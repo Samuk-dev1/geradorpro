@@ -35,8 +35,11 @@ jobs:
       run: |
         npm init -y
         
-        # Versão 5 Estável
-        npm install @capacitor/core@5 @capacitor/android@5 @capacitor/cli@5
+        # Versão 5 Estável + PLUGINS DE NOTIFICAÇÃO E AGENDAMENTO
+        npm install @capacitor/core@5 @capacitor/android@5 @capacitor/cli@5 \
+          @capacitor/local-notifications \
+          @capacitor/background-task \
+          @capacitor/sqlite
         
         mkdir -p www
         cp index.html www/index.html
@@ -97,6 +100,19 @@ jobs:
           # Remove os arquivos XML antigos do Android para forçar o uso da imagem PNG nova
           find android/app/src/main/res/ -name "ic_launcher.xml" -delete
           find android/app/src/main/res/ -name "ic_launcher_round.xml" -delete
+        fi
+
+        # ADICIONAR PERMISSÕES NO ANDROIDMANIFEST PARA NOTIFICAÇÕES E AGENDAMENTO
+        MANIFEST_FILE="android/app/src/main/AndroidManifest.xml"
+        if [ -f "$MANIFEST_FILE" ]; then
+          # Permissão para notificações (Android 13+)
+          sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />' "$MANIFEST_FILE"
+          # Permissão para agendamento em segundo plano
+          sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />' "$MANIFEST_FILE"
+          # Permissão para vibrar (opcional, mas útil para notificações)
+          sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.VIBRATE" />' "$MANIFEST_FILE"
+          # Permissão para internet (já deve ter, mas garante)
+          sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.INTERNET" />' "$MANIFEST_FILE"
         fi
 
         npx cap sync android

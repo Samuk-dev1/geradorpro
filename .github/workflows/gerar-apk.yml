@@ -1,12 +1,11 @@
-name: Gerar APK Prático
-
+name: Gerar APK — Gestor IPTV
 on:
   workflow_dispatch:
     inputs:
       app_name:
         description: 'Nome do Aplicativo'
         required: true
-        default: 'MeuApp'
+        default: 'GestorIPTV'
       enviou_logo:
         description: 'Usuário enviou logo?'
         required: false
@@ -15,9 +14,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Baixar codigo do projeto
+    - name: Baixar código do projeto
       uses: actions/checkout@v4
 
     - name: Configurar Node.js 20
@@ -31,100 +29,100 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Preparar Ambiente e Gerar
+    - name: Preparar Ambiente e Gerar APK
       run: |
         npm init -y
         
-        # Versão 5 Estável + PLUGINS DE NOTIFICAÇÃO E AGENDAMENTO
+        # Instala Capacitor 5 + todos os plugins
         npm install @capacitor/core@5 @capacitor/android@5 @capacitor/cli@5 \
           @capacitor/local-notifications \
           @capacitor/background-task \
           @capacitor/sqlite
-        
-        mkdir -p www
-        cp index.html www/index.html
 
-        # SÓ APAGA SE O USUÁRIO DE FATO NÃO TIVER ENVIADO NENHUMA LOGO
+        # Cria pasta www e copia o arquivo único index.html
+        mkdir -p www
+        
+        # ✅ SEU ARQUIVO ÚNICO É COPIADO AQUI
+        if [ -f index.html ]; then
+          cp index.html www/index.html
+          echo "✅ Arquivo index.html copiado com sucesso!"
+        else
+          echo "⚠️ Arquivo index.html não encontrado! Crie o arquivo na raiz do repositório."
+          exit 1
+        fi
+
+        # Limpa logo se não foi enviada
         ENVIOU_LOGO="${{ github.event.inputs.enviou_logo }}"
         if [ "$ENVIOU_LOGO" = "nao" ]; then
-          echo "Nenhuma logo nova foi enviada. Limpando a logo do cliente anterior..."
+          echo "Nenhuma logo enviada — usando padrão..."
           rm -f logo.png
         fi
-        
+
         APP_NAME="${{ github.event.inputs.app_name }}"
         
-        # Cria um identificador único com base no nome digitado para evitar conflitos no Android
+        # Gera ID único a partir do nome
         APP_ID=$(echo "$APP_NAME" | tr '[:upper:]' '[:lower:]' | tr -cd '[:alnum:]')
         if [ -z "$APP_ID" ]; then
-          APP_ID="app"
+          APP_ID = "app"
         fi
-        
-        # Inicializa o Capacitor usando o ID único gerado
-        npx cap init "$APP_NAME" com.gerador.$APP_ID --web-dir www
+
+        # Inicializa Capacitor
+        npx cap init "$APP_NAME" com.gestoriptv.$APP_ID --web-dir www
         npx cap add android
 
-        # Aplica o nome exato no arquivo de strings nativo do Android
+        # Aplica nome personalizado no Android
         STRINGS_FILE="android/app/src/main/res/values/strings.xml"
         if [ -f "$STRINGS_FILE" ]; then
           sed -i "s/<string name=\"app_name\">.*<\/string>/<string name=\"app_name\">$APP_NAME<\/string>/" "$STRINGS_FILE"
         fi
 
-        # Se o usuário enviou uma logo nova, ajusta ela automaticamente para o padrão de ícones do Android
+        # Processa logo personalizada se existir
         if [ -f logo.png ]; then
-          echo "Logo personalizada encontrada! Otimizando e redimensionando automaticamente..."
-          
-          # Instala ferramenta leve de imagem no Ubuntu para redimensionar sem pesar o app
+          echo "Logo encontrada! Otimizando..."
           sudo apt-get update && sudo apt-get install -y imagemagick > /dev/null 2>&1
-          
-          # Cria os tamanhos exatos exigidos pelo Android em cada pasta mipmap
+
           mkdir -p android/app/src/main/res/mipmap-mdpi
           convert logo.png -resize 48x48! android/app/src/main/res/mipmap-mdpi/ic_launcher.png
           convert logo.png -resize 48x48! android/app/src/main/res/mipmap-mdpi/ic_launcher_round.png
-
           mkdir -p android/app/src/main/res/mipmap-hdpi
           convert logo.png -resize 72x72! android/app/src/main/res/mipmap-hdpi/ic_launcher.png
           convert logo.png -resize 72x72! android/app/src/main/res/mipmap-hdpi/ic_launcher_round.png
-
           mkdir -p android/app/src/main/res/mipmap-xhdpi
           convert logo.png -resize 96x96! android/app/src/main/res/mipmap-xhdpi/ic_launcher.png
           convert logo.png -resize 96x96! android/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png
-
           mkdir -p android/app/src/main/res/mipmap-xxhdpi
           convert logo.png -resize 144x144! android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
           convert logo.png -resize 144x144! android/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png
-
           mkdir -p android/app/src/main/res/mipmap-xxxhdpi
           convert logo.png -resize 192x192! android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
           convert logo.png -resize 192x192! android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png
 
-          # Remove os arquivos XML antigos do Android para forçar o uso da imagem PNG nova
           find android/app/src/main/res/ -name "ic_launcher.xml" -delete
           find android/app/src/main/res/ -name "ic_launcher_round.xml" -delete
         fi
 
-        # ADICIONAR PERMISSÕES NO ANDROIDMANIFEST PARA NOTIFICAÇÕES E AGENDAMENTO
+        # 🔑 PERMISSÕES NO ANDROIDMANIFEST
         MANIFEST_FILE="android/app/src/main/AndroidManifest.xml"
         if [ -f "$MANIFEST_FILE" ]; then
-          # Permissão para notificações (Android 13+)
           sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />' "$MANIFEST_FILE"
-          # Permissão para agendamento em segundo plano
           sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />' "$MANIFEST_FILE"
-          # Permissão para vibrar (opcional, mas útil para notificações)
           sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.VIBRATE" />' "$MANIFEST_FILE"
-          # Permissão para internet (já deve ter, mas garante)
           sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.INTERNET" />' "$MANIFEST_FILE"
+          sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.WAKE_LOCK" />' "$MANIFEST_FILE"
+          sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />' "$MANIFEST_FILE"
         fi
 
+        # Sincroniza tudo
         npx cap sync android
 
-    - name: Compilar APK de Debug
+    - name: Compilar APK
       run: |
         cd android
         ./gradlew assembleDebug
 
-    - name: Salvar o APK gerado
+    - name: Disponibilizar APK
       uses: actions/upload-artifact@v4
       with:
-        name: meu-aplicativo-apk
+        name: ${{ github.event.inputs.app_name || 'GestorIPTV' }}-APK
         path: android/app/build/outputs/apk/debug/app-debug.apk
-        retention-days: 1
+        retention-days: 7

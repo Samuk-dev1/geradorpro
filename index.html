@@ -427,18 +427,30 @@ function mostrarToast(titulo, texto, tipo='success') {
 async function solicitarPermissaoNotif() {
   if ('Notification' in window) {
     const perm = await Notification.requestPermission();
-    if (perm === 'granted') mostrarToast('✅ Permissão Concedida', 'Notificações ativadas!', 'success');
+    if (perm === 'granted') mostrarToast('✅ Permissão Concedida', 'Notificações web ativadas!', 'success');
   }
-  if (window.Capacitor?.LocalNotifications) {
-    const { LocalNotifications } = window.Capacitor;
+  
+  if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications) {
+    const LocalNotifications = window.Capacitor.Plugins.LocalNotifications;
     await LocalNotifications.requestPermissions();
+    
+    try {
+      await LocalNotifications.createChannel({
+          id: 'alertas_gestor',
+          name: 'Alertas do Gestor',
+          description: 'Notificações de sistema e vencimentos',
+          importance: 5,
+          visibility: 1
+      });
+    } catch(e) {
+      console.log('Erro ao criar canal:', e);
+    }
   }
 }
 
 async function dispararNotificacaoSistema(titulo, mensagem, id=1) {
-  // 1º Tenta: Capacitor Nativo Android
-  if (window.Capacitor?.LocalNotifications) {
-    const { LocalNotifications } = window.Capacitor;
+  if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications) {
+    const LocalNotifications = window.Capacitor.Plugins.LocalNotifications;
     try {
       await LocalNotifications.schedule({
         notifications: [{
@@ -446,13 +458,13 @@ async function dispararNotificacaoSistema(titulo, mensagem, id=1) {
           title: titulo,
           body: mensagem,
           schedule: { at: new Date(Date.now() + 500) },
-          sound: 'notification.mp3'
+          channelId: 'alertas_gestor'
         }]
       });
       return true;
     } catch(e) { console.log('Erro Capacitor:', e); }
   }
-  // 2º Fallback: Notificação Web
+  
   if ('Notification' in window && Notification.permission === 'granted') {
     new Notification(titulo, { body: mensagem, icon: 'https://cdn-icons-png.flaticon.com/512/2659/2659960.png' });
     return true;

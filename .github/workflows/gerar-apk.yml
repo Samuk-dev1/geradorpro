@@ -33,10 +33,9 @@ jobs:
       run: |
         npm init -y
         
-        # Removido o pacote inexistente @capacitor/background-task
+        # Deixando apenas o core, android, cli e o plugin de notificações
         npm install @capacitor/core@5 @capacitor/android@5 @capacitor/cli@5 \
-          @capacitor/local-notifications@5 \
-          @capacitor/sqlite@5
+          @capacitor/local-notifications@5
 
         # Cria pasta www e copia o arquivo único index.html
         mkdir -p www

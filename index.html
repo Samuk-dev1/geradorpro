@@ -74,7 +74,7 @@ body { background: linear-gradient(135deg, #0a0f1a 0%, #0f172a 100%); color: var
 .table tr { transition: 0.15s; }
 .table tr:hover { background: var(--bg-card-2); }
 
-.btn { padding: 10px 18px; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; transition: 0.25s ease; font-size: 14px; }
+.btn { padding: 10px 18px; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; transition: 0.25s ease; font-size: 14px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
 .btn.primary { background: var(--gradient); color: #000; box-shadow: 0 4px 12px rgba(0,212,255,0.25); }
 .btn.primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,212,255,0.35); }
 .btn.secondary { background: linear-gradient(135deg, #ffb703, #ff9500); color: #000; }
@@ -97,11 +97,12 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--a
 .form-group { margin-bottom: 16px; }
 .form-group label { display: block; margin-bottom: 8px; font-size: 14px; color: var(--muted); font-weight: 500; }
 
-.badge { padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; display: inline-block; }
+.badge { padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; display: inline-block; text-align: center; }
 .badge.ativo { background: rgba(0,224,145,0.12); color: var(--success); border: 1px solid rgba(0,224,145,0.25); }
 .badge.vencendo { background: rgba(255,183,3,0.12); color: var(--warning); border: 1px solid rgba(255,183,3,0.25); }
 .badge.vencido { background: rgba(255,71,87,0.12); color: var(--danger); border: 1px solid rgba(255,71,87,0.25); }
 .badge.inativo { background: rgba(148,163,184,0.12); color: var(--muted); border: 1px solid rgba(148,163,184,0.25); }
+.badge.tpl { background: rgba(123,47,253,0.12); color: var(--accent-2); border: 1px solid rgba(123,47,253,0.25); }
 
 .toast { position: fixed; bottom: 24px; right: 24px; background: var(--bg-card); border: 1px solid var(--accent); padding: 14px 20px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); z-index: 3000; transform: translateY(100px); opacity:0; transition: 0.3s ease; max-width: 340px; }
 .toast.show { transform: translateY(0); opacity:1; }
@@ -130,13 +131,13 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--a
       <li><a href="#" onclick="showScreen('dashboard')"><i class="fas fa-chart-pie"></i> Dashboard</a></li>
       <li><a href="#" onclick="showScreen('clientes')"><i class="fas fa-users"></i> Clientes</a></li>
       <li><a href="#" onclick="showScreen('planos')"><i class="fas fa-list-alt"></i> Planos</a></li>
-      <li><a href="#" onclick="showScreen('templates')"><i class="fas fa-file-alt"></i> Mensagens</a></li>
+      <li><a href="#" onclick="showScreen('templates')"><i class="fas fa-file-alt"></i> Mensagens (Régua)</a></li>
       <li><a href="#" onclick="showScreen('vencimentos')"><i class="fas fa-calendar-check"></i> Próximos Vencimentos</a></li>
       <li class="submenu">
         <a href="#"><i class="fas fa-cog"></i> Configurações ▾</a>
         <ul>
-          <li><a href="#" onclick="showScreen('configuracoes')">Dados da Empresa</a></li>
-          <li><a href="#" onclick="showScreen('notificacoes')">Notificações</a></li>
+          <li><a href="#" onclick="showScreen('configuracoes')">Dados da Empresa / Zap</a></li>
+          <li><a href="#" onclick="showScreen('notificacoes')">Notificações Automáticas</a></li>
           <li><a href="#" onclick="showScreen('backup')">Backup / Exportar</a></li>
         </ul>
       </li>
@@ -209,10 +210,11 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--a
     <!-- TEMPLATES / MENSAGENS -->
     <section id="screen-templates" class="screen">
       <div class="top-bar">
-        <button class="btn primary" onclick="abrirModalTemplate()"><i class="fas fa-plus"></i> Novo Template</button>
+        <button class="btn primary" onclick="abrirModalTemplate()"><i class="fas fa-plus"></i> Novo Template (Mensagem)</button>
       </div>
+      <p style="font-size:13px; color:var(--muted); margin-bottom:15px;">A "Régua de Cobrança" escolhe automaticamente a mensagem certa baseada nos dias que faltam para o cliente vencer quando você clica em enviar WhatsApp.</p>
       <table class="table">
-        <thead><tr><th>Nome</th><th>Mensagem</th><th>Exemplo</th><th>Ações</th></tr></thead>
+        <thead><tr><th>Nome</th><th>Tipo / Gatilho</th><th>Mensagem</th><th>Ações</th></tr></thead>
         <tbody id="lista-templates"></tbody>
       </table>
     </section>
@@ -236,6 +238,19 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--a
         <div class="form-group"><label>Telefone / WhatsApp (com DDD)</label><input type="text" id="cfg-contato" placeholder="(71) 99999-9999"></div>
         <div class="form-group"><label>E-mail</label><input type="email" id="cfg-email" placeholder="seu@email.com"></div>
         <div class="form-group"><label>Chave Pix (para pagamentos)</label><input type="text" id="cfg-pix" placeholder="CPF, CNPJ, e-mail ou telefone"></div>
+        
+        <br>
+        <h3 style="border-top: 1px solid var(--border); padding-top:20px; margin-top:10px;">💬 Trava do WhatsApp</h3>
+        <p style="font-size:13px; color:var(--muted); margin-bottom:15px;">Escolha qual WhatsApp o sistema deve forçar a abrir para enviar as mensagens aos clientes.</p>
+        <div class="form-group">
+          <label>Aplicativo de Envio</label>
+          <select id="cfg-wa-app">
+            <option value="default">📱 Perguntar / Padrão do Celular (Recomendado)</option>
+            <option value="com.whatsapp.w4b">💼 Forçar WhatsApp Business</option>
+            <option value="com.whatsapp">🟢 Forçar WhatsApp Normal</option>
+          </select>
+        </div>
+
         <button class="btn primary" onclick="salvarConfiguracoes()">💾 Salvar Configurações</button>
       </div>
     </section>
@@ -324,17 +339,56 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--a
     </div>
   </div>
 
-  <!-- MODAL TEMPLATE -->
+  <!-- MODAL TEMPLATE (RÉGUA) -->
   <div class="modal" id="modal-template">
     <div class="modal-content">
       <span class="close" onclick="fecharModalTemplate()">&times;</span>
-      <h3>Criar Mensagem de Lembrete</h3>
+      <h3 id="modal-template-titulo">Criar Mensagem de Régua</h3>
       <input type="hidden" id="tpl-id">
-      <div class="form-group"><label>Nome do Template *</label><input type="text" id="tpl-nome" placeholder="Ex: Lembrete Padrão"></div>
-      <div class="form-group"><label>Mensagem <small>Use: {nome}, {data}, {valor}, {empresa}, {pix}</small></label>
+      <div class="form-group"><label>Nome do Template *</label><input type="text" id="tpl-nome" placeholder="Ex: Lembrete 3 Dias"></div>
+      
+      <div class="form-group">
+        <label>Qual é o Tipo/Momento dessa Mensagem? *</label>
+        <select id="tpl-tipo">
+          <option value="avulso">📝 Padrão / Avulso (Qualquer momento)</option>
+          <option value="lembrete_5">⏳ Faltando 5 dias para vencer</option>
+          <option value="lembrete_3">⏳ Faltando 3 dias para vencer</option>
+          <option value="lembrete_2">⏳ Faltando 2 dias para vencer</option>
+          <option value="lembrete_1">⏳ Faltando 1 dia para vencer</option>
+          <option value="vencimento_hoje">🔴 Vence HOJE!</option>
+          <option value="renovacao">✅ Pós-Renovação (Agradecimento)</option>
+        </select>
+      </div>
+
+      <div class="form-group"><label>Mensagem <small>Variáveis: {nome}, {data}, {valor}, {empresa}, {pix}</small></label>
         <textarea id="tpl-mensagem" rows="5" required>Olá {nome}! Tudo bem? 😊 Seu plano IPTV vence em {data}. Valor: R$ {valor}. Pague via Pix: {pix} — {empresa}</textarea>
       </div>
       <button class="btn primary" onclick="salvarTemplate()">💾 Salvar Mensagem</button>
+    </div>
+  </div>
+
+  <!-- MODAL DE RENOVAÇÃO RÁPIDA -->
+  <div class="modal" id="modal-renovacao">
+    <div class="modal-content">
+      <span class="close" onclick="fecharModalRenovacao()">&times;</span>
+      <h3>✅ Confirmar Renovação</h3>
+      <input type="hidden" id="renov-cli-id">
+      
+      <p id="renov-info" style="font-size: 14px; color: var(--muted); margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom:10px;"></p>
+      
+      <div class="form-group">
+        <label>Mensagem de Agradecimento (WhatsApp)</label>
+        <textarea id="renov-mensagem" rows="5" style="border-color: var(--success);"></textarea>
+      </div>
+
+      <div style="display: flex; gap: 10px; margin-top: 20px;">
+        <button class="btn success" style="flex:2;" onclick="confirmarRenovacao(true)">
+          <i class="fab fa-whatsapp"></i> Renovar e Enviar Recibo
+        </button>
+        <button class="btn primary" style="flex:1;" onclick="confirmarRenovacao(false)">
+          Só Renovar
+        </button>
+      </div>
     </div>
   </div>
 
@@ -348,7 +402,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--a
 // ========== BANCO LOCAL INDEXEDDB ==========
 let db;
 let chartStatus, chartVenc;
-let cfgEmpresa = { nome: '', contato: '', email: '', pix: '' };
+let cfgEmpresa = { nome: '', contato: '', email: '', pix: '', wa_app: 'default' };
 let cfgNotif = { horarios: ['09:00', '13:00', '18:00'], antecedencia: '2' }; 
 
 window.onload = async () => {
@@ -359,13 +413,13 @@ window.onload = async () => {
   await renderizarPlanosSelect();
   await renderizarVencimentos();
   solicitarPermissaoNotif();
-  await recalcularNotificacoesGlobal(); // Garante o alarme rodando na inicialização!
+  await recalcularNotificacoesGlobal(); 
 };
 
 // ========== INICIALIZAÇÃO BANCO ==========
 async function initBanco() {
   db = await new Promise((res, rej) => {
-    const req = indexedDB.open('IPTVDBPro', 3);
+    const req = indexedDB.open('IPTVDBPro', 4);
     req.onupgradeneeded = e => {
       const d = e.target.result;
       if(!d.objectStoreNames.contains('config')) {
@@ -410,8 +464,8 @@ function showScreen(nome) {
   document.getElementById(`screen-${nome}`).classList.add('active');
   document.getElementById('page-title').textContent = {
     dashboard: '📊 Dashboard', clientes: '👥 Clientes', planos: '📋 Planos',
-    templates: '📝 Mensagens', vencimentos: '📆 Próximos Vencimentos',
-    configuracoes: '⚙️ Dados da Empresa', notificacoes: '🔔 Notificações', backup: '💾 Backup'
+    templates: '📝 Mensagens (Régua)', vencimentos: '📆 Próximos Vencimentos',
+    configuracoes: '⚙️ Configurações', notificacoes: '🔔 Notificações', backup: '💾 Backup'
   }[nome] || nome;
   toggleMenu();
   if (nome === 'dashboard') renderizarDashboard();
@@ -452,34 +506,23 @@ async function solicitarPermissaoNotif() {
     const LocalNotifications = window.Capacitor.Plugins.LocalNotifications;
     await LocalNotifications.requestPermissions();
     try {
-      await LocalNotifications.createChannel({
-          id: 'alertas_gestor',
-          name: 'Alertas do Gestor',
-          description: 'Notificações de sistema e vencimentos',
-          importance: 5,
-          visibility: 1
-      });
+      await LocalNotifications.createChannel({ id: 'alertas_gestor', name: 'Alertas do Gestor', importance: 5, visibility: 1 });
     } catch(e) {}
   }
 }
 
-// O Coração do Sistema: Recalcula e agrupa todos os alarmes do zero!
 async function recalcularNotificacoesGlobal() {
   if (!window.Capacitor || !window.Capacitor.Plugins || !window.Capacitor.Plugins.LocalNotifications) return;
   const LocalNotifications = window.Capacitor.Plugins.LocalNotifications;
 
-  // 1. Apaga TUDO que estava agendado antes (Limpa a lousa)
   try {
       const pending = await LocalNotifications.getPending();
-      if(pending.notifications.length > 0) {
-          await LocalNotifications.cancel(pending);
-      }
-  } catch(e) { console.log('Erro ao limpar agenda antiga:', e); }
+      if(pending.notifications.length > 0) await LocalNotifications.cancel(pending);
+  } catch(e) {}
 
   const clis = await getAll('clientes');
   const ativos = clis.filter(c => c.status === 'Ativo');
 
-  // 2. Agrupa os clientes que vencem no mesmo dia
   const clientesPorData = {};
   ativos.forEach(c => {
       if(!clientesPorData[c.data_vencimento]) clientesPorData[c.data_vencimento] = [];
@@ -487,16 +530,13 @@ async function recalcularNotificacoesGlobal() {
   });
 
   const diasAntecedencia = parseInt(cfgNotif.antecedencia);
-  const horariosValidos = cfgNotif.horarios.filter(h => h && h.trim() !== ''); // Filtra as caixas vazias
+  const horariosValidos = cfgNotif.horarios.filter(h => h && h.trim() !== '');
   
   let idAlarme = 1;
   const novaAgenda = [];
   const hoje = new Date(); hoje.setHours(0,0,0,0);
-  
-  // Limite de 40 dias para frente para não estourar a memória do Android
   const dataLimiteFuturo = new Date(); dataLimiteFuturo.setDate(dataLimiteFuturo.getDate() + 40);
 
-  // 3. Monta os alarmes pra cada data!
   for (const dataStr in clientesPorData) {
       const listaDoDia = clientesPorData[dataStr];
       const dataVencimento = new Date(dataStr + 'T00:00:00');
@@ -506,7 +546,6 @@ async function recalcularNotificacoesGlobal() {
       let tituloDia, corpoDia, tituloAntes, corpoAntes;
       const nomes = listaDoDia.map(c => c.nome);
 
-      // Se tem SÓ 1 cliente, mostra nome e valor. Se tem VÁRIOS, faz agrupamento!
       if (listaDoDia.length === 1) {
           tituloDia = '🔴 Cliente Vencendo HOJE!';
           corpoDia = `O plano de ${nomes[0]} vence hoje! (R$ ${Number(listaDoDia[0].valor).toFixed(2)})`;
@@ -519,72 +558,21 @@ async function recalcularNotificacoesGlobal() {
           corpoAntes = `Prepare as cobranças: ${nomes.slice(0,3).join(', ')}${nomes.length > 3 ? '...' : ''} vencem em breve.`;
       }
 
-      // 4. Multiplica as mensagens pelos horários que você escolheu
       for (const horaEscolhida of horariosValidos) {
           const [h, m] = horaEscolhida.split(':').map(Number);
-
-          // Alarme do DIA DO VENCIMENTO
-          const toqueDia = new Date(dataVencimento);
-          toqueDia.setHours(h, m, 0, 0);
+          const toqueDia = new Date(dataVencimento); toqueDia.setHours(h, m, 0, 0);
           
-          if (toqueDia > new Date()) {
-              novaAgenda.push({
-                  id: idAlarme++,
-                  title: tituloDia,
-                  body: corpoDia,
-                  schedule: { at: toqueDia, allowWhileIdle: true }, // Fura bloqueio de tela apagada
-                  channelId: 'alertas_gestor'
-              });
-          }
+          if (toqueDia > new Date()) novaAgenda.push({ id: idAlarme++, title: tituloDia, body: corpoDia, schedule: { at: toqueDia, allowWhileIdle: true }, channelId: 'alertas_gestor' });
 
-          // Alarme de AVISO PRÉVIO
           if (diasAntecedencia > 0) {
-              const toqueAntes = new Date(dataVencimento);
-              toqueAntes.setDate(toqueAntes.getDate() - diasAntecedencia);
-              toqueAntes.setHours(h, m, 0, 0);
-
-              if (toqueAntes > new Date()) {
-                  novaAgenda.push({
-                      id: idAlarme++,
-                      title: tituloAntes,
-                      body: corpoAntes,
-                      schedule: { at: toqueAntes, allowWhileIdle: true }, 
-                      channelId: 'alertas_gestor'
-                  });
-              }
+              const toqueAntes = new Date(dataVencimento); toqueAntes.setDate(toqueAntes.getDate() - diasAntecedencia); toqueAntes.setHours(h, m, 0, 0);
+              if (toqueAntes > new Date()) novaAgenda.push({ id: idAlarme++, title: tituloAntes, body: corpoAntes, schedule: { at: toqueAntes, allowWhileIdle: true }, channelId: 'alertas_gestor' });
           }
       }
   }
 
-  // 5. Envia todo o novo calendário para o Android!
   if (novaAgenda.length > 0) {
-      try {
-          await LocalNotifications.schedule({ notifications: novaAgenda });
-          console.log(`✅ ${novaAgenda.length} alarmes inteligentes programados!`);
-      } catch(e) { console.log('Erro ao agendar nova fila:', e); }
-  }
-}
-
-// ========== TESTE MANUAL ==========
-async function dispararNotificacaoSistema(titulo, mensagem, id=999) {
-  if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications) {
-    const LocalNotifications = window.Capacitor.Plugins.LocalNotifications;
-    try {
-      await LocalNotifications.schedule({
-        notifications: [{
-          id: id,
-          title: titulo,
-          body: mensagem,
-          schedule: { at: new Date(Date.now() + 1000), allowWhileIdle: true },
-          channelId: 'alertas_gestor'
-        }]
-      });
-      return true;
-    } catch(e) {}
-  }
-  if ('Notification' in window && Notification.permission === 'granted') {
-    new Notification(titulo, { body: mensagem, icon: 'https://cdn-icons-png.flaticon.com/512/2659/2659960.png' });
-    return true;
+      try { await LocalNotifications.schedule({ notifications: novaAgenda }); } catch(e) {}
   }
 }
 
@@ -665,8 +653,8 @@ async function renderizarClientes(filtro='todos', busca='') {
       <td><span class="badge ${sts.classe}">${sts.texto}</span></td>
       <td>
         <div class="btn-group">
-          <button class="btn-sm success" title="✅ Renovar Cliente" onclick="renovarCliente(${c.id})"><i class="fas fa-sync-alt"></i> Renovar</button>
-          <button class="btn-sm info" title="💬 WhatsApp" onclick="enviarWhatsApp(${c.id})">💬</button>
+          <button class="btn-sm success" title="✅ Renovar Cliente" onclick="abrirModalRenovacao(${c.id})"><i class="fas fa-sync-alt"></i> Renovar</button>
+          <button class="btn-sm info" title="💬 WhatsApp" onclick="enviarWhatsApp(${c.id})"><i class="fab fa-whatsapp"></i></button>
           <button class="btn-sm primary" title="✏️ Editar" onclick="editarCliente(${c.id})">✏️</button>
           <button class="btn-sm danger" title="🗑️ Excluir" onclick="excluirCliente(${c.id})">🗑️</button>
         </div>
@@ -678,10 +666,12 @@ function filtrarClientes() {
   renderizarClientes(document.getElementById('filtro-status').value, document.getElementById('busca-cliente').value);
 }
 
-// ========== ✅ RENOVAR CLIENTE ==========
-async function renovarCliente(id) {
+// ========== 💡 TELA DE RENOVAÇÃO INTELIGENTE ==========
+function fecharModalRenovacao() { document.getElementById('modal-renovacao').classList.remove('open'); }
+
+async function abrirModalRenovacao(id) {
   const clis = await getAll('clientes');
-  const cliente = clis.find(x=>x.id===id);
+  const cliente = clis.find(x => x.id === id);
   if(!cliente) return;
 
   const planos = await getAll('planos');
@@ -692,19 +682,118 @@ async function renovarCliente(id) {
   const hoje = new Date(); hoje.setHours(0,0,0,0);
   if (novaData < hoje) novaData = hoje;
   novaData.setDate(novaData.getDate() + dias);
-  const novaDataStr = novaData.toISOString().split('T')[0];
+  
+  document.getElementById('renov-cli-id').value = id;
+  document.getElementById('renov-info').innerHTML = `O plano de <b>${cliente.nome}</b> será renovado por <b>+${dias} dias</b>.<br>A nova data de vencimento será <b>${novaData.toLocaleDateString('pt-BR')}</b>.`;
 
-  cliente.data_vencimento = novaDataStr;
+  // Prepara o texto de Agradecimento (Procura template 'renovacao')
+  const templates = await getAll('templates');
+  let tpl = templates.find(t => t.tipo === 'renovacao');
+  
+  let msgTemplate = tpl ? tpl.mensagem : `Olá {nome}! Tudo bem? 😊 Passando para agradecer pela confiança. Seu plano foi renovado com sucesso e agora é válido até {data}. Muito obrigado! — {empresa}`;
+  
+  // Substitui as variáveis com os dados DA NOVA DATA
+  const msgPronta = msgTemplate
+    .replace(/{nome}/g, cliente.nome)
+    .replace(/{data}/g, novaData.toLocaleDateString('pt-BR'))
+    .replace(/{valor}/g, Number(cliente.valor).toFixed(2))
+    .replace(/{empresa}/g, cfgEmpresa.nome || 'Sua Empresa')
+    .replace(/{pix}/g, cfgEmpresa.pix || 'Chave Pix');
+
+  document.getElementById('renov-mensagem').value = msgPronta;
+  document.getElementById('modal-renovacao').classList.add('open');
+}
+
+async function confirmarRenovacao(enviarZap) {
+  const id = Number(document.getElementById('renov-cli-id').value);
+  const mensagemPopUp = document.getElementById('renov-mensagem').value.trim();
+  
+  const clis = await getAll('clientes');
+  const cliente = clis.find(x => x.id === id);
+  if(!cliente) return;
+
+  const planos = await getAll('planos');
+  const plano = planos.find(p => p.nome === cliente.plano);
+  const dias = plano?.dias || 30;
+
+  let novaData = new Date(cliente.data_vencimento+'T00:00:00');
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  if (novaData < hoje) novaData = hoje;
+  novaData.setDate(novaData.getDate() + dias);
+  
+  cliente.data_vencimento = novaData.toISOString().split('T')[0];
   cliente.status = 'Ativo';
   await put('clientes', cliente);
 
-  // 🔔 Atualiza todos os alarmes do sistema silenciosamente
   await recalcularNotificacoesGlobal(); 
-
+  
+  fecharModalRenovacao();
   mostrarToast('✅ Renovado!', `${cliente.nome} → Vence em ${novaData.toLocaleDateString('pt-BR')}`, 'success');
+  
   renderizarClientes();
   renderizarDashboard();
   renderizarVencimentos();
+
+  // Dispara o WhatsApp forçado pelo aplicativo escolhido
+  if (enviarZap) {
+    dispararWhatsAppInteligente(cliente.telefone, mensagemPopUp);
+  }
+}
+
+// ========== 💬 MOTOR DE WHATSAPP (RÉGUA DE COBRANÇA + INTENT) ==========
+async function enviarWhatsApp(idCliente) {
+  const clis = await getAll('clientes');
+  const c = clis.find(x => x.id === idCliente);
+  if(!c) return;
+
+  const sts = calcularStatus(c.data_vencimento);
+  let tipoIdeal = 'avulso';
+
+  // Descobre qual o momento do cliente para pegar a mensagem certa
+  if (sts.dias === 0) tipoIdeal = 'vencimento_hoje';
+  else if (sts.dias === 1) tipoIdeal = 'lembrete_1';
+  else if (sts.dias === 2) tipoIdeal = 'lembrete_2';
+  else if (sts.dias === 3) tipoIdeal = 'lembrete_3';
+  else if (sts.dias === 4 || sts.dias === 5) tipoIdeal = 'lembrete_5';
+
+  const templates = await getAll('templates');
+  let tpl = templates.find(t => t.tipo === tipoIdeal);
+  
+  // Se não achar o específico, tenta achar o avulso (padrão)
+  if (!tpl) tpl = templates.find(t => t.tipo === 'avulso' || !t.tipo); 
+  
+  let msgBruta = tpl ? tpl.mensagem : `Olá {nome}! 😊 Seu plano IPTV vence em {data}. Valor: R$ {valor}. Pague via Pix: {pix} — {empresa}`;
+  
+  const dt = new Date(c.data_vencimento+'T00:00:00').toLocaleDateString('pt-BR');
+  const msg = msgBruta
+    .replace(/{nome}/g, c.nome)
+    .replace(/{data}/g, dt)
+    .replace(/{valor}/g, Number(c.valor).toFixed(2))
+    .replace(/{empresa}/g, cfgEmpresa.nome || 'Sua Empresa')
+    .replace(/{pix}/g, cfgEmpresa.pix || 'Chave Pix');
+
+  dispararWhatsAppInteligente(c.telefone, msg);
+}
+
+function dispararWhatsAppInteligente(telefoneBase, mensagem) {
+  const numeroLimpo = (telefoneBase || cfgEmpresa.contato || '').replace(/\D/g,'');
+  if(!numeroLimpo) {
+      mostrarToast('❌ Sem número', 'Este cliente não tem telefone salvo.', 'danger');
+      return;
+  }
+  
+  // Garante o código do Brasil na frente
+  const foneFinal = numeroLimpo.startsWith('55') ? numeroLimpo : '55' + numeroLimpo;
+  const textoEncoded = encodeURIComponent(mensagem);
+  
+  let url = `https://wa.me/${foneFinal}?text=${textoEncoded}`;
+  
+  // Trava de aplicativo via Intent do Android
+  if (cfgEmpresa.wa_app === 'com.whatsapp' || cfgEmpresa.wa_app === 'com.whatsapp.w4b') {
+      url = `intent://send?phone=${foneFinal}&text=${textoEncoded}#Intent;package=${cfgEmpresa.wa_app};scheme=whatsapp;end;`;
+  }
+  
+  window.open(url, '_blank');
 }
 
 // ========== MODAL CLIENTE ==========
@@ -715,7 +804,7 @@ async function renderizarPlanosSelect(){
   const sel = document.getElementById('cli-plano');
   sel.innerHTML = ps.map(p=>`<option value="${p.nome}" data-valor="${p.valor}">${p.nome} — R$ ${Number(p.valor).toFixed(2)}</option>`).join('');
   sel.onchange = ()=>{ const opt = sel.selectedOptions[0]; if(opt) document.getElementById('cli-valor').value = opt.dataset.valor; };
-  sel.onchange();
+  if(ps.length > 0) sel.onchange();
 }
 
 async function salvarCliente(){
@@ -741,7 +830,6 @@ async function salvarCliente(){
       return mostrarToast('❌ MAC Duplicado', 'Este MAC já está cadastrado!', 'danger'); 
   }
 
-  // 🔔 Ajusta a agenda toda vez que um cliente é salvo
   await recalcularNotificacoesGlobal();
 
   fecharModalCliente();
@@ -770,32 +858,11 @@ async function editarCliente(id){
 async function excluirCliente(id){
   if(confirm('Tem certeza? Esta ação não pode ser desfeita!')) {
     await del('clientes',id);
-    await recalcularNotificacoesGlobal(); // Ajusta os alarmes removendo a pessoa
+    await recalcularNotificacoesGlobal(); 
     mostrarToast('🗑️ Excluído', 'Cliente removido!', 'warning');
     renderizarClientes();
     renderizarDashboard();
   }
-}
-
-// ========== WHATSAPP ==========
-async function enviarWhatsApp(idCliente){
-  const clis = await getAll('clientes');
-  const c = clis.find(x=>x.id===idCliente);
-  if(!c) return;
-
-  const templates = await getAll('templates');
-  const tpl = templates[0]?.mensagem || `Olá {nome}! 😊 Seu plano IPTV vence em {data}. Valor: R$ {valor}. Pague via Pix: {pix} — {empresa}`;
-  
-  const dt = new Date(c.data_vencimento+'T00:00:00').toLocaleDateString('pt-BR');
-  const msg = tpl
-    .replace(/{nome}/g, c.nome)
-    .replace(/{data}/g, dt)
-    .replace(/{valor}/g, Number(c.valor).toFixed(2))
-    .replace(/{empresa}/g, cfgEmpresa.nome || 'Sua Empresa')
-    .replace(/{pix}/g, cfgEmpresa.pix || 'Chave Pix');
-
-  const fone = (c.telefone || cfgEmpresa.contato || '').replace(/\D/g,'');
-  window.open(`https://wa.me/${fone}?text=${encodeURIComponent(msg)}`, '_blank');
 }
 
 // ========== PLANOS ==========
@@ -825,24 +892,78 @@ async function salvarPlano(){
 }
 async function excluirPlano(id){ if(confirm('Excluir este plano?')){ await del('planos',id); renderizarPlanos(); renderizarDashboard(); } }
 
-// ========== TEMPLATES ==========
+// ========== TEMPLATES DA RÉGUA DE COBRANÇA ==========
+function traduzirTipoTemplate(tipo) {
+    const tipos = {
+        'avulso': '📝 Padrão / Avulso',
+        'lembrete_5': '⏳ Faltam 5 dias',
+        'lembrete_3': '⏳ Faltam 3 dias',
+        'lembrete_2': '⏳ Faltam 2 dias',
+        'lembrete_1': '⏳ Falta 1 dia',
+        'vencimento_hoje': '🔴 Vence Hoje',
+        'renovacao': '✅ Renovação'
+    };
+    return tipos[tipo] || '📝 Padrão / Avulso';
+}
+
 async function renderizarTemplates(){
   const ts = await getAll('templates');
   document.getElementById('lista-templates').innerHTML = ts.map(t=>{
-    const exemplo = t.mensagem.replace(/{nome}/g,'João Silva').replace(/{data}/g,'15/09/2026').replace(/{valor}/g,'30,00').replace(/{empresa}/g,'IPTV Pro').replace(/{pix}/g,'123.456.789-00');
-    return `<tr><td><strong>${t.nome}</strong></td><td style="max-width:300px; font-size:13px;">${t.mensagem}</td><td style="max-width:300px; font-size:12px; color:var(--muted);">${exemplo}</td><td><button class="btn-sm danger" onclick="excluirTemplate(${t.id})">🗑️</button></td></tr>`;
+    const exemplo = t.mensagem.replace(/{nome}/g,'João').replace(/{data}/g,'15/09/2026').replace(/{valor}/g,'30,00').replace(/{empresa}/g,'IPTV').replace(/{pix}/g,'123');
+    const nomeTipo = traduzirTipoTemplate(t.tipo || 'avulso');
+    return `<tr>
+      <td><strong>${t.nome}</strong></td>
+      <td><span class="badge tpl">${nomeTipo}</span></td>
+      <td style="max-width:300px; font-size:12px; color:var(--muted);">${exemplo}</td>
+      <td>
+        <div class="btn-group">
+          <button class="btn-sm primary" onclick="editarTemplate(${t.id})">✏️</button>
+          <button class="btn-sm danger" onclick="excluirTemplate(${t.id})">🗑️</button>
+        </div>
+      </td>
+    </tr>`;
   }).join('');
 }
-function abrirModalTemplate(){ document.getElementById('modal-template').classList.add('open'); document.getElementById('tpl-nome').value=''; document.getElementById('tpl-mensagem').value='Olá {nome}! Tudo bem? 😊 Seu plano IPTV vence em {data}. Valor: R$ {valor}. Pague via Pix: {pix} — {empresa}'; }
+
+function abrirModalTemplate(){ 
+  document.getElementById('modal-template').classList.add('open'); 
+  document.getElementById('modal-template-titulo').textContent = 'Criar Mensagem de Régua';
+  document.getElementById('tpl-id').value=''; 
+  document.getElementById('tpl-nome').value=''; 
+  document.getElementById('tpl-tipo').value='avulso';
+  document.getElementById('tpl-mensagem').value='Olá {nome}! Tudo bem? 😊 Seu plano IPTV vence em {data}. Valor: R$ {valor}. Pague via Pix: {pix} — {empresa}'; 
+}
+
 function fecharModalTemplate(){ document.getElementById('modal-template').classList.remove('open'); }
+
+async function editarTemplate(id) {
+  const ts = await getAll('templates');
+  const t = ts.find(x => x.id === id);
+  if(!t) return;
+  
+  document.getElementById('modal-template-titulo').textContent = 'Editar Mensagem';
+  document.getElementById('tpl-id').value = t.id;
+  document.getElementById('tpl-nome').value = t.nome;
+  document.getElementById('tpl-tipo').value = t.tipo || 'avulso';
+  document.getElementById('tpl-mensagem').value = t.mensagem;
+  document.getElementById('modal-template').classList.add('open');
+}
+
 async function salvarTemplate(){
+  const idStr = document.getElementById('tpl-id').value;
   const nome = document.getElementById('tpl-nome').value.trim();
+  const tipo = document.getElementById('tpl-tipo').value;
   const mensagem = document.getElementById('tpl-mensagem').value.trim();
-  await put('templates', {nome, mensagem});
+  
+  const templateObj = { nome, tipo, mensagem };
+  if(idStr) templateObj.id = Number(idStr);
+  
+  await put('templates', templateObj);
   fecharModalTemplate();
-  mostrarToast('✅ Template Salvo', nome, 'success');
+  mostrarToast('✅ Mensagem Salva', nome, 'success');
   renderizarTemplates();
 }
+
 async function excluirTemplate(id){ if(confirm('Excluir este template?')){ await del('templates',id); renderizarTemplates(); } }
 
 // ========== PRÓXIMOS VENCIMENTOS ==========
@@ -863,8 +984,8 @@ async function renderizarVencimentos(){
       <td>${new Date(c.data_vencimento+'T00:00:00').toLocaleDateString('pt-BR')}</td>
       <td><span class="badge ${c._sts.classe}">${c._sts.dias === 0 ? 'HOJE' : c._sts.dias + ' dias'}</span></td>
       <td><div class="btn-group">
-        <button class="btn-sm success" onclick="renovarCliente(${c.id})">✅ Renovar</button>
-        <button class="btn-sm info" onclick="enviarWhatsApp(${c.id})">💬</button>
+        <button class="btn-sm success" onclick="abrirModalRenovacao(${c.id})">✅ Renovar</button>
+        <button class="btn-sm info" onclick="enviarWhatsApp(${c.id})"><i class="fab fa-whatsapp"></i></button>
       </div></td>
     </tr>`;
   }).join('');
@@ -873,26 +994,42 @@ async function renderizarVencimentos(){
 // ========== CONFIGURAÇÕES ==========
 async function carregarConfiguracoes(){
   const cfg = await new Promise(r => tx('config').get(1).onsuccess = e => r(e.target.result || {}));
-  cfgEmpresa = { nome: cfg.nome_empresa || '', contato: cfg.contato || '', email: cfg.email || '', pix: cfg.chave_pix || '' };
+  cfgEmpresa = { 
+    nome: cfg.nome_empresa || '', 
+    contato: cfg.contato || '', 
+    email: cfg.email || '', 
+    pix: cfg.chave_pix || '',
+    wa_app: cfg.wa_app || 'default'
+  };
   document.getElementById('cfg-nome').value = cfgEmpresa.nome;
   document.getElementById('cfg-contato').value = cfgEmpresa.contato;
   document.getElementById('cfg-email').value = cfgEmpresa.email;
   document.getElementById('cfg-pix').value = cfgEmpresa.pix;
+  document.getElementById('cfg-wa-app').value = cfgEmpresa.wa_app;
 }
+
 async function salvarConfiguracoes(){
   cfgEmpresa.nome = document.getElementById('cfg-nome').value.trim();
   cfgEmpresa.contato = document.getElementById('cfg-contato').value.trim();
   cfgEmpresa.email = document.getElementById('cfg-email').value.trim();
   cfgEmpresa.pix = document.getElementById('cfg-pix').value.trim();
-  await put('config', {id:1, nome_empresa:cfgEmpresa.nome, contato:cfgEmpresa.contato, email:cfgEmpresa.email, chave_pix:cfgEmpresa.pix});
-  mostrarToast('✅ Salvo!', 'Dados da empresa atualizados', 'success');
+  cfgEmpresa.wa_app = document.getElementById('cfg-wa-app').value;
+  
+  await put('config', {
+    id:1, 
+    nome_empresa: cfgEmpresa.nome, 
+    contato: cfgEmpresa.contato, 
+    email: cfgEmpresa.email, 
+    chave_pix: cfgEmpresa.pix,
+    wa_app: cfgEmpresa.wa_app
+  });
+  mostrarToast('✅ Salvo!', 'Configurações atualizadas', 'success');
 }
 
 // ========== CONFIG NOTIFICAÇÕES ==========
 async function carregarNotifConfig(){
   const cfg = await new Promise(r => tx('notif_config').get(1).onsuccess = e => r(e.target.result || {}));
   
-  // Lida com o formato antigo (se o usuário já usava 1 horário) para o novo formato de 3
   let preHorarios = ['09:00', '13:00', '18:00'];
   if (cfg.horarios && Array.isArray(cfg.horarios)) {
       preHorarios = cfg.horarios;
@@ -917,36 +1054,27 @@ async function salvarNotifConfig(){
   cfgNotif.antecedencia = document.getElementById('notif-antecedencia').value;
   await put('notif_config', {id:1, ...cfgNotif});
   
-  // 🔔 Recalcula a agenda do Android com os novos horários
   await recalcularNotificacoesGlobal();
-  
   mostrarToast('✅ Calendário Atualizado!', `Alertas reagendados com sucesso.`, 'success');
 }
 
 // ========== TESTE MANUAL ==========
 async function dispararNotificacao(){
-  const clis = await getAll('clientes');
-  const hoje = new Date().toISOString().split('T')[0];
-  const vencHoje = clis.filter(c => c.data_vencimento === hoje);
-
-  if(vencHoje.length === 0) {
-    mostrarToast('✅ Nenhum vencimento', 'Nenhum cliente vence hoje!', 'success');
-    return;
+  if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications) {
+      window.Capacitor.Plugins.LocalNotifications.schedule({
+        notifications: [{ id: 999, title: '📆 Teste de Sistema', body: 'As notificações estão funcionando perfeitamente!', schedule: { at: new Date(Date.now() + 1000), allowWhileIdle: true }, channelId: 'alertas_gestor' }]
+      });
+      mostrarToast('📆 Teste Enviado', `Aguarde 1 segundo...`, 'warning');
+  } else {
+      mostrarToast('❌ Capacitor inativo', `Gere o APK para ver as notificações nativas.`, 'danger');
   }
-
-  await dispararNotificacaoSistema(
-    '📆 Teste Manual',
-    `Hoje você tem ${vencHoje.length} cliente(s) vencendo!`,
-    999
-  );
-  mostrarToast('📆 Teste Enviado', `Aguarde 1 segundo...`, 'warning');
 }
 
 // ========== BACKUP ==========
 async function exportarBackup(){
   const dados = {
     exportadoEm: new Date().toISOString(),
-    versao: '3.0',
+    versao: '4.0',
     configuracoes: cfgEmpresa,
     notif_config: cfgNotif,
     clientes: await getAll('clientes'),
@@ -966,7 +1094,7 @@ async function importarBackup(e){
   const texto = await f.text();
   try {
     const d = JSON.parse(texto);
-    if(d.configuracoes) await put('config', {id:1, nome_empresa:d.configuracoes.nome, contato:d.configuracoes.contato, email:d.configuracoes.email, chave_pix:d.configuracoes.pix});
+    if(d.configuracoes) await put('config', {id:1, nome_empresa:d.configuracoes.nome, contato:d.configuracoes.contato, email:d.configuracoes.email, chave_pix:d.configuracoes.pix, wa_app:d.configuracoes.wa_app});
     if(d.notif_config) await put('notif_config', {id:1, ...d.notif_config});
     if(d.planos) for(const p of d.planos) { delete p.id; await put('planos', p); }
     if(d.templates) for(const t of d.templates) { delete t.id; await put('templates', t); }

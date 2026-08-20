@@ -2,1604 +2,732 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestor IPTV Pro</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Gestor IPTV · Premium</title>
+  <!-- Phosphor Icons (elegante, consistente) -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
   <style>
-:root {
-  --bg: #202024;
-  --bg-2: #1a1a1d;
-  --card: #2a2a2f;
-  --card-hover: #323238;
-  --text: #e8e5df;
-  --muted: #9a978f;
-  --accent: #c47046;
-  --accent-soft: rgba(196,112,70,.14);
-  --accent-2: #7ba8b8;
-  --accent-2-soft: rgba(123,168,184,.14);
-  --success: #4a9e6b;
-  --success-soft: rgba(74,158,107,.14);
-  --warning: #d4a24c;
-  --warning-soft: rgba(212,162,76,.14);
-  --danger: #c25454;
-  --danger-soft: rgba(194,84,84,.14);
-  --border: rgba(232,229,223,.10);
-  --border-strong: rgba(232,229,223,.18);
-  --shadow-sm: 0 2px 8px rgba(0,0,0,.2);
-  --shadow-md: 0 4px 20px rgba(0,0,0,.25);
-  --shadow-lg: 0 8px 40px rgba(0,0,0,.35);
-  --shadow-accent: 0 4px 20px rgba(196,112,70,.2);
-  --gradient-accent: linear-gradient(135deg, #c47046, #d98a5e);
-  --gradient-accent-2: linear-gradient(135deg, #7ba8b8, #5d8a9a);
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 20px;
-}
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-  background: radial-gradient(1400px 700px at 90% -20%, rgba(196,112,70,.08), transparent 60%),
-              radial-gradient(1000px 500px at -10% 10%, rgba(123,168,184,.06), transparent 55%),
-              var(--bg);
-  color: var(--text);
-  font-family: 'Sora', 'Segoe UI', Roboto, sans-serif;
-  min-height: 100vh;
-  -webkit-font-smoothing: antialiased;
-}
+    /* ===== RESET & GLOBAL ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    body {
+      background: #0b0d15;
+      color: #eef2ff;
+      padding-bottom: 90px;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+    #app {
+      max-width: 480px;
+      width: 100%;
+      padding: 20px 16px 100px;
+      position: relative;
+    }
 
-/* ========== SIDEBAR ========== */
-.sidebar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 280px;
-  height: 100vh;
-  background: var(--bg-2);
-  border-right: 1px solid var(--border);
-  transform: translateX(-100%);
-  transition: transform .35s cubic-bezier(0.4,0,0.2,1);
-  z-index: 1001;
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-.sidebar.open { transform: translateX(0); }
-.sidebar-header {
-  padding: 28px 24px 20px;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 8px;
-}
-.sidebar-header .brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.sidebar-header .brand-icon {
-  width: 42px;
-  height: 42px;
-  border-radius: var(--radius-md);
-  background: var(--gradient-accent);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  font-size: 18px;
-  box-shadow: var(--shadow-accent);
-}
-.sidebar-header h2 {
-  font-size: 17px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
-  color: var(--text);
-  line-height: 1.2;
-}
-.sidebar-header .brand-sub {
-  font-size: 11px;
-  color: var(--muted);
-  margin-top: 2px;
-  letter-spacing: 0.5px;
-}
-.sidebar-menu {
-  list-style: none;
-  padding: 8px 12px;
-}
-.sidebar-menu li a {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  color: var(--muted);
-  text-decoration: none;
-  border-radius: var(--radius-md);
-  margin: 2px 0;
-  font-weight: 500;
-  font-size: 14px;
-  transition: all .2s ease;
-  position: relative;
-}
-.sidebar-menu li a:hover {
-  background: var(--card);
-  color: var(--text);
-  transform: translateX(2px);
-}
-.sidebar-menu li a i {
-  width: 20px;
-  text-align: center;
-  font-size: 16px;
-  color: var(--accent);
-  opacity: 0.85;
-}
-.sidebar-menu li a:hover i { opacity: 1; }
-.sidebar-menu .submenu ul {
-  padding-left: 16px;
-  margin-top: 4px;
-  border-left: 1px solid var(--border);
-  margin-left: 22px;
-}
-.sidebar-menu .submenu ul li a {
-  font-size: 13px;
-  padding: 9px 14px;
-  color: var(--muted);
-}
-.sidebar-menu .submenu ul li a:hover {
-  color: var(--accent-2);
-  background: transparent;
-}
+    /* ===== GLASSMORPHISM + NEON ===== */
+    .glass-card {
+      background: rgba(20, 25, 40, 0.6);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(120, 80, 255, 0.25);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(120, 80, 255, 0.1);
+      border-radius: 28px;
+      padding: 18px 16px;
+      transition: all 0.2s ease;
+    }
 
-/* ========== OVERLAY ========== */
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.6);
-  backdrop-filter: blur(3px);
-  z-index: 1000;
-  display: none;
-  opacity: 0;
-  transition: opacity .3s ease;
-}
-.overlay.active { display: block; opacity: 1; }
+    h1, h2, h3 {
+      font-weight: 500;
+      letter-spacing: -0.02em;
+    }
+    h2 {
+      font-size: 1.4rem;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #b6a0ff, #7b4dff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      display: inline-block;
+    }
 
-/* ========== HEADER ========== */
-.header {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 16px 24px;
-  background: rgba(26,26,29,.85);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-.menu-btn {
-  background: var(--card);
-  border: 1px solid var(--border);
-  color: var(--text);
-  font-size: 18px;
-  cursor: pointer;
-  transition: all .2s;
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-sm);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.menu-btn:hover {
-  background: var(--accent-soft);
-  border-color: var(--accent);
-  color: var(--accent);
-  transform: scale(1.05);
-}
-.header h1 {
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--text);
-  letter-spacing: -0.01em;
-}
+    /* ===== TOGGLE iOS ===== */
+    .toggle-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 6px 0;
+    }
+    .toggle-switch {
+      position: relative;
+      width: 52px;
+      height: 30px;
+      flex-shrink: 0;
+    }
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #2a2f44;
+      border-radius: 30px;
+      transition: 0.3s;
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.6);
+    }
+    .toggle-slider::before {
+      content: "";
+      position: absolute;
+      height: 24px;
+      width: 24px;
+      left: 3px;
+      bottom: 3px;
+      background: #eef2ff;
+      border-radius: 50%;
+      transition: 0.3s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    }
+    .toggle-switch input:checked + .toggle-slider {
+      background: linear-gradient(135deg, #7b4dff, #3f8cff);
+    }
+    .toggle-switch input:checked + .toggle-slider::before {
+      transform: translateX(22px);
+      background: white;
+    }
 
-/* ========== MAIN CONTENT ========== */
-.main-content {
-  padding: 28px 24px;
-  max-width: 1400px;
-  margin: 0 auto;
-}
-.screen {
-  display: none;
-  animation: fadeSlide .35s ease;
-}
-.screen.active { display: block; }
-@keyframes fadeSlide {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+    /* ===== BOTÕES ===== */
+    .btn-neon {
+      background: linear-gradient(135deg, #6b3bff, #3f7bff);
+      border: none;
+      color: white;
+      font-weight: 600;
+      padding: 12px 24px;
+      border-radius: 40px;
+      box-shadow: 0 4px 18px rgba(60, 40, 220, 0.5);
+      transition: 0.2s;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.95rem;
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .btn-neon:active {
+      transform: scale(0.95);
+      box-shadow: 0 2px 10px rgba(60, 40, 220, 0.7);
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid #7b4dff;
+      color: #c6b8ff;
+      padding: 8px 14px;
+      border-radius: 40px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .btn-outline:active {
+      background: rgba(123, 77, 255, 0.2);
+    }
 
-/* ========== CARDS GRID ========== */
-.cards-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-  gap: 18px;
-  margin-bottom: 28px;
-}
-.card {
-  background: var(--card);
-  padding: 22px;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-sm);
-  transition: all .25s ease;
-  position: relative;
-  overflow: hidden;
-}
-.card::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 80px;
-  height: 80px;
-  background: radial-gradient(circle at top right, var(--accent-soft), transparent 70%);
-  opacity: 0;
-  transition: opacity .3s ease;
-}
-.card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-md);
-  border-color: var(--border-strong);
-}
-.card:hover::after { opacity: 1; }
-.card.warning::after { background: radial-gradient(circle at top right, var(--warning-soft), transparent 70%); }
-.card.danger::after { background: radial-gradient(circle at top right, var(--danger-soft), transparent 70%); }
-.card.success::after { background: radial-gradient(circle at top right, var(--success-soft), transparent 70%); }
-.card.info::after { background: radial-gradient(circle at top right, var(--accent-2-soft), transparent 70%); }
-.card h3 {
-  font-size: 12px;
-  color: var(--muted);
-  margin-bottom: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-}
-.card-value {
-  font-size: 30px;
-  font-weight: 800;
-  color: var(--accent);
-  line-height: 1.1;
-  font-variant-numeric: tabular-nums;
-}
-.card.warning .card-value { color: var(--warning); }
-.card.danger .card-value { color: var(--danger); }
-.card.success .card-value { color: var(--success); }
-.card.info .card-value { color: var(--accent-2); }
+    /* ===== BOTTOM NAV ===== */
+    .bottom-nav {
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 32px);
+      max-width: 440px;
+      background: rgba(16, 20, 32, 0.75);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 48px;
+      padding: 10px 12px;
+      display: flex;
+      justify-content: space-around;
+      border: 1px solid rgba(120, 80, 255, 0.3);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.7);
+      z-index: 100;
+    }
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #6b718a;
+      transition: 0.2s;
+      cursor: pointer;
+      padding: 6px 12px;
+      border-radius: 40px;
+      background: transparent;
+    }
+    .nav-item i {
+      font-size: 1.8rem;
+      transition: 0.2s;
+    }
+    .nav-item span {
+      font-size: 0.6rem;
+      font-weight: 500;
+      margin-top: 2px;
+    }
+    .nav-item.active {
+      color: #b6a0ff;
+      background: rgba(123, 77, 255, 0.15);
+    }
+    .nav-item.active i {
+      color: #b6a0ff;
+      filter: drop-shadow(0 0 8px #7b4dff);
+    }
 
-/* ========== CHARTS ========== */
-.charts-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 20px;
-  margin-bottom: 28px;
-}
-.chart-box {
-  background: var(--card);
-  padding: 22px;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-sm);
-}
-.chart-box h3 {
-  margin-bottom: 16px;
-  font-size: 14px;
-  color: var(--muted);
-  font-weight: 600;
-  letter-spacing: 0.3px;
-}
+    /* ===== FAB ===== */
+    .fab {
+      position: fixed;
+      bottom: 100px;
+      right: 24px;
+      background: linear-gradient(135deg, #8b5cf6, #4f7bff);
+      width: 62px;
+      height: 62px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 24px rgba(80, 40, 220, 0.6);
+      color: white;
+      font-size: 2.2rem;
+      border: none;
+      transition: 0.2s;
+      z-index: 50;
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+    .fab:active {
+      transform: scale(0.92);
+    }
 
-/* ========== PANEL ========== */
-.panel {
-  background: var(--card);
-  padding: 24px;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-sm);
-  margin-bottom: 20px;
-}
-.panel h3 {
-  margin-bottom: 18px;
-  font-size: 16px;
-  color: var(--text);
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.panel h3::before {
-  content: '';
-  width: 3px;
-  height: 18px;
-  background: var(--gradient-accent);
-  border-radius: 2px;
-}
+    /* ===== CARDS ===== */
+    .client-card, .plan-card, .template-card {
+      margin-bottom: 14px;
+      padding: 16px;
+      border-radius: 24px;
+      background: rgba(22, 28, 44, 0.6);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .card-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .status-badge {
+      padding: 4px 14px;
+      border-radius: 40px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: #2a2f44;
+      color: #b6b9d0;
+    }
+    .status-badge.ativo { background: #1f3b3b; color: #6fcf97; }
+    .status-badge.vencido { background: #3b1f2a; color: #f28b82; }
+    .status-badge.proximo { background: #3b2f1f; color: #f9ca7f; }
 
-/* ========== TABLE ========== */
-.table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  margin-top: 8px;
-}
-.table th, .table td {
-  padding: 14px 12px;
-  text-align: left;
-  border-bottom: 1px solid var(--border);
-  font-size: 13.5px;
-  vertical-align: middle;
-}
-.table th {
-  color: var(--muted);
-  font-weight: 600;
-  font-size: 11.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  background: var(--bg-2);
-  position: sticky;
-  top: 0;
-}
-.table th:first-child { border-top-left-radius: var(--radius-sm); }
-.table th:last-child { border-top-right-radius: var(--radius-sm); }
-.table tr { transition: background .15s ease; }
-.table tbody tr:hover { background: var(--card-hover); }
-.table tbody tr:last-child td { border-bottom: none; }
+    .actions-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 6px;
+    }
+    .icon-btn {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 30px;
+      padding: 8px 14px;
+      color: #c6b8ff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .icon-btn:active { background: rgba(123, 77, 255, 0.2); }
 
-/* ========== BUTTONS ========== */
-.btn {
-  padding: 10px 18px;
-  border: none;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  font-weight: 600;
-  transition: all .2s ease;
-  font-size: 13.5px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-  font-family: 'Sora', sans-serif;
-  letter-spacing: 0.2px;
-}
-.btn:active { transform: scale(0.97); }
-.btn.primary {
-  background: var(--gradient-accent);
-  color: #fff;
-  box-shadow: var(--shadow-accent);
-}
-.btn.primary:hover {
-  filter: brightness(1.08);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 24px rgba(196,112,70,.3);
-}
-.btn.secondary {
-  background: var(--gradient-accent-2);
-  color: #fff;
-}
-.btn.secondary:hover { filter: brightness(1.08); transform: translateY(-1px); }
-.btn.success {
-  background: var(--success);
-  color: #fff;
-}
-.btn.success:hover { filter: brightness(1.1); transform: translateY(-1px); }
-.btn.danger {
-  background: var(--danger);
-  color: #fff;
-}
-.btn.danger:hover { filter: brightness(1.1); transform: translateY(-1px); }
-.btn.info {
-  background: var(--accent-2);
-  color: #fff;
-}
-.btn.info:hover { filter: brightness(1.1); transform: translateY(-1px); }
-.btn-sm {
-  padding: 6px 10px;
-  font-size: 12px;
-  margin: 2px;
-  border-radius: var(--radius-sm);
-  font-weight: 500;
-}
-.btn-group {
-  display: flex;
-  gap: 4px;
-  flex-wrap: wrap;
-}
+    /* ===== MODAL ===== */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(12px);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      z-index: 999;
+      opacity: 0;
+      pointer-events: none;
+      transition: 0.3s;
+    }
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .modal-content {
+      background: #141a28;
+      padding: 24px 20px 40px;
+      width: 100%;
+      max-width: 480px;
+      border-radius: 40px 40px 0 0;
+      border: 1px solid rgba(120,80,255,0.2);
+      transform: translateY(40px);
+      transition: 0.3s;
+    }
+    .modal-overlay.active .modal-content {
+      transform: translateY(0);
+    }
 
-/* ========== TOP BAR ========== */
-.top-bar {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-bottom: 20px;
-  align-items: center;
-}
-
-/* ========== INPUTS ========== */
-input, select, textarea {
-  background: var(--bg-2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 11px 14px;
-  color: var(--text);
-  width: 100%;
-  font-size: 13.5px;
-  transition: all .2s ease;
-  font-family: 'Sora', sans-serif;
-}
-input:focus, select:focus, textarea:focus {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-soft);
-  background: var(--card);
-}
-textarea { resize: vertical; min-height: 80px; }
-
-/* ========== SWITCH ========== */
-.switch { position: relative; display: inline-block; width: 40px; height: 22px; margin: 0; }
-.switch input { opacity: 0; width: 0; height: 0; }
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-color: var(--bg-2);
-  transition: .3s;
-  border-radius: 34px;
-  border: 1px solid var(--border);
-}
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 16px;
-  width: 16px;
-  left: 2px;
-  bottom: 2px;
-  background-color: var(--muted);
-  transition: .3s cubic-bezier(0.4,0,0.2,1);
-  border-radius: 50%;
-}
-input:checked + .slider {
-  background-color: var(--success-soft);
-  border-color: var(--success);
-}
-input:checked + .slider:before {
-  transform: translateX(18px);
-  background-color: var(--success);
-}
-
-/* ========== MODAL ========== */
-.modal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.7);
-  backdrop-filter: blur(6px);
-  z-index: 2000;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  animation: fadeIn .2s ease;
-}
-.modal.open { display: flex; }
-.modal-content {
-  background: var(--card);
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius-xl);
-  padding: 28px;
-  max-width: 540px;
-  width: 100%;
-  max-height: 92vh;
-  overflow-y: auto;
-  box-shadow: var(--shadow-lg);
-  animation: modalSlide .3s cubic-bezier(0.4,0,0.2,1);
-}
-@keyframes modalSlide {
-  from { opacity: 0; transform: translateY(20px) scale(0.98); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-.modal-content h3 {
-  margin-bottom: 22px;
-  color: var(--text);
-  font-size: 19px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.modal-content h3::before {
-  content: '';
-  width: 4px;
-  height: 22px;
-  background: var(--gradient-accent);
-  border-radius: 2px;
-}
-.close {
-  float: right;
-  font-size: 22px;
-  cursor: pointer;
-  color: var(--muted);
-  transition: all .2s;
-  margin-top: -4px;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--radius-sm);
-}
-.close:hover {
-  color: var(--danger);
-  background: var(--danger-soft);
-  transform: rotate(90deg);
-}
-
-/* ========== FORM ========== */
-.form-group { margin-bottom: 16px; }
-.form-group label {
-  display: block;
-  margin-bottom: 7px;
-  font-size: 12.5px;
-  color: var(--muted);
-  font-weight: 600;
-  letter-spacing: 0.3px;
-}
-.form-group label small {
-  font-weight: 400;
-  color: var(--muted);
-  opacity: 0.8;
-}
-
-/* ========== BADGES ========== */
-.badge {
-  padding: 5px 11px;
-  border-radius: 20px;
-  font-size: 11.5px;
-  font-weight: 600;
-  display: inline-block;
-  text-align: center;
-  letter-spacing: 0.3px;
-}
-.badge.ativo {
-  background: var(--success-soft);
-  color: var(--success);
-  border: 1px solid rgba(74,158,107,.3);
-}
-.badge.vencendo {
-  background: var(--warning-soft);
-  color: var(--warning);
-  border: 1px solid rgba(212,162,76,.3);
-}
-.badge.vencido {
-  background: var(--danger-soft);
-  color: var(--danger);
-  border: 1px solid rgba(194,84,84,.3);
-}
-.badge.inativo {
-  background: rgba(154,151,143,.12);
-  color: var(--muted);
-  border: 1px solid rgba(154,151,143,.25);
-}
-.badge.tpl {
-  background: var(--accent-2-soft);
-  color: var(--accent-2);
-  border: 1px solid rgba(123,168,184,.3);
-}
-
-/* ========== TOAST ========== */
-.toast {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  background: var(--card);
-  border: 1px solid var(--border-strong);
-  padding: 14px 20px;
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-lg);
-  z-index: 3000;
-  transform: translateY(120px);
-  opacity: 0;
-  transition: all .35s cubic-bezier(0.4,0,0.2,1);
-  max-width: 340px;
-  border-left: 3px solid var(--accent);
-}
-.toast.show { transform: translateY(0); opacity: 1; }
-.toast.success { border-left-color: var(--success); }
-.toast.warning { border-left-color: var(--warning); }
-.toast.danger { border-left-color: var(--danger); }
-.toast strong {
-  display: block;
-  font-size: 13.5px;
-  font-weight: 700;
-  margin-bottom: 3px;
-  color: var(--text);
-}
-.toast p {
-  font-size: 12.5px;
-  color: var(--muted);
-  margin: 0;
-}
-
-/* ========== CODE / MAC ========== */
-code {
-  background: var(--bg-2);
-  padding: 3px 8px;
-  border-radius: 6px;
-  font-size: 12px;
-  color: var(--accent-2);
-  border: 1px solid var(--border);
-  font-family: 'JetBrains Mono', 'Consolas', monospace;
-}
-
-/* ========== RESPONSIVE ========== */
-@media (max-width: 768px) {
-  .charts-grid { grid-template-columns: 1fr; }
-  .table { display: block; overflow-x: auto; }
-  .cards-grid { grid-template-columns: 1fr 1fr; }
-  .main-content { padding: 18px 14px; }
-  .header { padding: 14px 16px; }
-}
-@media (max-width: 480px) {
-  .cards-grid { grid-template-columns: 1fr; }
-  .sidebar { width: 260px; }
-}
-
-/* ========== SCROLLBAR ========== */
-::-webkit-scrollbar { width: 8px; height: 8px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb {
-  background: var(--border-strong);
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+    /* ===== OUTROS ===== */
+    .section {
+      display: none;
+      animation: fadeSlide 0.3s ease;
+    }
+    .section.active {
+      display: block;
+    }
+    @keyframes fadeSlide {
+      0% { opacity: 0.3; transform: translateY(8px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .input-glass {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 40px;
+      padding: 14px 18px;
+      color: white;
+      width: 100%;
+      font-size: 1rem;
+      outline: none;
+      transition: 0.2s;
+    }
+    .input-glass:focus {
+      border-color: #7b4dff;
+      box-shadow: 0 0 0 3px rgba(123, 77, 255, 0.2);
+    }
+    .time-group {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin: 10px 0;
+    }
+    .time-group input {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 30px;
+      padding: 12px 16px;
+      color: white;
+      font-size: 1rem;
+      flex: 1;
+      min-width: 100px;
+    }
+    .separator {
+      height: 1px;
+      background: rgba(255,255,255,0.05);
+      margin: 20px 0;
+    }
+    .flex-between { display: flex; justify-content: space-between; align-items: center; }
   </style>
 </head>
 <body>
-  <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
-  <nav class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-      <div class="brand">
-        <div class="brand-icon"><i class="fas fa-broadcast-tower"></i></div>
+<div id="app">
+  <!-- ===== TELAS ===== -->
+  <!-- Clientes -->
+  <div id="tab-clientes" class="section active">
+    <div class="flex-between"><h2>📡 Clientes</h2><span id="client-count" style="font-size:0.8rem;color:#6b718a;">0</span></div>
+    <div id="client-list"></div>
+  </div>
+
+  <!-- Planos -->
+  <div id="tab-planos" class="section">
+    <h2>📦 Planos</h2>
+    <div id="plan-list"></div>
+    <button class="btn-neon" style="margin-top:12px;" onclick="adicionarPlano()">+ Novo Plano</button>
+  </div>
+
+  <!-- Templates -->
+  <div id="tab-templates" class="section">
+    <h2>📋 Templates</h2>
+    <div id="template-list"></div>
+  </div>
+
+  <!-- Configurações -->
+  <div id="tab-config" class="section">
+    <h2>⚙️ Configurações</h2>
+    <div class="glass-card">
+      <div style="margin-bottom:12px;font-weight:500;">Horários de Notificação</div>
+      <div class="time-group" id="time-group">
+        <input type="time" class="input-glass" id="time1" value="08:00">
+        <input type="time" class="input-glass" id="time2" value="13:00">
+        <input type="time" class="input-glass" id="time3" value="18:00">
+      </div>
+      <button class="btn-neon" onclick="salvarHorarios()" style="width:100%;justify-content:center;">Salvar Horários</button>
+    </div>
+    <div class="glass-card" style="margin-top:16px;">
+      <div class="flex-between">
+        <span>Backup & Restore</span>
         <div>
-          <h2>IPTV Manager Pro</h2>
-          <div class="brand-sub">Sistema de Gestão</div>
+          <button class="btn-outline" onclick="fazerBackup()">💾 Backup</button>
+          <button class="btn-outline" onclick="document.getElementById('restoreInput').click()">📂 Restore</button>
+          <input type="file" id="restoreInput" accept=".json" style="display:none" onchange="restoreBackup(event)">
         </div>
       </div>
     </div>
-    <ul class="sidebar-menu">
-      <li><a href="#" onclick="showScreen('dashboard')"><i class="fas fa-chart-pie"></i> Dashboard</a></li>
-      <li><a href="#" onclick="showScreen('clientes')"><i class="fas fa-users"></i> Clientes</a></li>
-      <li><a href="#" onclick="showScreen('planos')"><i class="fas fa-layer-group"></i> Planos</a></li>
-      <li><a href="#" onclick="showScreen('templates')"><i class="fas fa-file-alt"></i> Templates</a></li>
-      <li><a href="#" onclick="showScreen('vencimentos')"><i class="fas fa-calendar-check"></i> Próximos Vencimentos</a></li>
-      <li class="submenu">
-        <a href="#"><i class="fas fa-cog"></i> Configurações <i class="fas fa-chevron-down" style="font-size:10px;margin-left:auto;"></i></a>
-        <ul>
-          <li><a href="#" onclick="showScreen('configuracoes')">Dados da Empresa</a></li>
-          <li><a href="#" onclick="showScreen('notificacoes')">Notificações Automáticas</a></li>
-          <li><a href="#" onclick="showScreen('backup')">Backup / Exportar</a></li>
-        </ul>
-      </li>
-    </ul>
+  </div>
+
+  <!-- FAB -->
+  <button class="fab" id="fab-add" onclick="abrirModalCliente()">+</button>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <div class="nav-item active" data-tab="tab-clientes"><i class="ph ph-users"></i><span>Clientes</span></div>
+    <div class="nav-item" data-tab="tab-planos"><i class="ph ph-cards"></i><span>Planos</span></div>
+    <div class="nav-item" data-tab="tab-templates"><i class="ph ph-files"></i><span>Templates</span></div>
+    <div class="nav-item" data-tab="tab-config"><i class="ph ph-gear"></i><span>Config</span></div>
   </nav>
-  <header class="header">
-    <button class="menu-btn" onclick="toggleMenu()"><i class="fas fa-bars"></i></button>
-    <h1 id="page-title"><i class="fas fa-chart-pie" style="color:var(--accent);margin-right:8px;font-size:16px;"></i>Dashboard</h1>
-  </header>
-  <main class="main-content">
-    <!-- DASHBOARD -->
-    <section id="screen-dashboard" class="screen active">
-      <div class="cards-grid">
-        <div class="card"><h3><i class="fas fa-users" style="margin-right:6px;"></i>Clientes Ativos</h3><p class="card-value" id="qtd-ativos">0</p></div>
-        <div class="card warning"><h3><i class="fas fa-calendar-day" style="margin-right:6px;"></i>Vencem Hoje</h3><p class="card-value" id="qtd-hoje">0</p></div>
-        <div class="card danger"><h3><i class="fas fa-exclamation-triangle" style="margin-right:6px;"></i>Vencidos</h3><p class="card-value" id="qtd-vencidos">0</p></div>
-        <div class="card success"><h3><i class="fas fa-coins" style="margin-right:6px;"></i>Faturamento Total</h3><p class="card-value" id="faturamento">R$ 0,00</p></div>
-      </div>
-      <div class="cards-grid">
-        <div class="card info"><h3><i class="fas fa-list-alt" style="margin-right:6px;"></i>Total de Planos</h3><p class="card-value" id="qtd-planos">0</p></div>
-        <div class="card"><h3><i class="fas fa-chart-line" style="margin-right:6px;"></i>A Receber</h3><p class="card-value" id="valor-vencendo">R$ 0,00</p></div>
-        <div class="card success"><h3><i class="fas fa-check-circle" style="margin-right:6px;"></i>Valor Ativo</h3><p class="card-value" id="valor-ativo">R$ 0,00</p></div>
-        <div class="card warning"><h3><i class="fas fa-chart-bar" style="margin-right:6px;"></i>Ticket Médio</h3><p class="card-value" id="media-mensal">R$ 0,00</p></div>
-      </div>
-      <div class="charts-grid">
-        <div class="chart-box"><h3><i class="fas fa-chart-doughnut" style="margin-right:6px;color:var(--accent);"></i>Status dos Clientes</h3><canvas id="chartStatus"></canvas></div>
-        <div class="chart-box"><h3><i class="fas fa-calendar-alt" style="margin-right:6px;color:var(--accent-2);"></i>Vencimentos — Últimos 7 Dias</h3><canvas id="chartVenc"></canvas></div>
-      </div>
-      <div class="panel">
-        <h3>Últimos Clientes Adicionados</h3>
-        <table class="table"><thead><tr><th>Nome</th><th>Plano</th><th>Vencimento</th><th>Status</th></tr></thead><tbody id="ultimos-clientes"></tbody></table>
-      </div>
-    </section>
-    <!-- CLIENTES -->
-    <section id="screen-clientes" class="screen">
-      <div class="top-bar">
-        <input type="text" id="busca-cliente" placeholder="Buscar por nome, MAC ou telefone..." oninput="filtrarClientes()" style="flex:1;min-width:240px;">
-        <select id="filtro-status" onchange="filtrarClientes()" style="width:auto;min-width:180px;">
-          <option value="todos">Todos os Status</option>
-          <option value="hoje">Vencendo Hoje</option>
-          <option value="vencidos">Vencidos</option>
-          <option value="ativos">Ativos</option>
-          <option value="3d">Vencem em 3 Dias</option>
-          <option value="7d">Vencem em 7 Dias</option>
-        </select>
-        <button class="btn primary" onclick="abrirModalCliente()"><i class="fas fa-plus"></i> Novo Cliente</button>
-        <button class="btn secondary" onclick="dispararNotificacao()"><i class="fas fa-bell"></i> Testar Alerta</button>
-      </div>
-      <div class="panel" style="padding:0;overflow:hidden;">
-        <table class="table">
-          <thead><tr><th>Nome</th><th>MAC</th><th>Plano</th><th>Valor</th><th>Vencimento</th><th>Status</th><th>Ações</th></tr></thead>
-          <tbody id="lista-clientes"></tbody>
-        </table>
-      </div>
-    </section>
-    <!-- PLANOS -->
-    <section id="screen-planos" class="screen">
-      <div class="top-bar">
-        <button class="btn primary" onclick="abrirModalPlano()"><i class="fas fa-plus"></i> Novo Plano</button>
-      </div>
-      <div class="panel" style="padding:0;overflow:hidden;">
-        <table class="table">
-          <thead><tr><th>Nome do Plano</th><th>Valor Mensal</th><th>Validade</th><th>Clientes</th><th>Ações</th></tr></thead>
-          <tbody id="lista-planos"></tbody>
-        </table>
-      </div>
-    </section>
-    <!-- TEMPLATES -->
-    <section id="screen-templates" class="screen">
-      <div class="top-bar">
-        <button class="btn primary" onclick="abrirModalTemplate()"><i class="fas fa-plus"></i> Novo Template</button>
-      </div>
-      <p style="font-size:13px; color:var(--muted); margin-bottom:15px; padding: 12px 16px; background: var(--accent-soft); border-radius: var(--radius-md); border-left: 3px solid var(--accent);">
-        <i class="fas fa-info-circle" style="margin-right:6px;"></i>
-        Ative a chavinha para que o celular te lembre automaticamente nesses dias específicos. Desative para não ser incomodado.
-      </p>
-      <div class="panel" style="padding:0;overflow:hidden;">
-        <table class="table">
-          <thead><tr><th>Nome</th><th>Tipo / Momento</th><th>Alarme</th><th>Mensagem</th><th>Ações</th></tr></thead>
-          <tbody id="lista-templates"></tbody>
-        </table>
-      </div>
-    </section>
-    <!-- PRÓXIMOS VENCIMENTOS -->
-    <section id="screen-vencimentos" class="screen">
-      <div class="panel">
-        <h3>Próximos Vencimentos (Próximos 15 Dias)</h3>
-        <table class="table">
-          <thead><tr><th>Nome</th><th>Valor</th><th>Vencimento</th><th>Dias Restantes</th><th>Ações</th></tr></thead>
-          <tbody id="lista-vencimentos"></tbody>
-        </table>
-      </div>
-    </section>
-    <!-- CONFIGURAÇÕES -->
-    <section id="screen-configuracoes" class="screen">
-      <div class="panel">
-        <h3>Dados da Sua Empresa</h3>
-        <div class="form-group"><label>Nome da Empresa *</label><input type="text" id="cfg-nome" placeholder="Ex: IPTV Pro Soluções"></div>
-        <div class="form-group"><label>Telefone / WhatsApp (com DDD)</label><input type="text" id="cfg-contato" placeholder="(71) 99999-9999"></div>
-        <div class="form-group"><label>E-mail</label><input type="email" id="cfg-email" placeholder="seu@email.com"></div>
-        <div class="form-group"><label>Chave Pix (para pagamentos)</label><input type="text" id="cfg-pix" placeholder="CPF, CNPJ, e-mail ou telefone"></div>
-        <button class="btn primary" onclick="salvarConfiguracoes()"><i class="fas fa-save"></i> Salvar Configurações</button>
-      </div>
-    </section>
-    <!-- NOTIFICAÇÕES -->
-    <section id="screen-notificacoes" class="screen">
-      <div class="panel">
-        <h3>Automação Inteligente de Alertas</h3>
-        <p style="font-size:13px; color:var(--muted); margin-bottom: 20px; padding: 12px 16px; background: var(--bg-2); border-radius: var(--radius-md); border-left: 3px solid var(--accent-2);">
-          <i class="fas fa-lightbulb" style="margin-right:6px;color:var(--accent-2);"></i>
-          Escolha apenas a HORA em que os alertas devem apitar. Para escolher QUAIS dias avisar, ative ou desative as chavinhas na tela de Templates.
-        </p>
-        <div class="form-group">
-          <label>Quais horários por dia você quer receber os alertas?</label>
-          <div style="display:flex; gap:10px; flex-wrap: wrap;">
-             <input type="time" id="notif-hr-1" value="09:00" style="flex:1; min-width: 120px;" title="Manhã">
-             <input type="time" id="notif-hr-2" value="13:00" style="flex:1; min-width: 120px;" title="Tarde">
-             <input type="time" id="notif-hr-3" value="18:00" style="flex:1; min-width: 120px;" title="Noite">
-          </div>
-          <small style="color:var(--accent-2); font-size:11.5px; margin-top: 6px; display: block;">
-            Dica: Deixe o campo em branco se não quiser aquele horário.
-          </small>
-        </div>
-        <button class="btn primary" onclick="salvarNotifConfig()"><i class="fas fa-save"></i> Salvar Horários</button>
-        <br><br>
-        <button class="btn success" onclick="solicitarPermissaoNotif()"><i class="fas fa-bell"></i> Autorizar Permissão no Android</button>
-      </div>
-    </section>
-    <!-- BACKUP -->
-    <section id="screen-backup" class="screen">
-      <div class="panel">
-        <h3>Exportar Backup Completo</h3>
-        <button class="btn success" onclick="exportarBackup()"><i class="fas fa-download"></i> Baixar Arquivo JSON</button>
-        <p style="font-size:13px; color:var(--muted); margin-top:10px;">
-          <i class="fas fa-shield-alt" style="margin-right:5px;"></i>Salve este arquivo em local seguro para não perder seus dados.
-        </p>
-        <br><br>
-        <h3 style="font-size:16px; margin-bottom: 14px; color: var(--text);">Restaurar Backup</h3>
-        <input type="file" id="arquivo-backup" accept=".json" onchange="importarBackup(event)">
-        <p style="font-size:13px; color:var(--danger); margin-top:10px;">
-          <i class="fas fa-exclamation-triangle" style="margin-right:5px;"></i>Atenção: substituirá os dados atuais!
-        </p>
-      </div>
-    </section>
-  </main>
+
   <!-- MODAL CLIENTE -->
-  <div class="modal" id="modal-cliente">
+  <div class="modal-overlay" id="modalCliente">
     <div class="modal-content">
-      <span class="close" onclick="fecharModalCliente()">&times;</span>
-      <h3 id="modal-cliente-titulo">Adicionar Novo Cliente</h3>
-      <input type="hidden" id="cli-id">
-      <div class="form-group"><label>Nome Completo *</label><input type="text" id="cli-nome" required placeholder="Nome do Cliente"></div>
-      <div class="form-group"><label>Telefone / WhatsApp</label><input type="text" id="cli-telefone" placeholder="(71) 99999-9999"></div>
-      <div class="form-group"><label>MAC Address * <small>(Formato: XX:XX:XX:XX:XX:XX)</small></label><input type="text" id="cli-mac" placeholder="00:1A:2B:3C:4D:5E" required></div>
-      <div class="form-group"><label>Plano *</label><select id="cli-plano"></select></div>
-      <div class="form-group"><label>Valor Mensal (R$) *</label><input type="number" step="0.01" id="cli-valor" required placeholder="0,00"></div>
-      <div class="form-group"><label>Data de Vencimento Inicial *</label><input type="date" id="cli-vencimento" required></div>
-      <div class="form-group"><label>Status</label>
-        <select id="cli-status">
-          <option value="Ativo">Ativo</option>
-          <option value="Inativo">Inativo</option>
-        </select>
-      </div>
-      <div class="form-group"><label>Observações / Endereço</label><textarea id="cli-obs" rows="3" placeholder="Informações adicionais..."></textarea></div>
-      <button class="btn primary" onclick="salvarCliente()"><i class="fas fa-save"></i> Salvar Cliente</button>
-    </div>
-  </div>
-  <!-- MODAL PLANO -->
-  <div class="modal" id="modal-plano">
-    <div class="modal-content">
-      <span class="close" onclick="fecharModalPlano()">&times;</span>
-      <h3>Cadastrar Novo Plano</h3>
-      <input type="hidden" id="plano-id">
-      <div class="form-group"><label>Nome do Plano *</label><input type="text" id="plano-nome" placeholder="Ex: Básico / Premium / VIP" required></div>
-      <div class="form-group"><label>Valor Mensal (R$) *</label><input type="number" step="0.01" id="plano-valor" required></div>
-      <div class="form-group"><label>Validade em Dias *</label><input type="number" id="plano-dias" value="30" required></div>
-      <button class="btn primary" onclick="salvarPlano()"><i class="fas fa-save"></i> Salvar Plano</button>
-    </div>
-  </div>
-  <!-- MODAL TEMPLATE -->
-  <div class="modal" id="modal-template">
-    <div class="modal-content">
-      <span class="close" onclick="fecharModalTemplate()">&times;</span>
-      <h3 id="modal-template-titulo">Criar Template</h3>
-      <input type="hidden" id="tpl-id">
-      <div class="form-group"><label>Nome do Template *</label><input type="text" id="tpl-nome" placeholder="Ex: Lembrete 3 Dias"></div>
-      <div class="form-group">
-        <label>Qual é o Tipo/Momento dessa Mensagem? *</label>
-        <select id="tpl-tipo">
-          <option value="avulso">Padrão / Avulso (Sem Alarme Automático)</option>
-          <option value="lembrete_5">Faltando 5 dias para vencer</option>
-          <option value="lembrete_4">Faltando 4 dias para vencer</option>
-          <option value="lembrete_3">Faltando 3 dias para vencer</option>
-          <option value="lembrete_2">Faltando 2 dias para vencer</option>
-          <option value="lembrete_1">Faltando 1 dia para vencer</option>
-          <option value="vencimento_hoje">Vence HOJE!</option>
-          <option value="renovacao">Pós-Renovação (Envio de Recibo)</option>
-        </select>
-      </div>
-      <div class="form-group"><label>Mensagem <small>(Variáveis: {nome}, {data}, {valor}, {empresa}, {pix})</small></label>
-        <textarea id="tpl-mensagem" rows="5" required>Olá {nome}! Tudo bem? Seu plano IPTV vence em {data}. Valor: R$ {valor}. Pague via Pix: {pix} — {empresa}</textarea>
-      </div>
-      <button class="btn primary" onclick="salvarTemplate()"><i class="fas fa-save"></i> Salvar Mensagem</button>
-    </div>
-  </div>
-  <!-- MODAL ENVIAR MENSAGEM -->
-  <div class="modal" id="modal-enviar-msg">
-    <div class="modal-content">
-      <span class="close" onclick="fecharModalEnviarMsg()">&times;</span>
-      <h3><i class="fas fa-paper-plane" style="color:var(--accent);"></i>Enviar Mensagem</h3>
-      <input type="hidden" id="msg-cli-id">
-      <div class="form-group">
-        <label>Selecione a Mensagem (Template):</label>
-        <select id="msg-template-select" onchange="atualizarPreviewMensagem()"></select>
-      </div>
-      <div class="form-group">
-        <label>Texto Final (Você pode editar antes de enviar):</label>
-        <textarea id="msg-preview" rows="6" style="border-color: var(--accent);"></textarea>
-      </div>
-      <button class="btn success" onclick="dispararWhatsAppManual()">
-        <i class="fab fa-whatsapp"></i> Abrir WhatsApp
-      </button>
-    </div>
-  </div>
-  <!-- MODAL RENOVAÇÃO -->
-  <div class="modal" id="modal-renovacao">
-    <div class="modal-content">
-      <span class="close" onclick="fecharModalRenovacao()">&times;</span>
-      <h3>Confirmar Renovação</h3>
-      <input type="hidden" id="renov-cli-id">
-      <p id="renov-info" style="font-size: 14px; color: var(--muted); margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom:12px;"></p>
-      <div class="form-group">
-        <label>Mensagem de Agradecimento (WhatsApp)</label>
-        <textarea id="renov-mensagem" rows="5" style="border-color: var(--success);"></textarea>
-      </div>
-      <div style="display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap;">
-        <button class="btn success" style="flex:2; min-width: 180px;" onclick="confirmarRenovacao(true)">
-          <i class="fab fa-whatsapp"></i> Renovar e Enviar Recibo
-        </button>
-        <button class="btn primary" style="flex:1; min-width: 120px;" onclick="confirmarRenovacao(false)">
-          Só Renovar
-        </button>
+      <h3 style="margin-bottom:16px;">➕ Novo Cliente</h3>
+      <input class="input-glass" id="inputNome" placeholder="Nome do cliente" style="margin-bottom:12px;">
+      <input class="input-glass" id="inputNumero" placeholder="WhatsApp (DDD + número)" style="margin-bottom:12px;">
+      <input class="input-glass" id="inputPlano" placeholder="Plano (ex: Basic)" style="margin-bottom:12px;">
+      <input class="input-glass" id="inputVencimento" type="date" style="margin-bottom:12px;">
+      <div style="display:flex;gap:12px;margin-top:8px;">
+        <button class="btn-neon" onclick="salvarCliente()">Salvar</button>
+        <button class="btn-outline" onclick="fecharModalCliente()">Cancelar</button>
       </div>
     </div>
   </div>
-  <!-- TOAST -->
-  <div id="toast" class="toast">
-    <strong id="toast-titulo"></strong>
-    <p id="toast-texto"></p>
+
+  <!-- MODAL TEMPLATE ENVIO -->
+  <div class="modal-overlay" id="modalEnvio">
+    <div class="modal-content">
+      <h3 style="margin-bottom:12px;">✈️ Escolher Template</h3>
+      <div id="template-envio-list"></div>
+      <button class="btn-outline" onclick="fecharModalEnvio()" style="margin-top:12px;">Cancelar</button>
+    </div>
   </div>
+</div>
+
 <script>
-// ========== BANCO LOCAL INDEXEDDB ==========
-let db;
-let chartStatus, chartVenc;
-let cfgEmpresa = { nome: '', contato: '', email: '', pix: '' };
-let cfgNotif = { horarios: ['09:00', '13:00', '18:00'] }; 
-window.onload = async () => {
-  await initBanco();
-  await carregarConfiguracoes();
-  await carregarNotifConfig();
-  await popularTemplatesPadrao();
-  await renderizarDashboard();
-  await renderizarPlanosSelect();
-  await renderizarVencimentos();
-  solicitarPermissaoNotif();
-  await recalcularNotificacoesGlobal(); 
-};
-async function initBanco() {
-  db = await new Promise((res, rej) => {
-    const req = indexedDB.open('IPTVDBPro', 4);
-    req.onupgradeneeded = e => {
-      const d = e.target.result;
-      if(!d.objectStoreNames.contains('config')) {
-        const s = d.createObjectStore('config', {keyPath:'id'});
-        s.add({id:1});
-      }
-      if(!d.objectStoreNames.contains('notif_config')) {
-        const s = d.createObjectStore('notif_config', {keyPath:'id'});
-        s.add({id:1, horarios:['09:00', '13:00', '18:00']});
-      }
-      if(!d.objectStoreNames.contains('planos')) d.createObjectStore('planos', {keyPath:'id', autoIncrement:true});
-      if(!d.objectStoreNames.contains('templates')) d.createObjectStore('templates', {keyPath:'id', autoIncrement:true});
-      if(!d.objectStoreNames.contains('clientes')) {
-        const s = d.createObjectStore('clientes', {keyPath:'id', autoIncrement:true});
-        s.createIndex('nome','nome');
-        s.createIndex('mac','mac',{unique:true});
-      }
+  (function() {
+    // ===== CAPACITOR CHECK =====
+    const isCap = typeof window.Capacitor !== 'undefined' && window.Capacitor.isNativePlatform();
+    const cap = isCap ? window.Capacitor : null;
+
+    // ===== STORE (Preferences + fallback) =====
+    const STORE_KEY = 'iptv_manager_data';
+    let data = {
+      clientes: [],
+      planos: [],
+      templates: [
+        { id: 't1', label: 'Vence hoje', dias: 0, ativo: true },
+        { id: 't2', label: 'Vence em 1 dia', dias: 1, ativo: true },
+        { id: 't3', label: 'Vence em 2 dias', dias: 2, ativo: true },
+        { id: 't4', label: 'Vence em 3 dias', dias: 3, ativo: true },
+        { id: 't5', label: 'Vence em 4 dias', dias: 4, ativo: true },
+        { id: 't6', label: 'Vence em 5 dias', dias: 5, ativo: true },
+        { id: 't7', label: 'Vencidos', dias: -1, ativo: true }
+      ],
+      horarios: ['08:00', '13:00', '18:00']
     };
-    req.onsuccess = e => res(e.target.result);
-    req.onerror = rej;
-  });
-}
-function tx(store, mode='readonly') { return db.transaction(store, mode).objectStore(store); }
-function getAll(store) { return new Promise(r => tx(store).getAll().onsuccess = e => r(e.target.result || [])); }
-function put(store, obj) { 
-    return new Promise((res, rej) => { 
-        const req = tx(store,'readwrite').put(obj); 
-        req.onsuccess = e => res(e.target.result); 
-        req.onerror = rej; 
-    }); 
-}
-function del(store, id) { return new Promise(r => tx(store,'readwrite').delete(id).onsuccess = r); }
-async function popularTemplatesPadrao() {
-    const ts = await getAll('templates');
-    if (ts.length === 0) {
-        const defaults = [
-            { nome: 'Vence Hoje', tipo: 'vencimento_hoje', ativo: true, mensagem: 'Olá {nome}! Seu plano vence HOJE ({data}). Valor: R$ {valor}. Pix: {pix}' },
-            { nome: 'Falta 1 Dia', tipo: 'lembrete_1', ativo: true, mensagem: 'Olá {nome}! Seu plano vence amanhã ({data}). Valor: R$ {valor}. Pix: {pix}' },
-            { nome: 'Faltam 2 Dias', tipo: 'lembrete_2', ativo: true, mensagem: 'Olá {nome}! Seu plano vence em 2 dias ({data}). Valor: R$ {valor}. Pix: {pix}' },
-            { nome: 'Faltam 3 Dias', tipo: 'lembrete_3', ativo: true, mensagem: 'Olá {nome}! Faltam 3 dias para o vencimento ({data}). Valor: R$ {valor}.' },
-            { nome: 'Faltam 4 Dias', tipo: 'lembrete_4', ativo: false, mensagem: 'Olá {nome}! Faltam 4 dias para o vencimento ({data}). Valor: R$ {valor}.' },
-            { nome: 'Faltam 5 Dias', tipo: 'lembrete_5', ativo: false, mensagem: 'Olá {nome}! Faltam 5 dias para o vencimento ({data}). Valor: R$ {valor}.' },
-            { nome: 'Pós-Renovação', tipo: 'renovacao', ativo: true, mensagem: 'Olá {nome}! Plano renovado com sucesso até {data}. Obrigado! — {empresa}' }
-        ];
-        for (const d of defaults) {
-            await put('templates', d);
-        }
-    }
-}
-function toggleMenu() {
-  document.getElementById('sidebar').classList.toggle('open');
-  document.getElementById('overlay').classList.toggle('active');
-}
-function showScreen(nome) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(`screen-${nome}`).classList.add('active');
-  const icons = {
-    dashboard: 'fa-chart-pie', clientes: 'fa-users', planos: 'fa-layer-group',
-    templates: 'fa-file-alt', vencimentos: 'fa-calendar-check',
-    configuracoes: 'fa-cog', notificacoes: 'fa-bell', backup: 'fa-database'
-  };
-  const titles = {
-    dashboard: 'Dashboard', clientes: 'Clientes', planos: 'Planos',
-    templates: 'Templates', vencimentos: 'Próximos Vencimentos',
-    configuracoes: 'Configurações', notificacoes: 'Notificações', backup: 'Backup'
-  };
-  document.getElementById('page-title').innerHTML = `<i class="fas ${icons[nome]||'fa-chart-pie'}" style="color:var(--accent);margin-right:8px;font-size:16px;"></i>${titles[nome]||nome}`;
-  toggleMenu();
-  if (nome === 'dashboard') renderizarDashboard();
-  if (nome === 'clientes') renderizarClientes();
-  if (nome === 'planos') renderizarPlanos();
-  if (nome === 'templates') renderizarTemplates();
-  if (nome === 'vencimentos') renderizarVencimentos();
-}
-function calcularStatus(dataVenc) {
-  const hoje = new Date(); hoje.setHours(0,0,0,0);
-  const dt = new Date(dataVenc+'T00:00:00'); dt.setHours(0,0,0,0);
-  const diff = Math.ceil((dt - hoje) / (1000*60*60*24));
-  if (diff < 0) return {texto:'Vencido', classe:'vencido', dias:diff};
-  if (diff === 0) return {texto:'Vencendo Hoje', classe:'vencendo', dias:0};
-  if (diff <= 3) return {texto:`Vence em ${diff} dias`, classe:'vencendo', dias:diff};
-  return {texto:'Ativo', classe:'ativo', dias:diff};
-}
-function mostrarToast(titulo, texto, tipo='success') {
-  const t = document.getElementById('toast');
-  document.getElementById('toast-titulo').textContent = titulo;
-  document.getElementById('toast-texto').textContent = texto;
-  t.className = `toast ${tipo} show`;
-  setTimeout(()=> t.classList.remove('show'), 4000);
-}
-async function solicitarPermissaoNotif() {
-  if ('Notification' in window) {
-    const perm = await Notification.requestPermission();
-    if (perm === 'granted') mostrarToast('Permissão Concedida', 'Notificações web ativadas!', 'success');
-  }
-  if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications) {
-    const LocalNotifications = window.Capacitor.Plugins.LocalNotifications;
-    await LocalNotifications.requestPermissions();
-    try {
-      await LocalNotifications.createChannel({ id: 'alertas_gestor', name: 'Alertas do Gestor', importance: 5, visibility: 1 });
-    } catch(e) {}
-  }
-}
-async function recalcularNotificacoesGlobal() {
-  if (!window.Capacitor || !window.Capacitor.Plugins || !window.Capacitor.Plugins.LocalNotifications) return;
-  const LocalNotifications = window.Capacitor.Plugins.LocalNotifications;
-  try {
-      const pending = await LocalNotifications.getPending();
-      if(pending.notifications.length > 0) await LocalNotifications.cancel(pending);
-  } catch(e) {}
-  const clis = await getAll('clientes');
-  const ativos = clis.filter(c => c.status === 'Ativo');
-  const clientesPorData = {};
-  ativos.forEach(c => {
-      if(!clientesPorData[c.data_vencimento]) clientesPorData[c.data_vencimento] = [];
-      clientesPorData[c.data_vencimento].push(c);
-  });
-  const horariosValidos = cfgNotif.horarios.filter(h => h && h.trim() !== '');
-  const templates = await getAll('templates');
-  const diasParaAvisar = [];
-  if (templates.find(t => t.tipo === 'vencimento_hoje' && t.ativo !== false)) diasParaAvisar.push(0);
-  if (templates.find(t => t.tipo === 'lembrete_1' && t.ativo !== false)) diasParaAvisar.push(1);
-  if (templates.find(t => t.tipo === 'lembrete_2' && t.ativo !== false)) diasParaAvisar.push(2);
-  if (templates.find(t => t.tipo === 'lembrete_3' && t.ativo !== false)) diasParaAvisar.push(3);
-  if (templates.find(t => t.tipo === 'lembrete_4' && t.ativo !== false)) diasParaAvisar.push(4);
-  if (templates.find(t => t.tipo === 'lembrete_5' && t.ativo !== false)) diasParaAvisar.push(5);
-  let idAlarme = 1;
-  const novaAgenda = [];
-  const hoje = new Date(); hoje.setHours(0,0,0,0);
-  const dataLimiteFuturo = new Date(); dataLimiteFuturo.setDate(dataLimiteFuturo.getDate() + 40);
-  for (const dataStr in clientesPorData) {
-      const listaDoDia = clientesPorData[dataStr];
-      const dataVencimento = new Date(dataStr + 'T00:00:00');
-      if (dataVencimento < hoje || dataVencimento > dataLimiteFuturo) continue;
-      const nomes = listaDoDia.map(c => c.nome);
-      for (const horaEscolhida of horariosValidos) {
-          const [h, m] = horaEscolhida.split(':').map(Number);
-          for (const antecedencia of diasParaAvisar) {
-              const toque = new Date(dataVencimento);
-              toque.setDate(toque.getDate() - antecedencia);
-              toque.setHours(h, m, 0, 0);
-              if (toque > new Date()) {
-                  let tTitulo, tCorpo;
-                  if (antecedencia === 0) {
-                      tTitulo = listaDoDia.length === 1 ? 'Cliente Vencendo HOJE!' : `${listaDoDia.length} Clientes Vencendo HOJE!`;
-                      tCorpo = listaDoDia.length === 1 ? `O plano de ${nomes[0]} vence hoje!` : `Vencem hoje: ${nomes.slice(0,3).join(', ')}...`;
-                  } else {
-                      tTitulo = listaDoDia.length === 1 ? `Vencimento em ${antecedencia} dia(s)` : `${listaDoDia.length} Clientes vencem em ${antecedencia} dia(s)!`;
-                      tCorpo = listaDoDia.length === 1 ? `Lembrete: O plano de ${nomes[0]} vencerá em breve.` : `Prepare as cobranças: ${nomes.slice(0,3).join(', ')}...`;
-                  }
-                  novaAgenda.push({
-                      id: idAlarme++,
-                      title: tTitulo,
-                      body: tCorpo,
-                      schedule: { at: toque, allowWhileIdle: true },
-                      channelId: 'alertas_gestor'
-                  });
-              }
+
+    // carregar dados
+    async function carregarDados() {
+      try {
+        if (isCap) {
+          const { Preferences } = await import('@capacitor/preferences');
+          const result = await Preferences.get({ key: STORE_KEY });
+          if (result.value) {
+            const parsed = JSON.parse(result.value);
+            data = { ...data, ...parsed };
           }
+        } else {
+          const local = localStorage.getItem(STORE_KEY);
+          if (local) {
+            const parsed = JSON.parse(local);
+            data = { ...data, ...parsed };
+          }
+        }
+      } catch (e) { console.warn('Erro ao carregar dados', e); }
+      renderAll();
+    }
+    async function salvarDados() {
+      try {
+        const str = JSON.stringify(data);
+        if (isCap) {
+          const { Preferences } = await import('@capacitor/preferences');
+          await Preferences.set({ key: STORE_KEY, value: str });
+        } else {
+          localStorage.setItem(STORE_KEY, str);
+        }
+      } catch (e) { console.warn('Erro ao salvar', e); }
+    }
+
+    // ===== RENDER =====
+    function renderAll() {
+      renderClientes();
+      renderPlanos();
+      renderTemplates();
+      renderHorarios();
+      document.getElementById('client-count').textContent = data.clientes.length;
+    }
+
+    function renderClientes() {
+      const container = document.getElementById('client-list');
+      if (!data.clientes.length) {
+        container.innerHTML = `<div class="glass-card" style="text-align:center;color:#6b718a;">Nenhum cliente cadastrado</div>`;
+        return;
       }
-  }
-  if (novaAgenda.length > 0) {
-      try { await LocalNotifications.schedule({ notifications: novaAgenda }); } catch(e) {}
-  }
-}
-async function renderizarDashboard() {
-  const clis = await getAll('clientes');
-  const planos = await getAll('planos');
-  let ativos = 0, vencHoje = 0, vencidos = 0;
-  let valorAtivo = 0, valorVencendo = 0;
-  clis.forEach(c => {
-    const s = calcularStatus(c.data_vencimento);
-    if (s.texto === 'Ativo') { ativos++; valorAtivo += Number(c.valor); }
-    else if (s.dias === 0) { vencHoje++; valorVencendo += Number(c.valor); }
-    else if (s.dias < 0) { vencidos++; valorVencendo += Number(c.valor); }
-    else if (s.dias > 0 && s.dias <= 7) valorVencendo += Number(c.valor);
-  });
-  document.getElementById('qtd-ativos').textContent = ativos;
-  document.getElementById('qtd-hoje').textContent = vencHoje;
-  document.getElementById('qtd-vencidos').textContent = vencidos;
-  document.getElementById('faturamento').textContent = `R$ ${(valorAtivo+valorVencendo).toFixed(2)}`;
-  document.getElementById('qtd-planos').textContent = planos.length;
-  document.getElementById('valor-vencendo').textContent = `R$ ${valorVencendo.toFixed(2)}`;
-  document.getElementById('valor-ativo').textContent = `R$ ${valorAtivo.toFixed(2)}`;
-  document.getElementById('media-mensal').textContent = clis.length ? `R$ ${((valorAtivo+valorVencendo)/clis.length).toFixed(2)}` : 'R$ 0,00';
-  if (chartStatus) chartStatus.destroy();
-  chartStatus = new Chart(document.getElementById('chartStatus'), {
-    type: 'doughnut',
-    data: { labels: ['Ativos', 'Vencendo Hoje', 'Vencidos'], datasets: [{ data: [ativos, vencHoje, vencidos], backgroundColor: ['#4a9e6b','#d4a24c','#c25457'], borderWidth:0, hoverOffset: 8 }] },
-    options: { responsive:true, cutout:'68%', plugins: { legend: { position:'bottom', labels: { color: '#e8e5df', padding:18, font:{size:12, family:'Sora'}, usePointStyle:true, pointStyle:'circle' } } } }
-  });
-  const datas = [], qtds = [];
-  for (let i = 6; i >= 0; i--) {
-    const d = new Date(); d.setDate(d.getDate() + i);
-    const ds = d.toISOString().split('T')[0];
-    datas.push(d.toLocaleDateString('pt-BR'));
-    qtds.push(clis.filter(c => c.data_vencimento === ds).length);
-  }
-  if (chartVenc) chartVenc.destroy();
-  chartVenc = new Chart(document.getElementById('chartVenc'), {
-    type: 'bar',
-    data: { labels: datas, datasets: [{ label: 'Vencimentos', data: qtds, backgroundColor: 'rgba(196,112,70,0.5)', borderColor: '#c47046', borderWidth:2, borderRadius: 6, hoverBackgroundColor: 'rgba(196,112,70,0.7)' }] },
-    options: { responsive:true, plugins: { legend: { display:false } },
-    scales: { x: { ticks: { color: '#9a978f', font:{family:'Sora'} }, grid: {display:false} }, y: { ticks: { color: '#9a978f', font:{family:'Sora'} }, beginAtZero:true, grid: {color:'rgba(232,229,223,.06)'} } } }
-  });
-  const ultimos = clis.sort((a,b) => (b.data_cadastro||'') > (a.data_cadastro||'') ? -1 : 1).slice(0,5);
-  document.getElementById('ultimos-clientes').innerHTML = ultimos.map(c => {
-    const sts = calcularStatus(c.data_vencimento);
-    return `<tr><td><strong>${c.nome}</strong></td><td>${c.plano}</td><td>${new Date(c.data_vencimento+'T00:00:00').toLocaleDateString('pt-BR')}</td><td><span class="badge ${sts.classe}">${sts.texto}</span></td></tr>`;
-  }).join('');
-}
-async function renderizarClientes(filtro='todos', busca='') {
-  let clis = await getAll('clientes');
-  clis = clis.map(c => ({...c, _statusCalc: calcularStatus(c.data_vencimento)}));
-  if (filtro === 'ativos') clis = clis.filter(c => c._statusCalc.texto === 'Ativo');
-  else if (filtro === 'hoje') clis = clis.filter(c => c._statusCalc.dias === 0);
-  else if (filtro === 'vencidos') clis = clis.filter(c => c._statusCalc.dias < 0);
-  else if (filtro === '3d') clis = clis.filter(c => c._statusCalc.dias > 0 && c._statusCalc.dias <= 3);
-  else if (filtro === '7d') clis = clis.filter(c => c._statusCalc.dias > 0 && c._statusCalc.dias <= 7);
-  if (busca) clis = clis.filter(c => c.nome.toLowerCase().includes(busca.toLowerCase()) || (c.telefone||'').includes(busca) || c.mac.includes(busca));
-  document.getElementById('lista-clientes').innerHTML = clis.map(c => {
-    const sts = c._statusCalc;
-    return `<tr>
-      <td><strong>${c.nome}</strong>${c.telefone ? `<br><small style="color:var(--muted);font-size:12px;">${c.telefone}</small>` : ''}</td>
-      <td><code>${c.mac}</code></td>
-      <td>${c.plano}</td>
-      <td style="font-variant-numeric:tabular-nums;font-weight:600;">R$ ${Number(c.valor).toFixed(2)}</td>
-      <td>${new Date(c.data_vencimento+'T00:00:00').toLocaleDateString('pt-BR')}</td>
-      <td><span class="badge ${sts.classe}">${sts.texto}</span></td>
-      <td>
-        <div class="btn-group">
-          <button class="btn-sm success" title="Renovar Cliente" onclick="abrirModalRenovacao(${c.id})"><i class="fas fa-sync-alt"></i> Renovar</button>
-          <button class="btn-sm info" title="Enviar Mensagem" onclick="abrirModalEnviarMsg(${c.id})"><i class="fas fa-paper-plane"></i></button>
-          <button class="btn-sm primary" title="Editar" onclick="editarCliente(${c.id})"><i class="fas fa-edit"></i></button>
-          <button class="btn-sm danger" title="Excluir" onclick="excluirCliente(${c.id})"><i class="fas fa-trash"></i></button>
-        </div>
-      </td>
-    </tr>`;
-  }).join('');
-}
-function filtrarClientes() {
-  renderizarClientes(document.getElementById('filtro-status').value, document.getElementById('busca-cliente').value);
-}
-function fecharModalEnviarMsg() { document.getElementById('modal-enviar-msg').classList.remove('open'); }
-async function abrirModalEnviarMsg(idCli) {
-  const clis = await getAll('clientes');
-  const cliente = clis.find(x => x.id === idCli);
-  if(!cliente) return;
-  document.getElementById('msg-cli-id').value = idCli;
-  const templates = await getAll('templates');
-  const sel = document.getElementById('msg-template-select');
-  if (templates.length === 0) {
-      mostrarToast('Sem Templates', 'Você precisa criar uma mensagem na aba Templates.', 'warning');
-      return;
-  }
-  sel.innerHTML = templates.map(t => `<option value="${t.id}">${t.nome} (${traduzirTipoTemplate(t.tipo)})</option>`).join('');
-  const sts = calcularStatus(cliente.data_vencimento);
-  let tipoIdeal = 'avulso';
-  if (sts.dias === 0) tipoIdeal = 'vencimento_hoje';
-  else if (sts.dias === 1) tipoIdeal = 'lembrete_1';
-  else if (sts.dias === 2) tipoIdeal = 'lembrete_2';
-  else if (sts.dias === 3) tipoIdeal = 'lembrete_3';
-  else if (sts.dias === 4) tipoIdeal = 'lembrete_4';
-  else if (sts.dias === 5) tipoIdeal = 'lembrete_5';
-  const tplAuto = templates.find(t => t.tipo === tipoIdeal);
-  if(tplAuto) sel.value = tplAuto.id;
-  else sel.value = templates[0].id;
-  await atualizarPreviewMensagem();
-  document.getElementById('modal-enviar-msg').classList.add('open');
-}
-async function atualizarPreviewMensagem() {
-  const idCli = Number(document.getElementById('msg-cli-id').value);
-  const idTpl = Number(document.getElementById('msg-template-select').value);
-  const clis = await getAll('clientes');
-  const cliente = clis.find(x => x.id === idCli);
-  const ts = await getAll('templates');
-  const tpl = ts.find(x => x.id === idTpl);
-  if(!cliente || !tpl) return;
-  const dt = new Date(cliente.data_vencimento+'T00:00:00').toLocaleDateString('pt-BR');
-  const msg = tpl.mensagem
-      .replace(/{nome}/g, cliente.nome)
-      .replace(/{data}/g, dt)
-      .replace(/{valor}/g, Number(cliente.valor).toFixed(2))
-      .replace(/{empresa}/g, cfgEmpresa.nome || 'Sua Empresa')
-      .replace(/{pix}/g, cfgEmpresa.pix || 'Chave Pix');
-  document.getElementById('msg-preview').value = msg;
-}
-async function dispararWhatsAppManual() {
-  const idCli = Number(document.getElementById('msg-cli-id').value);
-  const msgFinal = document.getElementById('msg-preview').value.trim();
-  const clis = await getAll('clientes');
-  const cliente = clis.find(x => x.id === idCli);
-  if(!cliente) return;
-  abrirWhatsApp(cliente.telefone, msgFinal);
-  fecharModalEnviarMsg();
-}
-function fecharModalRenovacao() { document.getElementById('modal-renovacao').classList.remove('open'); }
-function calcularNovaData(clienteDataVenc, diasPlano) {
-    let baseDate = new Date(clienteDataVenc + 'T00:00:00');
-    const hoje = new Date(); hoje.setHours(0,0,0,0);
-    let diaBase = parseInt(clienteDataVenc.split('-')[2]);
-    if (baseDate < hoje) {
-        baseDate = hoje;
-        diaBase = baseDate.getDate(); 
+      container.innerHTML = data.clientes.map((c, idx) => {
+        const statusClass = c.status || 'ativo';
+        return `
+          <div class="client-card">
+            <div class="card-row"><strong>${c.nome}</strong><span class="status-badge ${statusClass}">${statusClass}</span></div>
+            <div class="card-row"><span>📱 ${c.numero}</span><span>📅 ${c.vencimento}</span></div>
+            <div class="card-row"><span>📦 ${c.plano}</span></div>
+            <div class="actions-group">
+              <button class="icon-btn" onclick="whatsappCliente('${c.numero}')"><i class="ph ph-whatsapp-logo"></i> WhatsApp</button>
+              <button class="icon-btn" onclick="abrirModalEnvio(${idx})"><i class="ph ph-paper-plane-tilt"></i> Enviar</button>
+            </div>
+          </div>
+        `;
+      }).join('');
     }
-    const meses = Math.max(1, Math.round(diasPlano / 30));
-    const novoAno = baseDate.getFullYear();
-    const novoMes = baseDate.getMonth() + meses;
-    const ultimoDiaNovoMes = new Date(novoAno, novoMes + 1, 0).getDate();
-    const diaSeguro = Math.min(diaBase, ultimoDiaNovoMes);
-    return new Date(novoAno, novoMes, diaSeguro);
-}
-async function abrirModalRenovacao(id) {
-  const clis = await getAll('clientes');
-  const cliente = clis.find(x => x.id === id);
-  if(!cliente) return;
-  const planos = await getAll('planos');
-  const plano = planos.find(p => p.nome === cliente.plano);
-  const dias = plano?.dias || 30;
-  const novaData = calcularNovaData(cliente.data_vencimento, dias);
-  document.getElementById('renov-cli-id').value = id;
-  document.getElementById('renov-info').innerHTML = `O plano de <b>${cliente.nome}</b> será renovado.<br>A data de vencimento será <b>${novaData.toLocaleDateString('pt-BR')}</b>.`;
-  const templates = await getAll('templates');
-  let tpl = templates.find(t => t.tipo === 'renovacao');
-  let msgTemplate = tpl ? tpl.mensagem : `Olá {nome}! Tudo bem? Passando para agradecer pela confiança. Seu plano foi renovado com sucesso e agora é válido até {data}. Muito obrigado! — {empresa}`;
-  const msgPronta = msgTemplate
-    .replace(/{nome}/g, cliente.nome)
-    .replace(/{data}/g, novaData.toLocaleDateString('pt-BR'))
-    .replace(/{valor}/g, Number(cliente.valor).toFixed(2))
-    .replace(/{empresa}/g, cfgEmpresa.nome || 'Sua Empresa')
-    .replace(/{pix}/g, cfgEmpresa.pix || 'Chave Pix');
-  document.getElementById('renov-mensagem').value = msgPronta;
-  document.getElementById('modal-renovacao').classList.add('open');
-}
-async function confirmarRenovacao(enviarZap) {
-  const id = Number(document.getElementById('renov-cli-id').value);
-  const mensagemPopUp = document.getElementById('renov-mensagem').value.trim();
-  const clis = await getAll('clientes');
-  const cliente = clis.find(x => x.id === id);
-  if(!cliente) return;
-  const planos = await getAll('planos');
-  const plano = planos.find(p => p.nome === cliente.plano);
-  const dias = plano?.dias || 30;
-  const novaData = calcularNovaData(cliente.data_vencimento, dias);
-  cliente.data_vencimento = novaData.toISOString().split('T')[0];
-  cliente.status = 'Ativo';
-  await put('clientes', cliente);
-  await recalcularNotificacoesGlobal(); 
-  fecharModalRenovacao();
-  mostrarToast('Renovado!', `${cliente.nome} → Vence em ${novaData.toLocaleDateString('pt-BR')}`, 'success');
-  renderizarClientes();
-  renderizarDashboard();
-  renderizarVencimentos();
-  if (enviarZap) abrirWhatsApp(cliente.telefone, mensagemPopUp);
-}
-function abrirWhatsApp(telefoneBase, mensagem) {
-  const numeroLimpo = (telefoneBase || '').replace(/\D/g,'');
-  if(!numeroLimpo) {
-      mostrarToast('Sem número', 'Este cliente não tem telefone salvo.', 'danger');
-      return;
-  }
-  const foneFinal = numeroLimpo.startsWith('55') ? numeroLimpo : '55' + numeroLimpo;
-  const textoEncoded = encodeURIComponent(mensagem);
-  const url = `https://wa.me/${foneFinal}?text=${textoEncoded}`;
-  window.open(url, '_blank');
-}
-function abrirModalCliente(){ document.getElementById('modal-cliente').classList.add('open'); document.getElementById('modal-cliente-titulo').textContent='Adicionar Cliente'; document.getElementById('cli-id').value=''; document.getElementById('cli-nome').value=''; document.getElementById('cli-telefone').value=''; document.getElementById('cli-mac').value=''; document.getElementById('cli-valor').value=''; document.getElementById('cli-vencimento').value=''; document.getElementById('cli-obs').value=''; document.getElementById('cli-status').value='Ativo'; renderizarPlanosSelect(); }
-function fecharModalCliente(){ document.getElementById('modal-cliente').classList.remove('open'); }
-async function renderizarPlanosSelect(){
-  const ps = await getAll('planos');
-  const sel = document.getElementById('cli-plano');
-  sel.innerHTML = ps.map(p=>`<option value="${p.nome}" data-valor="${p.valor}">${p.nome} — R$ ${Number(p.valor).toFixed(2)}</option>`).join('');
-  sel.onchange = ()=>{ const opt = sel.selectedOptions[0]; if(opt) document.getElementById('cli-valor').value = opt.dataset.valor; };
-  if(ps.length > 0) sel.onchange();
-}
-async function salvarCliente(){
-  const idStr = document.getElementById('cli-id').value;
-  const nome = document.getElementById('cli-nome').value.trim();
-  const telefone = document.getElementById('cli-telefone').value.trim();
-  const mac = document.getElementById('cli-mac').value.trim().toUpperCase();
-  const plano = document.getElementById('cli-plano').value;
-  const valor = document.getElementById('cli-valor').value;
-  const data_vencimento = document.getElementById('cli-vencimento').value;
-  const status = document.getElementById('cli-status').value;
-  const obs = document.getElementById('cli-obs').value.trim();
-  if(!/^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/.test(mac)) return mostrarToast('MAC Inválido', 'Use formato XX:XX:XX:XX:XX:XX', 'danger');
-  const cliente = {nome, telefone, mac, plano, valor:Number(valor), data_vencimento, status, observacao:obs, data_cadastro: new Date().toISOString().slice(0,10)};
-  if(idStr) cliente.id = Number(idStr);
-  try { 
-      const novoId = await put('clientes', cliente); 
-      if (!cliente.id) cliente.id = novoId;
-  } catch { 
-      return mostrarToast('MAC Duplicado', 'Este MAC já está cadastrado!', 'danger'); 
-  }
-  await recalcularNotificacoesGlobal();
-  fecharModalCliente();
-  mostrarToast(idStr ? 'Cliente Editado' : 'Cliente Cadastrado', nome, 'success');
-  renderizarClientes();
-  renderizarDashboard();
-}
-async function editarCliente(id){
-  const clis = await getAll('clientes');
-  const c = clis.find(x=>x.id===id);
-  if(!c) return;
-  document.getElementById('modal-cliente-titulo').textContent='Editar Cliente';
-  document.getElementById('cli-id').value=c.id;
-  document.getElementById('cli-nome').value=c.nome;
-  document.getElementById('cli-telefone').value=c.telefone||'';
-  document.getElementById('cli-mac').value=c.mac;
-  await renderizarPlanosSelect(); document.getElementById('cli-plano').value=c.plano;
-  document.getElementById('cli-valor').value=c.valor;
-  document.getElementById('cli-vencimento').value=c.data_vencimento;
-  document.getElementById('cli-status').value=c.status;
-  document.getElementById('cli-obs').value=c.observacao||'';
-  document.getElementById('modal-cliente').classList.add('open');
-}
-async function excluirCliente(id){
-  if(confirm('Tem certeza? Esta ação não pode ser desfeita!')) {
-    await del('clientes',id);
-    await recalcularNotificacoesGlobal(); 
-    mostrarToast('Excluído', 'Cliente removido!', 'warning');
-    renderizarClientes();
-    renderizarDashboard();
-  }
-}
-async function renderizarPlanos(){
-  const ps = await getAll('planos');
-  const clis = await getAll('clientes');
-  document.getElementById('lista-planos').innerHTML = ps.map(p=>{
-    const qtd = clis.filter(c=>c.plano===p.nome).length;
-    return `<tr><td><strong>${p.nome}</strong></td><td style="font-variant-numeric:tabular-nums;font-weight:600;">R$ ${Number(p.valor).toFixed(2)}</td><td>${p.dias} dias</td><td>${qtd} cliente(s)</td><td><button class="btn-sm danger" onclick="excluirPlano(${p.id})"><i class="fas fa-trash"></i></button></td></tr>`;
-  }).join('');
-}
-function abrirModalPlano(){ document.getElementById('modal-plano').classList.add('open'); document.getElementById('plano-id').value=''; document.getElementById('plano-nome').value=''; document.getElementById('plano-valor').value=''; document.getElementById('plano-dias').value='30'; }
-function fecharModalPlano(){ document.getElementById('modal-plano').classList.remove('open'); }
-async function salvarPlano(){
-  const id = document.getElementById('plano-id').value;
-  const nome = document.getElementById('plano-nome').value.trim();
-  const valor = document.getElementById('plano-valor').value;
-  const dias = document.getElementById('plano-dias').value;
-  const plano = {nome, valor:Number(valor), dias:Number(dias)};
-  if(id) plano.id = Number(id);
-  await put('planos', plano);
-  fecharModalPlano();
-  mostrarToast('Plano Salvo', nome, 'success');
-  renderizarPlanos();
-  renderizarPlanosSelect();
-  renderizarDashboard();
-}
-async function excluirPlano(id){ if(confirm('Excluir este plano?')){ await del('planos',id); renderizarPlanos(); renderizarDashboard(); } }
-function traduzirTipoTemplate(tipo) {
-    const tipos = {
-        'avulso': 'Padrão / Avulso',
-        'lembrete_5': 'Faltam 5 dias',
-        'lembrete_4': 'Faltam 4 dias',
-        'lembrete_3': 'Faltam 3 dias',
-        'lembrete_2': 'Faltam 2 dias',
-        'lembrete_1': 'Falta 1 dia',
-        'vencimento_hoje': 'Vence Hoje',
-        'renovacao': 'Renovação'
+
+    function renderPlanos() {
+      const container = document.getElementById('plan-list');
+      if (!data.planos.length) {
+        container.innerHTML = `<div class="glass-card" style="text-align:center;color:#6b718a;">Nenhum plano criado</div>`;
+        return;
+      }
+      container.innerHTML = data.planos.map((p, i) => `
+        <div class="plan-card"><div class="flex-between"><span><strong>${p.nome}</strong></span><span>R$ ${p.preco}</span></div></div>
+      `).join('');
+    }
+
+    function renderTemplates() {
+      const container = document.getElementById('template-list');
+      container.innerHTML = data.templates.map((t, i) => `
+        <div class="template-card">
+          <div class="toggle-wrapper">
+            <span>${t.label}</span>
+            <label class="toggle-switch">
+              <input type="checkbox" ${t.ativo ? 'checked' : ''} onchange="toggleTemplate(${i}, this.checked)">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:4px;">
+            <button class="btn-outline" onclick="copiarTemplate(${i})"><i class="ph ph-copy"></i> Copiar</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderHorarios() {
+      document.getElementById('time1').value = data.horarios[0] || '08:00';
+      document.getElementById('time2').value = data.horarios[1] || '13:00';
+      document.getElementById('time3').value = data.horarios[2] || '18:00';
+    }
+
+    // ===== FUNÇÕES =====
+    window.adicionarPlano = function() {
+      const nome = prompt('Nome do plano:');
+      if (!nome) return;
+      const preco = prompt('Preço (ex: 49.90):');
+      if (!preco) return;
+      data.planos.push({ nome, preco });
+      salvarDados().then(renderAll);
     };
-    return tipos[tipo] || 'Padrão / Avulso';
-}
-window.toggleTemplateAtivo = async function(id, isChecked) {
-    const ts = await getAll('templates');
-    const t = ts.find(x => x.id === id);
-    if(t) {
-        t.ativo = isChecked;
-        await put('templates', t);
-        await recalcularNotificacoesGlobal();
-        mostrarToast('Atualizado', isChecked ? 'Alarme ativado para este dia!' : 'Alarme desativado!', 'success');
-    }
-}
-async function renderizarTemplates(){
-  const ts = await getAll('templates');
-  document.getElementById('lista-templates').innerHTML = ts.map(t=>{
-    const exemplo = t.mensagem.replace(/{nome}/g,'João').replace(/{data}/g,'15/09/2026').replace(/{valor}/g,'30,00').replace(/{empresa}/g,'IPTV').replace(/{pix}/g,'123');
-    const nomeTipo = traduzirTipoTemplate(t.tipo || 'avulso');
-    let toggleHtml = '<span style="font-size:11.5px;color:var(--muted);">Manual</span>';
-    if (t.tipo && (t.tipo.startsWith('lembrete') || t.tipo === 'vencimento_hoje')) {
-        const isAtivo = t.ativo !== false ? 'checked' : '';
-        toggleHtml = `<label class="switch"><input type="checkbox" ${isAtivo} onchange="toggleTemplateAtivo(${t.id}, this.checked)"><span class="slider"></span></label>`;
-    }
-    return `<tr>
-      <td><strong>${t.nome}</strong></td>
-      <td><span class="badge tpl">${nomeTipo}</span></td>
-      <td>${toggleHtml}</td>
-      <td style="max-width:300px; font-size:12.5px; color:var(--muted); line-height:1.5;">${exemplo}</td>
-      <td>
-        <div class="btn-group">
-          <button class="btn-sm primary" onclick="editarTemplate(${t.id})"><i class="fas fa-edit"></i></button>
-          <button class="btn-sm danger" onclick="excluirTemplate(${t.id})"><i class="fas fa-trash"></i></button>
-        </div>
-      </td>
-    </tr>`;
-  }).join('');
-}
-function abrirModalTemplate(){ 
-  document.getElementById('modal-template').classList.add('open'); 
-  document.getElementById('modal-template-titulo').textContent = 'Criar Template';
-  document.getElementById('tpl-id').value=''; 
-  document.getElementById('tpl-nome').value=''; 
-  document.getElementById('tpl-tipo').value='avulso';
-  document.getElementById('tpl-mensagem').value='Olá {nome}! Tudo bem? Seu plano IPTV vence em {data}. Valor: R$ {valor}. Pague via Pix: {pix} — {empresa}'; 
-}
-function fecharModalTemplate(){ document.getElementById('modal-template').classList.remove('open'); }
-async function editarTemplate(id) {
-  const ts = await getAll('templates');
-  const t = ts.find(x => x.id === id);
-  if(!t) return;
-  document.getElementById('modal-template-titulo').textContent = 'Editar Mensagem';
-  document.getElementById('tpl-id').value = t.id;
-  document.getElementById('tpl-nome').value = t.nome;
-  document.getElementById('tpl-tipo').value = t.tipo || 'avulso';
-  document.getElementById('tpl-mensagem').value = t.mensagem;
-  document.getElementById('modal-template').classList.add('open');
-}
-async function salvarTemplate(){
-  const idStr = document.getElementById('tpl-id').value;
-  const nome = document.getElementById('tpl-nome').value.trim();
-  const tipo = document.getElementById('tpl-tipo').value;
-  const mensagem = document.getElementById('tpl-mensagem').value.trim();
-  const ts = await getAll('templates');
-  let isAtivo = true;
-  if (idStr) {
-      const existente = ts.find(t => t.id === Number(idStr));
-      if (existente && existente.ativo !== undefined) isAtivo = existente.ativo;
-  }
-  const templateObj = { nome, tipo, mensagem, ativo: isAtivo };
-  if(idStr) templateObj.id = Number(idStr);
-  await put('templates', templateObj);
-  fecharModalTemplate();
-  mostrarToast('Mensagem Salva', nome, 'success');
-  renderizarTemplates();
-  await recalcularNotificacoesGlobal();
-}
-async function excluirTemplate(id){ if(confirm('Excluir este template?')){ await del('templates',id); renderizarTemplates(); await recalcularNotificacoesGlobal(); } }
-async function renderizarVencimentos(){
-  const clis = await getAll('clientes');
-  const hoje = new Date(); hoje.setHours(0,0,0,0);
-  const daqui15 = new Date(); daqui15.setDate(daqui15.getDate()+15);
-  const proximos = clis
-    .map(c => ({...c, _sts: calcularStatus(c.data_vencimento)}))
-    .filter(c => c._sts.dias >= 0 && c._sts.dias <= 15)
-    .sort((a,b) => a._sts.dias - b._sts.dias);
-  document.getElementById('lista-vencimentos').innerHTML = proximos.map(c => {
-    return `<tr>
-      <td><strong>${c.nome}</strong></td>
-      <td style="font-variant-numeric:tabular-nums;font-weight:600;">R$ ${Number(c.valor).toFixed(2)}</td>
-      <td>${new Date(c.data_vencimento+'T00:00:00').toLocaleDateString('pt-BR')}</td>
-      <td><span class="badge ${c._sts.classe}">${c._sts.dias === 0 ? 'HOJE' : c._sts.dias + ' dias'}</span></td>
-      <td><div class="btn-group">
-        <button class="btn-sm success" onclick="abrirModalRenovacao(${c.id})"><i class="fas fa-check"></i> Renovar</button>
-        <button class="btn-sm info" onclick="abrirModalEnviarMsg(${c.id})"><i class="fas fa-paper-plane"></i></button>
-      </div></td>
-    </tr>`;
-  }).join('');
-}
-async function carregarConfiguracoes(){
-  const cfg = await new Promise(r => tx('config').get(1).onsuccess = e => r(e.target.result || {}));
-  cfgEmpresa = { 
-    nome: cfg.nome_empresa || '', 
-    contato: cfg.contato || '', 
-    email: cfg.email || '', 
-    pix: cfg.chave_pix || ''
-  };
-  document.getElementById('cfg-nome').value = cfgEmpresa.nome;
-  document.getElementById('cfg-contato').value = cfgEmpresa.contato;
-  document.getElementById('cfg-email').value = cfgEmpresa.email;
-  document.getElementById('cfg-pix').value = cfgEmpresa.pix;
-}
-async function salvarConfiguracoes(){
-  cfgEmpresa.nome = document.getElementById('cfg-nome').value.trim();
-  cfgEmpresa.contato = document.getElementById('cfg-contato').value.trim();
-  cfgEmpresa.email = document.getElementById('cfg-email').value.trim();
-  cfgEmpresa.pix = document.getElementById('cfg-pix').value.trim();
-  await put('config', {
-    id:1, 
-    nome_empresa: cfgEmpresa.nome, 
-    contato: cfgEmpresa.contato, 
-    email: cfgEmpresa.email, 
-    chave_pix: cfgEmpresa.pix
-  });
-  mostrarToast('Salvo!', 'Configurações atualizadas', 'success');
-}
-async function carregarNotifConfig(){
-  const cfg = await new Promise(r => tx('notif_config').get(1).onsuccess = e => r(e.target.result || {}));
-  let preHorarios = ['09:00', '13:00', '18:00'];
-  if (cfg.horarios && Array.isArray(cfg.horarios)) preHorarios = cfg.horarios;
-  else if (cfg.horario) preHorarios = [cfg.horario, '', ''];
-  cfgNotif = { horarios: preHorarios };
-  document.getElementById('notif-hr-1').value = cfgNotif.horarios[0] || '';
-  document.getElementById('notif-hr-2').value = cfgNotif.horarios[1] || '';
-  document.getElementById('notif-hr-3').value = cfgNotif.horarios[2] || '';
-}
-async function salvarNotifConfig(){
-  cfgNotif.horarios = [
-      document.getElementById('notif-hr-1').value,
-      document.getElementById('notif-hr-2').value,
-      document.getElementById('notif-hr-3').value
-  ];
-  await put('notif_config', {id:1, ...cfgNotif});
-  await recalcularNotificacoesGlobal();
-  mostrarToast('Calendário Atualizado!', `Alertas reagendados com sucesso.`, 'success');
-}
-async function dispararNotificacao(){
-  if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications) {
-      window.Capacitor.Plugins.LocalNotifications.schedule({
-        notifications: [{ id: 999, title: 'Teste de Sistema', body: 'As notificações estão funcionando perfeitamente!', schedule: { at: new Date(Date.now() + 1000), allowWhileIdle: true }, channelId: 'alertas_gestor' }]
+
+    window.salvarCliente = function() {
+      const nome = document.getElementById('inputNome').value.trim();
+      const numero = document.getElementById('inputNumero').value.trim();
+      const plano = document.getElementById('inputPlano').value.trim();
+      const vencimento = document.getElementById('inputVencimento').value;
+      if (!nome || !numero || !vencimento) { alert('Preencha todos os campos'); return; }
+      const cliente = { nome, numero, plano, vencimento, status: 'ativo', id: Date.now() };
+      data.clientes.push(cliente);
+      salvarDados().then(() => {
+        renderAll();
+        fecharModalCliente();
+        agendarNotificacoes(cliente);
       });
-      mostrarToast('Teste Enviado', `Aguarde 1 segundo...`, 'warning');
-  } else {
-      mostrarToast('Capacitor inativo', `Gere o APK para ver as notificações nativas.`, 'danger');
-  }
-}
-async function exportarBackup(){
-  const dados = {
-    exportadoEm: new Date().toISOString(),
-    versao: '5.0',
-    configuracoes: cfgEmpresa,
-    notif_config: cfgNotif,
-    clientes: await getAll('clientes'),
-    planos: await getAll('planos'),
-    templates: await getAll('templates')
-  };
-  const blob = new Blob([JSON.stringify(dados,null,2)],{type:'application/json'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `backup-iptv-${new Date().toISOString().slice(0,10)}.json`;
-  a.click();
-  mostrarToast('Backup Exportado', 'Arquivo baixado com sucesso!', 'success');
-}
-async function importarBackup(e){
-  const f = e.target.files?.[0]; if(!f) return;
-  if(!confirm('Isso substituirá TODOS os dados atuais. Continuar?')) return;
-  const texto = await f.text();
-  try {
-    const d = JSON.parse(texto);
-    if(d.configuracoes) await put('config', {id:1, nome_empresa:d.configuracoes.nome, contato:d.configuracoes.contato, email:d.configuracoes.email, chave_pix:d.configuracoes.pix});
-    if(d.notif_config) await put('notif_config', {id:1, ...d.notif_config});
-    if(d.planos) for(const p of d.planos) { delete p.id; await put('planos', p); }
-    if(d.templates) for(const t of d.templates) { delete t.id; await put('templates', t); }
-    if(d.clientes) for(const c of d.clientes) { delete c.id; await put('clientes', c); }
-    mostrarToast('Importado!', 'Dados restaurados com sucesso', 'success');
-    setTimeout(()=> location.reload(), 1500);
-  }catch(err){ mostrarToast('Erro', 'Arquivo de backup inválido!', 'danger'); }
-}
+    };
+
+    window.whatsappCliente = function(numero) {
+      const url = `https://wa.me/55${numero.replace(/\D/g, '')}`;
+      window.open(url, '_blank');
+    };
+
+    // Envio template
+    let clienteEnvioIdx = -1;
+    window.abrirModalEnvio = function(idx) {
+      clienteEnvioIdx = idx;
+      const container = document.getElementById('template-envio-list');
+      container.innerHTML = data.templates.filter(t => t.ativo).map((t, i) => `
+        <div style="padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;justify-content:space-between;">
+          <span>${t.label}</span>
+          <button class="btn-outline" onclick="enviarTemplateCliente(${i})">Enviar</button>
+        </div>
+      `).join('');
+      document.getElementById('modalEnvio').classList.add('active');
+    };
+    window.fecharModalEnvio = function() {
+      document.getElementById('modalEnvio').classList.remove('active');
+    };
+    window.enviarTemplateCliente = function(tIdx) {
+      if (clienteEnvioIdx < 0) return;
+      const cliente = data.clientes[clienteEnvioIdx];
+      const template = data.templates[tIdx];
+      if (!cliente || !template) return;
+      const texto = `${template.label} - Cliente: ${cliente.nome}, vencimento ${cliente.vencimento}`;
+      const url = `https://wa.me/55${cliente.numero.replace(/\D/g, '')}?text=${encodeURIComponent(texto)}`;
+      window.open(url, '_blank');
+      fecharModalEnvio();
+    };
+
+    window.toggleTemplate = function(idx, val) {
+      data.templates[idx].ativo = val;
+      salvarDados().then(() => { renderTemplates(); });
+    };
+
+    window.copiarTemplate = async function(idx) {
+      const texto = data.templates[idx].label;
+      try {
+        if (isCap) {
+          const { Clipboard } = await import('@capacitor/clipboard');
+          await Clipboard.write({ string: texto });
+        } else {
+          await navigator.clipboard.writeText(texto);
+        }
+        alert('Texto copiado!');
+      } catch (e) { alert('Erro ao copiar'); }
+    };
+
+    window.salvarHorarios = function() {
+      const t1 = document.getElementById('time1').value;
+      const t2 = document.getElementById('time2').value;
+      const t3 = document.getElementById('time3').value;
+      data.horarios = [t1, t2, t3];
+      salvarDados().then(() => alert('Horários salvos!'));
+    };
+
+    window.fazerBackup = async function() {
+      try {
+        const json = JSON.stringify(data, null, 2);
+        if (isCap) {
+          const { Filesystem, Directory } = await import('@capacitor/filesystem');
+          const { Share } = await import('@capacitor/share');
+          const result = await Filesystem.writeFile({
+            path: 'iptv_backup.json',
+            data: json,
+            directory: Directory.Documents
+          });
+          await Share.share({ title: 'Backup IPTV', text: 'Backup gerado', url: result.uri });
+        } else {
+          const blob = new Blob([json], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url; a.download = 'iptv_backup.json';
+          a.click();
+        }
+      } catch (e) { alert('Erro no backup: ' + e.message); }
+    };
+
+    window.restoreBackup = async function(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      try {
+        const text = await file.text();
+        const parsed = JSON.parse(text);
+        data = { ...data, ...parsed };
+        await salvarDados();
+        renderAll();
+        alert('Restore concluído!');
+      } catch (e) { alert('Erro no restore: ' + e.message); }
+    };
+
+    // ===== NOTIFICAÇÕES =====
+    window.agendarNotificacoes = async function(cliente) {
+      if (!isCap) return;
+      try {
+        const { LocalNotifications } = await import('@capacitor/local-notifications');
+        // Verificar permissão
+        const perm = await LocalNotifications.requestPermissions();
+        if (perm.display !== 'granted') return;
+
+        const venc = new Date(cliente.vencimento + 'T00:00:00');
+        const hoje = new Date();
+        const diffDays = Math.ceil((venc - hoje) / (1000*60*60*24));
+
+        // Para cada template ativo, verifica se bate com diffDays
+        for (const t of data.templates) {
+          if (!t.ativo) continue;
+          let shouldNotify = false;
+          if (t.dias === -1 && diffDays < 0) shouldNotify = true;
+          else if (t.dias >= 0 && diffDays === t.dias) shouldNotify = true;
+
+          if (shouldNotify) {
+            for (const horario of data.horarios) {
+              const [h, m] = horario.split(':').map(Number);
+              const notifDate = new Date();
+              notifDate.setHours(h, m, 0, 0);
+              if (notifDate < new Date()) notifDate.setDate(notifDate.getDate() + 1);
+              await LocalNotifications.schedule({
+                notifications: [{
+                  title: '📡 IPTV - Cliente',
+                  body: `${cliente.nome} - ${t.label}`,
+                  id: Date.now() + Math.random() * 1000,
+                  schedule: { at: notifDate }
+                }]
+              });
+            }
+          }
+        }
+      } catch (e) { console.warn('Erro notificação', e); }
+    };
+
+    // ===== MODAL =====
+    window.abrirModalCliente = function() {
+      document.getElementById('modalCliente').classList.add('active');
+    };
+    window.fecharModalCliente = function() {
+      document.getElementById('modalCliente').classList.remove('active');
+    };
+
+    // ===== NAVEGAÇÃO =====
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', function() {
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        this.classList.add('active');
+        const tabId = this.dataset.tab;
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+      });
+    });
+
+    // ===== INICIALIZAÇÃO =====
+    carregarDados();
+  })();
 </script>
 </body>
 </html>

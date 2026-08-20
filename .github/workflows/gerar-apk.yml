@@ -33,14 +33,15 @@ jobs:
       run: |
         npm init -y
         
-        # Deixando apenas o core, android, cli e o plugin de notificações
+        # ✅ Notificações + Arquivos/Backup + GPS
         npm install @capacitor/core@5 @capacitor/android@5 @capacitor/cli@5 \
-          @capacitor/local-notifications@5
+          @capacitor/local-notifications@5 \
+          @capacitor/filesystem@5 \
+          @capacitor/geolocation@5
 
         # Cria pasta www e copia o arquivo único index.html
         mkdir -p www
         
-        # ✅ SEU ARQUIVO ÚNICO É COPIADO AQUI
         if [ -f index.html ]; then
           cp index.html www/index.html
           echo "✅ Arquivo index.html copiado com sucesso!"
@@ -99,9 +100,10 @@ jobs:
           find android/app/src/main/res/ -name "ic_launcher_round.xml" -delete
         fi
 
-        # 🔑 PERMISSÕES NO ANDROIDMANIFEST
+        # 🔑 TODAS AS PERMISSÕES
         MANIFEST_FILE="android/app/src/main/AndroidManifest.xml"
         if [ -f "$MANIFEST_FILE" ]; then
+          # Notificações
           sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />' "$MANIFEST_FILE"
           sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />' "$MANIFEST_FILE"
           sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />' "$MANIFEST_FILE"
@@ -109,6 +111,16 @@ jobs:
           sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.INTERNET" />' "$MANIFEST_FILE"
           sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.WAKE_LOCK" />' "$MANIFEST_FILE"
           sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />' "$MANIFEST_FILE"
+          
+          # 📂 Backup / Arquivos
+          sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />' "$MANIFEST_FILE"
+          sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />' "$MANIFEST_FILE"
+          sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />' "$MANIFEST_FILE"
+          
+          # 📍 GPS / Localização
+          sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />' "$MANIFEST_FILE"
+          sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />' "$MANIFEST_FILE"
+          sed -i '/<manifest/ a \    <uses-feature android:name="android.hardware.location.gps" android:required="false" />' "$MANIFEST_FILE"
         fi
 
         # Sincroniza tudo

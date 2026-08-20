@@ -33,11 +33,11 @@ jobs:
       run: |
         npm init -y
         
-        # Instala Capacitor 5 + todos os plugins
+        # Instala Capacitor 5 + todos os plugins na versão 5 para evitar conflitos
         npm install @capacitor/core@5 @capacitor/android@5 @capacitor/cli@5 \
-          @capacitor/local-notifications \
-          @capacitor/background-task \
-          @capacitor/sqlite
+          @capacitor/local-notifications@5 \
+          @capacitor/background-task@5 \
+          @capacitor/sqlite@5
 
         # Cria pasta www e copia o arquivo único index.html
         mkdir -p www
@@ -63,7 +63,7 @@ jobs:
         # Gera ID único a partir do nome
         APP_ID=$(echo "$APP_NAME" | tr '[:upper:]' '[:lower:]' | tr -cd '[:alnum:]')
         if [ -z "$APP_ID" ]; then
-          APP_ID = "app"
+          APP_ID="app" # CORRIGIDO: Removido os espaços ao redor do sinal de igual
         fi
 
         # Inicializa Capacitor

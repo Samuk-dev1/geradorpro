@@ -104,6 +104,7 @@ jobs:
         if [ -f "$MANIFEST_FILE" ]; then
           sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />' "$MANIFEST_FILE"
           sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />' "$MANIFEST_FILE"
+          sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />' "$MANIFEST_FILE"
           sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.VIBRATE" />' "$MANIFEST_FILE"
           sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.INTERNET" />' "$MANIFEST_FILE"
           sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.WAKE_LOCK" />' "$MANIFEST_FILE"

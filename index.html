@@ -187,7 +187,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--a
           <option value="7d">Vencem em 7 Dias</option>
         </select>
         <button class="btn primary" onclick="abrirModalCliente()"><i class="fas fa-plus"></i> Novo Cliente</button>
-        <button class="btn secondary" onclick="dispararNotificacao()"><i class="fas fa-bell"></i> Verificar Vencimentos</button>
+        <button class="btn secondary" onclick="dispararNotificacao()"><i class="fas fa-bell"></i> Testar Alerta Manual</button>
       </div>
       <table class="table">
         <thead><tr><th>Nome</th><th>MAC</th><th>Plano</th><th>Valor</th><th>Vencimento</th><th>Status</th><th>Ações</th></tr></thead>
@@ -243,22 +243,28 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--a
     <!-- CONFIGURAÇÕES DE NOTIFICAÇÕES -->
     <section id="screen-notificacoes" class="screen">
       <div class="panel">
-        <h3>🔔 Configurações de Notificações</h3>
+        <h3>🔔 Automação de Alertas no Celular</h3>
+        <p style="font-size:13px; color:var(--muted); margin-bottom: 20px;">
+          As notificações serão programadas no sistema do Android e apitarão automaticamente, <b>mesmo se o aplicativo estiver totalmente fechado</b>.
+        </p>
+
         <div class="form-group">
-          <label>Horário diário para verificar vencimentos</label>
+          <label>Horário que o celular deve despertar com o aviso:</label>
           <input type="time" id="notif-horario" value="08:00">
         </div>
         <div class="form-group">
-          <label>Notificar 3 dias antes do vencimento</label>
+          <label>Quando você deseja ser avisado do vencimento?</label>
           <select id="notif-antecedencia">
-            <option value="sim">✅ Sim</option>
-            <option value="nao">❌ Não</option>
+            <option value="0">Somente no dia exato do vencimento</option>
+            <option value="1">1 dia antes E no dia do vencimento</option>
+            <option value="2">2 dias antes E no dia do vencimento</option>
+            <option value="3">3 dias antes E no dia do vencimento</option>
+            <option value="5">5 dias antes E no dia do vencimento</option>
           </select>
         </div>
-        <button class="btn primary" onclick="salvarNotifConfig()">💾 Salvar Preferências</button>
+        <button class="btn primary" onclick="salvarNotifConfig()">💾 Salvar e Reagendar Todos</button>
         <br><br>
-        <button class="btn success" onclick="solicitarPermissaoNotif()">🔔 Ativar Notificações do Sistema</button>
-        <p style="margin-top:12px; font-size:13px; color:var(--muted)">As notificações aparecem na barra de notificações do Android mesmo com o app fechado.</p>
+        <button class="btn success" onclick="solicitarPermissaoNotif()">🔔 Autorizar Permissão no Android</button>
       </div>
     </section>
 
@@ -338,7 +344,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--a
 let db;
 let chartStatus, chartVenc;
 let cfgEmpresa = { nome: '', contato: '', email: '', pix: '' };
-let cfgNotif = { horario: '08:00', antecedencia: 'sim' };
+let cfgNotif = { horario: '08:00', antecedencia: '2' }; // Padrão: 2 dias antes
 
 window.onload = async () => {
   await initBanco();
@@ -362,7 +368,7 @@ async function initBanco() {
       }
       if(!d.objectStoreNames.contains('notif_config')) {
         const s = d.createObjectStore('notif_config', {keyPath:'id'});
-        s.add({id:1, horario:'08:00', antecedencia:'sim'});
+        s.add({id:1, horario:'08:00', antecedencia:'2'});
       }
       if(!d.objectStoreNames.contains('planos')) d.createObjectStore('planos', {keyPath:'id', autoIncrement:true});
       if(!d.objectStoreNames.contains('templates')) d.createObjectStore('templates', {keyPath:'id', autoIncrement:true});
@@ -379,7 +385,14 @@ async function initBanco() {
 
 function tx(store, mode='readonly') { return db.transaction(store, mode).objectStore(store); }
 function getAll(store) { return new Promise(r => tx(store).getAll().onsuccess = e => r(e.target.result || [])); }
-function put(store, obj) { return new Promise(r => tx(store,'readwrite').put(obj).onsuccess = r); }
+// Nova função put para retornar o ID gerado pelo banco corretamente
+function put(store, obj) { 
+    return new Promise((res, rej) => { 
+        const req = tx(store,'readwrite').put(obj); 
+        req.onsuccess = e => res(e.target.result); 
+        req.onerror = rej; 
+    }); 
+}
 function del(store, id) { return new Promise(r => tx(store,'readwrite').delete(id).onsuccess = r); }
 
 // ========== NAVEGAÇÃO ==========
@@ -423,7 +436,7 @@ function mostrarToast(titulo, texto, tipo='success') {
   setTimeout(()=> t.classList.remove('show'), 4000);
 }
 
-// ========== 🔔 NOTIFICAÇÕES NATIVAS ANDROID ==========
+// ========== 🔔 NOTIFICAÇÕES (AGENDAMENTO AUTOMÁTICO) ==========
 async function solicitarPermissaoNotif() {
   if ('Notification' in window) {
     const perm = await Notification.requestPermission();
@@ -442,12 +455,70 @@ async function solicitarPermissaoNotif() {
           importance: 5,
           visibility: 1
       });
-    } catch(e) {
-      console.log('Erro ao criar canal:', e);
-    }
+    } catch(e) { console.log('Erro ao criar canal:', e); }
   }
 }
 
+// Limpa os alarmes antigos do celular para esse cliente não ficar buzinando errado
+async function cancelarNotificacoesCliente(idCliente) {
+  if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications) {
+    try {
+      // O ID * 100 é o dia do vencimento. O ID * 100 + 1 é o aviso de dias antes.
+      const idsCancelamento = [{ id: idCliente * 100 }, { id: (idCliente * 100) + 1 }];
+      await window.Capacitor.Plugins.LocalNotifications.cancel({ notifications: idsCancelamento });
+    } catch(e) { console.log('Erro ao cancelar notificação pendente:', e); }
+  }
+}
+
+// Calcula os dias no calendário e programa o alarme pro futuro!
+async function agendarNotificacoesCliente(cliente) {
+  if (!window.Capacitor || !window.Capacitor.Plugins || !window.Capacitor.Plugins.LocalNotifications) return;
+  const LocalNotifications = window.Capacitor.Plugins.LocalNotifications;
+  
+  const [hora, min] = cfgNotif.horario.split(':').map(Number);
+  const diasAntecedencia = parseInt(cfgNotif.antecedencia);
+  const notificacoesProgramadas = [];
+  
+  // 1. O Alarme do DIA EXATO do Vencimento
+  const dataDia = new Date(cliente.data_vencimento + 'T00:00:00');
+  dataDia.setHours(hora, min, 0, 0);
+  
+  if (dataDia > new Date()) { // Só agenda se a data ainda não passou
+    notificacoesProgramadas.push({
+      id: cliente.id * 100,
+      title: '🔴 Cliente Vencendo HOJE!',
+      body: `O plano de ${cliente.nome} vence hoje! Valor: R$ ${Number(cliente.valor).toFixed(2)}`,
+      schedule: { at: dataDia },
+      channelId: 'alertas_gestor'
+    });
+  }
+  
+  // 2. O Alarme de AVISO PRÉVIO (Ex: 2 dias antes)
+  if (diasAntecedencia > 0) {
+    const dataAntes = new Date(cliente.data_vencimento + 'T00:00:00');
+    dataAntes.setDate(dataAntes.getDate() - diasAntecedencia);
+    dataAntes.setHours(hora, min, 0, 0);
+    
+    if (dataAntes > new Date()) { // Só agenda se ainda der tempo de avisar antes
+      notificacoesProgramadas.push({
+        id: (cliente.id * 100) + 1,
+        title: `🟡 Vencimento em ${diasAntecedencia} dia(s)`,
+        body: `Lembrete: O plano de ${cliente.nome} vai vencer dia ${new Date(cliente.data_vencimento+'T00:00:00').toLocaleDateString('pt-BR')}.`,
+        schedule: { at: dataAntes },
+        channelId: 'alertas_gestor'
+      });
+    }
+  }
+  
+  // Manda pro Android engatilhar os despertadores
+  if (notificacoesProgramadas.length > 0) {
+    try {
+      await LocalNotifications.schedule({ notifications: notificacoesProgramadas });
+    } catch(e) { console.log('Erro ao agendar no Android:', e); }
+  }
+}
+
+// Função de Teste Manual na Tela (Igual a antiga)
 async function dispararNotificacaoSistema(titulo, mensagem, id=1) {
   if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications) {
     const LocalNotifications = window.Capacitor.Plugins.LocalNotifications;
@@ -457,7 +528,7 @@ async function dispararNotificacaoSistema(titulo, mensagem, id=1) {
           id: id,
           title: titulo,
           body: mensagem,
-          schedule: { at: new Date(Date.now() + 500) },
+          schedule: { at: new Date(Date.now() + 1000) }, // Toca 1 segundo depois de clicar
           channelId: 'alertas_gestor'
         }]
       });
@@ -562,7 +633,7 @@ function filtrarClientes() {
   renderizarClientes(document.getElementById('filtro-status').value, document.getElementById('busca-cliente').value);
 }
 
-// ========== ✅ RENOVAR CLIENTE + NOTIFICAÇÃO ==========
+// ========== ✅ RENOVAR CLIENTE + REAGENDAMENTO AUTOMÁTICO ==========
 async function renovarCliente(id) {
   const clis = await getAll('clientes');
   const cliente = clis.find(x=>x.id===id);
@@ -582,12 +653,9 @@ async function renovarCliente(id) {
   cliente.status = 'Ativo';
   await put('clientes', cliente);
 
-  // 🔔 DISPARA NOTIFICAÇÃO NO ANDROID
-  await dispararNotificacaoSistema(
-    '✅ Cliente Renovado!',
-    `${cliente.nome} renovado até ${novaData.toLocaleDateString('pt-BR')} — +${dias} dias`,
-    id + 1000
-  );
+  // 🔔 MÁGICA: Cancela o alarme antigo para não apitar errado, e já agenda o do mês que vem!
+  await cancelarNotificacoesCliente(id);
+  await agendarNotificacoesCliente(cliente);
 
   mostrarToast('✅ Renovado!', `${cliente.nome} → Vence em ${novaData.toLocaleDateString('pt-BR')}`, 'success');
   renderizarClientes();
@@ -605,8 +673,9 @@ async function renderizarPlanosSelect(){
   sel.onchange = ()=>{ const opt = sel.selectedOptions[0]; if(opt) document.getElementById('cli-valor').value = opt.dataset.valor; };
   sel.onchange();
 }
+
 async function salvarCliente(){
-  const id = document.getElementById('cli-id').value;
+  const idStr = document.getElementById('cli-id').value;
   const nome = document.getElementById('cli-nome').value.trim();
   const telefone = document.getElementById('cli-telefone').value.trim();
   const mac = document.getElementById('cli-mac').value.trim().toUpperCase();
@@ -619,14 +688,29 @@ async function salvarCliente(){
   if(!/^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/.test(mac)) return mostrarToast('❌ MAC Inválido', 'Use formato XX:XX:XX:XX:XX:XX', 'danger');
 
   const cliente = {nome, telefone, mac, plano, valor:Number(valor), data_vencimento, status, observacao:obs, data_cadastro: new Date().toISOString().slice(0,10)};
-  if(id) cliente.id = Number(id);
-  try { await put('clientes', cliente); } catch { return mostrarToast('❌ MAC Duplicado', 'Este MAC já está cadastrado!', 'danger'); }
+  if(idStr) cliente.id = Number(idStr);
+  
+  let novoId;
+  try { 
+      novoId = await put('clientes', cliente); 
+  } catch { 
+      return mostrarToast('❌ MAC Duplicado', 'Este MAC já está cadastrado!', 'danger'); 
+  }
+  
+  if (!cliente.id) cliente.id = novoId; // Pega o ID que o banco gerou
+
+  // 🔔 MÁGICA: Cancela o alerta antigo se for edição, e re-agenda com os novos dados
+  await cancelarNotificacoesCliente(cliente.id);
+  if (cliente.status === 'Ativo') {
+      await agendarNotificacoesCliente(cliente);
+  }
 
   fecharModalCliente();
-  mostrarToast(id ? '✅ Cliente Editado' : '✅ Cliente Cadastrado', nome, 'success');
+  mostrarToast(idStr ? '✅ Cliente Editado' : '✅ Cliente Cadastrado', nome, 'success');
   renderizarClientes();
   renderizarDashboard();
 }
+
 async function editarCliente(id){
   const clis = await getAll('clientes');
   const c = clis.find(x=>x.id===id);
@@ -643,8 +727,10 @@ async function editarCliente(id){
   document.getElementById('cli-obs').value=c.observacao||'';
   document.getElementById('modal-cliente').classList.add('open');
 }
+
 async function excluirCliente(id){
   if(confirm('Tem certeza? Esta ação não pode ser desfeita!')) {
+    await cancelarNotificacoesCliente(id); // Limpa o despertador do Android antes de excluir!
     await del('clientes',id);
     mostrarToast('🗑️ Excluído', 'Cliente removido!', 'warning');
     renderizarClientes();
@@ -766,18 +852,30 @@ async function salvarConfiguracoes(){
 // ========== CONFIG NOTIFICAÇÕES ==========
 async function carregarNotifConfig(){
   const cfg = await new Promise(r => tx('notif_config').get(1).onsuccess = e => r(e.target.result || {}));
-  cfgNotif = { horario: cfg.horario || '08:00', antecedencia: cfg.antecedencia || 'sim' };
+  cfgNotif = { horario: cfg.horario || '08:00', antecedencia: cfg.antecedencia || '2' };
   document.getElementById('notif-horario').value = cfgNotif.horario;
   document.getElementById('notif-antecedencia').value = cfgNotif.antecedencia;
 }
+
+// 🔔 MÁGICA FINAL: Se você mudar a hora de avisar, ele reagenda pra TODO MUNDO sozinho!
 async function salvarNotifConfig(){
   cfgNotif.horario = document.getElementById('notif-horario').value;
   cfgNotif.antecedencia = document.getElementById('notif-antecedencia').value;
   await put('notif_config', {id:1, ...cfgNotif});
-  mostrarToast('✅ Salvo!', `Verificação diária às ${cfgNotif.horario}`, 'success');
+  
+  // Re-agendar notificações para todos os clientes ativos com o novo horário/dias
+  const clis = await getAll('clientes');
+  for (const c of clis) {
+      if (c.status === 'Ativo') {
+          await cancelarNotificacoesCliente(c.id);
+          await agendarNotificacoesCliente(c);
+      }
+  }
+  
+  mostrarToast('✅ Salvo e Reagendado!', `Seus alarmes tocarão às ${cfgNotif.horario}`, 'success');
 }
 
-// ========== VERIFICAR VENCIMENTOS + NOTIFICAR ==========
+// ========== TESTE MANUAL ==========
 async function dispararNotificacao(){
   const clis = await getAll('clientes');
   const hoje = new Date().toISOString().split('T')[0];
@@ -789,11 +887,11 @@ async function dispararNotificacao(){
   }
 
   await dispararNotificacaoSistema(
-    '📆 Lembrete IPTV',
-    `Hoje você tem ${vencHoje.length} cliente(s) vencendo! Acesse o app e veja.`,
+    '📆 Teste Manual',
+    `Hoje você tem ${vencHoje.length} cliente(s) vencendo!`,
     999
   );
-  mostrarToast('📆 Notificação Enviada', `${vencHoje.length} cliente(s) vencendo hoje!`, 'warning');
+  mostrarToast('📆 Teste Enviado', `Aguarde 1 segundo...`, 'warning');
 }
 
 // ========== BACKUP ==========

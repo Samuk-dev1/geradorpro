@@ -136,7 +136,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--a
       <li class="submenu">
         <a href="#"><i class="fas fa-cog"></i> Configurações ▾</a>
         <ul>
-          <li><a href="#" onclick="showScreen('configuracoes')">Dados da Empresa / Zap</a></li>
+          <li><a href="#" onclick="showScreen('configuracoes')">Dados da Empresa</a></li>
           <li><a href="#" onclick="showScreen('notificacoes')">Notificações Automáticas</a></li>
           <li><a href="#" onclick="showScreen('backup')">Backup / Exportar</a></li>
         </ul>
@@ -212,9 +212,9 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--a
       <div class="top-bar">
         <button class="btn primary" onclick="abrirModalTemplate()"><i class="fas fa-plus"></i> Novo Template (Mensagem)</button>
       </div>
-      <p style="font-size:13px; color:var(--muted); margin-bottom:15px;">A "Régua de Cobrança" escolhe automaticamente a mensagem certa baseada nos dias que faltam para o cliente vencer quando você clica em enviar WhatsApp.</p>
+      <p style="font-size:13px; color:var(--muted); margin-bottom:15px;">Cadastre mensagens diferentes para cada momento. Ao clicar em enviar, o sistema já sugere a correta.</p>
       <table class="table">
-        <thead><tr><th>Nome</th><th>Tipo / Gatilho</th><th>Mensagem</th><th>Ações</th></tr></thead>
+        <thead><tr><th>Nome</th><th>Tipo / Momento</th><th>Mensagem</th><th>Ações</th></tr></thead>
         <tbody id="lista-templates"></tbody>
       </table>
     </section>
@@ -239,18 +239,6 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--a
         <div class="form-group"><label>E-mail</label><input type="email" id="cfg-email" placeholder="seu@email.com"></div>
         <div class="form-group"><label>Chave Pix (para pagamentos)</label><input type="text" id="cfg-pix" placeholder="CPF, CNPJ, e-mail ou telefone"></div>
         
-        <br>
-        <h3 style="border-top: 1px solid var(--border); padding-top:20px; margin-top:10px;">💬 Trava do WhatsApp</h3>
-        <p style="font-size:13px; color:var(--muted); margin-bottom:15px;">Escolha qual WhatsApp o sistema deve forçar a abrir para enviar as mensagens aos clientes.</p>
-        <div class="form-group">
-          <label>Aplicativo de Envio</label>
-          <select id="cfg-wa-app">
-            <option value="default">📱 Perguntar / Padrão do Celular (Recomendado)</option>
-            <option value="com.whatsapp.w4b">💼 Forçar WhatsApp Business</option>
-            <option value="com.whatsapp">🟢 Forçar WhatsApp Normal</option>
-          </select>
-        </div>
-
         <button class="btn primary" onclick="salvarConfiguracoes()">💾 Salvar Configurações</button>
       </div>
     </section>
@@ -367,6 +355,29 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--a
     </div>
   </div>
 
+  <!-- MODAL DE ENVIAR MENSAGEM (NOVO AVIÃOZINHO) -->
+  <div class="modal" id="modal-enviar-msg">
+    <div class="modal-content">
+      <span class="close" onclick="fecharModalEnviarMsg()">&times;</span>
+      <h3><i class="fas fa-paper-plane" style="color:var(--accent);"></i> Enviar Mensagem</h3>
+      <input type="hidden" id="msg-cli-id">
+      
+      <div class="form-group">
+        <label>Selecione a Mensagem (Template):</label>
+        <select id="msg-template-select" onchange="atualizarPreviewMensagem()"></select>
+      </div>
+
+      <div class="form-group">
+        <label>Texto Final (Você pode editar aqui antes de enviar):</label>
+        <textarea id="msg-preview" rows="6" style="border-color: var(--accent);"></textarea>
+      </div>
+
+      <button class="btn success" onclick="dispararWhatsAppManual()">
+        <i class="fab fa-whatsapp"></i> Abrir WhatsApp
+      </button>
+    </div>
+  </div>
+
   <!-- MODAL DE RENOVAÇÃO RÁPIDA -->
   <div class="modal" id="modal-renovacao">
     <div class="modal-content">
@@ -402,7 +413,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--a
 // ========== BANCO LOCAL INDEXEDDB ==========
 let db;
 let chartStatus, chartVenc;
-let cfgEmpresa = { nome: '', contato: '', email: '', pix: '', wa_app: 'default' };
+let cfgEmpresa = { nome: '', contato: '', email: '', pix: '' };
 let cfgNotif = { horarios: ['09:00', '13:00', '18:00'], antecedencia: '2' }; 
 
 window.onload = async () => {
@@ -653,10 +664,10 @@ async function renderizarClientes(filtro='todos', busca='') {
       <td><span class="badge ${sts.classe}">${sts.texto}</span></td>
       <td>
         <div class="btn-group">
-          <button class="btn-sm success" title="✅ Renovar Cliente" onclick="abrirModalRenovacao(${c.id})"><i class="fas fa-sync-alt"></i> Renovar</button>
-          <button class="btn-sm info" title="💬 WhatsApp" onclick="enviarWhatsApp(${c.id})"><i class="fab fa-whatsapp"></i></button>
-          <button class="btn-sm primary" title="✏️ Editar" onclick="editarCliente(${c.id})">✏️</button>
-          <button class="btn-sm danger" title="🗑️ Excluir" onclick="excluirCliente(${c.id})">🗑️</button>
+          <button class="btn-sm success" title="Renovar Cliente" onclick="abrirModalRenovacao(${c.id})"><i class="fas fa-sync-alt"></i> Renovar</button>
+          <button class="btn-sm info" title="Enviar Mensagem" onclick="abrirModalEnviarMsg(${c.id})"><i class="fas fa-paper-plane"></i></button>
+          <button class="btn-sm primary" title="Editar" onclick="editarCliente(${c.id})">✏️</button>
+          <button class="btn-sm danger" title="Excluir" onclick="excluirCliente(${c.id})">🗑️</button>
         </div>
       </td>
     </tr>`;
@@ -664,6 +675,81 @@ async function renderizarClientes(filtro='todos', busca='') {
 }
 function filtrarClientes() {
   renderizarClientes(document.getElementById('filtro-status').value, document.getElementById('busca-cliente').value);
+}
+
+// ========== 💡 TELA DE ENVIAR MENSAGEM (NOVO AVIÃOZINHO) ==========
+function fecharModalEnviarMsg() { document.getElementById('modal-enviar-msg').classList.remove('open'); }
+
+async function abrirModalEnviarMsg(idCli) {
+  const clis = await getAll('clientes');
+  const cliente = clis.find(x => x.id === idCli);
+  if(!cliente) return;
+  
+  document.getElementById('msg-cli-id').value = idCli;
+
+  const templates = await getAll('templates');
+  const sel = document.getElementById('msg-template-select');
+  
+  if (templates.length === 0) {
+      mostrarToast('⚠️ Sem Templates', 'Você precisa criar uma mensagem na aba Mensagens (Régua).', 'warning');
+      return;
+  }
+  
+  // Preenche as opções
+  sel.innerHTML = templates.map(t => `<option value="${t.id}">${t.nome} (${traduzirTipoTemplate(t.tipo)})</option>`).join('');
+
+  // LÓGICA DE SINTONIA FINA: Qual mensagem ele precisa agora?
+  const sts = calcularStatus(cliente.data_vencimento);
+  let tipoIdeal = 'avulso';
+  if (sts.dias === 0) tipoIdeal = 'vencimento_hoje';
+  else if (sts.dias === 1) tipoIdeal = 'lembrete_1';
+  else if (sts.dias === 2) tipoIdeal = 'lembrete_2';
+  else if (sts.dias === 3) tipoIdeal = 'lembrete_3';
+  else if (sts.dias === 4 || sts.dias === 5) tipoIdeal = 'lembrete_5';
+
+  const tplAuto = templates.find(t => t.tipo === tipoIdeal);
+  if(tplAuto) {
+      sel.value = tplAuto.id;
+  } else {
+      sel.value = templates[0].id;
+  }
+
+  await atualizarPreviewMensagem();
+  document.getElementById('modal-enviar-msg').classList.add('open');
+}
+
+async function atualizarPreviewMensagem() {
+  const idCli = Number(document.getElementById('msg-cli-id').value);
+  const idTpl = Number(document.getElementById('msg-template-select').value);
+  
+  const clis = await getAll('clientes');
+  const cliente = clis.find(x => x.id === idCli);
+  const ts = await getAll('templates');
+  const tpl = ts.find(x => x.id === idTpl);
+  
+  if(!cliente || !tpl) return;
+
+  const dt = new Date(cliente.data_vencimento+'T00:00:00').toLocaleDateString('pt-BR');
+  const msg = tpl.mensagem
+      .replace(/{nome}/g, cliente.nome)
+      .replace(/{data}/g, dt)
+      .replace(/{valor}/g, Number(cliente.valor).toFixed(2))
+      .replace(/{empresa}/g, cfgEmpresa.nome || 'Sua Empresa')
+      .replace(/{pix}/g, cfgEmpresa.pix || 'Chave Pix');
+
+  document.getElementById('msg-preview').value = msg;
+}
+
+async function dispararWhatsAppManual() {
+  const idCli = Number(document.getElementById('msg-cli-id').value);
+  const msgFinal = document.getElementById('msg-preview').value.trim();
+  
+  const clis = await getAll('clientes');
+  const cliente = clis.find(x => x.id === idCli);
+  if(!cliente) return;
+
+  abrirWhatsApp(cliente.telefone, msgFinal);
+  fecharModalEnviarMsg();
 }
 
 // ========== 💡 TELA DE RENOVAÇÃO INTELIGENTE ==========
@@ -686,13 +772,11 @@ async function abrirModalRenovacao(id) {
   document.getElementById('renov-cli-id').value = id;
   document.getElementById('renov-info').innerHTML = `O plano de <b>${cliente.nome}</b> será renovado por <b>+${dias} dias</b>.<br>A nova data de vencimento será <b>${novaData.toLocaleDateString('pt-BR')}</b>.`;
 
-  // Prepara o texto de Agradecimento (Procura template 'renovacao')
+  // Prepara o texto de Agradecimento
   const templates = await getAll('templates');
   let tpl = templates.find(t => t.tipo === 'renovacao');
-  
   let msgTemplate = tpl ? tpl.mensagem : `Olá {nome}! Tudo bem? 😊 Passando para agradecer pela confiança. Seu plano foi renovado com sucesso e agora é válido até {data}. Muito obrigado! — {empresa}`;
   
-  // Substitui as variáveis com os dados DA NOVA DATA
   const msgPronta = msgTemplate
     .replace(/{nome}/g, cliente.nome)
     .replace(/{data}/g, novaData.toLocaleDateString('pt-BR'))
@@ -734,48 +818,13 @@ async function confirmarRenovacao(enviarZap) {
   renderizarDashboard();
   renderizarVencimentos();
 
-  // Dispara o WhatsApp forçado pelo aplicativo escolhido
   if (enviarZap) {
-    dispararWhatsAppInteligente(cliente.telefone, mensagemPopUp);
+    abrirWhatsApp(cliente.telefone, mensagemPopUp);
   }
 }
 
-// ========== 💬 MOTOR DE WHATSAPP (RÉGUA DE COBRANÇA + INTENT) ==========
-async function enviarWhatsApp(idCliente) {
-  const clis = await getAll('clientes');
-  const c = clis.find(x => x.id === idCliente);
-  if(!c) return;
-
-  const sts = calcularStatus(c.data_vencimento);
-  let tipoIdeal = 'avulso';
-
-  // Descobre qual o momento do cliente para pegar a mensagem certa
-  if (sts.dias === 0) tipoIdeal = 'vencimento_hoje';
-  else if (sts.dias === 1) tipoIdeal = 'lembrete_1';
-  else if (sts.dias === 2) tipoIdeal = 'lembrete_2';
-  else if (sts.dias === 3) tipoIdeal = 'lembrete_3';
-  else if (sts.dias === 4 || sts.dias === 5) tipoIdeal = 'lembrete_5';
-
-  const templates = await getAll('templates');
-  let tpl = templates.find(t => t.tipo === tipoIdeal);
-  
-  // Se não achar o específico, tenta achar o avulso (padrão)
-  if (!tpl) tpl = templates.find(t => t.tipo === 'avulso' || !t.tipo); 
-  
-  let msgBruta = tpl ? tpl.mensagem : `Olá {nome}! 😊 Seu plano IPTV vence em {data}. Valor: R$ {valor}. Pague via Pix: {pix} — {empresa}`;
-  
-  const dt = new Date(c.data_vencimento+'T00:00:00').toLocaleDateString('pt-BR');
-  const msg = msgBruta
-    .replace(/{nome}/g, c.nome)
-    .replace(/{data}/g, dt)
-    .replace(/{valor}/g, Number(c.valor).toFixed(2))
-    .replace(/{empresa}/g, cfgEmpresa.nome || 'Sua Empresa')
-    .replace(/{pix}/g, cfgEmpresa.pix || 'Chave Pix');
-
-  dispararWhatsAppInteligente(c.telefone, msg);
-}
-
-function dispararWhatsAppInteligente(telefoneBase, mensagem) {
+// ========== 💬 FUNÇÃO GERAL DE WHATSAPP (SEM TRAVA) ==========
+function abrirWhatsApp(telefoneBase, mensagem) {
   const numeroLimpo = (telefoneBase || cfgEmpresa.contato || '').replace(/\D/g,'');
   if(!numeroLimpo) {
       mostrarToast('❌ Sem número', 'Este cliente não tem telefone salvo.', 'danger');
@@ -786,13 +835,7 @@ function dispararWhatsAppInteligente(telefoneBase, mensagem) {
   const foneFinal = numeroLimpo.startsWith('55') ? numeroLimpo : '55' + numeroLimpo;
   const textoEncoded = encodeURIComponent(mensagem);
   
-  let url = `https://wa.me/${foneFinal}?text=${textoEncoded}`;
-  
-  // Trava de aplicativo via Intent do Android
-  if (cfgEmpresa.wa_app === 'com.whatsapp' || cfgEmpresa.wa_app === 'com.whatsapp.w4b') {
-      url = `intent://send?phone=${foneFinal}&text=${textoEncoded}#Intent;package=${cfgEmpresa.wa_app};scheme=whatsapp;end;`;
-  }
-  
+  const url = `https://wa.me/${foneFinal}?text=${textoEncoded}`;
   window.open(url, '_blank');
 }
 
@@ -985,7 +1028,7 @@ async function renderizarVencimentos(){
       <td><span class="badge ${c._sts.classe}">${c._sts.dias === 0 ? 'HOJE' : c._sts.dias + ' dias'}</span></td>
       <td><div class="btn-group">
         <button class="btn-sm success" onclick="abrirModalRenovacao(${c.id})">✅ Renovar</button>
-        <button class="btn-sm info" onclick="enviarWhatsApp(${c.id})"><i class="fab fa-whatsapp"></i></button>
+        <button class="btn-sm info" onclick="abrirModalEnviarMsg(${c.id})"><i class="fas fa-paper-plane"></i></button>
       </div></td>
     </tr>`;
   }).join('');
@@ -998,14 +1041,12 @@ async function carregarConfiguracoes(){
     nome: cfg.nome_empresa || '', 
     contato: cfg.contato || '', 
     email: cfg.email || '', 
-    pix: cfg.chave_pix || '',
-    wa_app: cfg.wa_app || 'default'
+    pix: cfg.chave_pix || ''
   };
   document.getElementById('cfg-nome').value = cfgEmpresa.nome;
   document.getElementById('cfg-contato').value = cfgEmpresa.contato;
   document.getElementById('cfg-email').value = cfgEmpresa.email;
   document.getElementById('cfg-pix').value = cfgEmpresa.pix;
-  document.getElementById('cfg-wa-app').value = cfgEmpresa.wa_app;
 }
 
 async function salvarConfiguracoes(){
@@ -1013,15 +1054,13 @@ async function salvarConfiguracoes(){
   cfgEmpresa.contato = document.getElementById('cfg-contato').value.trim();
   cfgEmpresa.email = document.getElementById('cfg-email').value.trim();
   cfgEmpresa.pix = document.getElementById('cfg-pix').value.trim();
-  cfgEmpresa.wa_app = document.getElementById('cfg-wa-app').value;
   
   await put('config', {
     id:1, 
     nome_empresa: cfgEmpresa.nome, 
     contato: cfgEmpresa.contato, 
     email: cfgEmpresa.email, 
-    chave_pix: cfgEmpresa.pix,
-    wa_app: cfgEmpresa.wa_app
+    chave_pix: cfgEmpresa.pix
   });
   mostrarToast('✅ Salvo!', 'Configurações atualizadas', 'success');
 }
@@ -1094,7 +1133,7 @@ async function importarBackup(e){
   const texto = await f.text();
   try {
     const d = JSON.parse(texto);
-    if(d.configuracoes) await put('config', {id:1, nome_empresa:d.configuracoes.nome, contato:d.configuracoes.contato, email:d.configuracoes.email, chave_pix:d.configuracoes.pix, wa_app:d.configuracoes.wa_app});
+    if(d.configuracoes) await put('config', {id:1, nome_empresa:d.configuracoes.nome, contato:d.configuracoes.contato, email:d.configuracoes.email, chave_pix:d.configuracoes.pix});
     if(d.notif_config) await put('notif_config', {id:1, ...d.notif_config});
     if(d.planos) for(const p of d.planos) { delete p.id; await put('planos', p); }
     if(d.templates) for(const t of d.templates) { delete t.id; await put('templates', t); }

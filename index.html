@@ -80,7 +80,7 @@
     .nav-item.active { color: var(--primary); }
     .nav-item.active .icon-box { background: var(--primary); color: #fff; box-shadow: 0 4px 10px rgba(41,98,255,0.3); }
     
-    /* Botão Central (Agora é Planos) */
+    /* Botão Central */
     .nav-item.btn-cadastrar { color: var(--text-dark); }
     .nav-item.btn-cadastrar .icon-box { background: #f1f5f9; color: var(--text-dark); font-size: 20px; }
 
@@ -181,7 +181,7 @@
     .modal-header h3 { font-size: 18px; font-weight: 700; }
     .close-btn { background: none; border: none; font-size: 24px; color: var(--text-muted); cursor: pointer; }
 
-    /* TOAST CORRIGIDO */
+    /* TOAST */
     .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #334155; color: #fff; padding: 12px 24px; border-radius: 30px; font-weight: 600; font-size: 14px; box-shadow: var(--shadow-md); z-index: 9999; opacity: 0; transition: 0.4s ease; text-align: center; white-space: nowrap; pointer-events: none; }
     .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
@@ -787,23 +787,45 @@ async function salvarNotifConfig(){
   await put('notif_config', {id:1, horarios:cfgNotif.horarios}); await recalcularNotificacoesGlobal(); mostrarToast('✅ Horários Atualizados!');
 }
 
+// AQUI ESTÁ A CORREÇÃO: CRIAÇÃO DO CANAL (CHANNEL) REQUERIDA PELO ANDROID 8.0+
 async function solicitarPermissaoNotif() {
-  if ('Notification' in window) { const p = await Notification.requestPermission(); if(p==='granted') mostrarToast('Notificações Web ativadas!'); }
-  if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications) { await window.Capacitor.Plugins.LocalNotifications.requestPermissions(); mostrarToast('Alertas Mobile ativados!'); }
+  if ('Notification' in window) { 
+    const p = await Notification.requestPermission(); 
+    if(p === 'granted') mostrarToast('Notificações Web ativadas!'); 
+  }
+  
+  if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications) { 
+    const LocalNotifications = window.Capacitor.Plugins.LocalNotifications;
+    await LocalNotifications.requestPermissions(); 
+    
+    try {
+      await LocalNotifications.createChannel({ 
+        id: 'alertas_gestor', 
+        name: 'Alertas do Gestor', 
+        description: 'Notificações de vencimento de clientes',
+        importance: 5, // Importância MÁXIMA (Toca som e aparece na tela)
+        visibility: 1, // Público
+        vibration: true
+      });
+      mostrarToast('✅ Alertas Mobile ativados no Android!'); 
+    } catch(e) {
+      console.log("Erro ao criar canal: ", e);
+    }
+  }
 }
 
 async function dispararNotificacao() {
   if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications) {
-      window.Capacitor.Plugins.LocalNotifications.schedule({
+      await window.Capacitor.Plugins.LocalNotifications.schedule({
         notifications: [{ 
           id: 999, 
           title: '📆 Teste de Sistema', 
           body: 'As notificações nativas do Android estão funcionando!', 
-          schedule: { at: new Date(Date.now() + 1500), allowWhileIdle: true }, 
+          schedule: { at: new Date(Date.now() + 1500), allowWhileIdle: true }, // allowWhileIdle é o que faz tocar com a tela apagada
           channelId: 'alertas_gestor' 
         }]
       });
-      mostrarToast('🔔 Alerta enviado! Puxe a barra de notificações.');
+      mostrarToast('🔔 Alerta enviado! Aguarde 1 segundo...');
   } else {
       mostrarToast('❌ Capacitor inativo. Gere o APK para testar.');
   }
@@ -873,8 +895,8 @@ async function recalcularNotificacoesGlobal() {
                       id: idAlarme++,
                       title: tTitulo,
                       body: tCorpo,
-                      schedule: { at: toque, allowWhileIdle: true },
-                      channelId: 'alertas_gestor'
+                      schedule: { at: toque, allowWhileIdle: true }, // Permite tocar em background
+                      channelId: 'alertas_gestor' // Essencial referenciar o canal criado!
                   });
               }
           }

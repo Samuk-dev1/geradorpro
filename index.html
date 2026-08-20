@@ -9,24 +9,44 @@
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
     :root {
+      /* CORES MODO CLARO */
       --bg-body: #f4f6f9;
       --bg-card: #ffffff;
       --primary: #2962ff;
-      --secondary: #a000ff;
-      --gradient-header: linear-gradient(135deg, #1b63ff 0%, #a230ff 100%);
+      --secondary: #00d2ff;
+      /* Novo gradiente Azul Neon/Brilhante */
+      --gradient-header: linear-gradient(135deg, #0022ff 0%, #00e1ff 100%);
       --success: #10b981;
       --warning: #f59e0b;
       --danger: #ef4444;
       --text-dark: #1e293b;
       --text-muted: #64748b;
       --border: #e2e8f0;
+      
+      --bg-input: #f8fafc;
+      --bg-nav: #ffffff;
+      --bg-nav-center: #f1f5f9;
+      
       --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
       --shadow-md: 0 8px 16px rgba(0,0,0,0.08);
       --shadow-nav: 0 10px 30px rgba(0,0,0,0.12);
     }
 
+    /* CORES MODO ESCURO (Dark Mode) */
+    body.dark-theme {
+      --bg-body: #0f172a;
+      --bg-card: #1e293b;
+      --text-dark: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #334155;
+      
+      --bg-input: #0f172a;
+      --bg-nav: #1e293b;
+      --bg-nav-center: #334155;
+    }
+
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
-    body { background-color: var(--bg-body); color: var(--text-dark); min-height: 100vh; overflow-x: hidden; }
+    body { background-color: var(--bg-body); color: var(--text-dark); min-height: 100vh; overflow-x: hidden; transition: background-color 0.3s ease; }
 
     /* CABEÇALHO GRADIENTE TOP */
     .top-header-area {
@@ -40,7 +60,8 @@
     .header-title-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
     .header-title-row h1 { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
     .header-title-row p { font-size: 11px; font-weight: 400; opacity: 0.9; margin-top: 2px; }
-    .theme-toggle { background: rgba(0,0,0,0.2); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+    .theme-toggle { background: rgba(0,0,0,0.2); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
+    .theme-toggle:active { transform: scale(0.9); }
 
     /* MÉTRICAS */
     .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -59,11 +80,12 @@
     /* NAVEGAÇÃO FLUTUANTE */
     .floating-nav-container {
       position: absolute; left: 20px; right: 20px; bottom: -35px;
-      background: #fff; border-radius: 40px;
+      background: var(--bg-nav); border-radius: 40px;
       box-shadow: var(--shadow-nav);
       display: flex; justify-content: space-between; align-items: center;
       padding: 10px 15px;
       z-index: 100;
+      transition: background-color 0.3s;
     }
     .nav-item {
       display: flex; flex-direction: column; align-items: center; gap: 4px;
@@ -82,7 +104,7 @@
     
     /* Botão Central */
     .nav-item.btn-cadastrar { color: var(--text-dark); }
-    .nav-item.btn-cadastrar .icon-box { background: #f1f5f9; color: var(--text-dark); font-size: 20px; }
+    .nav-item.btn-cadastrar .icon-box { background: var(--bg-nav-center); color: var(--text-dark); font-size: 20px; }
 
     /* ÁREA DE CONTEÚDO */
     .main-content { padding: 60px 16px 20px 16px; }
@@ -94,18 +116,18 @@
     .filter-row { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
     .filter-row::-webkit-scrollbar { display: none; }
     .filter-btn {
-      background: #fff; border: 1px solid var(--border); color: var(--text-muted);
+      background: var(--bg-card); border: 1px solid var(--border); color: var(--text-muted);
       padding: 10px 14px; border-radius: 6px; font-size: 13px; font-weight: 600;
       white-space: nowrap; cursor: pointer; box-shadow: var(--shadow-sm); transition: 0.2s;
     }
-    .filter-btn.active { border-color: var(--text-dark); color: var(--text-dark); background: #f8fafc; }
+    .filter-btn.active { border-color: var(--primary); color: var(--primary); background: var(--bg-input); }
 
     /* CARTÕES DE CLIENTES */
     .list-container { display: flex; flex-direction: column; gap: 16px; }
     .cliente-card {
       background: var(--bg-card); border-radius: 16px;
       box-shadow: var(--shadow-md); position: relative; overflow: hidden;
-      padding: 16px 16px 12px 20px;
+      padding: 16px 16px 12px 20px; transition: background-color 0.3s;
     }
     .cliente-card::before {
       content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px;
@@ -126,9 +148,10 @@
     
     .card-actions { display: flex; gap: 8px; margin-top: 16px; }
     .btn-action {
-      flex: 1; background: #fff; border: 1px solid var(--border); border-radius: 6px;
+      flex: 1; background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px;
       padding: 8px 0; font-size: 12px; font-weight: 600; color: var(--text-dark);
       display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; box-shadow: var(--shadow-sm);
+      transition: 0.2s;
     }
     .btn-action.trash { flex: none; width: 44px; background: #e74c3c; border-color: #c0392b; color: #fff; }
     .btn-action i.fa-dollar-sign { color: var(--warning); }
@@ -136,22 +159,22 @@
     .btn-action i.fa-sync { color: var(--primary); }
 
     /* DASHBOARD WIDGETS */
-    .widget-box { background: var(--bg-card); border-radius: 16px; padding: 16px; box-shadow: var(--shadow-sm); margin-bottom: 16px; }
+    .widget-box { background: var(--bg-card); border-radius: 16px; padding: 16px; box-shadow: var(--shadow-sm); margin-bottom: 16px; transition: background-color 0.3s; }
     .widget-header { display: flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 700; margin-bottom: 16px; color: var(--text-dark); }
     .empty-state { text-align: center; color: var(--text-muted); font-size: 14px; padding: 20px 0; }
 
     /* TELA DE COBRANÇA E CONFIGURAÇÕES */
-    .panel-box { background: var(--bg-card); border-radius: 16px; padding: 20px; box-shadow: var(--shadow-md); margin-bottom: 20px; }
+    .panel-box { background: var(--bg-card); border-radius: 16px; padding: 20px; box-shadow: var(--shadow-md); margin-bottom: 20px; transition: background-color 0.3s; }
     .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
     .panel-header h3 { font-size: 16px; font-weight: 700; color: var(--text-dark); display: flex; align-items: center; gap: 8px; }
     
     .form-group { margin-bottom: 16px; }
     .form-group label { display: block; font-size: 13px; color: var(--text-muted); font-weight: 600; margin-bottom: 6px; }
     input, select, textarea {
-      width: 100%; padding: 12px 14px; background: #f8fafc; border: 1px solid var(--border);
+      width: 100%; padding: 12px 14px; background: var(--bg-input); border: 1px solid var(--border);
       border-radius: 10px; font-size: 14px; color: var(--text-dark); outline: none; transition: 0.2s;
     }
-    input:focus, select:focus, textarea:focus { border-color: var(--primary); background: #fff; }
+    input:focus, select:focus, textarea:focus { border-color: var(--primary); }
 
     /* CHAVINHA iOS */
     .switch { position: relative; display: inline-block; width: 48px; height: 26px; }
@@ -174,12 +197,14 @@
     }
 
     /* MODAIS */
-    .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
+    .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
     .modal.open { display: flex; animation: fadeIn 0.2s ease; }
-    .modal-content { background: var(--bg-card); border-radius: 20px; padding: 24px; width: 100%; max-width: 400px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+    .modal-content { background: var(--bg-card); border-radius: 20px; padding: 24px; width: 100%; max-width: 400px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.3); transition: background-color 0.3s; }
     .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    .modal-header h3 { font-size: 18px; font-weight: 700; }
+    .modal-header h3 { font-size: 18px; font-weight: 700; color: var(--text-dark); }
     .close-btn { background: none; border: none; font-size: 24px; color: var(--text-muted); cursor: pointer; }
+
+    #renov-info { font-size: 14px; color: var(--text-dark); margin-bottom: 15px; background: var(--bg-input); padding: 12px; border-radius: 8px; text-align: center; border: 1px solid var(--border); }
 
     /* TOAST CORRIGIDO */
     .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #334155; color: #fff; padding: 12px 24px; border-radius: 30px; font-weight: 600; font-size: 14px; box-shadow: var(--shadow-md); z-index: 9999; opacity: 0; transition: 0.4s ease; text-align: center; white-space: nowrap; pointer-events: none; }
@@ -187,7 +212,7 @@
 
     /* AJUSTE PARA BUSCA */
     .search-bar { display: flex; gap: 8px; flex: 1; }
-    .search-bar input { flex: 1; border-radius: 12px; padding: 10px 16px; background: #fff; }
+    .search-bar input { flex: 1; border-radius: 12px; padding: 10px 16px; }
   </style>
 </head>
 <body>
@@ -198,9 +223,10 @@
       <div>
         <!-- O Nome aqui agora tem um ID para mudar dinamicamente -->
         <h1><i class="fas fa-tv"></i> <span id="header-empresa-nome">Gestor IPTV</span></h1>
-        <p>Gestão profissional | Cobrança automática</p>
+        <p>Gestão profissional | Cobrança Manual</p>
       </div>
-      <div class="theme-toggle"><i class="fas fa-moon"></i></div>
+      <!-- BOTÃO DE DARK/LIGHT MODE -->
+      <div class="theme-toggle" onclick="toggleTheme()"><i class="fas fa-moon" id="theme-icon"></i></div>
     </div>
     
     <div class="metrics-grid">
@@ -221,8 +247,9 @@
       <div class="nav-item btn-cadastrar" onclick="navegarPara('planos', this)">
         <div class="icon-box"><i class="fas fa-list-alt"></i></div><span>Planos</span>
       </div>
+      <!-- ALTERADO PARA AVIÃOZINHO E "TEMPLATES" -->
       <div class="nav-item" onclick="navegarPara('templates', this)">
-        <div class="icon-box"><i class="fas fa-hand-holding-usd"></i></div><span>Cobrança</span>
+        <div class="icon-box"><i class="fas fa-paper-plane"></i></div><span>Templates</span>
       </div>
       <div class="nav-item" onclick="navegarPara('configuracoes', this)">
         <div class="icon-box"><i class="fas fa-cog"></i></div><span>Config</span>
@@ -273,7 +300,7 @@
       <div class="list-container" id="lista-clientes"></div>
     </section>
     
-    <!-- TELA: PLANOS (NOVA TELA DEDICADA) -->
+    <!-- TELA: PLANOS -->
     <section id="screen-planos" class="screen">
       <div class="panel-box">
         <div class="panel-header">
@@ -289,7 +316,7 @@
     <section id="screen-templates" class="screen">
       <div class="panel-box">
         <div class="panel-header">
-          <h3><i class="fas fa-hand-holding-usd" style="color:var(--warning)"></i> Cobrança Automática</h3>
+          <h3><i class="fas fa-paper-plane" style="color:var(--warning)"></i> Templates de Cobrança</h3>
           <button class="btn-action" style="padding:4px 10px; font-size:11px;" onclick="abrirModalTemplate()">+ Novo</button>
         </div>
         <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">
@@ -330,13 +357,13 @@
         <div class="panel-header"><h3><i class="fas fa-cloud-download-alt" style="color:var(--success)"></i> Backup dos Dados</h3></div>
         <button class="btn-gradient" style="margin-bottom:12px;" onclick="exportarBackup()"><i class="fas fa-upload"></i> Fazer Backup / Compartilhar</button>
         <label style="font-size:13px; color:var(--text-muted); display:block; margin-bottom:8px;">Restaurar Backup (Cuidado!):</label>
-        <input type="file" id="arquivo-backup" accept=".json" onchange="importarBackup(event)" style="background:#fff;">
+        <input type="file" id="arquivo-backup" accept=".json" onchange="importarBackup(event)">
       </div>
     </section>
 
   </main>
 
-  <!-- MODAL: CLIENTE (ATUALIZADO COM SENHA, APP E EM COLUNA) -->
+  <!-- MODAL: CLIENTE -->
   <div class="modal" id="modal-cliente">
     <div class="modal-content">
       <div class="modal-header">
@@ -419,7 +446,7 @@
   <div class="modal" id="modal-enviar-msg">
     <div class="modal-content">
       <div class="modal-header">
-        <h3 style="color:var(--warning)"><i class="fas fa-comment-dollar"></i> Enviar Cobrança</h3>
+        <h3 style="color:var(--warning)"><i class="fas fa-paper-plane"></i> Enviar Template</h3>
         <button class="close-btn" onclick="fecharModal('modal-enviar-msg')">&times;</button>
       </div>
       <input type="hidden" id="msg-cli-id">
@@ -428,7 +455,7 @@
         <select id="msg-template-select" onchange="atualizarPreviewMensagem()"></select>
       </div>
       <div class="form-group">
-        <textarea id="msg-preview" rows="6" style="background:#fff; border-color:var(--warning)"></textarea>
+        <textarea id="msg-preview" rows="6" style="border-color:var(--warning)"></textarea>
       </div>
       <button class="btn-gradient" onclick="dispararWhatsAppManual()"><i class="fab fa-whatsapp"></i> Enviar p/ WhatsApp</button>
     </div>
@@ -442,7 +469,7 @@
         <button class="close-btn" onclick="fecharModal('modal-renovacao')">&times;</button>
       </div>
       <input type="hidden" id="renov-cli-id">
-      <p id="renov-info" style="font-size: 14px; color: var(--text-dark); margin-bottom: 15px; background: #f8fafc; padding: 12px; border-radius: 8px; text-align: center; border: 1px solid var(--border);"></p>
+      <p id="renov-info"></p>
       <div class="form-group">
         <label>Recibo (WhatsApp)</label>
         <textarea id="renov-mensagem" rows="4" style="border-color:var(--success)"></textarea>
@@ -456,6 +483,28 @@
   <div id="toast" class="toast">Mensagem de Sucesso</div>
 
 <script>
+// ========== LÓGICA DO MODO ESCURO (DARK MODE) ==========
+function toggleTheme() {
+  const isDark = document.body.classList.toggle('dark-theme');
+  const icon = document.getElementById('theme-icon');
+  if (isDark) {
+    icon.classList.replace('fa-moon', 'fa-sun');
+    localStorage.setItem('theme', 'dark');
+  } else {
+    icon.classList.replace('fa-sun', 'fa-moon');
+    localStorage.setItem('theme', 'light');
+  }
+}
+
+function loadTheme() {
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'dark') {
+    document.body.classList.add('dark-theme');
+    const icon = document.getElementById('theme-icon');
+    if(icon) icon.classList.replace('fa-moon', 'fa-sun');
+  }
+}
+
 // ========== BANCO E VARIÁVEIS GERAIS ==========
 let db;
 let cfgEmpresa = { nome: '', contato: '', email: '', pix: '' };
@@ -464,6 +513,7 @@ let filtroAtualGlobal = 'todos';
 let toastTimeout;
 
 window.onload = async () => {
+  loadTheme(); // Carrega o tema logo que abre o app
   await initBanco();
   await carregarConfiguracoes();
   await carregarNotifConfig();
@@ -533,17 +583,14 @@ function formatDataBr(dataString) {
 
 // FORMATADOR DE MAC AUTOMÁTICO
 function formatarMAC(input) {
-  // Pega apenas letras e números e transforma em maiúsculo
   let val = input.value.replace(/[^A-Fa-f0-9]/g, '').toUpperCase();
   let newVal = '';
-  // Loop para injetar os dois pontos
   for(let i = 0; i < val.length; i++) {
       if (i > 0 && i % 2 === 0) {
           newVal += ':';
       }
       newVal += val[i];
   }
-  // Aplica o valor no input cortando em 17 chars (00:00:00:00:00:00)
   input.value = newVal.substring(0, 17);
 }
 
@@ -627,7 +674,6 @@ async function renderizarClientesListagem(filtro, busca) {
     else if(c._sts.dias > 0) strDias = `${c._sts.dias} dias restantes`;
     else strDias = `Vencido há ${c._sts.dias * -1} dias`;
 
-    // Renderiza App e Senha se existirem
     let infoExtra = '';
     if (c.aplicativo) infoExtra += `<p><i class="fas fa-mobile-alt" style="color:var(--secondary)"></i> App: ${c.aplicativo}</p>`;
 
@@ -666,8 +712,8 @@ async function renderizarPlanosSelect(){
 async function renderizarPlanos(){
   const ps = await getAll('planos');
   document.getElementById('lista-planos').innerHTML = ps.map(p=>`
-    <div style="display:flex; justify-content:space-between; align-items:center; padding:12px; border:1px solid var(--border); border-radius:10px; background:#f8fafc;">
-      <div><strong style="font-size:14px;">${p.nome}</strong><br><small style="color:var(--text-muted)">R$ ${Number(p.valor).toFixed(2)} — ${p.dias} dias</small></div>
+    <div style="display:flex; justify-content:space-between; align-items:center; padding:12px; border:1px solid var(--border); border-radius:10px; background:var(--bg-input);">
+      <div><strong style="font-size:14px; color:var(--text-dark);">${p.nome}</strong><br><small style="color:var(--text-muted)">R$ ${Number(p.valor).toFixed(2)} — ${p.dias} dias</small></div>
       <button class="btn-action trash" style="width:36px; padding:6px;" onclick="excluirPlano(${p.id})"><i class="fas fa-trash-alt"></i></button>
     </div>
   `).join('');
@@ -741,7 +787,7 @@ async function abrirModalRenovacao(id) {
   const novaData = new Date(base.getFullYear(), base.getMonth() + Math.max(1, Math.round(dias/30)), base.getDate());
   
   document.getElementById('renov-cli-id').value = id;
-  document.getElementById('renov-info').innerHTML = `O plano de <b>${c.nome}</b> passará a vencer em <b>${novaData.toLocaleDateString('pt-BR')}</b>.`;
+  document.getElementById('renov-info').innerHTML = `O plano de <b>${c.nome}</b> passará a vencer em <br><b style="font-size:18px; color:var(--primary);">${novaData.toLocaleDateString('pt-BR')}</b>.`;
 
   const tpl = (await getAll('templates')).find(t => t.tipo === 'renovacao');
   let msg = tpl ? tpl.mensagem : `Olá {nome}! Assinatura renovada até {data}. Obrigado!`;
@@ -762,8 +808,6 @@ async function confirmarRenovacao(enviarZap) {
   await put('clientes', c);
   
   fecharModal('modal-renovacao'); 
-  
-  // Atualiza as telas para exibir imediatamente
   await renderizarClientes(); 
   await renderizarDashboard(); 
   await recalcularNotificacoesGlobal();
@@ -810,7 +854,7 @@ async function popularTemplatesPadrao() {
 async function renderizarTemplates() {
   const ts = await getAll('templates');
   document.getElementById('lista-templates').innerHTML = ts.map(t=>`
-    <div style="border:1px solid var(--border); border-radius:12px; padding:16px; background:#f8fafc;">
+    <div style="border:1px solid var(--border); border-radius:12px; padding:16px; background:var(--bg-input);">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
         <strong style="font-size:14px; color:var(--text-dark)">${t.nome}</strong>
         ${t.tipo !== 'avulso' ? `<label class="switch"><input type="checkbox" ${t.ativo?'checked':''} onchange="toggleTemplate(${t.id}, this.checked)"><span class="slider"></span></label>` : '<span style="font-size:11px; color:var(--text-muted)">Manual</span>'}
@@ -850,7 +894,6 @@ async function salvarConfiguracoes(){
   cfgEmpresa = { nome: document.getElementById('cfg-nome').value, contato: document.getElementById('cfg-contato').value, pix: document.getElementById('cfg-pix').value };
   await put('config', {id:1, nome_empresa:cfgEmpresa.nome, contato:cfgEmpresa.contato, chave_pix:cfgEmpresa.pix}); 
   
-  // Atualiza o título no header dinamicamente
   const headerNome = document.getElementById('header-empresa-nome');
   if(headerNome) headerNome.textContent = cfgEmpresa.nome || 'Gestor IPTV';
 
@@ -884,8 +927,8 @@ async function solicitarPermissaoNotif() {
         id: 'alertas_gestor', 
         name: 'Alertas do Gestor', 
         description: 'Notificações de vencimento de clientes',
-        importance: 5, // Importância MÁXIMA (Toca som e aparece na tela)
-        visibility: 1, // Público
+        importance: 5, 
+        visibility: 1, 
         vibration: true
       });
       mostrarToast('✅ Alertas Mobile ativados no Android!'); 
@@ -902,7 +945,7 @@ async function dispararNotificacao() {
           id: 999, 
           title: '📆 Teste de Sistema', 
           body: 'As notificações nativas do Android estão funcionando!', 
-          schedule: { at: new Date(Date.now() + 1500), allowWhileIdle: true }, // allowWhileIdle é o que faz tocar com a tela apagada
+          schedule: { at: new Date(Date.now() + 1500), allowWhileIdle: true }, 
           channelId: 'alertas_gestor' 
         }]
       });
@@ -976,8 +1019,8 @@ async function recalcularNotificacoesGlobal() {
                       id: idAlarme++,
                       title: tTitulo,
                       body: tCorpo,
-                      schedule: { at: toque, allowWhileIdle: true }, // Permite tocar em background
-                      channelId: 'alertas_gestor' // Essencial referenciar o canal criado!
+                      schedule: { at: toque, allowWhileIdle: true },
+                      channelId: 'alertas_gestor'
                   });
               }
           }

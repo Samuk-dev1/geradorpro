@@ -3,196 +3,218 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GPS Mapa Offline</title>
-    <!-- Leaflet -->
+    <title>GPS Rotas Premium</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <!-- Rotas / Caminhos -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css">
     <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
-
     <style>
-        * { margin:0; padding:0; box-sizing:border-box; font-family: system-ui, -apple-system, sans-serif; }
-        html, body { height:100%; width:100%; overflow:hidden; background:#f0f4f8; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, -apple-system, sans-serif; }
+        html, body { height: 100%; width: 100%; overflow: hidden; background: #f0f4f8; }
 
         /* Tela de Permissões */
         .perm-screen {
-            position:fixed; inset:0; background:linear-gradient(135deg,#2563eb 0%,#1e40af 100%); z-index:9999;
-            display:flex; flex-direction:column; align-items:center; justify-content:center; padding:32px; text-align:center;
+            position: fixed; inset: 0; background: linear-gradient(180deg, #2563eb 0%, #1e40af 100%);
+            z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 40px 24px; text-align: center;
         }
-        .perm-screen h2 { color:#fff; font-size:24px; margin-bottom:16px; }
-        .perm-screen p { color:#dbeafe; font-size:15px; margin-bottom:32px; line-height:1.7; max-width:340px; }
+        .perm-screen h1 { color: #fff; font-size: 28px; margin-bottom: 16px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .perm-screen p { color: #dbeafe; font-size: 16px; line-height: 1.8; max-width: 340px; margin-bottom: 40px; }
         .perm-btn {
-            background:#fff; color:#2563eb; border:none; padding:15px 40px; border-radius:14px;
-            font-size:17px; font-weight:700; cursor:pointer; width:100%; max-width:300px;
-            box-shadow:0 4px 14px rgba(0,0,0,.15); transition:transform .2s;
+            background: #fff; color: #2563eb; border: none; padding: 16px 48px; border-radius: 50px;
+            font-size: 17px; font-weight: 700; cursor: pointer; width: 100%; max-width: 280px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2); transition: all 0.3s;
         }
-        .perm-btn:active { transform:scale(.97); }
-        .perm-screen.hidden { display:none; }
+        .perm-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(0,0,0,0.25); }
+        .perm-btn:active { transform: translateY(0); }
+        .perm-screen.hidden { display: none; }
 
         /* Cabeçalho */
         .header {
-            position:fixed; top:0; left:0; right:0; height:64px;
-            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-            color:white; display:flex; align-items:center; justify-content:space-between;
-            padding:0 16px; z-index:1000; box-shadow:0 3px 10px rgba(0,0,0,.15);
+            position: fixed; top: 0; left: 0; right: 0; height: 60px;
+            background: #fff; display: flex; align-items: center; justify-content: space-between;
+            padding: 0 16px; z-index: 1000;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            backdrop-filter: blur(10px);
         }
-        .header h1 { font-size:17px; font-weight:700; display:flex; align-items:center; gap:8px; }
-        .status { display:flex; gap:8px; align-items:center; }
-        .status-badge { padding:5px 12px; border-radius:20px; font-size:12px; font-weight:600; }
-        .online { background:#10b981; }
-        .offline { background:#ef4444; }
+        .header-title { font-size: 19px; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 10px; }
+        .status-badge { padding: 6px 14px; border-radius: 50px; font-size: 12px; font-weight: 600; }
+        .online { background: linear-gradient(135deg, #10b981, #059669); color: #fff; }
+        .offline { background: linear-gradient(135deg, #ef4444, #dc2626); color: #fff; }
 
         /* Barra de Busca */
-        .search-bar {
-            position:fixed; top:72px; left:12px; right:12px; z-index:950;
-            background:white; border-radius:14px; padding:10px 14px;
-            box-shadow:0 4px 14px rgba(0,0,0,.12); display:flex; gap:10px; align-items:center;
+        .search-container {
+            position: fixed; top: 72px; left: 16px; right: 16px; z-index: 950;
+            background: #fff; border-radius: 16px; padding: 6px 6px 6px 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.12); display: flex; align-items: center; gap: 10px;
+            transition: all 0.3s;
         }
-        .search-input { flex:1; border:none; outline:none; font-size:15px; padding:8px 4px; color:#1f2937; }
-        .search-input::placeholder { color:#9ca3af; }
-        .search-btn, .clear-btn { border:none; background:none; font-size:20px; cursor:pointer; padding:4px; }
+        .search-container:focus-within { box-shadow: 0 6px 24px rgba(37,99,235,0.2); }
+        .search-input { flex: 1; border: none; outline: none; font-size: 15px; padding: 12px 0; color: #1e293b; background: transparent; }
+        .search-input::placeholder { color: #94a3b8; }
+        .search-btn {
+            width: 44px; height: 44px; border-radius: 12px; border: none;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; font-size: 20px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+        }
         .search-results {
-            position:fixed; top:130px; left:12px; right:12px; background:white; border-radius:12px;
-            box-shadow:0 6px 20px rgba(0,0,0,.15); z-index:960; max-height:280px; overflow-y:auto; display:none;
+            position: fixed; top: 135px; left: 16px; right: 16px; background: #fff; border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15); z-index: 960; max-height: 320px; overflow-y: auto; display: none;
         }
-        .search-results.show { display:block; }
-        .search-item { padding:14px 16px; border-bottom:1px solid #f3f4f6; cursor:pointer; transition:background .2s; }
-        .search-item:hover { background:#eff6ff; }
-        .search-item:last-child { border:none; }
-        .search-item .tit { font-weight:600; color:#1f2937; font-size:14px; }
-        .search-item .sub { font-size:12px; color:#6b7280; margin-top:2px; }
+        .search-results.show { display: block; }
+        .search-item { padding: 16px 20px; border-bottom: 1px solid #f1f5f9; cursor: pointer; transition: all 0.2s; }
+        .search-item:hover { background: #eff6ff; padding-left: 24px; }
+        .search-item:last-child { border: none; }
+        .search-name { font-weight: 600; color: #1e293b; font-size: 15px; }
+        .search-addr { font-size: 13px; color: #64748b; margin-top: 4px; }
 
         /* Mapa */
-        #map { position:absolute; top:64px; left:0; right:0; bottom:90px; }
+        #map { position: absolute; top: 60px; left: 0; right: 0; bottom: 85px; }
 
-        /* Controles de Zoom */
-        .zoom-controls {
-            position:fixed; right:14px; top:140px; z-index:900; display:flex; flex-direction:column; gap:6px;
+        /* Controles Lado Direito */
+        .map-controls {
+            position: fixed; right: 16px; top: 160px; z-index: 900; display: flex; flex-direction: column; gap: 10px;
         }
-        .zoom-btn { width:44px; height:44px; border:none; background:white; border-radius:10px; font-size:22px; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,.15); color:#374151; font-weight:600; }
-        .zoom-btn:hover { background:#eff6ff; color:#2563eb; }
+        .ctrl-btn {
+            width: 52px; height: 52px; border-radius: 16px; border: none; background: #fff;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12); font-size: 22px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; color: #475569; transition: all 0.2s;
+        }
+        .ctrl-btn:hover { background: #eff6ff; color: #2563eb; transform: scale(1.05); }
+        .ctrl-btn.active { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; box-shadow: 0 4px 16px rgba(37,99,235,0.4); }
 
-        /* Painel de Direções */
-        .directions-panel {
-            position:fixed; bottom:95px; left:12px; right:12px; background:white; border-radius:14px;
-            box-shadow:0 -4px 20px rgba(0,0,0,.15); z-index:900; max-height:220px; overflow-y:auto; display:none;
+        /* Painel de Rota */
+        .route-panel {
+            position: fixed; bottom: 95px; left: 12px; right: 12px; background: #fff; border-radius: 20px;
+            box-shadow: 0 -8px 32px rgba(0,0,0,0.15); z-index: 900; max-height: 280px; overflow: hidden; display: none; flex-direction: column;
         }
-        .directions-panel.show { display:block; }
-        .dir-header { padding:12px 16px; background:#2563eb; color:white; font-weight:600; display:flex; justify-content:space-between; align-items:center; border-radius:14px 14px 0 0; }
-        .dir-close { background:none; border:none; color:white; font-size:20px; cursor:pointer; }
-        .dir-content { padding:14px; font-size:14px; line-height:1.8; }
-        .dir-step { padding:8px 0; border-bottom:1px solid #f3f4f6; display:flex; gap:10px; align-items:flex-start; }
-        .dir-step:last-child { border:none; }
-        .dir-icon { font-size:18px; }
+        .route-panel.show { display: flex; }
+        .route-header {
+            padding: 16px 20px; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; display: flex; justify-content: space-between; align-items: center;
+        }
+        .route-info { display: flex; gap: 24px; font-size: 15px; font-weight: 600; }
+        .route-close { background: none; border: none; color: #fff; font-size: 24px; cursor: pointer; opacity: 0.8; transition: opacity 0.2s; }
+        .route-close:hover { opacity: 1; }
+        .route-steps { padding: 16px 20px; overflow-y: auto; flex: 1; background: #fafbfc; }
+        .step-item { display: flex; gap: 14px; padding: 12px 0; border-bottom: 1px solid #e2e8f0; align-items: flex-start; }
+        .step-item:last-child { border: none; }
+        .step-icon { font-size: 22px; min-width: 32px; text-align: center; }
+        .step-text { font-size: 14px; color: #334155; line-height: 1.6; }
 
         /* Barra Inferior */
-        .footer {
-            position:fixed; bottom:0; left:0; right:0; height:85px;
-            background:white; display:flex; align-items:center; justify-content:space-around;
-            box-shadow:0 -3px 15px rgba(0,0,0,.1); z-index:999; padding:8px 6px;
+        .bottom-bar {
+            position: fixed; bottom: 0; left: 0; right: 0; height: 85px; background: #fff;
+            display: flex; align-items: center; justify-content: space-around; padding: 0 12px;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.08); z-index: 999;
         }
-        .btn {
-            display:flex; flex-direction:column; align-items:center; gap:3px;
-            background:none; border:none; color:#4b5563; font-size:11px; cursor:pointer;
-            padding:8px 10px; border-radius:12px; transition:all .2s;
+        .nav-btn {
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
+            background: none; border: none; color: #64748b; cursor: pointer; padding: 10px 14px; border-radius: 14px; transition: all 0.2s;
         }
-        .btn:hover { background:#eff6ff; color:#2563eb; }
-        .btn.primary { background:linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color:white; box-shadow:0 3px 10px rgba(37,99,235,.3); }
-        .btn.primary:hover { background:#1d4ed8; }
-        .btn-icon { font-size:22px; }
+        .nav-btn:hover { background: #eff6ff; color: #2563eb; }
+        .nav-btn.main {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; width: 64px; height: 64px; border-radius: 50%;
+            margin-top: -24px; box-shadow: 0 6px 20px rgba(37,99,235,0.4);
+        }
+        .nav-btn.main:hover { transform: scale(1.1); }
+        .nav-icon { font-size: 24px; }
+        .nav-label { font-size: 12px; font-weight: 600; }
 
-        /* Toast */
+        /* Aviso */
         .toast {
-            position:fixed; bottom:100px; left:50%; transform:translateX(-50%);
-            background:rgba(17,24,39,.9); color:white; padding:12px 24px;
-            border-radius:10px; font-size:14px; z-index:2000; opacity:0;
-            transition:opacity .3s; pointer-events:none; max-width:90%; text-align:center;
+            position: fixed; bottom: 110px; left: 50%; transform: translateX(-50%);
+            background: rgba(15,23,42,0.9); color: #fff; padding: 14px 28px; border-radius: 50px;
+            font-size: 14px; z-index: 2000; opacity: 0; transition: all 0.3s; pointer-events: none;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
         }
-        .toast.show { opacity:1; }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(-5px); }
+
+        /* Melhorias no mapa */
+        .leaflet-container { background: #e2e8f0 !important; }
     </style>
 </head>
 <body>
 
 <!-- Tela de Permissões -->
 <div id="permScreen" class="perm-screen">
-    <h2>📍 Permissões Necessárias</h2>
-    <p>Esse app precisa de acesso à sua localização para mostrar sua posição e traçar rotas, além de permissão para salvar mapas e enviar avisos. Toque abaixo e permita tudo quando o celular pedir, tá bom?</p>
-    <button id="btnGrantPerm" class="perm-btn">✅ Permitir Acesso</button>
+    <h1>📍 GPS Rotas Premium</h1>
+    <p>Para funcionar corretamente, preciso de acesso à sua localização, salvar mapas e enviar avisos. Permita tudo quando o celular pedir, tá bom?</p>
+    <button id="btnGrantPerm" class="perm-btn">Começar a Usar</button>
 </div>
 
 <!-- Cabeçalho -->
 <div class="header">
-    <h1>🗺️ GPS Rotas Offline</h1>
-    <div class="status">
-        <span id="netBadge" class="status-badge offline">Sem Internet</span>
-    </div>
+    <span class="header-title">🗺️ GPS Rotas Premium</span>
+    <span id="netBadge" class="status-badge offline">Sem internet</span>
 </div>
 
-<!-- Barra de Busca -->
-<div class="search-bar">
-    <span>🔍</span>
-    <input id="searchInput" class="search-input" placeholder="Buscar por nome, endereço ou CEP...">
-    <button id="searchBtn" class="search-btn">➡️</button>
-    <button id="clearSearch" class="clear-btn" style="display:none;">✕</button>
+<!-- Busca -->
+<div class="search-container">
+    <span style="font-size:20px; color:#94a3b8;">🔍</span>
+    <input id="searchInput" class="search-input" placeholder="Buscar lugar, endereço ou CEP...">
+    <button id="searchBtn" class="search-btn">➜</button>
 </div>
 <div id="searchResults" class="search-results"></div>
 
-<!-- Controles de Zoom -->
-<div class="zoom-controls">
-    <button class="zoom-btn" id="zoomIn">+</button>
-    <button class="zoom-btn" id="zoomOut">−</button>
+<!-- Controles do Mapa -->
+<div class="map-controls">
+    <button class="ctrl-btn" id="zoomIn">+</button>
+    <button class="ctrl-btn" id="zoomOut">−</button>
+    <button class="ctrl-btn active" id="btnFollow" title="Seguir minha posição">🎯</button>
 </div>
 
 <!-- Mapa -->
 <div id="map"></div>
 
-<!-- Painel de Direções -->
-<div id="directionsPanel" class="directions-panel">
-    <div class="dir-header">
-        <span>🛣️ Rota</span>
-        <button class="dir-close" id="closeDir">✕</button>
+<!-- Painel de Rota -->
+<div id="routePanel" class="route-panel">
+    <div class="route-header">
+        <div class="route-info">
+            <span id="routeDist">-- km</span>
+            <span id="routeTime">-- min</span>
+        </div>
+        <button class="route-close" id="closeRoute">✕</button>
     </div>
-    <div id="dirContent" class="dir-content"></div>
+    <div id="routeSteps" class="route-steps"></div>
 </div>
 
 <!-- Barra Inferior -->
-<div class="footer">
-    <button class="btn primary" id="btnLoc">
-        <span class="btn-icon">📍</span>
-        <span>Minha Posição</span>
+<div class="bottom-bar">
+    <button class="nav-btn" id="btnSave">
+        <span class="nav-icon">💾</span>
+        <span class="nav-label">Salvar</span>
     </button>
-    <button class="btn" id="btnRoute">
-        <span class="btn-icon">🛣️</span>
-        <span>Nova Rota</span>
+    <button class="nav-btn" id="btnVoice">
+        <span class="nav-icon">🔊</span>
+        <span class="nav-label">Voz</span>
     </button>
-    <button class="btn" id="btnSave">
-        <span class="btn-icon">💾</span>
-        <span>Salvar Mapa</span>
+    <button class="nav-btn main" id="btnLoc">
+        <span class="nav-icon">📍</span>
+        <span class="nav-label">Ir</span>
     </button>
-    <button class="btn" id="btnVoice">
-        <span class="btn-icon">🔊</span>
-        <span>Voz</span>
+    <button class="nav-btn" id="btnShare">
+        <span class="nav-icon">↗️</span>
+        <span class="nav-label">Enviar</span>
     </button>
-    <button class="btn" id="btnShare">
-        <span class="btn-icon">↗️</span>
-        <span>Compartilhar</span>
+    <button class="nav-btn" id="btnClear">
+        <span class="nav-icon">🗑️</span>
+        <span class="nav-label">Limpar</span>
     </button>
 </div>
 
 <div id="toast" class="toast"></div>
 
 <script>
-const CACHE_NAME = 'mapa-offline-v2';
 let map, marker, tilesCache = {}, lastPosition = null;
 let routingControl = null;
+let followMode = true;
 let voiceEnabled = true;
-let routeSteps = [];
+let watchId = null;
 
 // ========== PERMISSÕES ==========
 async function checkAndRequestPermissions() {
     const isFirstTime = await isFirstLaunch();
-    if(!isFirstTime) {
+    if (!isFirstTime) {
         document.getElementById('permScreen').classList.add('hidden');
         initApp();
         return;
@@ -202,13 +224,13 @@ async function checkAndRequestPermissions() {
         await markPermissionsDone();
         document.getElementById('permScreen').classList.add('hidden');
         initApp();
-        showToast('✅ Permissões concedidas! Tudo pronto!');
+        showToast('✅ Tudo pronto! Bem-vindo!');
     });
 }
 
 async function isFirstLaunch() {
     try {
-        if(window.Capacitor?.Plugins?.Preferences) {
+        if (window.Capacitor?.Plugins?.Preferences) {
             const { value } = await window.Capacitor.Plugins.Preferences.get({ key: 'permSetupDone' });
             return value !== 'yes';
         }
@@ -218,18 +240,18 @@ async function isFirstLaunch() {
 
 async function markPermissionsDone() {
     try {
-        if(window.Capacitor?.Plugins?.Preferences) {
+        if (window.Capacitor?.Plugins?.Preferences) {
             await window.Capacitor.Plugins.Preferences.set({ key: 'permSetupDone', value: 'yes' });
         } else { localStorage.setItem('permSetupDone', 'yes'); }
     } catch {}
 }
 
 async function requestAllPermissions() {
-    if(!window.Capacitor?.Plugins) return;
+    if (!window.Capacitor?.Plugins) return;
     const { Geolocation, LocalNotifications, Filesystem } = window.Capacitor.Plugins;
-    try { await Geolocation.requestPermissions(); } catch(e){}
-    try { await LocalNotifications.requestPermissions(); } catch(e){}
-    try { await Filesystem.requestPermissions(); } catch(e){}
+    try { await Geolocation.requestPermissions(); } catch {}
+    try { await LocalNotifications.requestPermissions(); } catch {}
+    try { await Filesystem.requestPermissions(); } catch {}
 }
 
 // ========== INICIALIZA ==========
@@ -237,94 +259,140 @@ function initApp() {
     initMap();
     updateNetStatus();
     loadCachedTiles();
+    startTrackingPosition();
     setupSearch();
-    setupZoom();
-    window.addEventListener('online', ()=>{ updateNetStatus(); showToast('✅ Conectado à internet'); });
-    window.addEventListener('offline', ()=>{ updateNetStatus(); showToast('⚠️ Sem internet — usando mapa salvo'); });
+    setupControls();
+    window.addEventListener('online', () => { updateNetStatus(); showToast('✅ Conectado à internet!'); });
+    window.addEventListener('offline', () => { updateNetStatus(); showToast('⚠️ Sem internet — usando mapa salvo!'); });
 }
 
-// ========== MAPA ==========
+// ========== MAPA ESTILIZADO — AQUI É ONDE FICA BONITO 🎨 ==========
 function initMap() {
-    map = L.map('map', { zoomControl:false }).setView([-14.85, -39.55], 13);
-    const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap', maxZoom: 19, crossOrigin: true
+    map = L.map('map', { zoomControl: false, attributionControl: false }).setView([-14.85, -39.55], 15);
+
+    // 🎨 MAPA ESTILIZADO — MUITO MAIS BONITO E DETALHADO!
+    // Ruas, bairros, áreas verdes, construções, águas — tudo colorido e destacado
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '© CARTO, © OpenStreetMap',
+        maxZoom: 19,
+        crossOrigin: true
     }).addTo(map);
-    osmLayer.on('tileload', (e) => {
-        tilesCache[e.tile.src] = { url:e.tile.src, timestamp:Date.now() };
-        saveTilesToStorage();
+
+    // Salva blocos do mapa automaticamente
+    map.on('tileload', (e) => {
+        if (e.tile && e.tile.src) {
+            tilesCache[e.tile.src] = { url: e.tile.src, timestamp: Date.now() };
+            saveTilesToStorage();
+        }
     });
+
     loadCachedTiles();
 }
 
 function saveTilesToStorage() {
     try {
-        if(window.Capacitor?.Plugins?.Preferences) {
-            window.Capacitor.Plugins.Preferences.set({ key:'savedMapTiles', value:JSON.stringify(tilesCache) });
+        if (window.Capacitor?.Plugins?.Preferences) {
+            window.Capacitor.Plugins.Preferences.set({ key: 'savedMapTiles', value: JSON.stringify(tilesCache) });
         } else { localStorage.setItem('savedMapTiles', JSON.stringify(tilesCache)); }
     } catch { localStorage.setItem('savedMapTiles', JSON.stringify(tilesCache)); }
 }
 
 function loadCachedTiles() {
     try {
-        if(window.Capacitor?.Plugins?.Preferences) {
-            window.Capacitor.Plugins.Preferences.get({ key:'savedMapTiles' }).then(r=>{ if(r.value) tilesCache = JSON.parse(r.value); });
-        } else { const s = localStorage.getItem('savedMapTiles'); if(s) tilesCache = JSON.parse(s); }
-    } catch { const s = localStorage.getItem('savedMapTiles'); if(s) tilesCache = JSON.parse(s); }
+        if (window.Capacitor?.Plugins?.Preferences) {
+            window.Capacitor.Plugins.Preferences.get({ key: 'savedMapTiles' }).then(r => { if (r.value) tilesCache = JSON.parse(r.value); });
+        } else { const s = localStorage.getItem('savedMapTiles'); if (s) tilesCache = JSON.parse(s); }
+    } catch { const s = localStorage.getItem('savedMapTiles'); if (s) tilesCache = JSON.parse(s); }
 }
 
 async function saveMapArea() {
     showToast('💾 Salvando mapa...');
     saveTilesToStorage();
-    await sendNotification('Mapa Salvo ✅', 'A área do mapa está disponível sem internet!');
+    await sendNotification('Mapa Salvo ✅', 'A área do mapa foi salva e está disponível sem internet!');
     showToast('✅ Mapa salvo! Funciona sem internet!');
 }
 
-// ========== BUSCA POR NOME / CEP ==========
+// ========== RASTREAMENTO — MAPA SEGUE VOCÊ 🎯 ==========
+function startTrackingPosition() {
+    if (!navigator.geolocation) return;
+
+    const updatePosition = (pos) => {
+        lastPosition = pos.coords;
+        showPosition(pos.coords);
+        if (followMode) {
+            map.panTo([pos.coords.latitude, pos.coords.longitude], { animate: true, duration: 0.6 });
+        }
+    };
+
+    const handleError = (err) => console.warn('Erro GPS:', err);
+
+    if (window.Capacitor?.Plugins?.Geolocation) {
+        window.Capacitor.Plugins.Geolocation.watchPosition(
+            { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 },
+            updatePosition
+        );
+    } else {
+        watchId = navigator.geolocation.watchPosition(updatePosition, handleError, {
+            enableHighAccuracy: true, timeout: 5000, maximumAge: 0
+        });
+    }
+}
+
+function showPosition(c) {
+    const lat = c.latitude, lng = c.longitude;
+
+    if (marker) {
+        marker.setLatLng([lat, lng]);
+    } else {
+        marker = L.marker([lat, lng], {
+            icon: L.divIcon({
+                className: 'my-location',
+                html: `<div style="width:20px;height:20px;background:linear-gradient(135deg,#2563eb,#1d4ed8);border:4px solid #fff;border-radius:50%;box-shadow:0 0 0 6px rgba(37,99,235,0.25);"></div>`,
+                iconSize: [20, 20], iconAnchor: [10, 10]
+            })
+        }).addTo(map);
+    }
+}
+
+// ========== BUSCA ==========
 function setupSearch() {
     const input = document.getElementById('searchInput');
     const results = document.getElementById('searchResults');
-    const clearBtn = document.getElementById('clearSearch');
 
     document.getElementById('searchBtn').addEventListener('click', () => searchPlace(input.value));
-    input.addEventListener('keypress', (e) => e.key==='Enter' && searchPlace(input.value));
-    input.addEventListener('input', () => clearBtn.style.display = input.value ? 'block' : 'none');
-    clearBtn.addEventListener('click', () => { input.value=''; results.innerHTML=''; results.classList.remove('show'); clearBtn.style.display='none'; });
+    input.addEventListener('keypress', (e) => e.key === 'Enter' && searchPlace(input.value));
+    input.addEventListener('input', () => { if (!input.value) results.classList.remove('show'); });
 
     results.addEventListener('click', (e) => {
         const item = e.target.closest('.search-item');
-        if(item) {
+        if (item) {
             const lat = parseFloat(item.dataset.lat), lng = parseFloat(item.dataset.lng);
             const name = item.dataset.name;
-            map.setView([lat, lng], 16);
-            if(marker) map.removeLayer(marker);
-            marker = L.marker([lat, lng]).addTo(map).bindPopup(name).openPopup();
             results.classList.remove('show');
             input.value = name;
-            // Perguntar se quer traçar rota
-            setTimeout(()=>{
-                if(confirm(`Traçar rota até: ${name}?`)) startRouteTo(lat, lng, name);
-            }, 300);
+            map.setView([lat, lng], 17);
+            if (confirm(`Traçar rota até:\n${name}?`)) startRouteTo(lat, lng, name);
         }
     });
 }
 
 async function searchPlace(query) {
-    if(!query.trim()) return;
-    if(!navigator.onLine) { showToast('⚠️ Precisa de internet para buscar locais!'); return; }
+    if (!query.trim()) return;
+    if (!navigator.onLine) { showToast('⚠️ Precisa de internet para buscar'); return; }
     showToast('🔍 Buscando...');
     try {
-        // Busca via Nominatim — funciona com nome, endereço ou CEP
         const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&countrycodes=BR&limit=5&format=json`);
         const data = await res.json();
         const results = document.getElementById('searchResults');
         results.innerHTML = '';
-        if(data.length===0) { results.innerHTML = '<div style="padding:20px;text-align:center;color:#6b7280;">Nenhum resultado encontrado</div>'; }
-        else {
+        if (data.length === 0) {
+            results.innerHTML = '<div style="padding:30px;text-align:center;color:#64748b;">Nenhum resultado encontrado</div>';
+        } else {
             data.forEach(r => {
                 const div = document.createElement('div');
                 div.className = 'search-item';
                 div.dataset.lat = r.lat; div.dataset.lng = r.lon; div.dataset.name = r.display_name;
-                div.innerHTML = `<div class="tit">${r.name || r.display_name.split(',')[0]}</div><div class="sub">${r.display_name}</div>`;
+                div.innerHTML = `<div class="search-name">${r.name || r.display_name.split(',')[0]}</div><div class="search-addr">${r.display_name}</div>`;
                 results.appendChild(div);
             });
         }
@@ -332,137 +400,141 @@ async function searchPlace(query) {
     } catch { showToast('❌ Erro na busca'); }
 }
 
-// ========== ROTAS / CAMINHOS ==========
+// ========== ROTAS ==========
 function startRouteTo(lat, lng, name) {
-    if(!lastPosition) { showToast('⚠️ Busque sua posição primeiro!'); return; }
-    if(!navigator.onLine) { showToast('⚠️ Precisa de internet para calcular rota!'); return; }
+    if (!lastPosition) { showToast('⚠️ Aguarde o GPS encontrar sua posição'); return; }
+    if (!navigator.onLine) { showToast('⚠️ Precisa de internet para calcular rota'); return; }
 
-    if(routingControl) { map.removeControl(routingControl); routingControl = null; }
+    if (routingControl) { map.removeControl(routingControl); }
 
     routingControl = L.Routing.control({
-        waypoints: [ L.latLng(lastPosition.latitude, lastPosition.longitude), L.latLng(lat, lng) ],
+        waypoints: [
+            L.latLng(lastPosition.latitude, lastPosition.longitude),
+            L.latLng(lat, lng)
+        ],
         language: 'pt-BR',
         routeWhileDragging: false,
         showAlternatives: false,
-        lineOptions: { styles: [{color:'#2563eb', opacity:0.8, weight:6}] },
+        lineOptions: {
+            styles: [
+                { color: '#ffffff', opacity: 0.9, weight: 12 },
+                { color: '#2563eb', opacity: 1, weight: 7 }
+            ]
+        },
         addWaypoints: false,
-        draggableWaypoints: false
+        draggableWaypoints: false,
+        fitSelectedRoutes: true
     }).addTo(map);
 
     routingControl.on('routesfound', (e) => {
-        routeSteps = e.routes[0].instructions;
-        showDirections(routeSteps);
-        speak(`Rota calculada para ${name}. Distância: ${Math.round(e.routes[0].summary.totalDistance/1000)} quilômetros.`);
+        const route = e.routes[0];
+        const distKm = (route.summary.totalDistance / 1000).toFixed(1);
+        const timeMin = Math.round(route.summary.totalTime / 60);
+
+        document.getElementById('routeDist').textContent = `${distKm} km`;
+        document.getElementById('routeTime').textContent = `${timeMin} min`;
+
+        showRouteSteps(route.instructions);
+        speak(`Rota calculada para ${name}. Distância de ${distKm} quilômetros, cerca de ${timeMin} minutos.`);
         showToast('✅ Rota pronta! Siga as indicações');
     });
 }
 
-function showDirections(steps) {
-    const panel = document.getElementById('directionsPanel');
-    const content = document.getElementById('dirContent');
-    content.innerHTML = '';
-    steps.forEach((s, i) => {
-        const icons = { Straight:'⬆️', TurnRight:'↩️', TurnLeft:'↪️', SlightRight:'↗️', SlightLeft:'↖️', SharpRight:'➡️', SharpLeft:'⬅️', Finish:'🏁', Start:'🚩' };
+function showRouteSteps(steps) {
+    const panel = document.getElementById('routePanel');
+    const container = document.getElementById('routeSteps');
+    container.innerHTML = '';
+
+    const icons = {
+        Straight: '⬆️', TurnRight: '↩️', TurnLeft: '↪️',
+        SlightRight: '↗️', SlightLeft: '↖️', SharpRight: '➡️',
+        SharpLeft: '⬅️', Finish: '🏁', Start: '🚩'
+    };
+
+    steps.forEach(s => {
         const icon = icons[s.type] || '➡️';
-        content.innerHTML += `<div class="dir-step"><span class="dir-icon">${icon}</span><span>${s.text}</span></div>`;
+        const dist = s.distance > 0 ? ` (${Math.round(s.distance)} m)` : '';
+        container.innerHTML += `<div class="step-item"><span class="step-icon">${icon}</span><span class="step-text">${s.text}${dist}</span></div>`;
     });
+
     panel.classList.add('show');
 }
 
-document.getElementById('closeDir').addEventListener('click', () => {
-    document.getElementById('directionsPanel').classList.remove('show');
-    if(routingControl) { map.removeControl(routingControl); routingControl = null; }
-    routeSteps = [];
+document.getElementById('closeRoute').addEventListener('click', () => {
+    document.getElementById('routePanel').classList.remove('show');
+    if (routingControl) { map.removeControl(routingControl); routingControl = null; }
 });
 
-document.getElementById('btnRoute').addEventListener('click', () => {
-    if(!lastPosition) { showToast('⚠️ Busque sua posição primeiro!'); return; }
-    document.getElementById('searchInput').focus();
-    showToast('🔍 Digite o destino na barra de busca');
-});
-
-// ========== ZOOM ==========
-function setupZoom() {
+// ========== CONTROLES ==========
+function setupControls() {
     document.getElementById('zoomIn').addEventListener('click', () => map.zoomIn());
     document.getElementById('zoomOut').addEventListener('click', () => map.zoomOut());
+
+    document.getElementById('btnFollow').addEventListener('click', () => {
+        followMode = !followMode;
+        document.getElementById('btnFollow').classList.toggle('active', followMode);
+        showToast(followMode ? '🎯 Seguindo sua posição' : '📍 Seguir desativado');
+    });
+
+    document.getElementById('btnLoc').addEventListener('click', () => {
+        if (lastPosition) {
+            map.setView([lastPosition.latitude, lastPosition.longitude], 17);
+            followMode = true;
+            document.getElementById('btnFollow').classList.add('active');
+            showToast('📍 Centralizado na sua posição');
+        } else {
+            showToast('⏳ Buscando posição...');
+        }
+    });
+
+    document.getElementById('btnVoice').addEventListener('click', () => {
+        voiceEnabled = !voiceEnabled;
+        document.querySelector('#btnVoice .nav-icon').textContent = voiceEnabled ? '🔊' : '🔇';
+        showToast(voiceEnabled ? '🔊 Voz ativada' : '🔇 Voz desativada');
+    });
+
+    document.getElementById('btnSave').addEventListener('click', saveMapArea);
+
+    document.getElementById('btnShare').addEventListener('click', async () => {
+        if (!lastPosition) { showToast('⚠️ Busque sua posição primeiro'); return; }
+        const lat = lastPosition.latitude.toFixed(6), lng = lastPosition.longitude.toFixed(6);
+        const texto = `📍 Minha localização:\n${lat}, ${lng}\nhttps://www.google.com/maps?q=${lat},${lng}`;
+        if (window.Capacitor?.Plugins?.Share) {
+            try { await window.Capacitor.Plugins.Share.share({ text: texto }); }
+            catch { await navigator.clipboard?.writeText(texto); showToast('✅ Copiado!'); }
+        } else { await navigator.clipboard?.writeText(texto); showToast('✅ Copiado!'); }
+    });
+
+    document.getElementById('btnClear').addEventListener('click', () => {
+        if (routingControl) { map.removeControl(routingControl); routingControl = null; }
+        document.getElementById('routePanel').classList.remove('show');
+        tilesCache = {};
+        saveTilesToStorage();
+        showToast('🗑️ Limpo!');
+    });
 }
 
-// ========== VOZ / FALA EM PORTUGUÊS ==========
+// ========== VOZ ==========
 function speak(texto) {
-    if(!voiceEnabled || !window.speechSynthesis) return;
+    if (!voiceEnabled || !window.speechSynthesis) return;
     window.speechSynthesis.cancel();
     const fala = new SpeechSynthesisUtterance(texto);
     fala.lang = 'pt-BR';
-    fala.rate = 1.0;
-    fala.volume = 1.0;
+    fala.rate = 1.05;
+    fala.volume = 1;
     window.speechSynthesis.speak(fala);
-}
-
-document.getElementById('btnVoice').addEventListener('click', () => {
-    voiceEnabled = !voiceEnabled;
-    const btn = document.getElementById('btnVoice');
-    btn.querySelector('.btn-icon').textContent = voiceEnabled ? '🔊' : '🔇';
-    showToast(voiceEnabled ? '🔊 Voz ativada' : '🔇 Voz desativada');
-    if(voiceEnabled) speak('Voz ativada. Siga as instruções de navegação.');
-});
-
-// ========== GPS / LOCALIZAÇÃO ==========
-async function getLocation() {
-    if(!navigator.geolocation) { showToast('❌ GPS não suportado'); return; }
-    showToast('📍 Buscando sua posição...');
-
-    if(window.Capacitor?.Plugins?.Geolocation) {
-        try {
-            const pos = await window.Capacitor.Plugins.Geolocation.getCurrentPosition({ enableHighAccuracy:true, timeout:15000 });
-            showPosition(pos.coords);
-        } catch { useBrowserGeolocation(); }
-    } else { useBrowserGeolocation(); }
-}
-
-function useBrowserGeolocation() {
-    navigator.geolocation.getCurrentPosition(
-        (pos) => showPosition(pos.coords),
-        (err) => showToast('❌ Erro: ' + err.message),
-        { enableHighAccuracy:true, timeout:15000, maximumAge:30000 }
-    );
-}
-
-function showPosition(c) {
-    lastPosition = c;
-    const lat = c.latitude.toFixed(6), lng = c.longitude.toFixed(6);
-    if(marker) map.removeLayer(marker);
-    marker = L.marker([c.latitude, c.longitude], {
-        icon: L.divIcon({
-            className:'my-location',
-            html:'<div style="width:20px;height:20px;background:#2563eb;border:4px solid white;border-radius:50%;box-shadow:0 0 0 4px rgba(37,99,235,.2);"></div>',
-            iconSize:[20,20], iconAnchor:[10,10]
-        })
-    }).addTo(map);
-    map.setView([c.latitude, c.longitude], 16);
-    showToast(`✅ Posição: ${lat}, ${lng}`);
-}
-
-// ========== COMPARTILHAR ==========
-async function shareLocation() {
-    if(!lastPosition) { showToast('⚠️ Busque sua posição primeiro!'); return; }
-    const lat = lastPosition.latitude.toFixed(6), lng = lastPosition.longitude.toFixed(6);
-    const texto = `📍 Minha localização:\n${lat}, ${lng}\nhttps://www.google.com/maps?q=${lat},${lng}`;
-    if(window.Capacitor?.Plugins?.Share) {
-        try { await window.Capacitor.Plugins.Share.share({ text:texto }); }
-        catch { await navigator.clipboard?.writeText(texto); showToast('✅ Copiado!'); }
-    } else { await navigator.clipboard?.writeText(texto); showToast('✅ Copiado!'); }
 }
 
 // ========== UTILITÁRIOS ==========
 function updateNetStatus() {
     const badge = document.getElementById('netBadge');
-    if(navigator.onLine) { badge.textContent='Online'; badge.className='status-badge online'; }
-    else { badge.textContent='Offline'; badge.className='status-badge offline'; }
+    if (navigator.onLine) { badge.textContent = 'Online'; badge.className = 'status-badge online'; }
+    else { badge.textContent = 'Sem internet'; badge.className = 'status-badge offline'; }
 }
 
 async function sendNotification(title, body) {
-    if(window.Capacitor?.Plugins?.LocalNotifications) {
-        try { await window.Capacitor.Plugins.LocalNotifications.schedule({ notifications:[{title,body,id:Date.now()}] }); }
+    if (window.Capacitor?.Plugins?.LocalNotifications) {
+        try { await window.Capacitor.Plugins.LocalNotifications.schedule({ notifications: [{ title, body, id: Date.now() }] }); }
         catch {}
     }
 }
@@ -470,13 +542,8 @@ async function sendNotification(title, body) {
 function showToast(msg) {
     const t = document.getElementById('toast');
     t.textContent = msg; t.classList.add('show');
-    setTimeout(()=>t.classList.remove('show'), 3000);
+    setTimeout(() => t.classList.remove('show'), 3000);
 }
-
-// ========== EVENTOS ==========
-document.getElementById('btnLoc').addEventListener('click', getLocation);
-document.getElementById('btnSave').addEventListener('click', saveMapArea);
-document.getElementById('btnShare').addEventListener('click', shareLocation);
 
 // ========== INÍCIO ==========
 document.addEventListener('DOMContentLoaded', checkAndRequestPermissions);

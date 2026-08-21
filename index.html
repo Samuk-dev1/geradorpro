@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Gestor IPTV</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-  <!-- BIBLIOTECA DE GRÁFICOS -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   
   <style>
@@ -67,7 +66,7 @@
     .action-btn { background: rgba(0,0,0,0.2); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; color: #fff; }
     .action-btn:active { transform: scale(0.9); }
 
-    /* MÉTRICAS (Os 4 botões do topo) */
+    /* MÉTRICAS TOPO */
     .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .metric-box {
       background: rgba(255, 255, 255, 0.15);
@@ -102,10 +101,8 @@
       font-size: 18px; transition: 0.3s;
     }
     .nav-item span { font-size: 10px; font-weight: 600; text-align: center; }
-    
     .nav-item.active { color: var(--primary); }
     .nav-item.active .icon-box { background: var(--primary); color: #fff; box-shadow: 0 4px 10px rgba(41,98,255,0.3); }
-    
     .nav-item.btn-cadastrar { color: var(--text-dark); }
     .nav-item.btn-cadastrar .icon-box { background: var(--bg-nav-center); color: var(--text-dark); font-size: 20px; }
 
@@ -116,73 +113,10 @@
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
     /* GRÁFICOS NEON NA DASHBOARD */
-    .neon-chart-container {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: var(--shadow-md);
-      position: relative;
-      overflow: hidden;
-      transition: background-color 0.3s, border-color 0.3s;
-    }
-    body.dark-theme .neon-chart-container {
-      background: #0f172a;
-      box-shadow: 0 0 25px rgba(0, 210, 255, 0.08);
-      border: 1px solid rgba(0, 210, 255, 0.2);
-    }
-    .neon-chart-header {
-      font-size: 14px; font-weight: 700; color: var(--text-dark); margin-bottom: 15px;
-      display: flex; align-items: center; gap: 8px;
-    }
-    body.dark-theme .neon-chart-header i {
-      text-shadow: 0 0 10px currentColor;
-    }
-
-    /* FILTROS BOTÕES */
-    .filter-row { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
-    .filter-row::-webkit-scrollbar { display: none; }
-    .filter-btn {
-      background: var(--bg-card); border: 1px solid var(--border); color: var(--text-muted);
-      padding: 10px 14px; border-radius: 6px; font-size: 13px; font-weight: 600;
-      white-space: nowrap; cursor: pointer; box-shadow: var(--shadow-sm); transition: 0.2s;
-    }
-    .filter-btn.active { border-color: var(--primary); color: var(--primary); background: var(--bg-input); }
-
-    /* ====================================================
-       NOVA LISTA DE CLIENTES ULTRA-FINA COM OLHINHO
-       ==================================================== */
-    .list-container { display: flex; flex-direction: column; gap: 8px; }
-    
-    .cliente-list-item {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      overflow: hidden;
-      transition: all 0.2s ease;
-      border-left: 4px solid var(--primary);
-    }
-    .cliente-list-item.vencido { border-left-color: var(--danger); }
-    .cliente-list-item.vencendo { border-left-color: var(--warning); }
-    .cliente-list-item:active { transform: scale(0.98); }
-    
-    .cli-header { 
-      display: flex; justify-content: space-between; align-items: center; 
-      padding: 12px 14px; cursor: pointer; gap: 10px;
-    }
-    
-    .cli-left { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
-    .cli-name { font-size: 14px; font-weight: 700; color: var(--text-dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .cli-dias { font-size: 11px; font-weight: 600; white-space: nowrap; }
-    
-    .cli-right { display: flex; align-items: center; gap: 12px; flex: none; }
-    .cli-right i.fa-eye { color: var(--text-muted); font-size: 15px; }
-
-    .badge-status { padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-    .badge-status.ativo { background: rgba(16, 185, 129, 0.15); color: var(--success); }
-    .badge-status.vencido { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
-    .badge-status.vencendo { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+    .neon-chart-container { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: var(--shadow-md); position: relative; overflow: hidden; transition: background-color 0.3s, border-color 0.3s; }
+    body.dark-theme .neon-chart-container { background: #0f172a; box-shadow: 0 0 25px rgba(0, 210, 255, 0.08); border: 1px solid rgba(0, 210, 255, 0.2); }
+    .neon-chart-header { font-size: 14px; font-weight: 700; color: var(--text-dark); margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+    body.dark-theme .neon-chart-header i { text-shadow: 0 0 10px currentColor; }
 
     /* DASHBOARD WIDGETS & GROUPS */
     .widget-box { background: var(--bg-card); border-radius: 16px; padding: 16px; box-shadow: var(--shadow-sm); margin-bottom: 16px; transition: background-color 0.3s; }
@@ -202,8 +136,48 @@
     .dash-item-info { flex: 1; }
     .dash-item-name { font-size: 14px; font-weight: 600; color: var(--text-dark); margin-bottom: 2px; }
     .dash-item-date { font-size: 12px; color: var(--text-muted); }
-    .dash-item-actions { display: flex; gap: 6px; }
 
+    /* FILTROS BOTÕES */
+    .filter-row { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
+    .filter-row::-webkit-scrollbar { display: none; }
+    .filter-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-muted); padding: 10px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; white-space: nowrap; cursor: pointer; box-shadow: var(--shadow-sm); transition: 0.2s; }
+    .filter-btn.active { border-color: var(--primary); color: var(--primary); background: var(--bg-input); }
+
+    /* ====================================================
+       NOVA LISTA DE CLIENTES ULTRA-FINA COM OLHINHO
+       ==================================================== */
+    .list-container { display: flex; flex-direction: column; gap: 10px; }
+    
+    .cliente-list-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: all 0.2s ease;
+      border-left: 4px solid var(--primary);
+    }
+    .cliente-list-item.vencido { border-left-color: var(--danger); }
+    .cliente-list-item.vencendo { border-left-color: var(--warning); }
+    .cliente-list-item:active { transform: scale(0.98); }
+    
+    .cli-header { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; cursor: pointer; }
+    .cli-title-box { display: flex; flex-direction: column; gap: 4px; }
+    .cli-name { font-size: 15px; font-weight: 700; color: var(--text-dark); display: flex; align-items: center; gap: 6px; }
+    .cli-name i { color: var(--primary); font-size: 12px; }
+    .cli-subtitle { font-size: 11px; font-weight: 500; color: var(--text-muted); }
+    .cli-header-right { display: flex; align-items: center; gap: 10px; }
+    
+    /* Grelha de Informações da Janela Detalhes */
+    .cli-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; background: var(--bg-input); padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+    .cli-info-item { font-size: 11px; color: var(--text-muted); }
+    .cli-info-item strong { color: var(--text-dark); display: block; font-size: 13px; margin-top: 2px; }
+    .cli-info-full { grid-column: span 2; }
+    
+    .badge-status { padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+    .badge-status.ativo { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+    .badge-status.vencido { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+    .badge-status.vencendo { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+    
     .card-actions { display: flex; gap: 8px; }
     .btn-action {
       flex: 1; background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px;
@@ -221,6 +195,7 @@
     .form-group { margin-bottom: 16px; }
     .form-group label { display: block; font-size: 13px; color: var(--text-muted); font-weight: 600; margin-bottom: 6px; }
     input, select, textarea { width: 100%; padding: 12px 14px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 10px; font-size: 14px; color: var(--text-dark); outline: none; transition: 0.2s; }
+    input[type="file"] { padding: 8px; background: var(--bg-card); }
     input:focus, select:focus, textarea:focus { border-color: var(--primary); }
 
     /* CHAVINHA iOS */
@@ -244,20 +219,12 @@
     .modal-header h3 { font-size: 18px; font-weight: 700; color: var(--text-dark); }
     .close-btn { background: none; border: none; font-size: 24px; color: var(--text-muted); cursor: pointer; margin-top: -5px;}
 
-    #renov-info { font-size: 14px; color: var(--text-dark); margin-bottom: 15px; background: var(--bg-input); padding: 12px; border-radius: 8px; text-align: center; border: 1px solid var(--border); }
-
     /* TOAST */
     .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #334155; color: #fff; padding: 12px 24px; border-radius: 30px; font-weight: 600; font-size: 14px; box-shadow: var(--shadow-md); z-index: 9999; opacity: 0; transition: 0.4s ease; text-align: center; white-space: nowrap; pointer-events: none; }
     .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
     .search-bar { display: flex; gap: 8px; flex: 1; }
     .search-bar input { flex: 1; border-radius: 12px; padding: 10px 16px; }
-
-    /* ESTILO MODAL DETALHES CLIENTE */
-    .cli-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; background: var(--bg-input); padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
-    .cli-info-item { font-size: 11px; color: var(--text-muted); }
-    .cli-info-item strong { color: var(--text-dark); display: block; font-size: 13px; margin-top: 2px; }
-    .cli-info-full { grid-column: span 2; }
   </style>
 </head>
 <body>
@@ -306,7 +273,6 @@
     
     <!-- TELA: DASHBOARD -->
     <section id="screen-dashboard" class="screen active">
-      
       <div class="neon-chart-container">
         <div class="neon-chart-header"><i class="fas fa-chart-area" style="color:var(--secondary)"></i> Vencimentos (Próximos 7 Dias)</div>
         <div style="position: relative; height: 180px;"><canvas id="chartEstatistica"></canvas></div>
@@ -348,7 +314,7 @@
         <button class="filter-btn" data-filtro="hoje" onclick="setFiltro('hoje', this)" style="display:none;">Filtrado Data Específica</button>
       </div>
       
-      <!-- LISTA DE CLIENTES EM FORMATO COMPACTO (SOMENTE LINHAS) -->
+      <!-- LISTA DE CLIENTES EM FORMATO COMPACTO -->
       <div class="list-container" id="lista-clientes"></div>
     </section>
     
@@ -372,7 +338,7 @@
           <button class="btn-action" style="padding:4px 10px; font-size:11px;" onclick="abrirModalTemplate()">+ Novo</button>
         </div>
         <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">
-          Ative as chaves para liberar os atalhos e avisos automáticos na Dashboard principal!
+          Anexe imagens opcionais para envio e ative as chaves para liberar os atalhos de disparo!
         </p>
         <div id="lista-templates" style="display:flex; flex-direction:column; gap:12px;"></div>
       </div>
@@ -405,12 +371,13 @@
       </div>
 
       <div class="panel-box">
-        <div class="panel-header"><h3><i class="fas fa-cloud-download-alt" style="color:var(--success)"></i> Backup</h3></div>
+        <div class="panel-header"><h3><i class="fas fa-cloud-download-alt" style="color:var(--success)"></i> Backup Completo</h3></div>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">Seu backup salvará clientes, planos e as IMAGENS dos templates.</p>
         <button class="btn-gradient" style="margin-bottom:12px;" onclick="exportarBackup()"><i class="fas fa-upload"></i> Salvar Backup</button>
         <label style="font-size:13px; color:var(--text-muted); display:block; margin-bottom:8px;">Restaurar Dados:</label>
         <input type="file" id="arquivo-backup" accept=".json" onchange="importarBackup(event)" style="margin-bottom: 16px;">
         
-        <!-- BOTÃO DELETAR TODOS OS DADOS (ZONA DE PERIGO) -->
+        <!-- BOTÃO DELETAR TODOS OS DADOS -->
         <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(239, 68, 68, 0.3);">
             <label style="font-size:13px; color:var(--danger); display:block; margin-bottom:8px; font-weight:700;"><i class="fas fa-exclamation-triangle"></i> Zona de Perigo:</label>
             <button class="btn-outline" style="border-color:var(--danger); color:var(--danger);" onclick="apagarTodosOsDados()"><i class="fas fa-trash-alt"></i> Apagar Todos os Dados</button>
@@ -463,38 +430,20 @@
         <button class="close-btn" onclick="fecharModal('modal-cliente')">&times;</button>
       </div>
       <input type="hidden" id="cli-id">
-      
       <div class="form-group"><label>Nome Completo</label><input type="text" id="cli-nome" required></div>
       <div class="form-group"><label>Telefone / WhatsApp</label><input type="tel" id="cli-telefone"></div>
       
       <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-        <div class="form-group">
-          <label>Usuário (Painel)</label>
-          <input type="text" id="cli-usuario" placeholder="Opcional">
-        </div>
-        <div class="form-group">
-          <label>Senha (Painel)</label>
-          <input type="text" id="cli-senha-painel" placeholder="Opcional">
-        </div>
+        <div class="form-group"><label>Usuário (Painel)</label><input type="text" id="cli-usuario" placeholder="Opcional"></div>
+        <div class="form-group"><label>Senha (Painel)</label><input type="text" id="cli-senha-painel" placeholder="Opcional"></div>
       </div>
-      
-      <div class="form-group">
-        <label>Servidor / Provedor</label>
-        <input type="text" id="cli-provedor" placeholder="Opcional (Ex: BobTV)">
-      </div>
-      
+      <div class="form-group"><label>Servidor / Provedor</label><input type="text" id="cli-provedor" placeholder="Opcional"></div>
       <div class="form-group"><label>Data de Vencimento</label><input type="date" id="cli-vencimento" required></div>
-      
-      <div class="form-group">
-        <label>MAC Address</label>
-        <input type="text" id="cli-mac" placeholder="Opcional: 00:1A:2B:3C:4D:5E" oninput="formatarMAC(this)" maxlength="17">
-      </div>
-      <div class="form-group"><label>Senha do Aplicativo</label><input type="text" id="cli-senha" placeholder="Opcional..."></div>
-      <div class="form-group"><label>Aplicativo Usado</label><input type="text" id="cli-app" placeholder="Opcional (Ex: Smartters)"></div>
+      <div class="form-group"><label>MAC Address</label><input type="text" id="cli-mac" placeholder="Opcional" oninput="formatarMAC(this)" maxlength="17"></div>
+      <div class="form-group"><label>Senha do Aplicativo</label><input type="text" id="cli-senha" placeholder="Opcional"></div>
+      <div class="form-group"><label>Aplicativo Usado</label><input type="text" id="cli-app" placeholder="Opcional"></div>
       <div class="form-group"><label>Plano</label><select id="cli-plano"></select></div>
-      
       <input type="hidden" id="cli-valor">
-      <div class="form-group" style="display:none;"><label>Status</label><select id="cli-status"><option value="Ativo">Ativo</option><option value="Inativo">Inativo</option></select></div>
       <button class="btn-gradient" onclick="salvarCliente()">Salvar Cadastro</button>
     </div>
   </div>
@@ -523,6 +472,19 @@
       </div>
       <input type="hidden" id="tpl-id">
       <div class="form-group"><label>Nome da Regra</label><input type="text" id="tpl-nome"></div>
+      
+      <!-- UPLOAD DE IMAGEM -->
+      <div class="form-group">
+        <label><i class="fas fa-image"></i> Imagem do Lembrete (Opcional)</label>
+        <input type="file" id="tpl-imagem-input" accept="image/*" onchange="carregarImagemTemplate(event)">
+        
+        <div id="tpl-imagem-preview-container" style="display:none; margin-top:10px; position:relative; width: fit-content; border: 2px dashed var(--primary); padding: 4px; border-radius: 10px;">
+          <img id="tpl-imagem-preview" src="" style="max-width: 150px; max-height: 150px; border-radius: 6px; display: block;">
+          <button onclick="removerImagemTemplate()" style="position:absolute; top:-10px; right:-10px; background:var(--danger); color:white; border:none; border-radius:50%; width:24px; height:24px; cursor:pointer; font-weight:bold; box-shadow:0 2px 4px rgba(0,0,0,0.3);">&times;</button>
+        </div>
+        <input type="hidden" id="tpl-imagem-base64">
+      </div>
+
       <div class="form-group">
         <label>Disparo Automático</label>
         <select id="tpl-tipo">
@@ -545,11 +507,11 @@
     </div>
   </div>
 
-  <!-- MODAL: ENVIAR MENSAGEM -->
+  <!-- MODAL: ENVIAR MENSAGEM MANUAL -->
   <div class="modal" id="modal-enviar-msg">
     <div class="modal-content">
       <div class="modal-header">
-        <h3 style="color:var(--warning)"><i class="fas fa-paper-plane"></i> Enviar Template</h3>
+        <h3 style="color:var(--warning)"><i class="fas fa-paper-plane"></i> Enviar Lembrete</h3>
         <button class="close-btn" onclick="fecharModal('modal-enviar-msg')">&times;</button>
       </div>
       <input type="hidden" id="msg-cli-id">
@@ -560,7 +522,7 @@
       <div class="form-group">
         <textarea id="msg-preview" rows="6" style="border-color:var(--warning)"></textarea>
       </div>
-      <button class="btn-gradient" onclick="dispararWhatsAppManual()"><i class="fab fa-whatsapp"></i> Enviar p/ WhatsApp</button>
+      <button class="btn-gradient" onclick="dispararWhatsAppManual()"><i class="fab fa-whatsapp"></i> Compartilhar / Enviar</button>
     </div>
   </div>
 
@@ -586,7 +548,7 @@
   <div id="toast" class="toast">Mensagem de Sucesso</div>
 
 <script>
-// ========== LÓGICA DO MODO ESCURO (DARK MODE) E RE-RENDER DE GRÁFICOS ==========
+// ========== LÓGICA DO MODO ESCURO (DARK MODE) ==========
 function toggleTheme() {
   const isDark = document.body.classList.toggle('dark-theme');
   const icon = document.getElementById('theme-icon');
@@ -597,7 +559,6 @@ function toggleTheme() {
     icon.classList.replace('fa-sun', 'fa-moon');
     localStorage.setItem('theme', 'light');
   }
-  
   if(document.getElementById('screen-dashboard').classList.contains('active')){
       renderizarDashboard();
   }
@@ -619,7 +580,6 @@ let cfgNotif = { horarios: ['09:00', '13:00', '18:00'] };
 let filtroAtualGlobal = 'todos';
 let toastTimeout;
 
-// Instâncias dos Gráficos
 let lineChartInstance = null;
 let doughnutChartInstance = null;
 
@@ -740,7 +700,6 @@ function getAll(store) { return new Promise(r => tx(store).getAll().onsuccess = 
 function put(store, obj) { return new Promise((res, rej) => { const req = tx(store,'readwrite').put(obj); req.onsuccess = e => res(e.target.result); req.onerror = rej; }); }
 function del(store, id) { return new Promise(r => tx(store,'readwrite').delete(id).onsuccess = r); }
 
-// APAGAR TUDO (ZONA DE PERIGO)
 async function apagarTodosOsDados() {
   if(confirm('🚨 ATENÇÃO! Isso vai apagar TODOS os seus clientes, planos e regras. Essa ação NÃO tem como ser desfeita. Tem certeza?')) {
       if(confirm('Tem certeza ABSOLUTA? Todo o banco de dados será limpo.')) {
@@ -884,14 +843,70 @@ async function renderizarDashboard() {
   document.getElementById('dash-vencimentos').innerHTML = htmlDashVenc || '<div class="empty-state">Sem clientes engatilhados hoje.</div>';
 }
 
+// ========== LOGICA DE DISPARO DE WHATSAPP (COM E SEM IMAGEM) ==========
+function abrirWhatsApp(telefone, msg) {
+  const num = (telefone || '').replace(/\D/g,'');
+  if(!num) return mostrarToast('Cliente sem telefone salvo!');
+  window.open(`https://wa.me/${num.startsWith('55')?num:'55'+num}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+async function dispararWhatsAppComImagem(telefone, msg, base64Image) {
+  // Tenta usar a API de Compartilhamento Nativa (Capacitor/Mobile)
+  if (navigator.share) {
+      try {
+          const res = await fetch(base64Image);
+          const blob = await res.blob();
+          const file = new File([blob], "lembrete.jpg", { type: blob.type });
+
+          await navigator.share({
+              text: msg,
+              files: [file]
+          });
+          mostrarToast('✅ Enviado para o WhatsApp!');
+      } catch(e) {
+          console.log("Compartilhamento cancelado ou falhou", e);
+      }
+  } else {
+      // Se estiver no PC ou navegador sem suporte, envia só o texto pro WhatsApp Web
+      mostrarToast('Aparelho não suporta envio direto de imagem. Enviando texto...');
+      abrirWhatsApp(telefone, msg);
+  }
+}
+
 async function enviarLembreteRapido(idCli, tipoTpl) {
   const c = (await getAll('clientes')).find(x => x.id === idCli);
   const ts = await getAll('templates');
   const tplAtivo = ts.find(t => t.tipo === tipoTpl && t.ativo);
+  
   if (!c) return mostrarToast('Cliente não encontrado.');
   if (!tplAtivo) return mostrarToast('Template não encontrado para este dia.');
+  
   const msg = tplAtivo.mensagem.replace(/{nome}/g, c.nome).replace(/{data}/g, formatDataBr(c.data_vencimento)).replace(/{valor}/g, c.valor).replace(/{empresa}/g, cfgEmpresa.nome);
-  abrirWhatsApp(c.telefone, msg);
+  
+  if (tplAtivo.imagem) {
+      dispararWhatsAppComImagem(c.telefone, msg, tplAtivo.imagem);
+  } else {
+      abrirWhatsApp(c.telefone, msg);
+  }
+}
+
+function dispararWhatsAppManual() {
+  getAll('clientes').then(async clis => {
+    const c = clis.find(x => x.id === Number(document.getElementById('msg-cli-id').value));
+    if(c) { 
+        const ts = await getAll('templates');
+        const tplId = Number(document.getElementById('msg-template-select').value);
+        const tplAtivo = ts.find(t => t.id === tplId);
+        const msg = document.getElementById('msg-preview').value;
+
+        if (tplAtivo && tplAtivo.imagem) {
+            dispararWhatsAppComImagem(c.telefone, msg, tplAtivo.imagem);
+        } else {
+            abrirWhatsApp(c.telefone, msg);
+        }
+        fecharModal('modal-enviar-msg'); 
+    }
+  });
 }
 
 // ========== ABRIR MODAL DE DETALHES DO CLIENTE ==========
@@ -917,7 +932,6 @@ async function abrirModalDetalhesCliente(id) {
   document.getElementById('detalhe-mac').textContent = c.mac || 'N/A';
   document.getElementById('detalhe-provedor').textContent = c.provedor || 'N/A';
 
-  // Configura as ações dos botões dentro do modal
   document.getElementById('btn-detalhe-cobrar').onclick = () => { fecharModal('modal-detalhes-cliente'); abrirModalEnviarMsg(c.id); };
   document.getElementById('btn-detalhe-editar').onclick = () => { fecharModal('modal-detalhes-cliente'); editarCliente(c.id); };
   document.getElementById('btn-detalhe-renovar').onclick = () => { fecharModal('modal-detalhes-cliente'); abrirModalRenovacao(c.id); };
@@ -926,7 +940,7 @@ async function abrirModalDetalhesCliente(id) {
   abrirModal('modal-detalhes-cliente');
 }
 
-// ========== CLIENTES LISTAGEM (FORMATO LINHA COMPACTO COM OLHO) ==========
+// ========== CLIENTES LISTAGEM (LINHA ÚNICA C/ OLHO) ==========
 async function renderizarClientesListagem(filtro, busca) {
   let clis = await getAll('clientes');
   clis = clis.map(c => ({...c, _sts: calcularStatus(c.data_vencimento)}));
@@ -952,24 +966,20 @@ async function renderizarClientesListagem(filtro, busca) {
     return `
       <div class="cliente-list-item ${c._sts.classe}" onclick="abrirModalDetalhesCliente(${c.id})">
         <div class="cli-header" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; cursor: pointer; gap: 10px;">
-          
           <div style="display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0;">
             <i class="fas fa-user-circle" style="color: var(--primary); font-size: 16px;"></i>
             <span style="font-size: 14px; font-weight: 700; color: var(--text-dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${c.nome}</span>
             <span style="font-size: 11px; font-weight: 600; color: ${colorDias}; white-space: nowrap;">${strDias}</span>
           </div>
-          
           <div style="display: flex; align-items: center; gap: 12px; flex: none;">
             <i class="fas fa-eye" style="color: var(--text-muted); font-size: 14px;"></i>
             <div class="badge-status ${c._sts.classe}">${c._sts.texto}</div>
           </div>
-
         </div>
       </div>
     `;
   }).join('');
 }
-async function renderizarClientes() { executarFiltro(); }
 
 // ========== PLANOS CRUD ==========
 async function renderizarPlanosSelect(){
@@ -1055,7 +1065,7 @@ async function editarCliente(id){
 }
 async function excluirCliente(id){ if(confirm('Excluir cliente permanentemente?')) { await del('clientes',id); mostrarToast('🗑️ Excluído!'); renderizarClientes(); renderizarDashboard(); await recalcularNotificacoesGlobal(); } }
 
-// ========== RENOVAÇÃO & WHATSAPP ==========
+// ========== RENOVAÇÃO ==========
 async function abrirModalRenovacao(id) {
   const c = (await getAll('clientes')).find(x => x.id === id); if(!c) return;
   const p = (await getAll('planos')).find(p => p.nome === c.plano);
@@ -1093,14 +1103,107 @@ async function confirmarRenovacao(enviarZap) {
   await recalcularNotificacoesGlobal();
   mostrarToast('✅ Plano Renovado com sucesso!');
   
-  if(enviarZap) abrirWhatsApp(c.telefone, document.getElementById('renov-mensagem').value);
+  if(enviarZap) {
+      const ts = await getAll('templates');
+      const tplRenovacao = ts.find(t => t.tipo === 'renovacao');
+      const msg = document.getElementById('renov-mensagem').value;
+      
+      if (tplRenovacao && tplRenovacao.imagem) {
+          dispararWhatsAppComImagem(c.telefone, msg, tplRenovacao.imagem);
+      } else {
+          abrirWhatsApp(c.telefone, msg);
+      }
+  }
 }
 
-function abrirWhatsApp(telefone, msg) {
-  const num = (telefone || '').replace(/\D/g,'');
-  if(!num) return mostrarToast('Cliente sem telefone salvo!');
-  window.open(`https://wa.me/${num.startsWith('55')?num:'55'+num}?text=${encodeURIComponent(msg)}`, '_blank');
+// ========== TEMPLATES, IMAGENS BASE64 E COBRANÇAS ==========
+function carregarImagemTemplate(event) {
+  const file = event.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    document.getElementById('tpl-imagem-base64').value = e.target.result;
+    document.getElementById('tpl-imagem-preview').src = e.target.result;
+    document.getElementById('tpl-imagem-preview-container').style.display = 'block';
+  };
+  reader.readAsDataURL(file);
 }
+
+function removerImagemTemplate() {
+  document.getElementById('tpl-imagem-base64').value = '';
+  document.getElementById('tpl-imagem-preview').src = '';
+  document.getElementById('tpl-imagem-preview-container').style.display = 'none';
+  document.getElementById('tpl-imagem-input').value = '';
+}
+
+async function popularTemplatesPadrao() {
+  if((await getAll('templates')).length === 0) {
+    await put('templates', {nome:'Vence Hoje', tipo:'vencimento_hoje', ativo:true, mensagem:'Olá {nome}! Sua assinatura VENCE HOJE ({data}). Valor: R$ {valor}. Regularize para não perder o acesso!'});
+    await put('templates', {nome:'Lembrete 2 Dias', tipo:'lembrete_2', ativo:false, mensagem:'Olá {nome}! Faltam 2 dias para sua assinatura vencer.'});
+    await put('templates', {nome:'Aviso de Vencido', tipo:'vencido', ativo:true, mensagem:'Olá {nome}! Notamos que sua assinatura venceu em {data}. Regularize para reativar seu acesso.'});
+    await put('templates', {nome:'Renovação', tipo:'renovacao', ativo:true, mensagem:'Obrigado {nome}! Plano renovado até {data}.'});
+  }
+}
+
+async function renderizarTemplates() {
+  const ts = await getAll('templates');
+  document.getElementById('lista-templates').innerHTML = ts.map(t=>`
+    <div style="border:1px solid var(--border); border-radius:12px; padding:16px; background:var(--bg-input);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <strong style="font-size:14px; color:var(--text-dark)">${t.nome} ${t.imagem ? '<i class="fas fa-image" style="color:var(--primary); margin-left:4px;" title="Contém Imagem"></i>' : ''}</strong>
+        ${t.tipo !== 'avulso' && t.tipo !== 'renovacao' ? `<label class="switch"><input type="checkbox" ${t.ativo?'checked':''} onchange="toggleTemplate(${t.id}, this.checked)"><span class="slider"></span></label>` : '<span style="font-size:11px; color:var(--text-muted)">Manual</span>'}
+      </div>
+      <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px; line-height:1.4;">${t.mensagem.substring(0,60)}...</p>
+      <div style="display:flex; gap:8px;">
+        <button class="btn-action" style="flex:1" onclick="editarTemplate(${t.id})">Editar</button>
+        <button class="btn-action trash" onclick="excluirTemplate(${t.id})"><i class="fas fa-trash-alt"></i></button>
+      </div>
+    </div>
+  `).join('');
+}
+window.toggleTemplate = async function(id, ativo) {
+  const t = (await getAll('templates')).find(x=>x.id===id);
+  if(t) { t.ativo = ativo; await put('templates', t); await renderizarDashboard(); await recalcularNotificacoesGlobal(); }
+}
+function abrirModalTemplate(){ 
+    document.getElementById('tpl-id').value=''; 
+    document.getElementById('tpl-nome').value=''; 
+    document.getElementById('tpl-mensagem').value=''; 
+    removerImagemTemplate();
+    abrirModal('modal-template'); 
+}
+async function editarTemplate(id){ 
+    const t = (await getAll('templates')).find(x=>x.id===id); 
+    document.getElementById('tpl-id').value=t.id; 
+    document.getElementById('tpl-nome').value=t.nome; 
+    document.getElementById('tpl-tipo').value=t.tipo||'avulso'; 
+    document.getElementById('tpl-mensagem').value=t.mensagem; 
+    
+    if (t.imagem) {
+        document.getElementById('tpl-imagem-base64').value = t.imagem;
+        document.getElementById('tpl-imagem-preview').src = t.imagem;
+        document.getElementById('tpl-imagem-preview-container').style.display = 'block';
+    } else {
+        removerImagemTemplate();
+    }
+    
+    abrirModal('modal-template'); 
+}
+async function salvarTemplate(){
+  const t = { 
+      nome: document.getElementById('tpl-nome').value, 
+      tipo: document.getElementById('tpl-tipo').value, 
+      mensagem: document.getElementById('tpl-mensagem').value, 
+      ativo: true,
+      imagem: document.getElementById('tpl-imagem-base64').value || null
+  };
+  if(document.getElementById('tpl-id').value) { 
+      t.id = Number(document.getElementById('tpl-id').value); 
+      t.ativo = (await getAll('templates')).find(x=>x.id===t.id).ativo; 
+  }
+  await put('templates', t); fecharModal('modal-template'); mostrarToast('✅ Regra Salva!'); renderizarTemplates(); renderizarDashboard(); await recalcularNotificacoesGlobal();
+}
+async function excluirTemplate(id){ if(confirm('Excluir regra?')){ await del('templates',id); renderizarTemplates(); renderizarDashboard(); } }
 
 async function abrirModalEnviarMsg(idCli) {
   const c = (await getAll('clientes')).find(x => x.id === idCli); if(!c) return;
@@ -1116,50 +1219,6 @@ async function atualizarPreviewMensagem() {
   if(!c || !t) return;
   document.getElementById('msg-preview').value = t.mensagem.replace(/{nome}/g, c.nome).replace(/{data}/g, formatDataBr(c.data_vencimento)).replace(/{valor}/g, c.valor).replace(/{empresa}/g, cfgEmpresa.nome);
 }
-function dispararWhatsAppManual() {
-  getAll('clientes').then(clis => {
-    const c = clis.find(x => x.id === Number(document.getElementById('msg-cli-id').value));
-    if(c) { abrirWhatsApp(c.telefone, document.getElementById('msg-preview').value); fecharModal('modal-enviar-msg'); }
-  });
-}
-
-// ========== TEMPLATES E COBRANÇAS ==========
-async function popularTemplatesPadrao() {
-  if((await getAll('templates')).length === 0) {
-    await put('templates', {nome:'Vence Hoje', tipo:'vencimento_hoje', ativo:true, mensagem:'Olá {nome}! Sua assinatura VENCE HOJE ({data}). Valor: R$ {valor}. Regularize para não perder o acesso!'});
-    await put('templates', {nome:'Lembrete 2 Dias', tipo:'lembrete_2', ativo:false, mensagem:'Olá {nome}! Faltam 2 dias para sua assinatura vencer.'});
-    await put('templates', {nome:'Aviso de Vencido', tipo:'vencido', ativo:true, mensagem:'Olá {nome}! Notamos que sua assinatura venceu em {data}. Regularize para reativar seu acesso.'});
-    await put('templates', {nome:'Renovação', tipo:'renovacao', ativo:true, mensagem:'Obrigado {nome}! Plano renovado até {data}.'});
-  }
-}
-async function renderizarTemplates() {
-  const ts = await getAll('templates');
-  document.getElementById('lista-templates').innerHTML = ts.map(t=>`
-    <div style="border:1px solid var(--border); border-radius:12px; padding:16px; background:var(--bg-input);">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-        <strong style="font-size:14px; color:var(--text-dark)">${t.nome}</strong>
-        ${t.tipo !== 'avulso' && t.tipo !== 'renovacao' ? `<label class="switch"><input type="checkbox" ${t.ativo?'checked':''} onchange="toggleTemplate(${t.id}, this.checked)"><span class="slider"></span></label>` : '<span style="font-size:11px; color:var(--text-muted)">Manual</span>'}
-      </div>
-      <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px; line-height:1.4;">${t.mensagem.substring(0,60)}...</p>
-      <div style="display:flex; gap:8px;">
-        <button class="btn-action" style="flex:1" onclick="editarTemplate(${t.id})">Editar</button>
-        <button class="btn-action trash" onclick="excluirTemplate(${t.id})"><i class="fas fa-trash-alt"></i></button>
-      </div>
-    </div>
-  `).join('');
-}
-window.toggleTemplate = async function(id, ativo) {
-  const t = (await getAll('templates')).find(x=>x.id===id);
-  if(t) { t.ativo = ativo; await put('templates', t); await renderizarDashboard(); await recalcularNotificacoesGlobal(); }
-}
-function abrirModalTemplate(){ document.getElementById('tpl-id').value=''; document.getElementById('tpl-nome').value=''; document.getElementById('tpl-mensagem').value=''; abrirModal('modal-template'); }
-async function editarTemplate(id){ const t = (await getAll('templates')).find(x=>x.id===id); document.getElementById('tpl-id').value=t.id; document.getElementById('tpl-nome').value=t.nome; document.getElementById('tpl-tipo').value=t.tipo||'avulso'; document.getElementById('tpl-mensagem').value=t.mensagem; abrirModal('modal-template'); }
-async function salvarTemplate(){
-  const t = { nome: document.getElementById('tpl-nome').value, tipo: document.getElementById('tpl-tipo').value, mensagem: document.getElementById('tpl-mensagem').value, ativo: true };
-  if(document.getElementById('tpl-id').value) { t.id = Number(document.getElementById('tpl-id').value); t.ativo = (await getAll('templates')).find(x=>x.id===t.id).ativo; }
-  await put('templates', t); fecharModal('modal-template'); mostrarToast('✅ Regra Salva!'); renderizarTemplates(); renderizarDashboard(); await recalcularNotificacoesGlobal();
-}
-async function excluirTemplate(id){ if(confirm('Excluir regra?')){ await del('templates',id); renderizarTemplates(); renderizarDashboard(); } }
 
 // ========== CONFIGURAÇÕES GERAIS ==========
 async function carregarConfiguracoes(){
@@ -1173,10 +1232,8 @@ async function carregarConfiguracoes(){
 async function salvarConfiguracoes(){
   cfgEmpresa = { nome: document.getElementById('cfg-nome').value, contato: document.getElementById('cfg-contato').value, pix: document.getElementById('cfg-pix').value };
   await put('config', {id:1, nome_empresa:cfgEmpresa.nome, contato:cfgEmpresa.contato, chave_pix:cfgEmpresa.pix}); 
-  
   const headerNome = document.getElementById('header-empresa-nome');
   if(headerNome) headerNome.textContent = cfgEmpresa.nome || 'Gestor IPTV';
-
   mostrarToast('✅ Dados Salvos!');
 }
 
@@ -1186,47 +1243,27 @@ async function carregarNotifConfig(){
   cfgNotif.horarios = c.horarios || ['09:00','13:00','18:00'];
   document.getElementById('notif-hr-1').value = cfgNotif.horarios[0]||''; document.getElementById('notif-hr-2').value = cfgNotif.horarios[1]||''; document.getElementById('notif-hr-3').value = cfgNotif.horarios[2]||'';
 }
-
 async function salvarNotifConfig(){
   cfgNotif.horarios = [document.getElementById('notif-hr-1').value, document.getElementById('notif-hr-2').value, document.getElementById('notif-hr-3').value];
   await put('notif_config', {id:1, horarios:cfgNotif.horarios}); await recalcularNotificacoesGlobal(); mostrarToast('✅ Horários Atualizados!');
 }
-
 async function solicitarPermissaoNotif() {
   if ('Notification' in window) { 
     const p = await Notification.requestPermission(); 
     if(p === 'granted') mostrarToast('Notificações Web ativadas!'); 
   }
-  
   if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications) { 
     const LocalNotifications = window.Capacitor.Plugins.LocalNotifications;
     await LocalNotifications.requestPermissions(); 
-    
     try {
-      await LocalNotifications.createChannel({ 
-        id: 'alertas_gestor', 
-        name: 'Alertas do Gestor', 
-        description: 'Notificações de vencimento de clientes',
-        importance: 5, 
-        visibility: 1, 
-        vibration: true
-      });
+      await LocalNotifications.createChannel({ id: 'alertas_gestor', name: 'Alertas do Gestor', description: 'Notificações de vencimento', importance: 5, visibility: 1, vibration: true });
       mostrarToast('✅ Alertas Mobile ativados no Android!'); 
     } catch(e) { console.log(e); }
   }
 }
-
 async function dispararNotificacao() {
   if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications) {
-      await window.Capacitor.Plugins.LocalNotifications.schedule({
-        notifications: [{ 
-          id: 999, 
-          title: '📆 Teste de Sistema', 
-          body: 'As notificações nativas do Android estão funcionando!', 
-          schedule: { at: new Date(Date.now() + 1500), allowWhileIdle: true }, 
-          channelId: 'alertas_gestor' 
-        }]
-      });
+      await window.Capacitor.Plugins.LocalNotifications.schedule({ notifications: [{ id: 999, title: '📆 Teste de Sistema', body: 'As notificações nativas do Android estão funcionando!', schedule: { at: new Date(Date.now() + 1500), allowWhileIdle: true }, channelId: 'alertas_gestor' }] });
       mostrarToast('🔔 Alerta enviado! Aguarde 1 segundo...');
   } else {
       mostrarToast('❌ Capacitor inativo. Gere o APK para testar.');
@@ -1236,7 +1273,6 @@ async function dispararNotificacao() {
 async function recalcularNotificacoesGlobal() {
   if (!window.Capacitor || !window.Capacitor.Plugins || !window.Capacitor.Plugins.LocalNotifications) return;
   const LocalNotifications = window.Capacitor.Plugins.LocalNotifications;
-
   try {
       const pending = await LocalNotifications.getPending();
       if(pending.notifications.length > 0) await LocalNotifications.cancel(pending);
@@ -1244,7 +1280,6 @@ async function recalcularNotificacoesGlobal() {
 
   const clis = await getAll('clientes');
   const ativos = clis.filter(c => c.status === 'Ativo');
-  
   const clientesPorData = {};
   ativos.forEach(c => {
       if(!clientesPorData[c.data_vencimento]) clientesPorData[c.data_vencimento] = [];
@@ -1253,7 +1288,6 @@ async function recalcularNotificacoesGlobal() {
 
   const horariosValidos = cfgNotif.horarios.filter(h => h && h.trim() !== '');
   const templates = await getAll('templates');
-  
   const diasParaAvisar = [];
   if (templates.find(t => t.tipo === 'vencimento_hoje' && t.ativo !== false)) diasParaAvisar.push(0);
   if (templates.find(t => t.tipo === 'lembrete_1' && t.ativo !== false)) diasParaAvisar.push(1);
@@ -1270,14 +1304,11 @@ async function recalcularNotificacoesGlobal() {
   for (const dataStr in clientesPorData) {
       const listaDoDia = clientesPorData[dataStr];
       const dataVencimento = new Date(dataStr + 'T00:00:00');
-      
       if (dataVencimento < hoje || dataVencimento > dataLimiteFuturo) continue;
-
       const nomes = listaDoDia.map(c => c.nome);
 
       for (const horaEscolhida of horariosValidos) {
           const [h, m] = horaEscolhida.split(':').map(Number);
-          
           for (const antecedencia of diasParaAvisar) {
               const toque = new Date(dataVencimento);
               toque.setDate(toque.getDate() - antecedencia);
@@ -1292,53 +1323,16 @@ async function recalcularNotificacoesGlobal() {
                       tTitulo = listaDoDia.length === 1 ? `🟡 Vencimento em ${antecedencia} dia(s)` : `🟡 ${listaDoDia.length} Clientes vencem em ${antecedencia} dia(s)!`;
                       tCorpo = listaDoDia.length === 1 ? `Lembrete: O plano de ${nomes[0]} vencerá em breve.` : `Prepare as cobranças: ${nomes.slice(0,3).join(', ')}...`;
                   }
-
-                  novaAgenda.push({
-                      id: idAlarme++,
-                      title: tTitulo,
-                      body: tCorpo,
-                      schedule: { at: toque, allowWhileIdle: true },
-                      channelId: 'alertas_gestor'
-                  });
+                  novaAgenda.push({ id: idAlarme++, title: tTitulo, body: tCorpo, schedule: { at: toque, allowWhileIdle: true }, channelId: 'alertas_gestor' });
               }
           }
       }
   }
-
   if (novaAgenda.length > 0) {
       try { await LocalNotifications.schedule({ notifications: novaAgenda }); } catch(e) {}
   }
 }
 
-// ========== BACKUP ==========
-async function exportarBackup(){
-  const dados = { config: cfgEmpresa, notif: cfgNotif, clientes: await getAll('clientes'), planos: await getAll('planos'), templates: await getAll('templates') };
-  const str = JSON.stringify(dados, null, 2);
-  const name = `Backup_IPTV_${new Date().toISOString().slice(0,10)}.json`;
-  
-  if (navigator.share) {
-    try {
-      const file = new File([str], name, {type: "application/json"});
-      await navigator.share({ title: 'Backup IPTV', files: [file] });
-      return mostrarToast('✅ Backup compartilhado!');
-    } catch(e) {}
-  }
-  
-  const b = new Blob([str], {type:'application/json'});
-  const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = name; a.click();
-  mostrarToast('✅ Backup baixado!');
-}
-async function importarBackup(e){
-  const f = e.target.files?.[0]; if(!f || !confirm('Atenção: Os dados atuais serão substituídos. Continuar?')) return;
-  try {
-    const d = JSON.parse(await f.text());
-    if(d.config) await put('config', {id:1, nome_empresa:d.config.nome, contato:d.config.contato, chave_pix:d.config.pix});
-    if(d.planos) for(const p of d.planos) { delete p.id; await put('planos', p); }
-    if(d.templates) for(const t of d.templates) { delete t.id; await put('templates', t); }
-    if(d.clientes) for(const c of d.clientes) { delete c.id; await put('clientes', c); }
-    mostrarToast('✅ Restaurado!'); setTimeout(()=> location.reload(), 1500);
-  } catch(err){ mostrarToast('❌ Erro ao importar!'); }
-}
 </script>
 </body>
 </html>

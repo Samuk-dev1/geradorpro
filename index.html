@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Gestor IPTV</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <!-- BIBLIOTECA DE GRÁFICOS -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   
   <style>
@@ -66,7 +67,7 @@
     .action-btn { background: rgba(0,0,0,0.2); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; color: #fff; }
     .action-btn:active { transform: scale(0.9); }
 
-    /* MÉTRICAS TOPO */
+    /* MÉTRICAS (Os 4 botões do topo) */
     .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .metric-box {
       background: rgba(255, 255, 255, 0.15);
@@ -101,8 +102,10 @@
       font-size: 18px; transition: 0.3s;
     }
     .nav-item span { font-size: 10px; font-weight: 600; text-align: center; }
+    
     .nav-item.active { color: var(--primary); }
     .nav-item.active .icon-box { background: var(--primary); color: #fff; box-shadow: 0 4px 10px rgba(41,98,255,0.3); }
+    
     .nav-item.btn-cadastrar { color: var(--text-dark); }
     .nav-item.btn-cadastrar .icon-box { background: var(--bg-nav-center); color: var(--text-dark); font-size: 20px; }
 
@@ -113,10 +116,73 @@
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
     /* GRÁFICOS NEON NA DASHBOARD */
-    .neon-chart-container { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: var(--shadow-md); position: relative; overflow: hidden; transition: background-color 0.3s, border-color 0.3s; }
-    body.dark-theme .neon-chart-container { background: #0f172a; box-shadow: 0 0 25px rgba(0, 210, 255, 0.08); border: 1px solid rgba(0, 210, 255, 0.2); }
-    .neon-chart-header { font-size: 14px; font-weight: 700; color: var(--text-dark); margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
-    body.dark-theme .neon-chart-header i { text-shadow: 0 0 10px currentColor; }
+    .neon-chart-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-md);
+      position: relative;
+      overflow: hidden;
+      transition: background-color 0.3s, border-color 0.3s;
+    }
+    body.dark-theme .neon-chart-container {
+      background: #0f172a;
+      box-shadow: 0 0 25px rgba(0, 210, 255, 0.08);
+      border: 1px solid rgba(0, 210, 255, 0.2);
+    }
+    .neon-chart-header {
+      font-size: 14px; font-weight: 700; color: var(--text-dark); margin-bottom: 15px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    body.dark-theme .neon-chart-header i {
+      text-shadow: 0 0 10px currentColor;
+    }
+
+    /* FILTROS BOTÕES */
+    .filter-row { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
+    .filter-row::-webkit-scrollbar { display: none; }
+    .filter-btn {
+      background: var(--bg-card); border: 1px solid var(--border); color: var(--text-muted);
+      padding: 10px 14px; border-radius: 6px; font-size: 13px; font-weight: 600;
+      white-space: nowrap; cursor: pointer; box-shadow: var(--shadow-sm); transition: 0.2s;
+    }
+    .filter-btn.active { border-color: var(--primary); color: var(--primary); background: var(--bg-input); }
+
+    /* ====================================================
+       NOVA LISTA DE CLIENTES ULTRA-FINA COM OLHINHO
+       ==================================================== */
+    .list-container { display: flex; flex-direction: column; gap: 8px; }
+    
+    .cliente-list-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      transition: all 0.2s ease;
+      border-left: 4px solid var(--primary);
+    }
+    .cliente-list-item.vencido { border-left-color: var(--danger); }
+    .cliente-list-item.vencendo { border-left-color: var(--warning); }
+    .cliente-list-item:active { transform: scale(0.98); }
+    
+    .cli-header { 
+      display: flex; justify-content: space-between; align-items: center; 
+      padding: 12px 14px; cursor: pointer; gap: 10px;
+    }
+    
+    .cli-left { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
+    .cli-name { font-size: 14px; font-weight: 700; color: var(--text-dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .cli-dias { font-size: 11px; font-weight: 600; white-space: nowrap; }
+    
+    .cli-right { display: flex; align-items: center; gap: 12px; flex: none; }
+    .cli-right i.fa-eye { color: var(--text-muted); font-size: 15px; }
+
+    .badge-status { padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+    .badge-status.ativo { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+    .badge-status.vencido { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+    .badge-status.vencendo { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
 
     /* DASHBOARD WIDGETS & GROUPS */
     .widget-box { background: var(--bg-card); border-radius: 16px; padding: 16px; box-shadow: var(--shadow-sm); margin-bottom: 16px; transition: background-color 0.3s; }
@@ -136,48 +202,8 @@
     .dash-item-info { flex: 1; }
     .dash-item-name { font-size: 14px; font-weight: 600; color: var(--text-dark); margin-bottom: 2px; }
     .dash-item-date { font-size: 12px; color: var(--text-muted); }
+    .dash-item-actions { display: flex; gap: 6px; }
 
-    /* FILTROS BOTÕES */
-    .filter-row { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
-    .filter-row::-webkit-scrollbar { display: none; }
-    .filter-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-muted); padding: 10px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; white-space: nowrap; cursor: pointer; box-shadow: var(--shadow-sm); transition: 0.2s; }
-    .filter-btn.active { border-color: var(--primary); color: var(--primary); background: var(--bg-input); }
-
-    /* ====================================================
-       NOVO LIST ITEM: CLIENTES (ACORDEON COMPACTO)
-       ==================================================== */
-    .list-container { display: flex; flex-direction: column; gap: 10px; }
-    
-    .cliente-list-item {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-      transition: all 0.2s ease;
-      border-left: 4px solid var(--primary);
-    }
-    .cliente-list-item.vencido { border-left-color: var(--danger); }
-    .cliente-list-item.vencendo { border-left-color: var(--warning); }
-    .cliente-list-item:active { transform: scale(0.98); }
-    
-    .cli-header { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; cursor: pointer; }
-    .cli-title-box { display: flex; flex-direction: column; gap: 4px; }
-    .cli-name { font-size: 15px; font-weight: 700; color: var(--text-dark); display: flex; align-items: center; gap: 6px; }
-    .cli-name i { color: var(--primary); font-size: 12px; }
-    .cli-subtitle { font-size: 11px; font-weight: 500; color: var(--text-muted); }
-    .cli-header-right { display: flex; align-items: center; gap: 10px; }
-    
-    /* Grelha de Informações da Janela Detalhes */
-    .cli-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; background: var(--bg-input); padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
-    .cli-info-item { font-size: 11px; color: var(--text-muted); }
-    .cli-info-item strong { color: var(--text-dark); display: block; font-size: 13px; margin-top: 2px; }
-    .cli-info-full { grid-column: span 2; }
-    
-    .badge-status { padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-    .badge-status.ativo { background: rgba(16, 185, 129, 0.15); color: var(--success); }
-    .badge-status.vencido { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
-    .badge-status.vencendo { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
-    
     .card-actions { display: flex; gap: 8px; }
     .btn-action {
       flex: 1; background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px;
@@ -226,6 +252,12 @@
 
     .search-bar { display: flex; gap: 8px; flex: 1; }
     .search-bar input { flex: 1; border-radius: 12px; padding: 10px 16px; }
+
+    /* ESTILO MODAL DETALHES CLIENTE */
+    .cli-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; background: var(--bg-input); padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+    .cli-info-item { font-size: 11px; color: var(--text-muted); }
+    .cli-info-item strong { color: var(--text-dark); display: block; font-size: 13px; margin-top: 2px; }
+    .cli-info-full { grid-column: span 2; }
   </style>
 </head>
 <body>
@@ -389,7 +421,7 @@
   </main>
 
   <!-- ==============================================
-       NOVO MODAL: JANELA DE DETALHES DO CLIENTE 
+       MODAL: JANELA DE DETALHES DO CLIENTE 
        ============================================== -->
   <div class="modal" id="modal-detalhes-cliente">
     <div class="modal-content">
@@ -434,17 +466,35 @@
       
       <div class="form-group"><label>Nome Completo</label><input type="text" id="cli-nome" required></div>
       <div class="form-group"><label>Telefone / WhatsApp</label><input type="tel" id="cli-telefone"></div>
+      
       <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-        <div class="form-group"><label>Usuário (Painel)</label><input type="text" id="cli-usuario" placeholder="Opcional"></div>
-        <div class="form-group"><label>Senha (Painel)</label><input type="text" id="cli-senha-painel" placeholder="Opcional"></div>
+        <div class="form-group">
+          <label>Usuário (Painel)</label>
+          <input type="text" id="cli-usuario" placeholder="Opcional">
+        </div>
+        <div class="form-group">
+          <label>Senha (Painel)</label>
+          <input type="text" id="cli-senha-painel" placeholder="Opcional">
+        </div>
       </div>
-      <div class="form-group"><label>Servidor / Provedor</label><input type="text" id="cli-provedor" placeholder="Opcional (Ex: BobTV)"></div>
+      
+      <div class="form-group">
+        <label>Servidor / Provedor</label>
+        <input type="text" id="cli-provedor" placeholder="Opcional (Ex: BobTV)">
+      </div>
+      
       <div class="form-group"><label>Data de Vencimento</label><input type="date" id="cli-vencimento" required></div>
-      <div class="form-group"><label>MAC Address</label><input type="text" id="cli-mac" placeholder="Opcional: 00:1A:2B:3C:4D:5E" oninput="formatarMAC(this)" maxlength="17"></div>
+      
+      <div class="form-group">
+        <label>MAC Address</label>
+        <input type="text" id="cli-mac" placeholder="Opcional: 00:1A:2B:3C:4D:5E" oninput="formatarMAC(this)" maxlength="17">
+      </div>
       <div class="form-group"><label>Senha do Aplicativo</label><input type="text" id="cli-senha" placeholder="Opcional..."></div>
       <div class="form-group"><label>Aplicativo Usado</label><input type="text" id="cli-app" placeholder="Opcional (Ex: Smartters)"></div>
       <div class="form-group"><label>Plano</label><select id="cli-plano"></select></div>
+      
       <input type="hidden" id="cli-valor">
+      <div class="form-group" style="display:none;"><label>Status</label><select id="cli-status"><option value="Ativo">Ativo</option><option value="Inativo">Inativo</option></select></div>
       <button class="btn-gradient" onclick="salvarCliente()">Salvar Cadastro</button>
     </div>
   </div>
@@ -536,7 +586,7 @@
   <div id="toast" class="toast">Mensagem de Sucesso</div>
 
 <script>
-// ========== LÓGICA DO MODO ESCURO (DARK MODE) ==========
+// ========== LÓGICA DO MODO ESCURO (DARK MODE) E RE-RENDER DE GRÁFICOS ==========
 function toggleTheme() {
   const isDark = document.body.classList.toggle('dark-theme');
   const icon = document.getElementById('theme-icon');
@@ -547,6 +597,7 @@ function toggleTheme() {
     icon.classList.replace('fa-sun', 'fa-moon');
     localStorage.setItem('theme', 'light');
   }
+  
   if(document.getElementById('screen-dashboard').classList.contains('active')){
       renderizarDashboard();
   }
@@ -568,6 +619,7 @@ let cfgNotif = { horarios: ['09:00', '13:00', '18:00'] };
 let filtroAtualGlobal = 'todos';
 let toastTimeout;
 
+// Instâncias dos Gráficos
 let lineChartInstance = null;
 let doughnutChartInstance = null;
 
@@ -874,7 +926,7 @@ async function abrirModalDetalhesCliente(id) {
   abrirModal('modal-detalhes-cliente');
 }
 
-// ========== CLIENTES LISTAGEM (FORMATO LINHA COMPACTO) ==========
+// ========== CLIENTES LISTAGEM (FORMATO LINHA COMPACTO COM OLHO) ==========
 async function renderizarClientesListagem(filtro, busca) {
   let clis = await getAll('clientes');
   clis = clis.map(c => ({...c, _sts: calcularStatus(c.data_vencimento)}));
@@ -894,19 +946,24 @@ async function renderizarClientesListagem(filtro, busca) {
     let colorDias = 'var(--primary)';
     
     if(c._sts.dias === 0) { strDias = 'Vence hoje'; colorDias = 'var(--warning)'; }
-    else if(c._sts.dias > 0) { strDias = `${c._sts.dias} dias restantes`; }
-    else { strDias = `Vencido há ${c._sts.dias * -1} dias`; colorDias = 'var(--danger)'; }
+    else if(c._sts.dias > 0) { strDias = `Faltam ${c._sts.dias}d`; }
+    else { strDias = `Vencido há ${c._sts.dias * -1}d`; colorDias = 'var(--danger)'; }
 
     return `
       <div class="cliente-list-item ${c._sts.classe}" onclick="abrirModalDetalhesCliente(${c.id})">
-        <div class="cli-header">
-          <div class="cli-title-box">
-            <div class="cli-name"><i class="fas fa-user-circle"></i> ${c.nome}</div>
-            <div class="cli-subtitle">${c.plano} | <span style="color:${colorDias}; font-weight:600;">${strDias}</span></div>
+        <div class="cli-header" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; cursor: pointer; gap: 10px;">
+          
+          <div style="display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0;">
+            <i class="fas fa-user-circle" style="color: var(--primary); font-size: 16px;"></i>
+            <span style="font-size: 14px; font-weight: 700; color: var(--text-dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${c.nome}</span>
+            <span style="font-size: 11px; font-weight: 600; color: ${colorDias}; white-space: nowrap;">${strDias}</span>
           </div>
-          <div class="cli-header-right">
+          
+          <div style="display: flex; align-items: center; gap: 12px; flex: none;">
+            <i class="fas fa-eye" style="color: var(--text-muted); font-size: 14px;"></i>
             <div class="badge-status ${c._sts.classe}">${c._sts.texto}</div>
           </div>
+
         </div>
       </div>
     `;

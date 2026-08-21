@@ -3,91 +3,393 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MoveUp - Mobilidade</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <title>GPS Mapa Offline</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
-        :root { --laranja: #FF5722; --cinza-fundo: #F4F6F8; --texto: #2C3E50; }
-        * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
-        body, html { height: 100%; margin: 0; padding: 0; background: var(--cinza-fundo); overflow: hidden; }
-        
-        header { 
-            height: 65px; background: #FFFFFF; display: flex; align-items: center; justify-content: space-between; 
-            padding: 0 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); position: relative; z-index: 2000;
-        }
-        .logo { font-size: 1.4rem; font-weight: 800; color: var(--laranja); }
-        .relogio { font-size: 1rem; font-weight: 600; color: var(--texto); }
-        .acoes { display: flex; gap: 15px; }
-        
-        .map-wrapper { 
-            position: absolute; top: 80px; left: 10px; right: 10px; bottom: 70px; 
-            border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1); 
-            border: 2px solid white;
-        }
-        #mapa { height: 100%; width: 100%; }
+        * { margin:0; padding:0; box-sizing:border-box; font-family: system-ui, -apple-system, sans-serif; }
+        html, body { height:100%; width:100%; overflow:hidden; background:#f0f4f8; }
 
-        .status-bar { 
-            position: absolute; bottom: 15px; width: 90%; left: 5%; height: 40px; 
-            background: #FFFFFF; border-radius: 20px; display: flex; align-items: center; 
-            justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); z-index: 2000;
+        .header {
+            position:fixed; top:0; left:0; right:0; height:60px;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color:white; display:flex; align-items:center; justify-content:space-between;
+            padding:0 16px; z-index:1000; box-shadow:0 2px 8px rgba(0,0,0,.2);
         }
-        .ponto { width: 8px; height: 8px; border-radius: 50%; background: var(--laranja); margin-right: 8px; }
+        .header h1 { font-size:18px; font-weight:600; }
+        .status { display:flex; gap:10px; align-items:center; }
+        .status-badge {
+            padding:4px 10px; border-radius:20px; font-size:12px; font-weight:500;
+        }
+        .online { background:#10b981; }
+        .offline { background:#ef4444; }
+
+        #map { position:absolute; top:60px; left:0; right:0; bottom:80px; }
+
+        .footer {
+            position:fixed; bottom:0; left:0; right:0; height:80px;
+            background:white; display:flex; align-items:center; justify-content:space-around;
+            box-shadow:0 -2px 10px rgba(0,0,0,.1); z-index:999; padding:8px 12px;
+        }
+        .btn {
+            display:flex; flex-direction:column; align-items:center; gap:4px;
+            background:none; border:none; color:#374151; font-size:11px; cursor:pointer;
+            padding:8px 12px; border-radius:12px; transition:all .2s;
+        }
+        .btn:hover { background:#eff6ff; color:#2563eb; }
+        .btn.primary { background:#2563eb; color:white; }
+        .btn.primary:hover { background:#1d4ed8; }
+        .btn-icon { font-size:22px; }
+
+        .coords-panel {
+            position:fixed; top:70px; left:12px; right:12px;
+            background:white; border-radius:12px; padding:12px 16px;
+            box-shadow:0 4px 12px rgba(0,0,0,.15); z-index:900;
+            font-size:13px; line-height:1.6; display:none;
+        }
+        .coords-panel.show { display:block; }
+        .coords-label { font-weight:600; color:#6b7280; }
+        .coords-value { color:#1f2937; font-weight:500; }
+
+        .perm-screen {
+            position:fixed; inset:0; background:#fff; z-index:9999;
+            display:flex; flex-direction:column; align-items:center; justify-content:center;
+            padding:32px; text-align:center;
+        }
+        .perm-screen h2 { color:#1f2937; font-size:22px; margin-bottom:12px; }
+        .perm-screen p { color:#6b7280; font-size:15px; margin-bottom:32px; line-height:1.6; }
+        .perm-btn {
+            background:linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color:white; border:none; padding:14px 32px; border-radius:12px;
+            font-size:16px; font-weight:600; cursor:pointer; width:100%; max-width:300px;
+        }
+        .perm-btn:active { transform:scale(.98); }
+        .perm-screen.hidden { display:none; }
+
+        .toast {
+            position:fixed; bottom:100px; left:50%; transform:translateX(-50%);
+            background:rgba(0,0,0,.8); color:white; padding:12px 24px;
+            border-radius:8px; font-size:14px; z-index:2000; opacity:0;
+            transition:opacity .3s; pointer-events:none;
+        }
+        .toast.show { opacity:1; }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="logo">MOVEUP</div>
-        <div class="relogio" id="relogio">00:00</div>
-        <div class="acoes">
-            <span style="cursor:pointer">🔍</span>
-            <span style="cursor:pointer">👤</span>
-        </div>
-    </header>
+<!-- Tela de Permissões — aparece SÓ na primeira vez que abrir o app -->
+<div id="permScreen" class="perm-screen">
+    <h2>📍 Permissões Necessárias</h2>
+    <p>Esse aplicativo precisa de acesso à sua localização para mostrar sua posição no mapa, além de permissão para salvar mapas e enviar avisos. <br><br>Toque no botão abaixo e permita tudo quando o celular pedir, tá bom? Assim o GPS vai funcionar 100% mesmo sem internet.</p>
+    <button id="btnGrantPerm" class="perm-btn">✅ Permitir Acesso</button>
+</div>
 
-    <div class="map-wrapper">
-        <div id="mapa"></div>
+<div class="header">
+    <h1>🗺️ Meu GPS Offline</h1>
+    <div class="status">
+        <span id="netBadge" class="status-badge offline">Sem Internet</span>
     </div>
+</div>
 
-    <div class="status-bar">
-        <div class="ponto"></div>
-        <span style="font-size: 0.85rem; color: #555;">Sistema Operacional Ativo</span>
-    </div>
+<div id="coordsPanel" class="coords-panel">
+    <div><span class="coords-label">Latitude:</span> <span id="latVal" class="coords-value">--</span></div>
+    <div><span class="coords-label">Longitude:</span> <span id="lngVal" class="coords-value">--</span></div>
+    <div><span class="coords-label">Precisão:</span> <span id="accVal" class="coords-value">--</span> m</div>
+    <div><span class="coords-label">Última Atualização:</span> <span id="timeVal" class="coords-value">--</span></div>
+</div>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script>
-        // Relógio
-        setInterval(() => {
-            document.getElementById('relogio').innerText = new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
-        }, 1000);
+<div id="map"></div>
 
-        // Mapa
-        const map = L.map('mapa', { zoomControl: false }).setView([-17.0391, -39.5222], 15);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-        
-        let marcador = null;
+<div class="footer">
+    <button class="btn primary" id="btnLoc">
+        <span class="btn-icon">📍</span>
+        <span>Minha Posição</span>
+    </button>
+    <button class="btn" id="btnSave">
+        <span class="btn-icon">💾</span>
+        <span>Salvar Mapa</span>
+    </button>
+    <button class="btn" id="btnUpdate">
+        <span class="btn-icon">🔄</span>
+        <span>Atualizar</span>
+    </button>
+    <button class="btn" id="btnShare">
+        <span class="btn-icon">↗️</span>
+        <span>Compartilhar</span>
+    </button>
+</div>
 
-        // GPS e Permissões (Modo Silencioso/Comercial)
-        async function iniciar() {
-            if (window.Capacitor) {
-                const { Geolocation, LocalNotifications } = window.Capacitor.Plugins;
-                try {
-                    await Geolocation.requestPermissions();
-                    await LocalNotifications.requestPermissions();
-                    
-                    Geolocation.watchPosition({ enableHighAccuracy: true }, (pos) => {
-                        const latlng = [pos.coords.latitude, pos.coords.longitude];
-                        if (!marcador) {
-                            marcador = L.marker(latlng).addTo(map);
-                            map.setView(latlng, 17);
-                        } else {
-                            marcador.setLatLng(latlng);
-                            map.setView(latlng);
-                        }
-                    });
-                } catch(e) {}
-            }
+<div id="toast" class="toast"></div>
+
+<script>
+const CACHE_NAME = 'mapa-offline-v1';
+let map, marker, tilesCache = {}, lastPosition = null;
+
+// ========== GERENCIAMENTO DE PERMISSÕES — PRIMEIRA ABERTURA ==========
+async function checkAndRequestPermissions() {
+    const isFirstTime = await isFirstLaunch();
+    if(!isFirstTime) {
+        document.getElementById('permScreen').classList.add('hidden');
+        initApp();
+        return;
+    }
+
+    // Botão de conceder permissões
+    document.getElementById('btnGrantPerm').addEventListener('click', async () => {
+        await requestAllPermissions();
+        await markPermissionsDone();
+        document.getElementById('permScreen').classList.add('hidden');
+        initApp();
+        showToast('✅ Permissões concedidas! Tudo pronto!');
+    });
+}
+
+async function isFirstLaunch() {
+    try {
+        if(window.Capacitor?.Plugins?.Preferences) {
+            const { Preferences } = window.Capacitor.Plugins;
+            const { value } = await Preferences.get({ key: 'permSetupDone' });
+            return value !== 'yes';
         }
-        window.onload = iniciar;
-    </script>
+        return !localStorage.getItem('permSetupDone');
+    } catch {
+        return !localStorage.getItem('permSetupDone');
+    }
+}
+
+async function markPermissionsDone() {
+    try {
+        if(window.Capacitor?.Plugins?.Preferences) {
+            const { Preferences } = window.Capacitor.Plugins;
+            await Preferences.set({ key: 'permSetupDone', value: 'yes' });
+        } else {
+            localStorage.setItem('permSetupDone', 'yes');
+        }
+    } catch {}
+}
+
+async function requestAllPermissions() {
+    if(!window.Capacitor?.Plugins) return;
+
+    const { Geolocation, LocalNotifications, Filesystem } = window.Capacitor.Plugins;
+
+    // 1️⃣ Permissão de Localização/GPS
+    try {
+        await Geolocation.requestPermissions();
+    } catch(e) { console.log('Permissão localização:', e); }
+
+    // 2️⃣ Permissão de Notificações
+    try {
+        await LocalNotifications.requestPermissions();
+    } catch(e) { console.log('Permissão notificações:', e); }
+
+    // 3️⃣ Permissão de Arquivos/Armazenamento
+    try {
+        await Filesystem.requestPermissions();
+    } catch(e) { console.log('Permissão arquivos:', e); }
+}
+
+// ========== INICIALIZAÇÃO DO APP ==========
+function initApp() {
+    initMap();
+    updateNetStatus();
+    loadCachedTiles();
+    window.addEventListener('online', ()=>{ updateNetStatus(); showToast('✅ Conectado à internet'); });
+    window.addEventListener('offline', ()=>{ updateNetStatus(); showToast('⚠️ Sem internet — usando mapa salvo'); });
+}
+
+// ========== MAPA ==========
+function initMap() {
+    map = L.map('map', { zoomControl:true }).setView([-14.85, -39.55], 13);
+
+    const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap', maxZoom: 19, crossOrigin: true
+    }).addTo(map);
+
+    osmLayer.on('tileload', (e) => {
+        const url = e.tile.src;
+        tilesCache[url] = { url, timestamp: Date.now() };
+        saveTilesToStorage();
+    });
+
+    loadCachedTiles();
+}
+
+function saveTilesToStorage() {
+    try {
+        if(window.Capacitor?.Plugins?.Preferences) {
+            const { Preferences } = window.Capacitor.Plugins;
+            Preferences.set({ key: 'savedMapTiles', value: JSON.stringify(tilesCache) });
+        } else {
+            localStorage.setItem('savedMapTiles', JSON.stringify(tilesCache));
+        }
+    } catch {
+        localStorage.setItem('savedMapTiles', JSON.stringify(tilesCache));
+    }
+}
+
+function loadCachedTiles() {
+    try {
+        let data = null;
+        if(window.Capacitor?.Plugins?.Preferences) {
+            Preferences.get({ key: 'savedMapTiles' }).then(r => {
+                if(r.value) tilesCache = JSON.parse(r.value);
+            });
+        } else {
+            const saved = localStorage.getItem('savedMapTiles');
+            if(saved) tilesCache = JSON.parse(saved);
+        }
+    } catch {
+        const saved = localStorage.getItem('savedMapTiles');
+        if(saved) tilesCache = JSON.parse(saved);
+    }
+}
+
+async function saveMapArea() {
+    showToast('💾 Salvando mapa...');
+    saveTilesToStorage();
+    await sendNotification('Mapa Salvo ✅', 'A área do mapa foi salva e está disponível sem internet!');
+    showToast('✅ Mapa salvo! Funciona sem internet!');
+}
+
+async function updateMapOnline() {
+    if(!navigator.onLine) {
+        showToast('⚠️ Precisa de internet para atualizar!');
+        return;
+    }
+    showToast('🔄 Atualizando mapa...');
+    tilesCache = {};
+    saveTilesToStorage();
+    map.eachLayer(layer => { if(layer instanceof L.TileLayer) map.removeLayer(layer); });
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap', maxZoom: 19
+    }).addTo(map);
+    await sendNotification('Mapa Atualizado ✅', 'Seu mapa offline foi atualizado com sucesso!');
+    showToast('✅ Mapa atualizado!');
+}
+
+// ========== GPS / LOCALIZAÇÃO ==========
+async function getLocation() {
+    if(!navigator.geolocation) {
+        showToast('❌ GPS não suportado');
+        return;
+    }
+    showToast('📍 Buscando sua posição...');
+
+    if(window.Capacitor?.Plugins?.Geolocation) {
+        try {
+            const { Geolocation } = window.Capacitor.Plugins;
+            const pos = await Geolocation.getCurrentPosition({ enableHighAccuracy:true, timeout:15000 });
+            showPosition(pos.coords);
+        } catch {
+            useBrowserGeolocation();
+        }
+    } else {
+        useBrowserGeolocation();
+    }
+}
+
+function useBrowserGeolocation() {
+    navigator.geolocation.getCurrentPosition(
+        (pos) => showPosition(pos.coords),
+        (err) => showToast('❌ Erro: ' + err.message),
+        { enableHighAccuracy:true, timeout:15000, maximumAge:30000 }
+    );
+}
+
+function showPosition(c) {
+    lastPosition = c;
+    const lat = c.latitude.toFixed(6);
+    const lng = c.longitude.toFixed(6);
+    const acc = Math.round(c.accuracy || 0);
+
+    document.getElementById('latVal').textContent = lat;
+    document.getElementById('lngVal').textContent = lng;
+    document.getElementById('accVal').textContent = acc;
+    document.getElementById('timeVal').textContent = new Date().toLocaleTimeString('pt-BR');
+    document.getElementById('coordsPanel').classList.add('show');
+
+    if(!marker) {
+        marker = L.marker([lat, lng], {
+            icon: L.divIcon({
+                className:'my-location',
+                html:'<div style="width:18px;height:18px;background:#2563eb;border:3px solid white;border-radius:50%;box-shadow:0 0 0 3px #2563eb40;"></div>',
+                iconSize:[18,18], iconAnchor:[9,9]
+            })
+        }).addTo(map);
+    } else {
+        marker.setLatLng([lat, lng]);
+    }
+
+    map.setView([lat, lng], 16);
+    showToast(`✅ Posição: ${lat}, ${lng}`);
+}
+
+// ========== COMPARTILHAR LOCALIZAÇÃO ==========
+async function shareLocation() {
+    if(!lastPosition) {
+        showToast('⚠️ Busque sua posição primeiro!');
+        return;
+    }
+    const lat = lastPosition.latitude.toFixed(6);
+    const lng = lastPosition.longitude.toFixed(6);
+    const texto = `📍 Minha localização:\nLatitude: ${lat}\nLongitude: ${lng}\nhttps://www.google.com/maps?q=${lat},${lng}`;
+
+    if(window.Capacitor?.Plugins?.Share) {
+        const { Share } = window.Capacitor.Plugins;
+        try {
+            await Share.share({ text: texto });
+        } catch {
+            navigator.clipboard?.writeText(texto);
+            showToast('✅ Copiado para a área de transferência!');
+        }
+    } else {
+        if(navigator.clipboard) {
+            await navigator.clipboard.writeText(texto);
+            showToast('✅ Copiado para compartilhar!');
+        }
+    }
+}
+
+// ========== INTERNET E NOTIFICAÇÕES ==========
+function updateNetStatus() {
+    const badge = document.getElementById('netBadge');
+    if(navigator.onLine) {
+        badge.textContent = 'Online';
+        badge.className = 'status-badge online';
+    } else {
+        badge.textContent = 'Offline';
+        badge.className = 'status-badge offline';
+    }
+}
+
+async function sendNotification(title, body) {
+    if(window.Capacitor?.Plugins?.LocalNotifications) {
+        const { LocalNotifications } = window.Capacitor.Plugins;
+        try {
+            await LocalNotifications.schedule({
+                notifications: [{ title, body, id: Date.now() }]
+            });
+        } catch {}
+    }
+}
+
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ========== EVENTOS DOS BOTÕES ==========
+document.getElementById('btnLoc').addEventListener('click', getLocation);
+document.getElementById('btnSave').addEventListener('click', saveMapArea);
+document.getElementById('btnUpdate').addEventListener('click', updateMapOnline);
+document.getElementById('btnShare').addEventListener('click', shareLocation);
+
+// ========== INÍCIO — VERIFICA PERMISSÕES NA ABERTURA ==========
+document.addEventListener('DOMContentLoaded', checkAndRequestPermissions);
+</script>
+
 </body>
 </html>

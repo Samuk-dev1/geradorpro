@@ -11,7 +11,6 @@
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
     :root {
-      /* CORES MODO CLARO */
       --bg-body: #f4f6f9;
       --bg-card: #ffffff;
       --primary: #2962ff;
@@ -33,7 +32,6 @@
       --shadow-nav: 0 10px 30px rgba(0,0,0,0.12);
     }
 
-    /* CORES MODO ESCURO (Dark Mode) */
     body.dark-theme {
       --bg-body: #0f172a;
       --bg-card: #1e293b;
@@ -49,7 +47,6 @@
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
     body { background-color: var(--bg-body); color: var(--text-dark); min-height: 100vh; overflow-x: hidden; transition: background-color 0.3s ease; }
 
-    /* CABEÇALHO GRADIENTE TOP */
     .top-header-area {
       background: var(--gradient-header);
       padding: 20px 20px 80px 20px;
@@ -66,7 +63,6 @@
     .action-btn { background: rgba(0,0,0,0.2); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; color: #fff; }
     .action-btn:active { transform: scale(0.9); }
 
-    /* MÉTRICAS TOPO */
     .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .metric-box {
       background: rgba(255, 255, 255, 0.15);
@@ -80,7 +76,6 @@
     .metric-box .val { font-size: 24px; font-weight: 800; margin-bottom: 2px; }
     .metric-box .lbl { font-size: 13px; font-weight: 500; opacity: 0.9; }
 
-    /* NAVEGAÇÃO FLUTUANTE */
     .floating-nav-container {
       position: absolute; left: 20px; right: 20px; bottom: -35px;
       background: var(--bg-nav); border-radius: 40px;
@@ -101,24 +96,79 @@
       font-size: 18px; transition: 0.3s;
     }
     .nav-item span { font-size: 10px; font-weight: 600; text-align: center; }
+    
     .nav-item.active { color: var(--primary); }
     .nav-item.active .icon-box { background: var(--primary); color: #fff; box-shadow: 0 4px 10px rgba(41,98,255,0.3); }
+    
     .nav-item.btn-cadastrar { color: var(--text-dark); }
     .nav-item.btn-cadastrar .icon-box { background: var(--bg-nav-center); color: var(--text-dark); font-size: 20px; }
 
-    /* ÁREA DE CONTEÚDO */
     .main-content { padding: 60px 16px 20px 16px; }
     .screen { display: none; animation: fadeIn 0.3s ease forwards; }
     .screen.active { display: block; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* GRÁFICOS NEON NA DASHBOARD */
-    .neon-chart-container { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: var(--shadow-md); position: relative; overflow: hidden; transition: background-color 0.3s, border-color 0.3s; }
-    body.dark-theme .neon-chart-container { background: #0f172a; box-shadow: 0 0 25px rgba(0, 210, 255, 0.08); border: 1px solid rgba(0, 210, 255, 0.2); }
-    .neon-chart-header { font-size: 14px; font-weight: 700; color: var(--text-dark); margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
-    body.dark-theme .neon-chart-header i { text-shadow: 0 0 10px currentColor; }
+    .neon-chart-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-md);
+      position: relative;
+      overflow: hidden;
+      transition: background-color 0.3s, border-color 0.3s;
+    }
+    body.dark-theme .neon-chart-container {
+      background: #0f172a;
+      box-shadow: 0 0 25px rgba(0, 210, 255, 0.08);
+      border: 1px solid rgba(0, 210, 255, 0.2);
+    }
+    .neon-chart-header {
+      font-size: 14px; font-weight: 700; color: var(--text-dark); margin-bottom: 15px;
+      display: flex; align-items: center; gap: 8px;
+    }
 
-    /* DASHBOARD WIDGETS & GROUPS */
+    .filter-row { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
+    .filter-row::-webkit-scrollbar { display: none; }
+    .filter-btn {
+      background: var(--bg-card); border: 1px solid var(--border); color: var(--text-muted);
+      padding: 10px 14px; border-radius: 6px; font-size: 13px; font-weight: 600;
+      white-space: nowrap; cursor: pointer; box-shadow: var(--shadow-sm); transition: 0.2s;
+    }
+    .filter-btn.active { border-color: var(--primary); color: var(--primary); background: var(--bg-input); }
+
+    .list-container { display: flex; flex-direction: column; gap: 8px; }
+    
+    .cliente-list-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      transition: all 0.2s ease;
+      border-left: 4px solid var(--primary);
+    }
+    .cliente-list-item.vencido { border-left-color: var(--danger); }
+    .cliente-list-item.vencendo { border-left-color: var(--warning); }
+    .cliente-list-item:active { transform: scale(0.98); }
+    
+    .cli-header { 
+      display: flex; justify-content: space-between; align-items: center; 
+      padding: 12px 14px; cursor: pointer; gap: 10px;
+    }
+    
+    .cli-left { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
+    .cli-name { font-size: 14px; font-weight: 700; color: var(--text-dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .cli-dias { font-size: 11px; font-weight: 600; white-space: nowrap; }
+    
+    .cli-right { display: flex; align-items: center; gap: 12px; flex: none; }
+    .cli-right i.fa-eye { color: var(--text-muted); font-size: 15px; }
+
+    .badge-status { padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+    .badge-status.ativo { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+    .badge-status.vencido { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+    .badge-status.vencendo { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+
     .widget-box { background: var(--bg-card); border-radius: 16px; padding: 16px; box-shadow: var(--shadow-sm); margin-bottom: 16px; transition: background-color 0.3s; }
     .widget-header { display: flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 700; margin-bottom: 16px; color: var(--text-dark); }
     .empty-state { text-align: center; color: var(--text-muted); font-size: 14px; padding: 20px 0; }
@@ -136,48 +186,8 @@
     .dash-item-info { flex: 1; }
     .dash-item-name { font-size: 14px; font-weight: 600; color: var(--text-dark); margin-bottom: 2px; }
     .dash-item-date { font-size: 12px; color: var(--text-muted); }
+    .dash-item-actions { display: flex; gap: 6px; }
 
-    /* FILTROS BOTÕES */
-    .filter-row { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
-    .filter-row::-webkit-scrollbar { display: none; }
-    .filter-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-muted); padding: 10px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; white-space: nowrap; cursor: pointer; box-shadow: var(--shadow-sm); transition: 0.2s; }
-    .filter-btn.active { border-color: var(--primary); color: var(--primary); background: var(--bg-input); }
-
-    /* ====================================================
-       NOVA LISTA DE CLIENTES ULTRA-FINA COM OLHINHO
-       ==================================================== */
-    .list-container { display: flex; flex-direction: column; gap: 10px; }
-    
-    .cliente-list-item {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-      transition: all 0.2s ease;
-      border-left: 4px solid var(--primary);
-    }
-    .cliente-list-item.vencido { border-left-color: var(--danger); }
-    .cliente-list-item.vencendo { border-left-color: var(--warning); }
-    .cliente-list-item:active { transform: scale(0.98); }
-    
-    .cli-header { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; cursor: pointer; gap: 10px;}
-    .cli-title-box { display: flex; flex-direction: column; gap: 4px; }
-    .cli-name { font-size: 15px; font-weight: 700; color: var(--text-dark); display: flex; align-items: center; gap: 6px; }
-    .cli-name i { color: var(--primary); font-size: 12px; }
-    .cli-subtitle { font-size: 11px; font-weight: 500; color: var(--text-muted); }
-    .cli-header-right { display: flex; align-items: center; gap: 10px; }
-    
-    /* Grelha de Informações da Janela Detalhes */
-    .cli-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; background: var(--bg-input); padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
-    .cli-info-item { font-size: 11px; color: var(--text-muted); }
-    .cli-info-item strong { color: var(--text-dark); display: block; font-size: 13px; margin-top: 2px; }
-    .cli-info-full { grid-column: span 2; }
-    
-    .badge-status { padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-    .badge-status.ativo { background: rgba(16, 185, 129, 0.15); color: var(--success); }
-    .badge-status.vencido { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
-    .badge-status.vencendo { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
-    
     .card-actions { display: flex; gap: 8px; }
     .btn-action {
       flex: 1; background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px;
@@ -188,7 +198,6 @@
     .btn-action:active { transform: scale(0.95); }
     .btn-action.trash { flex: none; width: 44px; background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3); color: var(--danger); }
 
-    /* TELA DE COBRANÇA E CONFIGURAÇÕES */
     .panel-box { background: var(--bg-card); border-radius: 16px; padding: 20px; box-shadow: var(--shadow-md); margin-bottom: 20px; transition: background-color 0.3s; }
     .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
     .panel-header h3 { font-size: 16px; font-weight: 700; color: var(--text-dark); display: flex; align-items: center; gap: 8px; }
@@ -197,7 +206,6 @@
     input, select, textarea { width: 100%; padding: 12px 14px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 10px; font-size: 14px; color: var(--text-dark); outline: none; transition: 0.2s; }
     input:focus, select:focus, textarea:focus { border-color: var(--primary); }
 
-    /* CHAVINHA iOS */
     .switch { position: relative; display: inline-block; width: 48px; height: 26px; }
     .switch input { opacity: 0; width: 0; height: 0; }
     .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .4s; border-radius: 34px; }
@@ -205,12 +213,44 @@
     input:checked + .slider { background-color: var(--success); }
     input:checked + .slider:before { transform: translateX(22px); }
 
-    /* BOTÕES GERAIS */
     .btn-gradient { width: 100%; background: var(--gradient-header); color: #fff; font-weight: 700; font-size: 15px; padding: 14px; border: none; border-radius: 12px; cursor: pointer; box-shadow: var(--shadow-md); display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.2s; }
     .btn-gradient:active { transform: scale(0.98); }
     .btn-outline { width: 100%; background: transparent; color: var(--text-dark); font-weight: 600; font-size: 14px; padding: 12px; border: 1px solid var(--border); border-radius: 12px; cursor: pointer; margin-bottom: 10px; }
 
-    /* MODAIS */
+    /* NOVO: Botão de envio automático */
+    .btn-auto-envio {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #fff;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      transition: 0.2s;
+      margin-bottom: 16px;
+      width: 100%;
+    }
+    .btn-auto-envio:active { transform: scale(0.98); }
+    .btn-auto-envio i { font-size: 16px; }
+
+    .info-box {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 16px;
+      font-size: 12px;
+      color: var(--text-dark);
+      line-height: 1.5;
+    }
+    .info-box strong { color: var(--success); }
+
     .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
     .modal.open { display: flex; animation: fadeIn 0.2s ease; }
     .modal-content { background: var(--bg-card); border-radius: 20px; padding: 24px; width: 100%; max-width: 400px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.3); transition: background-color 0.3s; }
@@ -220,17 +260,20 @@
 
     #renov-info { font-size: 14px; color: var(--text-dark); margin-bottom: 15px; background: var(--bg-input); padding: 12px; border-radius: 8px; text-align: center; border: 1px solid var(--border); }
 
-    /* TOAST */
     .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #334155; color: #fff; padding: 12px 24px; border-radius: 30px; font-weight: 600; font-size: 14px; box-shadow: var(--shadow-md); z-index: 9999; opacity: 0; transition: 0.4s ease; text-align: center; white-space: nowrap; pointer-events: none; }
     .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
     .search-bar { display: flex; gap: 8px; flex: 1; }
     .search-bar input { flex: 1; border-radius: 12px; padding: 10px 16px; }
+
+    .cli-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; background: var(--bg-input); padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+    .cli-info-item { font-size: 11px; color: var(--text-muted); }
+    .cli-info-item strong { color: var(--text-dark); display: block; font-size: 13px; margin-top: 2px; }
+    .cli-info-full { grid-column: span 2; }
   </style>
 </head>
 <body>
 
-  <!-- CABEÇALHO FIXO GRADIENTE -->
   <header class="top-header-area">
     <div class="header-title-row">
       <div>
@@ -250,7 +293,6 @@
       <div class="metric-box"><span class="val" id="faturamento">R$ 0,00</span><span class="lbl">Receita</span></div>
     </div>
 
-    <!-- MENU FLUTUANTE -->
     <div class="floating-nav-container">
       <div class="nav-item active" onclick="navegarPara('dashboard', this)">
         <div class="icon-box"><i class="fas fa-chart-bar"></i></div><span>Dashboard</span>
@@ -272,9 +314,19 @@
 
   <main class="main-content">
     
-    <!-- TELA: DASHBOARD -->
     <section id="screen-dashboard" class="screen active">
       
+      <!-- NOVO: Botão de Geração Automática de Lista -->
+      <div class="info-box">
+        <i class="fas fa-info-circle" style="color:var(--success); margin-right:6px;"></i>
+        <strong>Envio Automático com MacroDroid:</strong> Clique no botão abaixo para gerar a lista de cobranças. O MacroDroid lerá este arquivo e enviará as mensagens automaticamente no horário programado!
+      </div>
+      
+      <button class="btn-auto-envio" onclick="gerarListaEnvioAutomatico()">
+        <i class="fas fa-robot"></i>
+        Gerar Lista para Envio Automático
+      </button>
+
       <div class="neon-chart-container">
         <div class="neon-chart-header"><i class="fas fa-chart-area" style="color:var(--secondary)"></i> Vencimentos (Próximos 7 Dias)</div>
         <div style="position: relative; height: 180px;"><canvas id="chartEstatistica"></canvas></div>
@@ -299,7 +351,6 @@
       </div>
     </section>
 
-    <!-- TELA: CLIENTES -->
     <section id="screen-clientes" class="screen">
       <div style="display:flex; gap:10px; margin-bottom: 16px; align-items:center;">
         <div class="search-bar">
@@ -316,11 +367,9 @@
         <button class="filter-btn" data-filtro="hoje" onclick="setFiltro('hoje', this)" style="display:none;">Filtrado Data Específica</button>
       </div>
       
-      <!-- LISTA DE CLIENTES EM FORMATO COMPACTO (SOMENTE LINHAS) -->
       <div class="list-container" id="lista-clientes"></div>
     </section>
     
-    <!-- TELA: PLANOS -->
     <section id="screen-planos" class="screen">
       <div class="panel-box">
         <div class="panel-header">
@@ -332,7 +381,6 @@
       </div>
     </section>
 
-    <!-- TELA: TEMPLATES -->
     <section id="screen-templates" class="screen">
       <div class="panel-box">
         <div class="panel-header">
@@ -340,14 +388,13 @@
           <button class="btn-action" style="padding:4px 10px; font-size:11px;" onclick="abrirModalTemplate()">+ Novo</button>
         </div>
         <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">
-          Anexe imagens opcionais para envio e ative as chaves para liberar os atalhos de disparo!
+          Ative as chaves para liberar os atalhos e avisos automáticos na Dashboard principal!
         </p>
         <div id="lista-templates" style="display:flex; flex-direction:column; gap:12px;"></div>
       </div>
       <button class="btn-gradient" onclick="dispararNotificacao()"><i class="fas fa-bell"></i> Testar Alerta no Celular</button>
     </section>
 
-    <!-- TELA: CONFIGURAÇÕES -->
     <section id="screen-configuracoes" class="screen">
       <div class="panel-box">
         <div class="panel-header"><h3><i class="fas fa-building" style="color:var(--primary)"></i> Dados da Empresa</h3></div>
@@ -373,13 +420,11 @@
       </div>
 
       <div class="panel-box">
-        <div class="panel-header"><h3><i class="fas fa-cloud-download-alt" style="color:var(--success)"></i> Backup Completo</h3></div>
-        <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">Seu backup salvará clientes, planos e as IMAGENS dos templates.</p>
+        <div class="panel-header"><h3><i class="fas fa-cloud-download-alt" style="color:var(--success)"></i> Backup</h3></div>
         <button class="btn-gradient" style="margin-bottom:12px;" onclick="exportarBackup()"><i class="fas fa-upload"></i> Salvar Backup</button>
         <label style="font-size:13px; color:var(--text-muted); display:block; margin-bottom:8px;">Restaurar Dados:</label>
         <input type="file" id="arquivo-backup" accept=".json" onchange="importarBackup(event)" style="margin-bottom: 16px;">
         
-        <!-- BOTÃO DELETAR TODOS OS DADOS -->
         <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(239, 68, 68, 0.3);">
             <label style="font-size:13px; color:var(--danger); display:block; margin-bottom:8px; font-weight:700;"><i class="fas fa-exclamation-triangle"></i> Zona de Perigo:</label>
             <button class="btn-outline" style="border-color:var(--danger); color:var(--danger);" onclick="apagarTodosOsDados()"><i class="fas fa-trash-alt"></i> Apagar Todos os Dados</button>
@@ -389,9 +434,6 @@
 
   </main>
 
-  <!-- ==============================================
-       MODAL: JANELA DE DETALHES DO CLIENTE 
-       ============================================== -->
   <div class="modal" id="modal-detalhes-cliente">
     <div class="modal-content">
       <div class="modal-header" style="margin-bottom: 10px;">
@@ -424,7 +466,6 @@
     </div>
   </div>
 
-  <!-- MODAL: CADASTRAR/EDITAR CLIENTE -->
   <div class="modal" id="modal-cliente">
     <div class="modal-content">
       <div class="modal-header">
@@ -468,7 +509,6 @@
     </div>
   </div>
 
-  <!-- MODAL: PLANO -->
   <div class="modal" id="modal-plano">
     <div class="modal-content">
       <div class="modal-header">
@@ -483,7 +523,6 @@
     </div>
   </div>
 
-  <!-- MODAL: TEMPLATE -->
   <div class="modal" id="modal-template">
     <div class="modal-content">
       <div class="modal-header">
@@ -492,19 +531,6 @@
       </div>
       <input type="hidden" id="tpl-id">
       <div class="form-group"><label>Nome da Regra</label><input type="text" id="tpl-nome"></div>
-      
-      <!-- UPLOAD DE IMAGEM -->
-      <div class="form-group">
-        <label><i class="fas fa-image"></i> Imagem do Lembrete (Opcional)</label>
-        <input type="file" id="tpl-imagem-input" accept="image/*" onchange="carregarImagemTemplate(event)">
-        
-        <div id="tpl-imagem-preview-container" style="display:none; margin-top:10px; position:relative; width: fit-content; border: 2px dashed var(--primary); padding: 4px; border-radius: 10px;">
-          <img id="tpl-imagem-preview" src="" style="max-width: 150px; max-height: 150px; border-radius: 6px; display: block;">
-          <button onclick="removerImagemTemplate()" style="position:absolute; top:-10px; right:-10px; background:var(--danger); color:white; border:none; border-radius:50%; width:24px; height:24px; cursor:pointer; font-weight:bold; box-shadow:0 2px 4px rgba(0,0,0,0.3);">&times;</button>
-        </div>
-        <input type="hidden" id="tpl-imagem-base64">
-      </div>
-
       <div class="form-group">
         <label>Disparo Automático</label>
         <select id="tpl-tipo">
@@ -527,11 +553,10 @@
     </div>
   </div>
 
-  <!-- MODAL: ENVIAR MENSAGEM MANUAL -->
   <div class="modal" id="modal-enviar-msg">
     <div class="modal-content">
       <div class="modal-header">
-        <h3 style="color:var(--warning)"><i class="fas fa-paper-plane"></i> Enviar Lembrete</h3>
+        <h3 style="color:var(--warning)"><i class="fas fa-paper-plane"></i> Enviar Template</h3>
         <button class="close-btn" onclick="fecharModal('modal-enviar-msg')">&times;</button>
       </div>
       <input type="hidden" id="msg-cli-id">
@@ -542,11 +567,10 @@
       <div class="form-group">
         <textarea id="msg-preview" rows="6" style="border-color:var(--warning)"></textarea>
       </div>
-      <button class="btn-gradient" onclick="dispararWhatsAppManual()"><i class="fab fa-whatsapp"></i> Compartilhar / Enviar</button>
+      <button class="btn-gradient" onclick="dispararWhatsAppManual()"><i class="fab fa-whatsapp"></i> Enviar p/ WhatsApp</button>
     </div>
   </div>
 
-  <!-- MODAL: RENOVAR -->
   <div class="modal" id="modal-renovacao">
     <div class="modal-content">
       <div class="modal-header">
@@ -564,11 +588,9 @@
     </div>
   </div>
 
-  <!-- TOAST -->
   <div id="toast" class="toast">Mensagem de Sucesso</div>
 
 <script>
-// ========== LÓGICA DO MODO ESCURO (DARK MODE) ==========
 function toggleTheme() {
   const isDark = document.body.classList.toggle('dark-theme');
   const icon = document.getElementById('theme-icon');
@@ -594,7 +616,6 @@ function loadTheme() {
   }
 }
 
-// ========== BANCO E VARIÁVEIS GERAIS ==========
 let db;
 let cfgEmpresa = { nome: '', contato: '', email: '', pix: '' };
 let cfgNotif = { horarios: ['09:00', '13:00', '18:00'] }; 
@@ -697,7 +718,6 @@ function formatarMAC(input) {
   input.value = newVal.substring(0, 17);
 }
 
-// ========== BANCO DE DADOS ==========
 async function initBanco() {
   db = await new Promise((res, rej) => {
     const req = indexedDB.open('IPTVDBPro', 6); 
@@ -721,7 +741,6 @@ function getAll(store) { return new Promise(r => tx(store).getAll().onsuccess = 
 function put(store, obj) { return new Promise((res, rej) => { const req = tx(store,'readwrite').put(obj); req.onsuccess = e => res(e.target.result); req.onerror = rej; }); }
 function del(store, id) { return new Promise(r => tx(store,'readwrite').delete(id).onsuccess = r); }
 
-// APAGAR TUDO (ZONA DE PERIGO)
 async function apagarTodosOsDados() {
   if(confirm('🚨 ATENÇÃO! Isso vai apagar TODOS os seus clientes, planos e regras. Essa ação NÃO tem como ser desfeita. Tem certeza?')) {
       if(confirm('Tem certeza ABSOLUTA? Todo o banco de dados será limpo.')) {
@@ -734,7 +753,119 @@ async function apagarTodosOsDados() {
   }
 }
 
-// ========== DASHBOARD ==========
+// ============================================================
+// NOVA FUNÇÃO: Gerar Lista para Envio Automático (MacroDroid)
+// ============================================================
+async function gerarListaEnvioAutomatico() {
+  const clisBrutos = await getAll('clientes');
+  const templates = await getAll('templates');
+  const tplAtivos = templates.filter(t => t.ativo);
+  
+  if (tplAtivos.length === 0) {
+    return mostrarToast('⚠️ Ative pelo menos 1 template na aba Templates!');
+  }
+  
+  const clis = clisBrutos.map(c => ({...c, _sts: calcularStatus(c.data_vencimento)}));
+  
+  // Filtrar clientes que precisam de cobrança hoje/próximos dias
+  const clientesParaCobrar = [];
+  
+  clis.forEach(c => {
+    let mensagem = '';
+    let templateUsado = null;
+    
+    if (c._sts.dias === 0) {
+      templateUsado = tplAtivos.find(t => t.tipo === 'vencimento_hoje');
+    } else if (c._sts.dias < 0) {
+      templateUsado = tplAtivos.find(t => t.tipo === 'vencido');
+    } else if (c._sts.dias >= 1 && c._sts.dias <= 5) {
+      templateUsado = tplAtivos.find(t => t.tipo === `lembrete_${c._sts.dias}`);
+    }
+    
+    if (templateUsado) {
+      mensagem = templateUsado.mensagem
+        .replace(/{nome}/g, c.nome)
+        .replace(/{data}/g, formatDataBr(c.data_vencimento))
+        .replace(/{valor}/g, `R$ ${Number(c.valor).toFixed(2)}`)
+        .replace(/{empresa}/g, cfgEmpresa.nome || 'Gestor IPTV');
+      
+      clientesParaCobrar.push({
+        telefone: (c.telefone || '').replace(/\D/g, ''),
+        nome: c.nome,
+        mensagem: mensagem,
+        dias: c._sts.dias
+      });
+    }
+  });
+  
+  if (clientesParaCobrar.length === 0) {
+    return mostrarToast('✅ Nenhum cliente precisa de cobrança no momento!');
+  }
+  
+  // Ordenar: vencidos primeiro, depois vence hoje, depois por dias
+  clientesParaCobrar.sort((a, b) => a.dias - b.dias);
+  
+  // Calcular horários: começa às 09:00, 3 minutos entre cada cliente
+  const horaBase = new Date();
+  horaBase.setHours(9, 0, 0, 0); // Começa às 09:00
+  
+  // Se já passou das 09:00, começa daqui a 5 minutos
+  if (horaBase < new Date()) {
+    horaBase.setTime(new Date().getTime() + 5 * 60000);
+  }
+  
+  const linhas = [];
+  clientesParaCobrar.forEach((c, indice) => {
+    const horarioEnvio = new Date(horaBase.getTime() + indice * 3 * 60000);
+    const horarioStr = `${String(horarioEnvio.getHours()).padStart(2, '0')}:${String(horarioEnvio.getMinutes()).padStart(2, '0')}`;
+    
+    // Formato: TELEFONE;NOME;MENSAGEM;HORARIO;ENVIADO
+    const linha = `${c.telefone};${c.nome};${c.mensagem.replace(/;/g, ',')};${horarioStr};NAO`;
+    linhas.push(linha);
+  });
+  
+  const conteudoArquivo = linhas.join('\n');
+  
+  // Salvar arquivo na memória do celular
+  try {
+    if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Filesystem) {
+      // Se for APK com Capacitor
+      await window.Capacitor.Plugins.Filesystem.writeFile({
+        path: 'COBRANCAS_AUTOMATICAS.txt',
+        data: conteudoArquivo,
+        directory: 'DOCUMENTS'
+      });
+    } else {
+      // Se for navegador, baixa o arquivo
+      const blob = new Blob([conteudoArquivo], {type: 'text/plain'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'COBRANCAS_AUTOMATICAS.txt';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+    
+    mostrarToast(`✅ Lista gerada! ${clientesParaCobrar.length} clientes prontos para envio.`);
+    console.log('Arquivo gerado com sucesso!');
+    console.log('Conteúdo:', conteudoArquivo);
+    
+  } catch (erro) {
+    console.error('Erro ao gerar arquivo:', erro);
+    
+    // Fallback: sempre tenta baixar
+    const blob = new Blob([conteudoArquivo], {type: 'text/plain'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'COBRANCAS_AUTOMATICAS.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    mostrarToast('📄 Arquivo baixado! Coloque na pasta raiz do celular.');
+  }
+}
+
 async function renderizarDashboard() {
   const clisBrutos = await getAll('clientes');
   const planos = await getAll('planos');
@@ -865,81 +996,16 @@ async function renderizarDashboard() {
   document.getElementById('dash-vencimentos').innerHTML = htmlDashVenc || '<div class="empty-state">Sem clientes engatilhados hoje.</div>';
 }
 
-// ========== LOGICA DE DISPARO DE WHATSAPP (COM E SEM IMAGEM) ==========
-function abrirWhatsApp(telefone, msg) {
-  const num = (telefone || '').replace(/\D/g,'');
-  if(!num) return mostrarToast('Cliente sem telefone salvo!');
-  window.open(`https://wa.me/${num.startsWith('55')?num:'55'+num}?text=${encodeURIComponent(msg)}`, '_blank');
-}
-
-async function dispararWhatsAppComImagem(telefone, msg, base64Image) {
-  try {
-    // Conversão robusta de Base64 para Arquivo (sem usar fetch, para não falhar em alguns Androids)
-    const arr = base64Image.split(',');
-    const mime = arr[0].match(/:(.*?);/)[1];
-    const bstr = atob(arr[1]);
-    let n = bstr.length;
-    const u8arr = new Uint8Array(n);
-    while(n--){
-        u8arr[n] = bstr.charCodeAt(n);
-    }
-    const ext = mime.split('/')[1] || 'jpg';
-    const file = new File([u8arr], `lembrete.${ext}`, {type: mime});
-
-    if (navigator.share) {
-        await navigator.share({
-            title: 'Lembrete de Vencimento',
-            text: msg,
-            files: [file]
-        });
-        mostrarToast('✅ Compartilhamento aberto!');
-    } else {
-        throw new Error("Seu navegador não suporta compartilhamento de arquivo.");
-    }
-  } catch (e) {
-    console.log("Falha no share com imagem: ", e);
-    mostrarToast('Erro ao anexar imagem. Enviando apenas o texto...');
-    abrirWhatsApp(telefone, msg);
-  }
-}
-
 async function enviarLembreteRapido(idCli, tipoTpl) {
   const c = (await getAll('clientes')).find(x => x.id === idCli);
   const ts = await getAll('templates');
   const tplAtivo = ts.find(t => t.tipo === tipoTpl && t.ativo);
-  
   if (!c) return mostrarToast('Cliente não encontrado.');
   if (!tplAtivo) return mostrarToast('Template não encontrado para este dia.');
-  
   const msg = tplAtivo.mensagem.replace(/{nome}/g, c.nome).replace(/{data}/g, formatDataBr(c.data_vencimento)).replace(/{valor}/g, c.valor).replace(/{empresa}/g, cfgEmpresa.nome);
-  
-  if (tplAtivo.imagem) {
-      dispararWhatsAppComImagem(c.telefone, msg, tplAtivo.imagem);
-  } else {
-      abrirWhatsApp(c.telefone, msg);
-  }
+  abrirWhatsApp(c.telefone, msg);
 }
 
-function dispararWhatsAppManual() {
-  getAll('clientes').then(async clis => {
-    const c = clis.find(x => x.id === Number(document.getElementById('msg-cli-id').value));
-    if(c) { 
-        const ts = await getAll('templates');
-        const tplId = Number(document.getElementById('msg-template-select').value);
-        const tplAtivo = ts.find(t => t.id === tplId);
-        const msg = document.getElementById('msg-preview').value;
-
-        if (tplAtivo && tplAtivo.imagem) {
-            dispararWhatsAppComImagem(c.telefone, msg, tplAtivo.imagem);
-        } else {
-            abrirWhatsApp(c.telefone, msg);
-        }
-        fecharModal('modal-enviar-msg'); 
-    }
-  });
-}
-
-// ========== ABRIR MODAL DE DETALHES DO CLIENTE ==========
 async function abrirModalDetalhesCliente(id) {
   const clis = await getAll('clientes');
   const c = clis.find(x => x.id === id);
@@ -962,7 +1028,6 @@ async function abrirModalDetalhesCliente(id) {
   document.getElementById('detalhe-mac').textContent = c.mac || 'N/A';
   document.getElementById('detalhe-provedor').textContent = c.provedor || 'N/A';
 
-  // Configura as ações dos botões dentro do modal
   document.getElementById('btn-detalhe-cobrar').onclick = () => { fecharModal('modal-detalhes-cliente'); abrirModalEnviarMsg(c.id); };
   document.getElementById('btn-detalhe-editar').onclick = () => { fecharModal('modal-detalhes-cliente'); editarCliente(c.id); };
   document.getElementById('btn-detalhe-renovar').onclick = () => { fecharModal('modal-detalhes-cliente'); abrirModalRenovacao(c.id); };
@@ -971,7 +1036,6 @@ async function abrirModalDetalhesCliente(id) {
   abrirModal('modal-detalhes-cliente');
 }
 
-// ========== CLIENTES LISTAGEM (LINHA ÚNICA C/ OLHO) ==========
 async function renderizarClientesListagem(filtro, busca) {
   let clis = await getAll('clientes');
   clis = clis.map(c => ({...c, _sts: calcularStatus(c.data_vencimento)}));
@@ -997,22 +1061,25 @@ async function renderizarClientesListagem(filtro, busca) {
     return `
       <div class="cliente-list-item ${c._sts.classe}" onclick="abrirModalDetalhesCliente(${c.id})">
         <div class="cli-header" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; cursor: pointer; gap: 10px;">
+          
           <div style="display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0;">
             <i class="fas fa-user-circle" style="color: var(--primary); font-size: 16px;"></i>
             <span style="font-size: 14px; font-weight: 700; color: var(--text-dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${c.nome}</span>
             <span style="font-size: 11px; font-weight: 600; color: ${colorDias}; white-space: nowrap;">${strDias}</span>
           </div>
+          
           <div style="display: flex; align-items: center; gap: 12px; flex: none;">
             <i class="fas fa-eye" style="color: var(--text-muted); font-size: 14px;"></i>
             <div class="badge-status ${c._sts.classe}">${c._sts.texto}</div>
           </div>
+
         </div>
       </div>
     `;
   }).join('');
 }
+async function renderizarClientes() { executarFiltro(); }
 
-// ========== PLANOS CRUD ==========
 async function renderizarPlanosSelect(){
   const ps = await getAll('planos');
   const sel = document.getElementById('cli-plano');
@@ -1037,7 +1104,6 @@ async function salvarPlano(){
 }
 async function excluirPlano(id){ if(confirm('Excluir plano?')){ await del('planos',id); renderizarPlanos(); } }
 
-// ========== CLIENTES CRUD ==========
 function abrirModalCliente(){ 
   document.getElementById('modal-cliente-titulo').textContent='Cadastrar Cliente'; 
   document.getElementById('cli-id').value=''; 
@@ -1096,7 +1162,6 @@ async function editarCliente(id){
 }
 async function excluirCliente(id){ if(confirm('Excluir cliente permanentemente?')) { await del('clientes',id); mostrarToast('🗑️ Excluído!'); renderizarClientes(); renderizarDashboard(); await recalcularNotificacoesGlobal(); } }
 
-// ========== RENOVAÇÃO ==========
 async function abrirModalRenovacao(id) {
   const c = (await getAll('clientes')).find(x => x.id === id); if(!c) return;
   const p = (await getAll('planos')).find(p => p.nome === c.plano);
@@ -1134,62 +1199,34 @@ async function confirmarRenovacao(enviarZap) {
   await recalcularNotificacoesGlobal();
   mostrarToast('✅ Plano Renovado com sucesso!');
   
-  if(enviarZap) {
-      const ts = await getAll('templates');
-      const tplRenovacao = ts.find(t => t.tipo === 'renovacao');
-      const msg = document.getElementById('renov-mensagem').value;
-      
-      if (tplRenovacao && tplRenovacao.imagem) {
-          dispararWhatsAppComImagem(c.telefone, msg, tplRenovacao.imagem);
-      } else {
-          abrirWhatsApp(c.telefone, msg);
-      }
-  }
+  if(enviarZap) abrirWhatsApp(c.telefone, document.getElementById('renov-mensagem').value);
 }
 
-// ========== TEMPLATES, IMAGENS BASE64 E COBRANÇAS ==========
-
-// COMPRESSOR DE IMAGEM NO UPLOAD
-function carregarImagemTemplate(event) {
-  const file = event.target.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    const img = new Image();
-    img.onload = function() {
-        const canvas = document.createElement('canvas');
-        const MAX_WIDTH = 800; // Limite de tamanho para não travar o Android Share
-        const MAX_HEIGHT = 800;
-        let width = img.width;
-        let height = img.height;
-
-        if (width > height) {
-          if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
-        } else {
-          if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
-        }
-        
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, width, height);
-        
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
-        
-        document.getElementById('tpl-imagem-base64').value = dataUrl;
-        document.getElementById('tpl-imagem-preview').src = dataUrl;
-        document.getElementById('tpl-imagem-preview-container').style.display = 'block';
-    }
-    img.src = e.target.result;
-  };
-  reader.readAsDataURL(file);
+function abrirWhatsApp(telefone, msg) {
+  const num = (telefone || '').replace(/\D/g,'');
+  if(!num) return mostrarToast('Cliente sem telefone salvo!');
+  window.open(`https://wa.me/${num.startsWith('55')?num:'55'+num}?text=${encodeURIComponent(msg)}`, '_blank');
 }
 
-function removerImagemTemplate() {
-  document.getElementById('tpl-imagem-base64').value = '';
-  document.getElementById('tpl-imagem-preview').src = '';
-  document.getElementById('tpl-imagem-preview-container').style.display = 'none';
-  document.getElementById('tpl-imagem-input').value = '';
+async function abrirModalEnviarMsg(idCli) {
+  const c = (await getAll('clientes')).find(x => x.id === idCli); if(!c) return;
+  document.getElementById('msg-cli-id').value = idCli;
+  const ts = await getAll('templates');
+  document.getElementById('msg-template-select').innerHTML = ts.map(t => `<option value="${t.id}">${t.nome}</option>`).join('');
+  if(ts.length > 0) atualizarPreviewMensagem();
+  abrirModal('modal-enviar-msg');
+}
+async function atualizarPreviewMensagem() {
+  const c = (await getAll('clientes')).find(x => x.id === Number(document.getElementById('msg-cli-id').value));
+  const t = (await getAll('templates')).find(x => x.id === Number(document.getElementById('msg-template-select').value));
+  if(!c || !t) return;
+  document.getElementById('msg-preview').value = t.mensagem.replace(/{nome}/g, c.nome).replace(/{data}/g, formatDataBr(c.data_vencimento)).replace(/{valor}/g, c.valor).replace(/{empresa}/g, cfgEmpresa.nome);
+}
+function dispararWhatsAppManual() {
+  getAll('clientes').then(clis => {
+    const c = clis.find(x => x.id === Number(document.getElementById('msg-cli-id').value));
+    if(c) { abrirWhatsApp(c.telefone, document.getElementById('msg-preview').value); fecharModal('modal-enviar-msg'); }
+  });
 }
 
 async function popularTemplatesPadrao() {
@@ -1200,13 +1237,12 @@ async function popularTemplatesPadrao() {
     await put('templates', {nome:'Renovação', tipo:'renovacao', ativo:true, mensagem:'Obrigado {nome}! Plano renovado até {data}.'});
   }
 }
-
 async function renderizarTemplates() {
   const ts = await getAll('templates');
   document.getElementById('lista-templates').innerHTML = ts.map(t=>`
     <div style="border:1px solid var(--border); border-radius:12px; padding:16px; background:var(--bg-input);">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-        <strong style="font-size:14px; color:var(--text-dark)">${t.nome} ${t.imagem ? '<i class="fas fa-image" style="color:var(--primary); margin-left:4px;" title="Contém Imagem"></i>' : ''}</strong>
+        <strong style="font-size:14px; color:var(--text-dark)">${t.nome}</strong>
         ${t.tipo !== 'avulso' && t.tipo !== 'renovacao' ? `<label class="switch"><input type="checkbox" ${t.ativo?'checked':''} onchange="toggleTemplate(${t.id}, this.checked)"><span class="slider"></span></label>` : '<span style="font-size:11px; color:var(--text-muted)">Manual</span>'}
       </div>
       <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px; line-height:1.4;">${t.mensagem.substring(0,60)}...</p>
@@ -1221,47 +1257,15 @@ window.toggleTemplate = async function(id, ativo) {
   const t = (await getAll('templates')).find(x=>x.id===id);
   if(t) { t.ativo = ativo; await put('templates', t); await renderizarDashboard(); await recalcularNotificacoesGlobal(); }
 }
-function abrirModalTemplate(){ 
-    document.getElementById('tpl-id').value=''; 
-    document.getElementById('tpl-nome').value=''; 
-    document.getElementById('tpl-mensagem').value=''; 
-    removerImagemTemplate();
-    abrirModal('modal-template'); 
-}
-async function editarTemplate(id){ 
-    const t = (await getAll('templates')).find(x=>x.id===id); 
-    document.getElementById('tpl-id').value=t.id; 
-    document.getElementById('tpl-nome').value=t.nome; 
-    document.getElementById('tpl-tipo').value=t.tipo||'avulso'; 
-    document.getElementById('tpl-mensagem').value=t.mensagem; 
-    
-    if (t.imagem) {
-        document.getElementById('tpl-imagem-base64').value = t.imagem;
-        document.getElementById('tpl-imagem-preview').src = t.imagem;
-        document.getElementById('tpl-imagem-preview-container').style.display = 'block';
-    } else {
-        removerImagemTemplate();
-    }
-    
-    abrirModal('modal-template'); 
-}
+function abrirModalTemplate(){ document.getElementById('tpl-id').value=''; document.getElementById('tpl-nome').value=''; document.getElementById('tpl-mensagem').value=''; abrirModal('modal-template'); }
+async function editarTemplate(id){ const t = (await getAll('templates')).find(x=>x.id===id); document.getElementById('tpl-id').value=t.id; document.getElementById('tpl-nome').value=t.nome; document.getElementById('tpl-tipo').value=t.tipo||'avulso'; document.getElementById('tpl-mensagem').value=t.mensagem; abrirModal('modal-template'); }
 async function salvarTemplate(){
-  const t = { 
-      nome: document.getElementById('tpl-nome').value, 
-      tipo: document.getElementById('tpl-tipo').value, 
-      mensagem: document.getElementById('tpl-mensagem').value, 
-      ativo: true,
-      imagem: document.getElementById('tpl-imagem-base64').value || null
-  };
-  if(document.getElementById('tpl-id').value) { 
-      t.id = Number(document.getElementById('tpl-id').value); 
-      t.ativo = (await getAll('templates')).find(x=>x.id===t.id).ativo; 
-  }
+  const t = { nome: document.getElementById('tpl-nome').value, tipo: document.getElementById('tpl-tipo').value, mensagem: document.getElementById('tpl-mensagem').value, ativo: true };
+  if(document.getElementById('tpl-id').value) { t.id = Number(document.getElementById('tpl-id').value); t.ativo = (await getAll('templates')).find(x=>x.id===t.id).ativo; }
   await put('templates', t); fecharModal('modal-template'); mostrarToast('✅ Regra Salva!'); renderizarTemplates(); renderizarDashboard(); await recalcularNotificacoesGlobal();
 }
 async function excluirTemplate(id){ if(confirm('Excluir regra?')){ await del('templates',id); renderizarTemplates(); renderizarDashboard(); } }
 
-// ========== CONFIGURAÇÕES GERAIS ==========
 async function carregarConfiguracoes(){
   const c = await new Promise(r => tx('config').get(1).onsuccess = e => r(e.target.result || {}));
   cfgEmpresa = { nome: c.nome_empresa||'', contato: c.contato||'', pix: c.chave_pix||'' };
@@ -1280,7 +1284,6 @@ async function salvarConfiguracoes(){
   mostrarToast('✅ Dados Salvos!');
 }
 
-// ========== MOTOR DE NOTIFICAÇÕES ==========
 async function carregarNotifConfig(){
   const c = await new Promise(r => tx('notif_config').get(1).onsuccess = e => r(e.target.result || {horarios:['09:00','13:00','18:00']}));
   cfgNotif.horarios = c.horarios || ['09:00','13:00','18:00'];
@@ -1410,7 +1413,6 @@ async function recalcularNotificacoesGlobal() {
   }
 }
 
-// ========== BACKUP ==========
 async function exportarBackup(){
   const dados = { config: cfgEmpresa, notif: cfgNotif, clientes: await getAll('clientes'), planos: await getAll('planos'), templates: await getAll('templates') };
   const str = JSON.stringify(dados, null, 2);

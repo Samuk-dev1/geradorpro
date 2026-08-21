@@ -14,7 +14,6 @@
       --bg-card: #ffffff;
       --primary: #2962ff;
       --secondary: #00d2ff;
-      /* Novo gradiente Azul Neon/Brilhante */
       --gradient-header: linear-gradient(135deg, #0022ff 0%, #00e1ff 100%);
       --success: #10b981;
       --warning: #f59e0b;
@@ -63,7 +62,7 @@
     .theme-toggle { background: rgba(0,0,0,0.2); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
     .theme-toggle:active { transform: scale(0.9); }
 
-    /* MÉTRICAS */
+    /* MÉTRICAS TOPO */
     .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .metric-box {
       background: rgba(255, 255, 255, 0.15);
@@ -98,11 +97,8 @@
       font-size: 18px; transition: 0.3s;
     }
     .nav-item span { font-size: 10px; font-weight: 600; text-align: center; }
-    
     .nav-item.active { color: var(--primary); }
     .nav-item.active .icon-box { background: var(--primary); color: #fff; box-shadow: 0 4px 10px rgba(41,98,255,0.3); }
-    
-    /* Botão Central */
     .nav-item.btn-cadastrar { color: var(--text-dark); }
     .nav-item.btn-cadastrar .icon-box { background: var(--bg-nav-center); color: var(--text-dark); font-size: 20px; }
 
@@ -143,7 +139,7 @@
     .badge-status.ativo { background: rgba(16, 185, 129, 0.15); color: var(--success); }
     .badge-status.vencido { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
     
-    .card-info p { font-size: 13px; color: var(--text-muted); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+    .card-info p { font-size: 13px; color: var(--text-muted); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
     .card-info p i { font-size: 14px; color: var(--text-dark); width: 16px; text-align: center; }
     
     .card-actions { display: flex; gap: 8px; margin-top: 16px; }
@@ -154,16 +150,33 @@
       transition: 0.2s;
     }
     .btn-action.trash { flex: none; width: 44px; background: #e74c3c; border-color: #c0392b; color: #fff; }
-    .btn-action i.fa-dollar-sign { color: var(--warning); }
-    .btn-action i.fa-pencil-alt { color: var(--warning); }
-    .btn-action i.fa-sync { color: var(--primary); }
 
-    /* DASHBOARD WIDGETS */
+    /* DASHBOARD WIDGETS & GROUPS */
     .widget-box { background: var(--bg-card); border-radius: 16px; padding: 16px; box-shadow: var(--shadow-sm); margin-bottom: 16px; transition: background-color 0.3s; }
     .widget-header { display: flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 700; margin-bottom: 16px; color: var(--text-dark); }
     .empty-state { text-align: center; color: var(--text-muted); font-size: 14px; padding: 20px 0; }
+    
+    /* ESTILOS DOS CARTÕES DE RESUMO (NOVO DASHBOARD) */
+    .dash-resumo-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 10px; }
+    .resumo-card { 
+      background: var(--bg-input); border: 1px solid var(--border); padding: 14px; 
+      border-radius: 12px; display: flex; flex-direction: column; justify-content: center; gap: 8px; cursor: pointer; 
+      transition: all 0.2s; box-shadow: var(--shadow-sm); position: relative; overflow: hidden;
+    }
+    .resumo-card:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+    .resumo-card .resumo-header { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+    .resumo-card .lbl { font-size: 13px; font-weight: 600; color: var(--text-dark); display: flex; align-items: center; gap: 6px; }
+    .resumo-card .badge { padding: 4px 10px; border-radius: 20px; font-size: 14px; font-weight: 800; background: var(--border); color: var(--text-dark); }
 
-    /* TELA DE COBRANÇA E CONFIGURAÇÕES */
+    .dash-group-title { font-size: 13px; font-weight: 700; color: var(--text-muted); margin: 16px 0 8px 0; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 4px; }
+    .dash-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); }
+    .dash-item:last-child { border-bottom: none; }
+    .dash-item-info { flex: 1; }
+    .dash-item-name { font-size: 14px; font-weight: 600; color: var(--text-dark); margin-bottom: 2px; }
+    .dash-item-date { font-size: 12px; color: var(--text-muted); }
+    .dash-item-actions { display: flex; gap: 6px; }
+
+    /* TELA DE CONFIGURAÇÕES */
     .panel-box { background: var(--bg-card); border-radius: 16px; padding: 20px; box-shadow: var(--shadow-md); margin-bottom: 20px; transition: background-color 0.3s; }
     .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
     .panel-header h3 { font-size: 16px; font-weight: 700; color: var(--text-dark); display: flex; align-items: center; gap: 8px; }
@@ -206,11 +219,10 @@
 
     #renov-info { font-size: 14px; color: var(--text-dark); margin-bottom: 15px; background: var(--bg-input); padding: 12px; border-radius: 8px; text-align: center; border: 1px solid var(--border); }
 
-    /* TOAST CORRIGIDO */
+    /* TOAST */
     .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #334155; color: #fff; padding: 12px 24px; border-radius: 30px; font-weight: 600; font-size: 14px; box-shadow: var(--shadow-md); z-index: 9999; opacity: 0; transition: 0.4s ease; text-align: center; white-space: nowrap; pointer-events: none; }
     .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
-    /* AJUSTE PARA BUSCA */
     .search-bar { display: flex; gap: 8px; flex: 1; }
     .search-bar input { flex: 1; border-radius: 12px; padding: 10px 16px; }
   </style>
@@ -221,11 +233,9 @@
   <header class="top-header-area">
     <div class="header-title-row">
       <div>
-        <!-- O Nome aqui agora tem um ID para mudar dinamicamente -->
         <h1><i class="fas fa-tv"></i> <span id="header-empresa-nome">Gestor IPTV</span></h1>
-        <p>Gestão profissional | Cobrança Manual</p>
+        <p>Gestão profissional | Cobrança Automática</p>
       </div>
-      <!-- BOTÃO DE DARK/LIGHT MODE -->
       <div class="theme-toggle" onclick="toggleTheme()"><i class="fas fa-moon" id="theme-icon"></i></div>
     </div>
     
@@ -236,18 +246,17 @@
       <div class="metric-box"><span class="val" id="faturamento">R$ 0,00</span><span class="lbl">Receita</span></div>
     </div>
 
-    <!-- MENU FLUTUANTE ATUALIZADO -->
+    <!-- MENU FLUTUANTE -->
     <div class="floating-nav-container">
       <div class="nav-item active" onclick="navegarPara('dashboard', this)">
         <div class="icon-box"><i class="fas fa-chart-bar"></i></div><span>Dashboard</span>
       </div>
-      <div class="nav-item" onclick="navegarPara('clientes', this)">
+      <div class="nav-item" id="nav-clientes" onclick="navegarPara('clientes', this)">
         <div class="icon-box"><i class="fas fa-user-friends"></i></div><span>Clientes</span>
       </div>
       <div class="nav-item btn-cadastrar" onclick="navegarPara('planos', this)">
         <div class="icon-box"><i class="fas fa-list-alt"></i></div><span>Planos</span>
       </div>
-      <!-- ALTERADO PARA AVIÃOZINHO E "TEMPLATES" -->
       <div class="nav-item" onclick="navegarPara('templates', this)">
         <div class="icon-box"><i class="fas fa-paper-plane"></i></div><span>Templates</span>
       </div>
@@ -261,29 +270,28 @@
     
     <!-- TELA: DASHBOARD -->
     <section id="screen-dashboard" class="screen active">
+      
       <div class="widget-box">
-        <div class="widget-header"><i class="fas fa-chart-line" style="color:var(--danger)"></i> Próximos Vencimentos</div>
+        <div class="widget-header"><i class="fas fa-filter" style="color:var(--primary)"></i> Resumo por Data (Filtro Rápido)</div>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:14px; line-height:1.4;">
+          Estes blocos são gerados com base nas <b>Chaves de Cobrança</b> ativas em seus Templates. Toque em um deles para ver a lista de clientes!
+        </p>
+        <div class="dash-resumo-grid" id="dash-resumo-dinamico">
+          <!-- Preenchido via JS -->
+        </div>
+      </div>
+
+      <div class="widget-box">
+        <div class="widget-header"><i class="fas fa-bolt" style="color:var(--warning)"></i> Disparar Lembretes</div>
         <div id="dash-vencimentos">
-           <!-- Preenchido via JS -->
+           <!-- Preenchido via JS com lista de clientes para disparo -->
         </div>
       </div>
-      <div class="widget-box">
-        <div class="widget-header"><i class="fas fa-chart-bar" style="color:var(--primary)"></i> Resumo do Sistema</div>
-        <div style="border:1px solid var(--border); border-radius:12px; padding:12px; margin-bottom:10px; display:flex; justify-content:space-between;">
-          <span style="font-size:14px; font-weight:600;"><i class="fas fa-list" style="color:var(--primary); margin-right:8px;"></i> Total de Planos</span>
-          <strong id="qtd-planos">0</strong>
-        </div>
-        <div style="border:1px solid var(--border); border-radius:12px; padding:12px; display:flex; justify-content:space-between;">
-          <span style="font-size:14px; font-weight:600;"><i class="far fa-calendar-alt" style="color:var(--danger); margin-right:8px;"></i> Vencem Hoje</span>
-          <strong id="qtd-hoje">0</strong>
-        </div>
-      </div>
+
     </section>
 
     <!-- TELA: CLIENTES -->
     <section id="screen-clientes" class="screen">
-      
-      <!-- NOVA BARRA DE BUSCA COM BOTÃO NOVO CLIENTE -->
       <div style="display:flex; gap:10px; margin-bottom: 16px; align-items:center;">
         <div class="search-bar">
           <input type="text" id="busca-cliente" placeholder="🔍 Buscar cliente..." oninput="executarFiltro()">
@@ -291,12 +299,14 @@
         <button class="btn-gradient" style="width:auto; padding: 10px 16px; margin:0; border-radius:12px;" onclick="abrirModalCliente()"><i class="fas fa-user-plus"></i> Novo</button>
       </div>
 
-      <div class="filter-row">
-        <button class="filter-btn active" onclick="setFiltro('todos', this)">Todos</button>
-        <button class="filter-btn" onclick="setFiltro('ativos', this)">Ativos</button>
-        <button class="filter-btn" onclick="setFiltro('breve', this)">Vencem Breve</button>
-        <button class="filter-btn" onclick="setFiltro('vencidos', this)">Vencidos</button>
+      <div class="filter-row" id="container-filtros">
+        <button class="filter-btn active" data-filtro="todos" onclick="setFiltro('todos', this)">Todos</button>
+        <button class="filter-btn" data-filtro="ativos" onclick="setFiltro('ativos', this)">Ativos</button>
+        <button class="filter-btn" data-filtro="breve" onclick="setFiltro('breve', this)">Vencem Breve</button>
+        <button class="filter-btn" data-filtro="vencidos" onclick="setFiltro('vencidos', this)">Vencidos</button>
+        <button class="filter-btn" data-filtro="hoje" onclick="setFiltro('hoje', this)" style="display:none;">Filtrado Data Específica</button>
       </div>
+      
       <div class="list-container" id="lista-clientes"></div>
     </section>
     
@@ -312,30 +322,29 @@
       </div>
     </section>
 
-    <!-- TELA: COBRANÇA (TEMPLATES) -->
+    <!-- TELA: TEMPLATES -->
     <section id="screen-templates" class="screen">
       <div class="panel-box">
         <div class="panel-header">
-          <h3><i class="fas fa-paper-plane" style="color:var(--warning)"></i> Templates de Cobrança</h3>
+          <h3><i class="fas fa-paper-plane" style="color:var(--warning)"></i> Templates de Lembrete</h3>
           <button class="btn-action" style="padding:4px 10px; font-size:11px;" onclick="abrirModalTemplate()">+ Novo</button>
         </div>
         <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">
-          Configure os dias que deseja enviar lembretes e ative a chave ao lado.
+          Ative as chaves para liberar os atalhos e avisos automáticos na Dashboard principal!
         </p>
         <div id="lista-templates" style="display:flex; flex-direction:column; gap:12px;"></div>
       </div>
       <button class="btn-gradient" onclick="dispararNotificacao()"><i class="fas fa-bell"></i> Testar Alerta no Celular</button>
     </section>
 
-    <!-- TELA: CONFIGURAÇÕES GERAIS -->
+    <!-- TELA: CONFIGURAÇÕES -->
     <section id="screen-configuracoes" class="screen">
       <div class="panel-box">
         <div class="panel-header"><h3><i class="fas fa-building" style="color:var(--primary)"></i> Dados da Empresa</h3></div>
-        <!-- Alterado o placeholder e a dica para refletir o white-label -->
         <div class="form-group">
           <label>Nome da Empresa</label>
           <input type="text" id="cfg-nome" placeholder="Gestor IPTV">
-          <small style="color:var(--text-muted); font-size:11px;">Este nome aparecerá no topo do aplicativo.</small>
+          <small style="color:var(--text-muted); font-size:11px;">Aparecerá no topo do app.</small>
         </div>
         <div class="form-group"><label>Telefone / WhatsApp</label><input type="text" id="cfg-contato"></div>
         <div class="form-group"><label>Chave Pix</label><input type="text" id="cfg-pix"></div>
@@ -354,9 +363,9 @@
       </div>
 
       <div class="panel-box">
-        <div class="panel-header"><h3><i class="fas fa-cloud-download-alt" style="color:var(--success)"></i> Backup dos Dados</h3></div>
-        <button class="btn-gradient" style="margin-bottom:12px;" onclick="exportarBackup()"><i class="fas fa-upload"></i> Fazer Backup / Compartilhar</button>
-        <label style="font-size:13px; color:var(--text-muted); display:block; margin-bottom:8px;">Restaurar Backup (Cuidado!):</label>
+        <div class="panel-header"><h3><i class="fas fa-cloud-download-alt" style="color:var(--success)"></i> Backup</h3></div>
+        <button class="btn-gradient" style="margin-bottom:12px;" onclick="exportarBackup()"><i class="fas fa-upload"></i> Salvar Backup</button>
+        <label style="font-size:13px; color:var(--text-muted); display:block; margin-bottom:8px;">Restaurar Dados:</label>
         <input type="file" id="arquivo-backup" accept=".json" onchange="importarBackup(event)">
       </div>
     </section>
@@ -372,27 +381,38 @@
       </div>
       <input type="hidden" id="cli-id">
       
-      <!-- Campos Enfileirados (Um abaixo do outro) -->
       <div class="form-group"><label>Nome Completo</label><input type="text" id="cli-nome" required></div>
-      
       <div class="form-group"><label>Telefone / WhatsApp</label><input type="tel" id="cli-telefone"></div>
+      
+      <!-- NOVOS CAMPOS DO PAINEL IPTV E SERVIDOR -->
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+        <div class="form-group">
+          <label>Usuário (Painel)</label>
+          <input type="text" id="cli-usuario" placeholder="Opcional">
+        </div>
+        <div class="form-group">
+          <label>Senha (Painel)</label>
+          <input type="text" id="cli-senha-painel" placeholder="Opcional">
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label>Servidor / Provedor</label>
+        <input type="text" id="cli-provedor" placeholder="Opcional">
+      </div>
       
       <div class="form-group"><label>Data de Vencimento</label><input type="date" id="cli-vencimento" required></div>
       
       <div class="form-group">
         <label>MAC Address</label>
-        <input type="text" id="cli-mac" placeholder="Ex: 00:1A:2B:3C:4D:5E" oninput="formatarMAC(this)" maxlength="17" required>
+        <input type="text" id="cli-mac" placeholder="Opcional: 00:1A:2B:3C:4D:5E" oninput="formatarMAC(this)" maxlength="17">
       </div>
-      
-      <div class="form-group"><label>Senha do Aplicativo</label><input type="text" id="cli-senha" placeholder="Senha do cliente"></div>
-      
-      <div class="form-group"><label>Aplicativo Usado</label><input type="text" id="cli-app" placeholder="Ex: Gestor Player, Smarters..."></div>
-      
+      <div class="form-group"><label>Senha do Aplicativo</label><input type="text" id="cli-senha" placeholder="Opcional..."></div>
+      <div class="form-group"><label>Aplicativo Usado</label><input type="text" id="cli-app" placeholder="Opcional (Ex: Smartters)"></div>
       <div class="form-group"><label>Plano</label><select id="cli-plano"></select></div>
       
       <input type="hidden" id="cli-valor">
       <div class="form-group" style="display:none;"><label>Status</label><select id="cli-status"><option value="Ativo">Ativo</option><option value="Inativo">Inativo</option></select></div>
-      
       <button class="btn-gradient" onclick="salvarCliente()">Salvar Cadastro</button>
     </div>
   </div>
@@ -430,6 +450,7 @@
           <option value="lembrete_2">2 Dias Antes</option>
           <option value="lembrete_1">1 Dia Antes</option>
           <option value="vencimento_hoje">Dia do Vencimento</option>
+          <option value="vencido">Após o Vencimento (Vencido)</option>
           <option value="renovacao">Mensagem Pós-Renovação</option>
         </select>
       </div>
@@ -513,7 +534,7 @@ let filtroAtualGlobal = 'todos';
 let toastTimeout;
 
 window.onload = async () => {
-  loadTheme(); // Carrega o tema logo que abre o app
+  loadTheme();
   await initBanco();
   await carregarConfiguracoes();
   await carregarNotifConfig();
@@ -525,7 +546,6 @@ window.onload = async () => {
   solicitarPermissaoNotif();
 };
 
-// Navegação do Menu "Pílula" Inferior
 function navegarPara(telaId, el) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(`screen-${telaId}`).classList.add('active');
@@ -541,34 +561,49 @@ function navegarPara(telaId, el) {
   if (telaId === 'planos') renderizarPlanos();
 }
 
-// Filtros da Tela de Clientes
+function verClientesFiltrados(filtro) {
+  filtroAtualGlobal = filtro;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  
+  const navBtnClientes = document.getElementById('nav-clientes');
+  navegarPara('clientes', navBtnClientes);
+  
+  const btnVisivel = document.querySelector(`.filter-btn[data-filtro="${filtro}"]`);
+  if(btnVisivel) {
+      btnVisivel.classList.add('active');
+      btnVisivel.style.display = 'inline-block';
+  } else {
+      const btnOculto = document.querySelector(`.filter-btn[data-filtro="hoje"]`);
+      btnOculto.classList.add('active');
+      btnOculto.style.display = 'inline-block';
+      if(typeof filtro === 'number') btnOculto.textContent = `Faltam ${filtro} Dias`;
+      else if(filtro === 'hoje') btnOculto.textContent = `Vencem Hoje`;
+  }
+  executarFiltro();
+}
+
 function setFiltro(tipo, el) {
   filtroAtualGlobal = tipo;
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
   el.classList.add('active');
   executarFiltro();
 }
+
 function executarFiltro() {
   const busca = document.getElementById('busca-cliente').value.toLowerCase();
   renderizarClientesListagem(filtroAtualGlobal, busca);
 }
 
-// Modais e Toast
 function abrirModal(id) { document.getElementById(id).classList.add('open'); }
 function fecharModal(id) { document.getElementById(id).classList.remove('open'); }
-
 function mostrarToast(texto) {
   const t = document.getElementById('toast');
   t.textContent = texto;
   t.classList.add('show');
-  
   if(toastTimeout) clearTimeout(toastTimeout);
-  toastTimeout = setTimeout(() => {
-    t.classList.remove('show');
-  }, 3500);
+  toastTimeout = setTimeout(() => { t.classList.remove('show'); }, 3500);
 }
 
-// Lógica de Datas
 function calcularStatus(dataVenc) {
   const hoje = new Date(); hoje.setHours(0,0,0,0);
   const dt = new Date(dataVenc+'T00:00:00'); dt.setHours(0,0,0,0);
@@ -581,14 +616,11 @@ function formatDataBr(dataString) {
   return dataString.split('-').reverse().join('/');
 }
 
-// FORMATADOR DE MAC AUTOMÁTICO
 function formatarMAC(input) {
-  let val = input.value.replace(/[^A-Fa-f0-9]/g, '').toUpperCase();
+  let val = input.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
   let newVal = '';
   for(let i = 0; i < val.length; i++) {
-      if (i > 0 && i % 2 === 0) {
-          newVal += ':';
-      }
+      if (i > 0 && i % 2 === 0) { newVal += ':'; }
       newVal += val[i];
   }
   input.value = newVal.substring(0, 17);
@@ -597,7 +629,7 @@ function formatarMAC(input) {
 // ========== BANCO DE DADOS ==========
 async function initBanco() {
   db = await new Promise((res, rej) => {
-    const req = indexedDB.open('IPTVDBPro', 4);
+    const req = indexedDB.open('IPTVDBPro', 5); // Incrementei a versão para evitar conflitos locais
     req.onupgradeneeded = e => {
       const d = e.target.result;
       if(!d.objectStoreNames.contains('config')) d.createObjectStore('config', {keyPath:'id'}).add({id:1});
@@ -618,18 +650,23 @@ function getAll(store) { return new Promise(r => tx(store).getAll().onsuccess = 
 function put(store, obj) { return new Promise((res, rej) => { const req = tx(store,'readwrite').put(obj); req.onsuccess = e => res(e.target.result); req.onerror = rej; }); }
 function del(store, id) { return new Promise(r => tx(store,'readwrite').delete(id).onsuccess = r); }
 
-// ========== DASHBOARD (TOPO E WIDGETS) ==========
+// ========== DASHBOARD ==========
 async function renderizarDashboard() {
-  const clis = await getAll('clientes');
+  const clisBrutos = await getAll('clientes');
   const planos = await getAll('planos');
+  const templates = await getAll('templates');
+  const ativosTpls = templates.filter(t => t.ativo);
   
-  let total = clis.length, ativos = 0, vencHoje = 0, vencidos = 0, faturamento = 0;
+  let total = clisBrutos.length, ativos = 0, vencHoje = 0, vencidos = 0, faturamento = 0;
   
+  const clis = clisBrutos.map(c => ({...c, _sts: calcularStatus(c.data_vencimento)}));
+  let countDias = {1:0, 2:0, 3:0, 4:0, 5:0};
+
   clis.forEach(c => {
-    const s = calcularStatus(c.data_vencimento);
-    if (s.texto === 'Ativo') { ativos++; faturamento += Number(c.valor); }
-    if (s.dias === 0) vencHoje++;
-    if (s.dias < 0) vencidos++;
+    if (c._sts.texto === 'Ativo') { ativos++; faturamento += Number(c.valor); }
+    if (c._sts.dias === 0) vencHoje++;
+    if (c._sts.dias < 0) vencidos++;
+    if (c._sts.dias > 0 && c._sts.dias <= 5) countDias[c._sts.dias]++;
   });
 
   document.getElementById('qtd-ativos').textContent = total;
@@ -639,30 +676,85 @@ async function renderizarDashboard() {
   document.getElementById('qtd-planos').textContent = planos.length;
   document.getElementById('qtd-hoje').textContent = vencHoje;
 
-  const proximos = clis.map(c => ({...c, _sts: calcularStatus(c.data_vencimento)}))
-                       .filter(c => c._sts.dias >= 0 && c._sts.dias <= 15)
-                       .sort((a,b) => a._sts.dias - b._sts.dias).slice(0, 5);
+  let htmlResumoCards = '';
+  if (ativosTpls.some(t => t.tipo === 'vencido')) {
+      htmlResumoCards += `<div class="resumo-card" onclick="verClientesFiltrados('vencidos')">
+          <div class="resumo-header">
+             <div class="lbl"><i class="fas fa-exclamation-circle" style="color:var(--danger)"></i> Vencidos</div>
+             <div class="badge" style="background:rgba(239, 68, 68, 0.15); color:var(--danger)">${vencidos}</div>
+          </div>
+      </div>`;
+  }
+  if (ativosTpls.some(t => t.tipo === 'vencimento_hoje')) {
+      htmlResumoCards += `<div class="resumo-card" onclick="verClientesFiltrados('hoje')">
+          <div class="resumo-header">
+             <div class="lbl"><i class="fas fa-calendar-day" style="color:var(--warning)"></i> Vencem Hoje</div>
+             <div class="badge" style="background:rgba(245, 158, 11, 0.15); color:var(--warning)">${vencHoje}</div>
+          </div>
+      </div>`;
+  }
+  for(let i=1; i<=5; i++) {
+      if(ativosTpls.some(t => t.tipo === `lembrete_${i}`)) {
+          htmlResumoCards += `<div class="resumo-card" onclick="verClientesFiltrados(${i})">
+              <div class="resumo-header">
+                 <div class="lbl"><i class="fas fa-clock" style="color:var(--primary)"></i> Em ${i} dia${i>1?'s':''}</div>
+                 <div class="badge" style="background:rgba(41, 98, 255, 0.15); color:var(--primary)">${countDias[i]}</div>
+              </div>
+          </div>`;
+      }
+  }
+  document.getElementById('dash-resumo-dinamico').innerHTML = htmlResumoCards || '<div class="empty-state">Nenhum gatilho ativado na aba Templates.</div>';
 
-  const htmlVenc = proximos.map(c => `
-    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding:10px 0;">
-      <div>
-        <div style="font-weight:600; font-size:14px;">${c.nome}</div>
-        <div style="font-size:12px; color:var(--text-muted)">Vence: ${formatDataBr(c.data_vencimento)}</div>
-      </div>
-      <button class="btn-action" style="padding:4px 10px; flex:none;" onclick="abrirModalRenovacao(${c.id})">Renovar</button>
-    </div>
-  `).join('');
-  document.getElementById('dash-vencimentos').innerHTML = htmlVenc || '<div class="empty-state">Nenhum vencimento próximo</div>';
+  let htmlDashVenc = '';
+  const renderGroup = (tituloGroup, tipoTpl, filtroFuncao, iconeCor) => {
+      const grupo = clis.filter(filtroFuncao);
+      if (grupo.length === 0) return '';
+      let html = `<div class="dash-group-title" style="border-bottom: 2px solid ${iconeCor}; display:inline-block; margin-bottom:10px;">${tituloGroup}</div>`;
+      grupo.forEach(c => {
+          html += `
+          <div class="dash-item">
+            <div class="dash-item-info">
+              <div class="dash-item-name">${c.nome}</div>
+              <div class="dash-item-date">${c.telefone || 'Sem telefone'} &nbsp;|&nbsp; Vence: ${formatDataBr(c.data_vencimento)}</div>
+            </div>
+            <div class="dash-item-actions">
+              <button class="btn-action" style="padding:6px 10px; font-size:12px; border-color:var(--border);" title="Renovar" onclick="abrirModalRenovacao(${c.id})"><i class="fas fa-sync" style="color:var(--primary)"></i></button>
+              <button class="btn-action" style="padding:6px 10px; font-size:12px; border-color:var(--success); color:var(--success); font-weight:700;" onclick="enviarLembreteRapido(${c.id}, '${tipoTpl}')"><i class="fab fa-whatsapp"></i> Zap</button>
+            </div>
+          </div>`;
+      });
+      return html;
+  };
+
+  if (ativosTpls.some(t => t.tipo === 'vencimento_hoje')) htmlDashVenc += renderGroup('🟠 Vencem Hoje', 'vencimento_hoje', c => c._sts.dias === 0, 'var(--warning)');
+  if (ativosTpls.some(t => t.tipo === 'lembrete_1')) htmlDashVenc += renderGroup('🟡 Vencem em 1 Dia', 'lembrete_1', c => c._sts.dias === 1, 'var(--primary)');
+  if (ativosTpls.some(t => t.tipo === 'lembrete_2')) htmlDashVenc += renderGroup('🟡 Vencem em 2 Dias', 'lembrete_2', c => c._sts.dias === 2, 'var(--primary)');
+  if (ativosTpls.some(t => t.tipo === 'lembrete_3')) htmlDashVenc += renderGroup('🟡 Vencem em 3 Dias', 'lembrete_3', c => c._sts.dias === 3, 'var(--primary)');
+  if (ativosTpls.some(t => t.tipo === 'vencido')) htmlDashVenc += renderGroup('🔴 Vencidos', 'vencido', c => c._sts.dias < 0, 'var(--danger)');
+
+  document.getElementById('dash-vencimentos').innerHTML = htmlDashVenc || '<div class="empty-state">Sem clientes engatilhados hoje.</div>';
 }
 
-// ========== CLIENTES ==========
+async function enviarLembreteRapido(idCli, tipoTpl) {
+  const c = (await getAll('clientes')).find(x => x.id === idCli);
+  const ts = await getAll('templates');
+  const tplAtivo = ts.find(t => t.tipo === tipoTpl && t.ativo);
+  if (!c) return mostrarToast('Cliente não encontrado.');
+  if (!tplAtivo) return mostrarToast('Template não encontrado para este dia.');
+  const msg = tplAtivo.mensagem.replace(/{nome}/g, c.nome).replace(/{data}/g, formatDataBr(c.data_vencimento)).replace(/{valor}/g, c.valor).replace(/{empresa}/g, cfgEmpresa.nome);
+  abrirWhatsApp(c.telefone, msg);
+}
+
+// ========== CLIENTES LISTAGEM ==========
 async function renderizarClientesListagem(filtro, busca) {
   let clis = await getAll('clientes');
   clis = clis.map(c => ({...c, _sts: calcularStatus(c.data_vencimento)}));
 
   if (filtro === 'ativos') clis = clis.filter(c => c._sts.dias >= 0);
-  else if (filtro === 'breve') clis = clis.filter(c => c._sts.dias >= 0 && c._sts.dias <= 5);
+  else if (filtro === 'breve') clis = clis.filter(c => c._sts.dias > 0 && c._sts.dias <= 5);
   else if (filtro === 'vencidos') clis = clis.filter(c => c._sts.dias < 0);
+  else if (filtro === 'hoje') clis = clis.filter(c => c._sts.dias === 0);
+  else if (typeof filtro === 'number') clis = clis.filter(c => c._sts.dias === filtro);
   
   if (busca) {
     clis = clis.filter(c => c.nome.toLowerCase().includes(busca) || (c.telefone||'').includes(busca));
@@ -674,7 +766,13 @@ async function renderizarClientesListagem(filtro, busca) {
     else if(c._sts.dias > 0) strDias = `${c._sts.dias} dias restantes`;
     else strDias = `Vencido há ${c._sts.dias * -1} dias`;
 
+    let infoIPTV = '';
+    if (c.usuario || c.senha_painel) {
+      infoIPTV += `<p><i class="fas fa-user-circle" style="color:var(--primary)"></i> Usr: ${c.usuario || 'N/A'} ${c.senha_painel ? `&nbsp;|&nbsp; 🔑 Pwd: ${c.senha_painel}` : ''}</p>`;
+    }
+
     let infoExtra = '';
+    if (c.provedor) infoExtra += `<p><i class="fas fa-server" style="color:var(--warning)"></i> Servidor: ${c.provedor}</p>`;
     if (c.aplicativo) infoExtra += `<p><i class="fas fa-mobile-alt" style="color:var(--secondary)"></i> App: ${c.aplicativo}</p>`;
 
     return `
@@ -686,8 +784,9 @@ async function renderizarClientesListagem(filtro, busca) {
         <div class="card-info">
           <p><i class="fas fa-phone-alt"></i> ${c.telefone || 'S/N'} &nbsp;|&nbsp; 📅 Vence: ${formatDataBr(c.data_vencimento)}</p>
           <p><i class="fas fa-money-bill-wave" style="color:var(--warning)"></i> ${c.plano} | ${strDias}</p>
-          <p><i class="fas fa-network-wired"></i> MAC: ${c.mac} ${c.senha ? `&nbsp;|&nbsp; 🔑 Senha: ${c.senha}` : ''}</p>
+          ${infoIPTV}
           ${infoExtra}
+          <p><i class="fas fa-network-wired"></i> MAC: ${c.mac || 'N/A'} ${c.senha ? `&nbsp;|&nbsp; 🔑 Senha App: ${c.senha}` : ''}</p>
         </div>
         <div class="card-actions">
           <button class="btn-action" onclick="abrirModalEnviarMsg(${c.id})"><i class="fas fa-dollar-sign"></i> Cobrar</button>
@@ -732,6 +831,9 @@ function abrirModalCliente(){
   document.getElementById('cli-id').value=''; 
   document.getElementById('cli-nome').value=''; 
   document.getElementById('cli-telefone').value=''; 
+  document.getElementById('cli-usuario').value=''; 
+  document.getElementById('cli-senha-painel').value=''; 
+  document.getElementById('cli-provedor').value=''; 
   document.getElementById('cli-mac').value=''; 
   document.getElementById('cli-senha').value=''; 
   document.getElementById('cli-app').value=''; 
@@ -744,6 +846,9 @@ async function salvarCliente(){
   const c = {
     nome: document.getElementById('cli-nome').value, 
     telefone: document.getElementById('cli-telefone').value, 
+    usuario: document.getElementById('cli-usuario').value,
+    senha_painel: document.getElementById('cli-senha-painel').value,
+    provedor: document.getElementById('cli-provedor').value,
     mac: document.getElementById('cli-mac').value, 
     senha: document.getElementById('cli-senha').value,
     aplicativo: document.getElementById('cli-app').value,
@@ -753,9 +858,10 @@ async function salvarCliente(){
     status: 'Ativo'
   };
   
-  if(!c.nome || !c.data_vencimento || !c.mac) return mostrarToast('Preencha os campos obrigatórios (Nome, MAC e Data)!');
+  if(!c.nome || !c.data_vencimento) return mostrarToast('Preencha os campos obrigatórios (Nome e Data)!');
   if(idStr) c.id = Number(idStr);
-  try { await put('clientes', c); } catch { return mostrarToast('MAC já cadastrado!'); }
+  
+  try { await put('clientes', c); } catch { return mostrarToast('Erro ao salvar. Verifique os dados!'); }
   fecharModal('modal-cliente'); mostrarToast('✅ Cliente Salvo!'); renderizarClientes(); renderizarDashboard(); await recalcularNotificacoesGlobal();
 }
 
@@ -764,8 +870,11 @@ async function editarCliente(id){
   document.getElementById('modal-cliente-titulo').textContent='Editar Cliente';
   document.getElementById('cli-id').value=c.id; 
   document.getElementById('cli-nome').value=c.nome; 
-  document.getElementById('cli-telefone').value=c.telefone; 
-  document.getElementById('cli-mac').value=c.mac; 
+  document.getElementById('cli-telefone').value=c.telefone || ''; 
+  document.getElementById('cli-usuario').value=c.usuario || ''; 
+  document.getElementById('cli-senha-painel').value=c.senha_painel || ''; 
+  document.getElementById('cli-provedor').value=c.provedor || ''; 
+  document.getElementById('cli-mac').value=c.mac || ''; 
   document.getElementById('cli-senha').value=c.senha || ''; 
   document.getElementById('cli-app').value=c.aplicativo || ''; 
   document.getElementById('cli-plano').value=c.plano; 
@@ -847,7 +956,8 @@ function dispararWhatsAppManual() {
 async function popularTemplatesPadrao() {
   if((await getAll('templates')).length === 0) {
     await put('templates', {nome:'Vence Hoje', tipo:'vencimento_hoje', ativo:true, mensagem:'Olá {nome}! Sua assinatura VENCE HOJE ({data}). Valor: R$ {valor}. Regularize para não perder o acesso!'});
-    await put('templates', {nome:'Lembrete 5 Dias', tipo:'lembrete_5', ativo:false, mensagem:'Olá {nome}! Faltam 5 dias para sua assinatura vencer.'});
+    await put('templates', {nome:'Lembrete 2 Dias', tipo:'lembrete_2', ativo:false, mensagem:'Olá {nome}! Faltam 2 dias para sua assinatura vencer.'});
+    await put('templates', {nome:'Aviso de Vencido', tipo:'vencido', ativo:true, mensagem:'Olá {nome}! Notamos que sua assinatura venceu em {data}. Regularize para reativar seu acesso.'});
     await put('templates', {nome:'Renovação', tipo:'renovacao', ativo:true, mensagem:'Obrigado {nome}! Plano renovado até {data}.'});
   }
 }
@@ -857,7 +967,7 @@ async function renderizarTemplates() {
     <div style="border:1px solid var(--border); border-radius:12px; padding:16px; background:var(--bg-input);">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
         <strong style="font-size:14px; color:var(--text-dark)">${t.nome}</strong>
-        ${t.tipo !== 'avulso' ? `<label class="switch"><input type="checkbox" ${t.ativo?'checked':''} onchange="toggleTemplate(${t.id}, this.checked)"><span class="slider"></span></label>` : '<span style="font-size:11px; color:var(--text-muted)">Manual</span>'}
+        ${t.tipo !== 'avulso' && t.tipo !== 'renovacao' ? `<label class="switch"><input type="checkbox" ${t.ativo?'checked':''} onchange="toggleTemplate(${t.id}, this.checked)"><span class="slider"></span></label>` : '<span style="font-size:11px; color:var(--text-muted)">Manual</span>'}
       </div>
       <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px; line-height:1.4;">${t.mensagem.substring(0,60)}...</p>
       <div style="display:flex; gap:8px;">
@@ -869,16 +979,16 @@ async function renderizarTemplates() {
 }
 window.toggleTemplate = async function(id, ativo) {
   const t = (await getAll('templates')).find(x=>x.id===id);
-  if(t) { t.ativo = ativo; await put('templates', t); await recalcularNotificacoesGlobal(); }
+  if(t) { t.ativo = ativo; await put('templates', t); await renderizarDashboard(); await recalcularNotificacoesGlobal(); }
 }
 function abrirModalTemplate(){ document.getElementById('tpl-id').value=''; document.getElementById('tpl-nome').value=''; document.getElementById('tpl-mensagem').value=''; abrirModal('modal-template'); }
 async function editarTemplate(id){ const t = (await getAll('templates')).find(x=>x.id===id); document.getElementById('tpl-id').value=t.id; document.getElementById('tpl-nome').value=t.nome; document.getElementById('tpl-tipo').value=t.tipo||'avulso'; document.getElementById('tpl-mensagem').value=t.mensagem; abrirModal('modal-template'); }
 async function salvarTemplate(){
   const t = { nome: document.getElementById('tpl-nome').value, tipo: document.getElementById('tpl-tipo').value, mensagem: document.getElementById('tpl-mensagem').value, ativo: true };
   if(document.getElementById('tpl-id').value) { t.id = Number(document.getElementById('tpl-id').value); t.ativo = (await getAll('templates')).find(x=>x.id===t.id).ativo; }
-  await put('templates', t); fecharModal('modal-template'); mostrarToast('✅ Regra Salva!'); renderizarTemplates(); await recalcularNotificacoesGlobal();
+  await put('templates', t); fecharModal('modal-template'); mostrarToast('✅ Regra Salva!'); renderizarTemplates(); renderizarDashboard(); await recalcularNotificacoesGlobal();
 }
-async function excluirTemplate(id){ if(confirm('Excluir regra?')){ await del('templates',id); renderizarTemplates(); } }
+async function excluirTemplate(id){ if(confirm('Excluir regra?')){ await del('templates',id); renderizarTemplates(); renderizarDashboard(); } }
 
 // ========== CONFIGURAÇÕES GERAIS ==========
 async function carregarConfiguracoes(){
@@ -886,7 +996,6 @@ async function carregarConfiguracoes(){
   cfgEmpresa = { nome: c.nome_empresa||'', contato: c.contato||'', pix: c.chave_pix||'' };
   document.getElementById('cfg-nome').value = cfgEmpresa.nome; document.getElementById('cfg-contato').value = cfgEmpresa.contato; document.getElementById('cfg-pix').value = cfgEmpresa.pix;
 
-  // Atualiza o título no header
   const headerNome = document.getElementById('header-empresa-nome');
   if(headerNome) headerNome.textContent = cfgEmpresa.nome || 'Gestor IPTV';
 }
@@ -900,7 +1009,7 @@ async function salvarConfiguracoes(){
   mostrarToast('✅ Dados Salvos!');
 }
 
-// ========== MOTOR DE NOTIFICAÇÕES (CAPACITOR ANDROID) ==========
+// ========== MOTOR DE NOTIFICAÇÕES ==========
 async function carregarNotifConfig(){
   const c = await new Promise(r => tx('notif_config').get(1).onsuccess = e => r(e.target.result || {horarios:['09:00','13:00','18:00']}));
   cfgNotif.horarios = c.horarios || ['09:00','13:00','18:00'];
@@ -932,9 +1041,7 @@ async function solicitarPermissaoNotif() {
         vibration: true
       });
       mostrarToast('✅ Alertas Mobile ativados no Android!'); 
-    } catch(e) {
-      console.log("Erro ao criar canal: ", e);
-    }
+    } catch(e) { console.log(e); }
   }
 }
 

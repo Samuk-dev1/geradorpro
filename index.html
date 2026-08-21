@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Gestor IPTV</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <!-- BIBLIOTECA DE GRÁFICOS (Adicionada de volta para os gráficos Neon) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
@@ -59,10 +62,12 @@
     .header-title-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
     .header-title-row h1 { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
     .header-title-row p { font-size: 11px; font-weight: 400; opacity: 0.9; margin-top: 2px; }
-    .theme-toggle { background: rgba(0,0,0,0.2); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
-    .theme-toggle:active { transform: scale(0.9); }
+    
+    .header-actions { display: flex; gap: 10px; }
+    .action-btn { background: rgba(0,0,0,0.2); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; color: #fff; }
+    .action-btn:active { transform: scale(0.9); }
 
-    /* MÉTRICAS TOPO */
+    /* MÉTRICAS (Os 4 botões do topo) */
     .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .metric-box {
       background: rgba(255, 255, 255, 0.15);
@@ -97,8 +102,10 @@
       font-size: 18px; transition: 0.3s;
     }
     .nav-item span { font-size: 10px; font-weight: 600; text-align: center; }
+    
     .nav-item.active { color: var(--primary); }
     .nav-item.active .icon-box { background: var(--primary); color: #fff; box-shadow: 0 4px 10px rgba(41,98,255,0.3); }
+    
     .nav-item.btn-cadastrar { color: var(--text-dark); }
     .nav-item.btn-cadastrar .icon-box { background: var(--bg-nav-center); color: var(--text-dark); font-size: 20px; }
 
@@ -107,6 +114,31 @@
     .screen { display: none; animation: fadeIn 0.3s ease forwards; }
     .screen.active { display: block; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* GRÁFICOS NEON NA DASHBOARD */
+    .neon-chart-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-md);
+      position: relative;
+      overflow: hidden;
+      transition: background-color 0.3s, border-color 0.3s;
+    }
+    body.dark-theme .neon-chart-container {
+      background: #0f172a;
+      box-shadow: 0 0 25px rgba(0, 210, 255, 0.08); /* Brilho Neon sutil por trás do gráfico */
+      border: 1px solid rgba(0, 210, 255, 0.2);
+    }
+    .neon-chart-header {
+      font-size: 14px; font-weight: 700; color: var(--text-dark); margin-bottom: 15px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    body.dark-theme .neon-chart-header i {
+      text-shadow: 0 0 10px currentColor; /* Ícones brilhando */
+    }
 
     /* FILTROS BOTÕES */
     .filter-row { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
@@ -151,32 +183,7 @@
     }
     .btn-action.trash { flex: none; width: 44px; background: #e74c3c; border-color: #c0392b; color: #fff; }
 
-    /* DASHBOARD WIDGETS & GROUPS */
-    .widget-box { background: var(--bg-card); border-radius: 16px; padding: 16px; box-shadow: var(--shadow-sm); margin-bottom: 16px; transition: background-color 0.3s; }
-    .widget-header { display: flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 700; margin-bottom: 16px; color: var(--text-dark); }
-    .empty-state { text-align: center; color: var(--text-muted); font-size: 14px; padding: 20px 0; }
-    
-    /* ESTILOS DOS CARTÕES DE RESUMO (NOVO DASHBOARD) */
-    .dash-resumo-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 10px; }
-    .resumo-card { 
-      background: var(--bg-input); border: 1px solid var(--border); padding: 14px; 
-      border-radius: 12px; display: flex; flex-direction: column; justify-content: center; gap: 8px; cursor: pointer; 
-      transition: all 0.2s; box-shadow: var(--shadow-sm); position: relative; overflow: hidden;
-    }
-    .resumo-card:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: var(--shadow-md); }
-    .resumo-card .resumo-header { display: flex; justify-content: space-between; align-items: center; width: 100%; }
-    .resumo-card .lbl { font-size: 13px; font-weight: 600; color: var(--text-dark); display: flex; align-items: center; gap: 6px; }
-    .resumo-card .badge { padding: 4px 10px; border-radius: 20px; font-size: 14px; font-weight: 800; background: var(--border); color: var(--text-dark); }
-
-    .dash-group-title { font-size: 13px; font-weight: 700; color: var(--text-muted); margin: 16px 0 8px 0; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 4px; }
-    .dash-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); }
-    .dash-item:last-child { border-bottom: none; }
-    .dash-item-info { flex: 1; }
-    .dash-item-name { font-size: 14px; font-weight: 600; color: var(--text-dark); margin-bottom: 2px; }
-    .dash-item-date { font-size: 12px; color: var(--text-muted); }
-    .dash-item-actions { display: flex; gap: 6px; }
-
-    /* TELA DE CONFIGURAÇÕES */
+    /* TELA DE COBRANÇA E CONFIGURAÇÕES */
     .panel-box { background: var(--bg-card); border-radius: 16px; padding: 20px; box-shadow: var(--shadow-md); margin-bottom: 20px; transition: background-color 0.3s; }
     .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
     .panel-header h3 { font-size: 16px; font-weight: 700; color: var(--text-dark); display: flex; align-items: center; gap: 8px; }
@@ -236,9 +243,15 @@
         <h1><i class="fas fa-tv"></i> <span id="header-empresa-nome">Gestor IPTV</span></h1>
         <p>Gestão profissional | Cobrança Automática</p>
       </div>
-      <div class="theme-toggle" onclick="toggleTheme()"><i class="fas fa-moon" id="theme-icon"></i></div>
+      
+      <!-- BOTÕES DO TOPO (Engrenagem e Modo Escuro) -->
+      <div class="header-actions">
+        <div class="action-btn" onclick="navegarPara('configuracoes')"><i class="fas fa-cog"></i></div>
+        <div class="action-btn" onclick="toggleTheme()"><i class="fas fa-moon" id="theme-icon"></i></div>
+      </div>
     </div>
     
+    <!-- MÉTRICAS DO TOPO (Intactas) -->
     <div class="metrics-grid">
       <div class="metric-box"><span class="val" id="qtd-ativos">0</span><span class="lbl">Clientes</span></div>
       <div class="metric-box"><span class="val" id="qtd-ativos-reais">0</span><span class="lbl">Ativos</span></div>
@@ -246,7 +259,7 @@
       <div class="metric-box"><span class="val" id="faturamento">R$ 0,00</span><span class="lbl">Receita</span></div>
     </div>
 
-    <!-- MENU FLUTUANTE -->
+    <!-- MENU FLUTUANTE PÍLULA -->
     <div class="floating-nav-container">
       <div class="nav-item active" onclick="navegarPara('dashboard', this)">
         <div class="icon-box"><i class="fas fa-chart-bar"></i></div><span>Dashboard</span>
@@ -268,23 +281,26 @@
 
   <main class="main-content">
     
-    <!-- TELA: DASHBOARD -->
+    <!-- TELA: DASHBOARD (COM GRÁFICOS NEON MODERNO) -->
     <section id="screen-dashboard" class="screen active">
       
-      <div class="widget-box">
-        <div class="widget-header"><i class="fas fa-filter" style="color:var(--primary)"></i> Resumo por Data (Filtro Rápido)</div>
-        <p style="font-size:12px; color:var(--text-muted); margin-bottom:14px; line-height:1.4;">
-          Estes blocos são gerados com base nas <b>Chaves de Cobrança</b> ativas em seus Templates. Toque em um deles para ver a lista de clientes!
-        </p>
-        <div class="dash-resumo-grid" id="dash-resumo-dinamico">
-          <!-- Preenchido via JS -->
+      <!-- GRÁFICO 1: LINHA COM GRADIENTE NEON -->
+      <div class="neon-chart-container">
+        <div class="neon-chart-header">
+          <i class="fas fa-chart-area" style="color:var(--secondary)"></i> Vencimentos (Próximos 7 Dias)
+        </div>
+        <div style="position: relative; height: 180px;">
+          <canvas id="chartEstatistica"></canvas>
         </div>
       </div>
 
-      <div class="widget-box">
-        <div class="widget-header"><i class="fas fa-bolt" style="color:var(--warning)"></i> Disparar Lembretes</div>
-        <div id="dash-vencimentos">
-           <!-- Preenchido via JS com lista de clientes para disparo -->
+      <!-- GRÁFICO 2: ROSCA (DOUGHNUT) COM CORES NEON -->
+      <div class="neon-chart-container">
+        <div class="neon-chart-header">
+          <i class="fas fa-chart-pie" style="color:var(--primary)"></i> Status Geral da Base
+        </div>
+        <div style="position: relative; height: 220px; display: flex; justify-content: center;">
+          <canvas id="chartRosca"></canvas>
         </div>
       </div>
 
@@ -330,7 +346,7 @@
           <button class="btn-action" style="padding:4px 10px; font-size:11px;" onclick="abrirModalTemplate()">+ Novo</button>
         </div>
         <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">
-          Ative as chaves para liberar os atalhos e avisos automáticos na Dashboard principal!
+          Ative as chaves para liberar os avisos automáticos via notificação!
         </p>
         <div id="lista-templates" style="display:flex; flex-direction:column; gap:12px;"></div>
       </div>
@@ -384,7 +400,6 @@
       <div class="form-group"><label>Nome Completo</label><input type="text" id="cli-nome" required></div>
       <div class="form-group"><label>Telefone / WhatsApp</label><input type="tel" id="cli-telefone"></div>
       
-      <!-- NOVOS CAMPOS DO PAINEL IPTV E SERVIDOR -->
       <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
         <div class="form-group">
           <label>Usuário (Painel)</label>
@@ -398,7 +413,7 @@
       
       <div class="form-group">
         <label>Servidor / Provedor</label>
-        <input type="text" id="cli-provedor" placeholder="Opcional">
+        <input type="text" id="cli-provedor" placeholder="Opcional (Ex: BobTV)">
       </div>
       
       <div class="form-group"><label>Data de Vencimento</label><input type="date" id="cli-vencimento" required></div>
@@ -504,7 +519,7 @@
   <div id="toast" class="toast">Mensagem de Sucesso</div>
 
 <script>
-// ========== LÓGICA DO MODO ESCURO (DARK MODE) ==========
+// ========== LÓGICA DO MODO ESCURO (DARK MODE) E RE-RENDER DE GRÁFICOS ==========
 function toggleTheme() {
   const isDark = document.body.classList.toggle('dark-theme');
   const icon = document.getElementById('theme-icon');
@@ -514,6 +529,10 @@ function toggleTheme() {
   } else {
     icon.classList.replace('fa-sun', 'fa-moon');
     localStorage.setItem('theme', 'light');
+  }
+  
+  if(document.getElementById('screen-dashboard').classList.contains('active')){
+      renderizarDashboard();
   }
 }
 
@@ -532,6 +551,10 @@ let cfgEmpresa = { nome: '', contato: '', email: '', pix: '' };
 let cfgNotif = { horarios: ['09:00', '13:00', '18:00'] }; 
 let filtroAtualGlobal = 'todos';
 let toastTimeout;
+
+// Instâncias dos Gráficos
+let lineChartInstance = null;
+let doughnutChartInstance = null;
 
 window.onload = async () => {
   loadTheme();
@@ -559,27 +582,6 @@ function navegarPara(telaId, el) {
   if (telaId === 'clientes') renderizarClientes();
   if (telaId === 'templates') renderizarTemplates();
   if (telaId === 'planos') renderizarPlanos();
-}
-
-function verClientesFiltrados(filtro) {
-  filtroAtualGlobal = filtro;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  
-  const navBtnClientes = document.getElementById('nav-clientes');
-  navegarPara('clientes', navBtnClientes);
-  
-  const btnVisivel = document.querySelector(`.filter-btn[data-filtro="${filtro}"]`);
-  if(btnVisivel) {
-      btnVisivel.classList.add('active');
-      btnVisivel.style.display = 'inline-block';
-  } else {
-      const btnOculto = document.querySelector(`.filter-btn[data-filtro="hoje"]`);
-      btnOculto.classList.add('active');
-      btnOculto.style.display = 'inline-block';
-      if(typeof filtro === 'number') btnOculto.textContent = `Faltam ${filtro} Dias`;
-      else if(filtro === 'hoje') btnOculto.textContent = `Vencem Hoje`;
-  }
-  executarFiltro();
 }
 
 function setFiltro(tipo, el) {
@@ -629,7 +631,7 @@ function formatarMAC(input) {
 // ========== BANCO DE DADOS ==========
 async function initBanco() {
   db = await new Promise((res, rej) => {
-    const req = indexedDB.open('IPTVDBPro', 5); // Incrementei a versão para evitar conflitos locais
+    const req = indexedDB.open('IPTVDBPro', 5); 
     req.onupgradeneeded = e => {
       const d = e.target.result;
       if(!d.objectStoreNames.contains('config')) d.createObjectStore('config', {keyPath:'id'}).add({id:1});
@@ -650,99 +652,116 @@ function getAll(store) { return new Promise(r => tx(store).getAll().onsuccess = 
 function put(store, obj) { return new Promise((res, rej) => { const req = tx(store,'readwrite').put(obj); req.onsuccess = e => res(e.target.result); req.onerror = rej; }); }
 function del(store, id) { return new Promise(r => tx(store,'readwrite').delete(id).onsuccess = r); }
 
-// ========== DASHBOARD ==========
+// ========== DASHBOARD (COM GRÁFICOS NEON) ==========
 async function renderizarDashboard() {
   const clisBrutos = await getAll('clientes');
-  const planos = await getAll('planos');
-  const templates = await getAll('templates');
-  const ativosTpls = templates.filter(t => t.ativo);
   
   let total = clisBrutos.length, ativos = 0, vencHoje = 0, vencidos = 0, faturamento = 0;
   
   const clis = clisBrutos.map(c => ({...c, _sts: calcularStatus(c.data_vencimento)}));
-  let countDias = {1:0, 2:0, 3:0, 4:0, 5:0};
 
   clis.forEach(c => {
     if (c._sts.texto === 'Ativo') { ativos++; faturamento += Number(c.valor); }
     if (c._sts.dias === 0) vencHoje++;
     if (c._sts.dias < 0) vencidos++;
-    if (c._sts.dias > 0 && c._sts.dias <= 5) countDias[c._sts.dias]++;
   });
 
   document.getElementById('qtd-ativos').textContent = total;
   document.getElementById('qtd-ativos-reais').textContent = ativos;
   document.getElementById('qtd-vencidos').textContent = vencidos;
   document.getElementById('faturamento').textContent = `R$ ${faturamento.toFixed(2)}`;
-  document.getElementById('qtd-planos').textContent = planos.length;
-  document.getElementById('qtd-hoje').textContent = vencHoje;
 
-  let htmlResumoCards = '';
-  if (ativosTpls.some(t => t.tipo === 'vencido')) {
-      htmlResumoCards += `<div class="resumo-card" onclick="verClientesFiltrados('vencidos')">
-          <div class="resumo-header">
-             <div class="lbl"><i class="fas fa-exclamation-circle" style="color:var(--danger)"></i> Vencidos</div>
-             <div class="badge" style="background:rgba(239, 68, 68, 0.15); color:var(--danger)">${vencidos}</div>
-          </div>
-      </div>`;
-  }
-  if (ativosTpls.some(t => t.tipo === 'vencimento_hoje')) {
-      htmlResumoCards += `<div class="resumo-card" onclick="verClientesFiltrados('hoje')">
-          <div class="resumo-header">
-             <div class="lbl"><i class="fas fa-calendar-day" style="color:var(--warning)"></i> Vencem Hoje</div>
-             <div class="badge" style="background:rgba(245, 158, 11, 0.15); color:var(--warning)">${vencHoje}</div>
-          </div>
-      </div>`;
-  }
-  for(let i=1; i<=5; i++) {
-      if(ativosTpls.some(t => t.tipo === `lembrete_${i}`)) {
-          htmlResumoCards += `<div class="resumo-card" onclick="verClientesFiltrados(${i})">
-              <div class="resumo-header">
-                 <div class="lbl"><i class="fas fa-clock" style="color:var(--primary)"></i> Em ${i} dia${i>1?'s':''}</div>
-                 <div class="badge" style="background:rgba(41, 98, 255, 0.15); color:var(--primary)">${countDias[i]}</div>
-              </div>
-          </div>`;
+  // Lógica de Cores baseada no Tema (Claro/Escuro) para os Gráficos
+  const isDark = document.body.classList.contains('dark-theme');
+  const textColor = isDark ? '#f8fafc' : '#1e293b';
+  const gridColor = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
+
+  // ========= GRÁFICO 1: VENCIMENTOS (LINHA NEON) =========
+  const canvasLine = document.getElementById('chartEstatistica');
+  if(canvasLine) {
+      const ctxLine = canvasLine.getContext('2d');
+      
+      let gradientLine = ctxLine.createLinearGradient(0, 0, 0, 180);
+      gradientLine.addColorStop(0, 'rgba(0, 210, 255, 0.5)');
+      gradientLine.addColorStop(1, 'rgba(0, 210, 255, 0.01)');
+
+      const datasLabels = [];
+      const qtdsData = [];
+      
+      for (let i = 0; i <= 6; i++) {
+        const d = new Date(); d.setDate(d.getDate() + i);
+        const dtIso = d.toISOString().split('T')[0];
+        datasLabels.push(i === 0 ? 'Hoje' : d.toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit'}));
+        qtdsData.push(clis.filter(c => c.data_vencimento === dtIso).length);
       }
-  }
-  document.getElementById('dash-resumo-dinamico').innerHTML = htmlResumoCards || '<div class="empty-state">Nenhum gatilho ativado na aba Templates.</div>';
 
-  let htmlDashVenc = '';
-  const renderGroup = (tituloGroup, tipoTpl, filtroFuncao, iconeCor) => {
-      const grupo = clis.filter(filtroFuncao);
-      if (grupo.length === 0) return '';
-      let html = `<div class="dash-group-title" style="border-bottom: 2px solid ${iconeCor}; display:inline-block; margin-bottom:10px;">${tituloGroup}</div>`;
-      grupo.forEach(c => {
-          html += `
-          <div class="dash-item">
-            <div class="dash-item-info">
-              <div class="dash-item-name">${c.nome}</div>
-              <div class="dash-item-date">${c.telefone || 'Sem telefone'} &nbsp;|&nbsp; Vence: ${formatDataBr(c.data_vencimento)}</div>
-            </div>
-            <div class="dash-item-actions">
-              <button class="btn-action" style="padding:6px 10px; font-size:12px; border-color:var(--border);" title="Renovar" onclick="abrirModalRenovacao(${c.id})"><i class="fas fa-sync" style="color:var(--primary)"></i></button>
-              <button class="btn-action" style="padding:6px 10px; font-size:12px; border-color:var(--success); color:var(--success); font-weight:700;" onclick="enviarLembreteRapido(${c.id}, '${tipoTpl}')"><i class="fab fa-whatsapp"></i> Zap</button>
-            </div>
-          </div>`;
+      if(lineChartInstance) lineChartInstance.destroy();
+      lineChartInstance = new Chart(ctxLine, {
+        type: 'line',
+        data: {
+          labels: datasLabels,
+          datasets: [{
+            label: 'Vencimentos',
+            data: qtdsData,
+            borderColor: '#00d2ff',
+            backgroundColor: gradientLine,
+            borderWidth: 3,
+            pointBackgroundColor: '#00d2ff',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2,
+            pointRadius: 4,
+            pointHoverRadius: 6,
+            fill: true,
+            tension: 0.4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { display: false }, ticks: { color: textColor, font: {family: 'Inter', size: 10} } },
+            y: { 
+              grid: { color: gridColor, borderDash: [5, 5] }, 
+              ticks: { color: textColor, font: {family: 'Inter', size: 10}, stepSize: 1, beginAtZero: true } 
+            }
+          },
+          animation: { duration: 2000, easing: 'easeOutQuart' }
+        }
       });
-      return html;
-  };
+  }
 
-  if (ativosTpls.some(t => t.tipo === 'vencimento_hoje')) htmlDashVenc += renderGroup('🟠 Vencem Hoje', 'vencimento_hoje', c => c._sts.dias === 0, 'var(--warning)');
-  if (ativosTpls.some(t => t.tipo === 'lembrete_1')) htmlDashVenc += renderGroup('🟡 Vencem em 1 Dia', 'lembrete_1', c => c._sts.dias === 1, 'var(--primary)');
-  if (ativosTpls.some(t => t.tipo === 'lembrete_2')) htmlDashVenc += renderGroup('🟡 Vencem em 2 Dias', 'lembrete_2', c => c._sts.dias === 2, 'var(--primary)');
-  if (ativosTpls.some(t => t.tipo === 'lembrete_3')) htmlDashVenc += renderGroup('🟡 Vencem em 3 Dias', 'lembrete_3', c => c._sts.dias === 3, 'var(--primary)');
-  if (ativosTpls.some(t => t.tipo === 'vencido')) htmlDashVenc += renderGroup('🔴 Vencidos', 'vencido', c => c._sts.dias < 0, 'var(--danger)');
-
-  document.getElementById('dash-vencimentos').innerHTML = htmlDashVenc || '<div class="empty-state">Sem clientes engatilhados hoje.</div>';
-}
-
-async function enviarLembreteRapido(idCli, tipoTpl) {
-  const c = (await getAll('clientes')).find(x => x.id === idCli);
-  const ts = await getAll('templates');
-  const tplAtivo = ts.find(t => t.tipo === tipoTpl && t.ativo);
-  if (!c) return mostrarToast('Cliente não encontrado.');
-  if (!tplAtivo) return mostrarToast('Template não encontrado para este dia.');
-  const msg = tplAtivo.mensagem.replace(/{nome}/g, c.nome).replace(/{data}/g, formatDataBr(c.data_vencimento)).replace(/{valor}/g, c.valor).replace(/{empresa}/g, cfgEmpresa.nome);
-  abrirWhatsApp(c.telefone, msg);
+  // ========= GRÁFICO 2: STATUS (ROSCA NEON) =========
+  const canvasDoughnut = document.getElementById('chartRosca');
+  if(canvasDoughnut) {
+      const ctxDoughnut = canvasDoughnut.getContext('2d');
+      
+      if(doughnutChartInstance) doughnutChartInstance.destroy();
+      doughnutChartInstance = new Chart(ctxDoughnut, {
+        type: 'doughnut',
+        data: {
+          labels: ['Ativos', 'Vencem Hoje', 'Vencidos'],
+          datasets: [{
+            data: [ativos, vencHoje, vencidos],
+            backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
+            borderWidth: 0,
+            hoverOffset: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '75%',
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { color: textColor, padding: 15, font: { family: 'Inter', size: 12, weight: '500' }, usePointStyle: true }
+            }
+          },
+          animation: { animateScale: true, animateRotate: true, duration: 2000, easing: 'easeOutQuart' }
+        }
+      });
+  }
 }
 
 // ========== CLIENTES LISTAGEM ==========

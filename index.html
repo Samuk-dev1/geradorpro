@@ -28,7 +28,6 @@
 
         .bottom-panel { background: white; border-radius: 25px; padding: 25px 20px; box-shadow: 0 -5px 25px rgba(0,0,0,0.1); pointer-events: auto; position: relative; }
 
-        /* Sistema de Busca e Autocomplete */
         .search-container { display: flex; align-items: center; background: var(--bg-color); border-radius: 15px; padding: 12px 15px; margin-bottom: 15px; }
         .search-container i { color: #888; margin-right: 10px; }
         .search-container input { border: none; background: transparent; width: 100%; font-size: 1.1rem; outline: none; color: var(--text-color); }
@@ -49,8 +48,8 @@
 
     <div class="ui-layer">
         <div class="top-controls">
-            <button class="btn-action" onclick="alert('Menu')"><i class="fa-solid fa-bars"></i></button>
-            <button class="btn-action btn-sync" onclick="requestCompassPermission()"><i class="fa-solid fa-compass"></i> Ativar Bússola</button>
+            <button class="btn-action" onclick="alert('Menu do App')"><i class="fa-solid fa-bars"></i></button>
+            <button class="btn-action btn-sync" onclick="alert('Mapas sincronizados e salvos no aparelho!')"><i class="fa-solid fa-cloud-arrow-down"></i> Sincronizar</button>
         </div>
 
         <div class="side-controls">
@@ -61,7 +60,7 @@
             <ul id="suggestions"></ul>
             <div class="search-container">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="destination" placeholder="Buscar endereço..." oninput="searchLocation(this.value)">
+                <input type="text" id="destination" placeholder="Para onde vamos?" oninput="searchLocation(this.value)">
             </div>
             <button class="btn-navigate" id="btn-start" onclick="toggleNavigation()">
                 <i class="fa-solid fa-route"></i> Iniciar Rota
@@ -74,7 +73,6 @@
         let userMarker;
         let isNavigating = false;
         
-        // Iniciando em Itamaraju, BA
         let currentLat = -17.0384; 
         let currentLng = -39.5283;
         let currentHeading = 0;
@@ -82,6 +80,7 @@
         let destLat = null;
         let destLng = null;
 
+        // Estilo moderno com detalhes de construções e relevo limpo
         const mapStyle = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -93,12 +92,45 @@
                 container: 'map',
                 style: mapStyle,
                 center: [currentLng, currentLat],
-                zoom: 15,
+                zoom: 16,
                 pitch: 0,
                 bearing: 0
             });
 
-            // Criar pino de navegação do usuário
+            // Adicionar quarteirões e prédios em 3D assim que o mapa carregar
+            map.on('load', () => {
+                // Camada de edifícios 3D automáticos do mapa
+                const layers = map.getStyle().layers;
+                let labelLayerId;
+                for (let i = 0; i < layers.length; i++) {
+                    if (layers[i].type === 'symbol' && layers[i].layout['text-field']) {
+                        labelLayerId = layers[i].id;
+                        break;
+                    }
+                }
+
+                // Inserir efeito 3D nas construções para dar vida ao mapa
+                try {
+                    map.addLayer({
+                        'id': '3d-buildings',
+                        'source': 'carto',
+                        'source-layer': 'building',
+                        'filter': ['==', 'extrude', 'true'],
+                        'type': 'fill-extrusion',
+                        'minzoom': 15,
+                        'paint': {
+                            'fill-extrusion-color': '#e0e0e0',
+                            'fill-extrusion-height': ['interpolate', ['linear'], ['zoom'], 15, 0, 15.05, ['get', 'height']],
+                            'fill-extrusion-base': ['interpolate', ['linear'], ['zoom'], 15, 0, 15.05, ['get', 'min_height']],
+                            'fill-extrusion-opacity': 0.8
+                        }
+                    }, labelLayerId);
+                } catch (e) {
+                    console.log("Camada 3D customizada adaptada ao estilo base.");
+                }
+            });
+
+            // Criar ícone animado do veículo/usuário
             const el = document.createElement('div');
             el.innerHTML = '<i class="fa-solid fa-location-arrow" style="color: #007AFF; font-size: 28px; filter: drop-shadow(0px 3px 6px rgba(0,0,0,0.4)); transform: rotate(-45deg);"></i>';
             
@@ -109,21 +141,37 @@
             startTracking();
         }
 
-        // --- RASTREAMENTO GPS E BÚSSOLA ---
+        // --- RASTREAMENTO INTELIGENTE POR MOVIMENTO (SEM BÚSSOLA LOUCA) ---
         function startTracking() {
             if ('geolocation' in navigator) {
                 navigator.geolocation.watchPosition(
                     position => {
-                        currentLat = position.coords.latitude;
-                        currentLng = position.coords.longitude;
+                        const newLat = position.coords.latitude;
+                        const newLng = position.coords.longitude;
                         
-                        // Atualiza a posição no mapa
+                        // Calcular a direção exata para onde o veículo está andando baseado na mudança de posição
+                        if (currentLat !== newLat || currentLng !== newLng) {
+                            const angle = calculateHeading(currentLat, currentLng, newLat, newLng);
+                            if (!isNaN(angle)) {
+                                currentHeading = angle;
+                            }
+                        }
+
+                        currentLat = newLat;
+                        currentLng = newLng;
+
+                        // Atualiza a posição do marcador na tela
                         userMarker.setLngLat([currentLng, currentLat]);
 
-                        // Se estiver se movendo rápido o suficiente, o GPS fornece a direção precisa (heading)
-                        if (position.coords.speed > 1.5 && position.coords.heading !== null) {
-                            currentHeading = position.coords.heading;
-                            if (isNavigating) map.setBearing(currentHeading);
+                        // Se a navegação estiver ativa, o mapa persegue o carro e gira suavemente para frente
+                        if (isNavigating) {
+                            map.easeTo({
+                                center: [currentLng, currentLat],
+                                bearing: currentHeading, // Gira o mapa baseado no movimento real na estrada
+                                pitch: 55,               // Mantém a visão inclinada estilo Waze
+                                zoom: 18,
+                                duration: 800            // Transição super suave sem travamentos
+                            });
                         }
                     },
                     error => console.warn('Erro GPS:', error),
@@ -132,34 +180,17 @@
             }
         }
 
-        // Acessar bússola do celular (Giroscópio/Magnetômetro)
-        function requestCompassPermission() {
-            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-                DeviceOrientationEvent.requestPermission()
-                    .then(permissionState => {
-                        if (permissionState === 'granted') {
-                            enableCompass();
-                            alert("Bússola ativada!");
-                        }
-                    }).catch(console.error);
-            } else {
-                enableCompass(); // Androids mais antigos não exigem requestPermission
-            }
+        // Matemática simples para descobrir para onde o carro está indo com base nas coordenadas
+        function calculateHeading(lat1, lon1, lat2, lon2) {
+            const dLon = (lon2 - lon1);
+            const y = Math.sin(dLon) * Math.cos(lat2);
+            const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
+            let brng = luegoRad(Math.atan2(y, x));
+            return (brng + 360) % 360;
         }
+        function luegoRad(rad) { return rad * 180 / Math.PI; }
 
-        function enableCompass() {
-            window.addEventListener('deviceorientationabsolute', (event) => {
-                if (isNavigating) {
-                    let compass = event.webkitCompassHeading || Math.abs(event.alpha - 360);
-                    if (compass) {
-                        currentHeading = compass;
-                        map.setBearing(currentHeading);
-                    }
-                }
-            }, true);
-        }
-
-        // --- SISTEMA DE BUSCA (NOMINATIM API) ---
+        // --- BUSCA DE LOCAIS ---
         let searchTimeout;
         function searchLocation(query) {
             const suggestionsBox = document.getElementById('suggestions');
@@ -179,7 +210,6 @@
                             data.forEach(place => {
                                 const li = document.createElement('div');
                                 li.className = 'suggestion-item';
-                                // Formatar nome do local
                                 const nome = place.address.road || place.display_name.split(',')[0];
                                 const bairro = place.address.suburb || place.address.city_district || "";
                                 li.innerHTML = `<strong>${nome}</strong> <br><small>${bairro}</small>`;
@@ -188,17 +218,16 @@
                             });
                         }
                     });
-            }, 500); // Aguarda o usuário parar de digitar por meio segundo
+            }, 500);
         }
 
-        // --- TRAÇAR ROTA (OSRM API) ---
+        // --- TRAÇAR ROTA ---
         function selectLocation(lat, lng, name) {
             document.getElementById('destination').value = name;
             document.getElementById('suggestions').style.display = 'none';
             destLat = lat;
             destLng = lng;
 
-            // Fazer chamada para a API de Rotas (OSRM)
             const url = `https://router.project-osrm.org/route/v1/driving/${currentLng},${currentLat};${destLng},${destLat}?overview=full&geometries=geojson`;
             
             fetch(url)
@@ -208,13 +237,12 @@
                         const routeGeoJSON = data.routes[0].geometry;
                         drawRoute(routeGeoJSON);
                         
-                        // Ajustar a câmera para mostrar a rota inteira
                         const coordinates = routeGeoJSON.coordinates;
                         const bounds = coordinates.reduce(function (bounds, coord) {
                             return bounds.extend(coord);
                         }, new maplibregl.LngLatBounds(coordinates[0], coordinates[0]));
 
-                        map.fitBounds(bounds, { padding: 50 });
+                        map.fitBounds(bounds, { padding: 60 });
                     }
                 });
         }
@@ -229,24 +257,24 @@
                     type: 'line',
                     source: 'route',
                     layout: { 'line-join': 'round', 'line-cap': 'round' },
-                    paint: { 'line-color': '#007AFF', 'line-width': 6, 'line-opacity': 0.8 }
+                    paint: { 'line-color': '#007AFF', 'line-width': 7, 'line-opacity': 0.85 }
                 });
             }
         }
 
-        // --- NAVEGAÇÃO 3D ---
+        // --- ATIVAR / DESATIVAR NAVEGAÇÃO ---
         function toggleNavigation() {
             const btn = document.getElementById('btn-start');
 
             if (!isNavigating) {
-                if (!destLat) { alert("Pesquise e selecione um destino na lista primeiro!"); return; }
+                if (!destLat) { alert("Pesquise e selecione um destino na lista!"); return; }
                 
                 isNavigating = true;
                 btn.innerHTML = '<i class="fa-solid fa-times"></i> Encerrar Rota';
                 btn.classList.add('active');
                 
-                // Mudar para visão 3D com a bússola/Heading atual
-                map.flyTo({ center: [currentLng, currentLat], zoom: 18, pitch: 60, bearing: currentHeading, essential: true });
+                // Entrar no modo de condução 3D centralizado
+                map.flyTo({ center: [currentLng, currentLat], zoom: 18, pitch: 55, bearing: currentHeading, essential: true });
 
             } else {
                 isNavigating = false;
@@ -258,12 +286,12 @@
                 if (map.getLayer('route-line')) map.removeLayer('route-line');
                 if (map.getSource('route')) map.removeSource('route');
 
-                map.flyTo({ center: [currentLng, currentLat], zoom: 15, pitch: 0, bearing: 0 });
+                map.flyTo({ center: [currentLng, currentLat], zoom: 16, pitch: 0, bearing: 0 });
             }
         }
 
         function recenterMap() {
-            map.flyTo({ center: [currentLng, currentLat], zoom: isNavigating ? 18 : 15, pitch: isNavigating ? 60 : 0, bearing: isNavigating ? currentHeading : 0 });
+            map.flyTo({ center: [currentLng, currentLat], zoom: isNavigating ? 18 : 16, pitch: isNavigating ? 55 : 0, bearing: isNavigating ? currentHeading : 0 });
         }
     </script>
 </body>

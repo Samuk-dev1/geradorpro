@@ -66,7 +66,7 @@
     .action-btn { background: rgba(0,0,0,0.2); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; color: #fff; }
     .action-btn:active { transform: scale(0.9); }
 
-    /* MÉTRICAS */
+    /* MÉTRICAS TOPO */
     .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .metric-box {
       background: rgba(255, 255, 255, 0.15);
@@ -112,12 +112,13 @@
     .screen.active { display: block; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* DASHBOARD WIDGETS & NEON */
+    /* GRÁFICOS NEON NA DASHBOARD */
     .neon-chart-container { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: var(--shadow-md); position: relative; overflow: hidden; transition: background-color 0.3s, border-color 0.3s; }
     body.dark-theme .neon-chart-container { background: #0f172a; box-shadow: 0 0 25px rgba(0, 210, 255, 0.08); border: 1px solid rgba(0, 210, 255, 0.2); }
     .neon-chart-header { font-size: 14px; font-weight: 700; color: var(--text-dark); margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
     body.dark-theme .neon-chart-header i { text-shadow: 0 0 10px currentColor; }
 
+    /* DASHBOARD WIDGETS & GROUPS */
     .widget-box { background: var(--bg-card); border-radius: 16px; padding: 16px; box-shadow: var(--shadow-sm); margin-bottom: 16px; transition: background-color 0.3s; }
     .widget-header { display: flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 700; margin-bottom: 16px; color: var(--text-dark); }
     .empty-state { text-align: center; color: var(--text-muted); font-size: 14px; padding: 20px 0; }
@@ -135,7 +136,6 @@
     .dash-item-info { flex: 1; }
     .dash-item-name { font-size: 14px; font-weight: 600; color: var(--text-dark); margin-bottom: 2px; }
     .dash-item-date { font-size: 12px; color: var(--text-muted); }
-    .dash-item-actions { display: flex; gap: 6px; }
 
     /* FILTROS BOTÕES */
     .filter-row { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
@@ -158,28 +158,17 @@
     }
     .cliente-list-item.vencido { border-left-color: var(--danger); }
     .cliente-list-item.vencendo { border-left-color: var(--warning); }
+    .cliente-list-item:active { transform: scale(0.98); }
     
-    .cli-header {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 14px 16px; cursor: pointer;
-    }
+    .cli-header { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; cursor: pointer; }
     .cli-title-box { display: flex; flex-direction: column; gap: 4px; }
     .cli-name { font-size: 15px; font-weight: 700; color: var(--text-dark); display: flex; align-items: center; gap: 6px; }
     .cli-name i { color: var(--primary); font-size: 12px; }
     .cli-subtitle { font-size: 11px; font-weight: 500; color: var(--text-muted); }
-    
     .cli-header-right { display: flex; align-items: center; gap: 10px; }
-    .cli-chevron { color: var(--text-muted); transition: transform 0.3s; font-size: 14px; }
-    .cliente-list-item.expanded .cli-chevron { transform: rotate(180deg); color: var(--primary); }
-    .cliente-list-item.expanded { box-shadow: var(--shadow-md); margin-bottom: 6px; margin-top: 6px; border-color: var(--primary); }
     
-    .cli-body { display: none; padding: 0 16px 16px 16px; }
-    .cliente-list-item.expanded .cli-body { display: block; animation: fadeIn 0.3s ease; }
-    
-    .cli-info-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
-      margin-top: 10px; padding-top: 12px; border-top: 1px dashed var(--border); margin-bottom: 16px;
-    }
+    /* Grelha de Informações da Janela Detalhes */
+    .cli-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; background: var(--bg-input); padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
     .cli-info-item { font-size: 11px; color: var(--text-muted); }
     .cli-info-item strong { color: var(--text-dark); display: block; font-size: 13px; margin-top: 2px; }
     .cli-info-full { grid-column: span 2; }
@@ -187,6 +176,7 @@
     .badge-status { padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
     .badge-status.ativo { background: rgba(16, 185, 129, 0.15); color: var(--success); }
     .badge-status.vencido { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+    .badge-status.vencendo { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
     
     .card-actions { display: flex; gap: 8px; }
     .btn-action {
@@ -226,7 +216,7 @@
     .modal-content { background: var(--bg-card); border-radius: 20px; padding: 24px; width: 100%; max-width: 400px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.3); transition: background-color 0.3s; }
     .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
     .modal-header h3 { font-size: 18px; font-weight: 700; color: var(--text-dark); }
-    .close-btn { background: none; border: none; font-size: 24px; color: var(--text-muted); cursor: pointer; }
+    .close-btn { background: none; border: none; font-size: 24px; color: var(--text-muted); cursor: pointer; margin-top: -5px;}
 
     #renov-info { font-size: 14px; color: var(--text-dark); margin-bottom: 15px; background: var(--bg-input); padding: 12px; border-radius: 8px; text-align: center; border: 1px solid var(--border); }
 
@@ -286,17 +276,20 @@
     <section id="screen-dashboard" class="screen active">
       
       <div class="neon-chart-container">
-        <div class="neon-chart-header"><i class="fas fa-chart-area" style="color:var(--secondary)"></i> Vencimentos (7 Dias)</div>
+        <div class="neon-chart-header"><i class="fas fa-chart-area" style="color:var(--secondary)"></i> Vencimentos (Próximos 7 Dias)</div>
         <div style="position: relative; height: 180px;"><canvas id="chartEstatistica"></canvas></div>
       </div>
 
       <div class="neon-chart-container">
-        <div class="neon-chart-header"><i class="fas fa-chart-pie" style="color:var(--primary)"></i> Status da Base</div>
+        <div class="neon-chart-header"><i class="fas fa-chart-pie" style="color:var(--primary)"></i> Status Geral da Base</div>
         <div style="position: relative; height: 220px; display: flex; justify-content: center;"><canvas id="chartRosca"></canvas></div>
       </div>
 
       <div class="widget-box">
         <div class="widget-header"><i class="fas fa-filter" style="color:var(--primary)"></i> Filtro Rápido</div>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:14px; line-height:1.4;">
+          Estes blocos são gerados com base nas <b>Chaves de Cobrança</b> ativas em seus Templates. Toque em um deles para ver a lista de clientes!
+        </p>
         <div class="dash-resumo-grid" id="dash-resumo-dinamico"></div>
       </div>
 
@@ -323,7 +316,7 @@
         <button class="filter-btn" data-filtro="hoje" onclick="setFiltro('hoje', this)" style="display:none;">Filtrado Data Específica</button>
       </div>
       
-      <!-- LISTA DE CLIENTES EM FORMATO COMPACTO (ACCORDION) -->
+      <!-- LISTA DE CLIENTES EM FORMATO COMPACTO (SOMENTE LINHAS) -->
       <div class="list-container" id="lista-clientes"></div>
     </section>
     
@@ -354,7 +347,7 @@
       <button class="btn-gradient" onclick="dispararNotificacao()"><i class="fas fa-bell"></i> Testar Alerta no Celular</button>
     </section>
 
-    <!-- TELA: CONFIGURAÇÕES GERAIS -->
+    <!-- TELA: CONFIGURAÇÕES -->
     <section id="screen-configuracoes" class="screen">
       <div class="panel-box">
         <div class="panel-header"><h3><i class="fas fa-building" style="color:var(--primary)"></i> Dados da Empresa</h3></div>
@@ -385,7 +378,7 @@
         <label style="font-size:13px; color:var(--text-muted); display:block; margin-bottom:8px;">Restaurar Dados:</label>
         <input type="file" id="arquivo-backup" accept=".json" onchange="importarBackup(event)" style="margin-bottom: 16px;">
         
-        <!-- BOTÃO DELETAR TODOS OS DADOS (NOVO) -->
+        <!-- BOTÃO DELETAR TODOS OS DADOS (ZONA DE PERIGO) -->
         <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(239, 68, 68, 0.3);">
             <label style="font-size:13px; color:var(--danger); display:block; margin-bottom:8px; font-weight:700;"><i class="fas fa-exclamation-triangle"></i> Zona de Perigo:</label>
             <button class="btn-outline" style="border-color:var(--danger); color:var(--danger);" onclick="apagarTodosOsDados()"><i class="fas fa-trash-alt"></i> Apagar Todos os Dados</button>
@@ -395,7 +388,42 @@
 
   </main>
 
-  <!-- MODAL: CLIENTE -->
+  <!-- ==============================================
+       NOVO MODAL: JANELA DE DETALHES DO CLIENTE 
+       ============================================== -->
+  <div class="modal" id="modal-detalhes-cliente">
+    <div class="modal-content">
+      <div class="modal-header" style="margin-bottom: 10px;">
+        <h3 id="detalhe-nome" style="font-size: 16px;"><i class="fas fa-user-circle"></i> Nome do Cliente</h3>
+        <button class="close-btn" onclick="fecharModal('modal-detalhes-cliente')">&times;</button>
+      </div>
+      
+      <div style="margin-bottom: 20px;">
+          <span id="detalhe-status" class="badge-status">Status</span>
+      </div>
+      
+      <div class="cli-info-grid">
+        <div class="cli-info-item">Vencimento <strong id="detalhe-vencimento"></strong></div>
+        <div class="cli-info-item">Telefone <strong id="detalhe-telefone"></strong></div>
+        <div class="cli-info-item">Plano <strong id="detalhe-plano"></strong></div>
+        <div class="cli-info-item">Valor Mensal <strong id="detalhe-valor"></strong></div>
+        <div class="cli-info-item">Usuário App <strong id="detalhe-usuario"></strong></div>
+        <div class="cli-info-item">Senha App <strong id="detalhe-senha-painel"></strong></div>
+        <div class="cli-info-item">Aplicativo <strong id="detalhe-app"></strong></div>
+        <div class="cli-info-item">MAC <strong id="detalhe-mac"></strong></div>
+        <div class="cli-info-item cli-info-full">Servidor / Provedor <strong id="detalhe-provedor"></strong></div>
+      </div>
+      
+      <div class="card-actions">
+        <button class="btn-action" id="btn-detalhe-cobrar"><i class="fas fa-paper-plane" style="color:var(--primary)"></i> Cobrar</button>
+        <button class="btn-action" id="btn-detalhe-editar"><i class="fas fa-pencil-alt" style="color:var(--warning)"></i> Editar</button>
+        <button class="btn-action" id="btn-detalhe-renovar"><i class="fas fa-sync" style="color:var(--success)"></i> Renovar</button>
+        <button class="btn-action trash" id="btn-detalhe-excluir"><i class="fas fa-trash-alt"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CADASTRAR/EDITAR CLIENTE -->
   <div class="modal" id="modal-cliente">
     <div class="modal-content">
       <div class="modal-header">
@@ -406,19 +434,16 @@
       
       <div class="form-group"><label>Nome Completo</label><input type="text" id="cli-nome" required></div>
       <div class="form-group"><label>Telefone / WhatsApp</label><input type="tel" id="cli-telefone"></div>
-      
       <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
         <div class="form-group"><label>Usuário (Painel)</label><input type="text" id="cli-usuario" placeholder="Opcional"></div>
         <div class="form-group"><label>Senha (Painel)</label><input type="text" id="cli-senha-painel" placeholder="Opcional"></div>
       </div>
-      
       <div class="form-group"><label>Servidor / Provedor</label><input type="text" id="cli-provedor" placeholder="Opcional (Ex: BobTV)"></div>
       <div class="form-group"><label>Data de Vencimento</label><input type="date" id="cli-vencimento" required></div>
       <div class="form-group"><label>MAC Address</label><input type="text" id="cli-mac" placeholder="Opcional: 00:1A:2B:3C:4D:5E" oninput="formatarMAC(this)" maxlength="17"></div>
       <div class="form-group"><label>Senha do Aplicativo</label><input type="text" id="cli-senha" placeholder="Opcional..."></div>
       <div class="form-group"><label>Aplicativo Usado</label><input type="text" id="cli-app" placeholder="Opcional (Ex: Smartters)"></div>
       <div class="form-group"><label>Plano</label><select id="cli-plano"></select></div>
-      
       <input type="hidden" id="cli-valor">
       <button class="btn-gradient" onclick="salvarCliente()">Salvar Cadastro</button>
     </div>
@@ -474,7 +499,7 @@
   <div class="modal" id="modal-enviar-msg">
     <div class="modal-content">
       <div class="modal-header">
-        <h3 style="color:var(--primary)"><i class="fas fa-paper-plane"></i> Enviar Lembrete</h3>
+        <h3 style="color:var(--warning)"><i class="fas fa-paper-plane"></i> Enviar Template</h3>
         <button class="close-btn" onclick="fecharModal('modal-enviar-msg')">&times;</button>
       </div>
       <input type="hidden" id="msg-cli-id">
@@ -483,7 +508,7 @@
         <select id="msg-template-select" onchange="atualizarPreviewMensagem()"></select>
       </div>
       <div class="form-group">
-        <textarea id="msg-preview" rows="6" style="border-color:var(--primary)"></textarea>
+        <textarea id="msg-preview" rows="6" style="border-color:var(--warning)"></textarea>
       </div>
       <button class="btn-gradient" onclick="dispararWhatsAppManual()"><i class="fab fa-whatsapp"></i> Enviar p/ WhatsApp</button>
     </div>
@@ -607,11 +632,6 @@ function executarFiltro() {
   renderizarClientesListagem(filtroAtualGlobal, busca);
 }
 
-function toggleExpandirCliente(elementoHeader) {
-  const containerItem = elementoHeader.parentElement;
-  containerItem.classList.toggle('expanded');
-}
-
 function abrirModal(id) { document.getElementById(id).classList.add('open'); }
 function fecharModal(id) { document.getElementById(id).classList.remove('open'); }
 function mostrarToast(texto) {
@@ -647,7 +667,7 @@ function formatarMAC(input) {
 // ========== BANCO DE DADOS ==========
 async function initBanco() {
   db = await new Promise((res, rej) => {
-    const req = indexedDB.open('IPTVDBPro', 5); 
+    const req = indexedDB.open('IPTVDBPro', 6); 
     req.onupgradeneeded = e => {
       const d = e.target.result;
       if(!d.objectStoreNames.contains('config')) d.createObjectStore('config', {keyPath:'id'}).add({id:1});
@@ -822,7 +842,39 @@ async function enviarLembreteRapido(idCli, tipoTpl) {
   abrirWhatsApp(c.telefone, msg);
 }
 
-// ========== CLIENTES LISTAGEM (NOVO MODELO LISTA COMPACTA ACCORDION) ==========
+// ========== ABRIR MODAL DE DETALHES DO CLIENTE ==========
+async function abrirModalDetalhesCliente(id) {
+  const clis = await getAll('clientes');
+  const c = clis.find(x => x.id === id);
+  if(!c) return;
+
+  const sts = calcularStatus(c.data_vencimento);
+
+  document.getElementById('detalhe-nome').innerHTML = `<i class="fas fa-user-circle" style="color:var(--primary)"></i> ${c.nome}`;
+  const badge = document.getElementById('detalhe-status');
+  badge.className = `badge-status ${sts.classe}`;
+  badge.textContent = sts.texto;
+
+  document.getElementById('detalhe-vencimento').textContent = formatDataBr(c.data_vencimento);
+  document.getElementById('detalhe-telefone').textContent = c.telefone || 'Não info';
+  document.getElementById('detalhe-plano').textContent = c.plano;
+  document.getElementById('detalhe-valor').textContent = `R$ ${Number(c.valor).toFixed(2)}`;
+  document.getElementById('detalhe-usuario').textContent = c.usuario || 'N/A';
+  document.getElementById('detalhe-senha-painel').textContent = c.senha_painel || 'N/A';
+  document.getElementById('detalhe-app').textContent = c.aplicativo || 'N/A';
+  document.getElementById('detalhe-mac').textContent = c.mac || 'N/A';
+  document.getElementById('detalhe-provedor').textContent = c.provedor || 'N/A';
+
+  // Configura as ações dos botões dentro do modal
+  document.getElementById('btn-detalhe-cobrar').onclick = () => { fecharModal('modal-detalhes-cliente'); abrirModalEnviarMsg(c.id); };
+  document.getElementById('btn-detalhe-editar').onclick = () => { fecharModal('modal-detalhes-cliente'); editarCliente(c.id); };
+  document.getElementById('btn-detalhe-renovar').onclick = () => { fecharModal('modal-detalhes-cliente'); abrirModalRenovacao(c.id); };
+  document.getElementById('btn-detalhe-excluir').onclick = () => { fecharModal('modal-detalhes-cliente'); excluirCliente(c.id); };
+
+  abrirModal('modal-detalhes-cliente');
+}
+
+// ========== CLIENTES LISTAGEM (FORMATO LINHA COMPACTO) ==========
 async function renderizarClientesListagem(filtro, busca) {
   let clis = await getAll('clientes');
   clis = clis.map(c => ({...c, _sts: calcularStatus(c.data_vencimento)}));
@@ -846,34 +898,14 @@ async function renderizarClientesListagem(filtro, busca) {
     else { strDias = `Vencido há ${c._sts.dias * -1} dias`; colorDias = 'var(--danger)'; }
 
     return `
-      <div class="cliente-list-item ${c._sts.classe}">
-        <div class="cli-header" onclick="toggleExpandirCliente(this)">
+      <div class="cliente-list-item ${c._sts.classe}" onclick="abrirModalDetalhesCliente(${c.id})">
+        <div class="cli-header">
           <div class="cli-title-box">
             <div class="cli-name"><i class="fas fa-user-circle"></i> ${c.nome}</div>
             <div class="cli-subtitle">${c.plano} | <span style="color:${colorDias}; font-weight:600;">${strDias}</span></div>
           </div>
           <div class="cli-header-right">
             <div class="badge-status ${c._sts.classe}">${c._sts.texto}</div>
-            <i class="fas fa-chevron-down cli-chevron"></i>
-          </div>
-        </div>
-        
-        <div class="cli-body">
-          <div class="cli-info-grid">
-            <div class="cli-info-item">Vencimento <strong>${formatDataBr(c.data_vencimento)}</strong></div>
-            <div class="cli-info-item">Telefone <strong>${c.telefone || 'Não info'}</strong></div>
-            <div class="cli-info-item">Usuário App <strong>${c.usuario || 'N/A'}</strong></div>
-            <div class="cli-info-item">Senha App <strong>${c.senha_painel || 'N/A'}</strong></div>
-            <div class="cli-info-item">Aplicativo <strong>${c.aplicativo || 'N/A'}</strong></div>
-            <div class="cli-info-item">MAC <strong>${c.mac || 'N/A'}</strong></div>
-            <div class="cli-info-item cli-info-full">Servidor / Provedor <strong>${c.provedor || 'N/A'}</strong></div>
-          </div>
-          
-          <div class="card-actions">
-            <button class="btn-action" onclick="abrirModalEnviarMsg(${c.id})"><i class="fas fa-paper-plane" style="color:var(--primary)"></i> Cobrar</button>
-            <button class="btn-action" onclick="editarCliente(${c.id})"><i class="fas fa-pencil-alt" style="color:var(--warning)"></i> Editar</button>
-            <button class="btn-action" onclick="abrirModalRenovacao(${c.id})"><i class="fas fa-sync" style="color:var(--success)"></i> Renovar</button>
-            <button class="btn-action trash" onclick="excluirCliente(${c.id})"><i class="fas fa-trash-alt"></i></button>
           </div>
         </div>
       </div>

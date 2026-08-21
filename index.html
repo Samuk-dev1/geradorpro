@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GPS Rotas Premium</title>
+    <title>GPS Rotas Limpo</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css">
@@ -18,155 +18,137 @@
             z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center;
             padding: 40px 24px; text-align: center;
         }
-        .perm-screen h1 { color: #fff; font-size: 28px; margin-bottom: 16px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .perm-screen h1 { color: #fff; font-size: 28px; margin-bottom: 16px; font-weight: 700; }
         .perm-screen p { color: #dbeafe; font-size: 16px; line-height: 1.8; max-width: 340px; margin-bottom: 40px; }
         .perm-btn {
             background: #fff; color: #2563eb; border: none; padding: 16px 48px; border-radius: 50px;
             font-size: 17px; font-weight: 700; cursor: pointer; width: 100%; max-width: 280px;
             box-shadow: 0 8px 24px rgba(0,0,0,0.2); transition: all 0.3s;
         }
-        .perm-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(0,0,0,0.25); }
+        .perm-btn:hover { transform: translateY(-2px); }
         .perm-btn:active { transform: translateY(0); }
         .perm-screen.hidden { display: none; }
 
         /* Cabeçalho */
         .header {
-            position: fixed; top: 0; left: 0; right: 0; height: 60px;
+            position: fixed; top: 0; left: 0; right: 0; height: 56px;
             background: #fff; display: flex; align-items: center; justify-content: space-between;
-            padding: 0 16px; z-index: 1000;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-            backdrop-filter: blur(10px);
+            padding: 0 16px; z-index: 1000; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
         }
-        .header-title { font-size: 19px; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 10px; }
-        .status-badge { padding: 6px 14px; border-radius: 50px; font-size: 12px; font-weight: 600; }
-        .online { background: linear-gradient(135deg, #10b981, #059669); color: #fff; }
-        .offline { background: linear-gradient(135deg, #ef4444, #dc2626); color: #fff; }
+        .header-title { font-size: 18px; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 8px; }
+        .status-badge { padding: 5px 12px; border-radius: 50px; font-size: 12px; font-weight: 600; }
+        .online { background: #dcfce7; color: #166534; }
+        .offline { background: #fee2e2; color: #991b1b; }
 
-        /* Barra de Busca */
+        /* Busca */
         .search-container {
-            position: fixed; top: 72px; left: 16px; right: 16px; z-index: 950;
-            background: #fff; border-radius: 16px; padding: 6px 6px 6px 20px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.12); display: flex; align-items: center; gap: 10px;
-            transition: all 0.3s;
+            position: fixed; top: 64px; left: 16px; right: 16px; z-index: 950;
+            background: #fff; border-radius: 16px; padding: 6px 6px 6px 18px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 10px;
         }
-        .search-container:focus-within { box-shadow: 0 6px 24px rgba(37,99,235,0.2); }
-        .search-input { flex: 1; border: none; outline: none; font-size: 15px; padding: 12px 0; color: #1e293b; background: transparent; }
-        .search-input::placeholder { color: #94a3b8; }
+        .search-input { flex: 1; border: none; outline: none; font-size: 15px; padding: 10px 0; color: #1e293b; background: transparent; }
         .search-btn {
-            width: 44px; height: 44px; border-radius: 12px; border: none;
-            background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; font-size: 20px; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+            width: 42px; height: 42px; border-radius: 12px; border: none;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; font-size: 18px; cursor: pointer;
         }
         .search-results {
-            position: fixed; top: 135px; left: 16px; right: 16px; background: #fff; border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.15); z-index: 960; max-height: 320px; overflow-y: auto; display: none;
+            position: fixed; top: 125px; left: 16px; right: 16px; background: #fff; border-radius: 16px;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.12); z-index: 960; max-height: 280px; overflow-y: auto; display: none;
         }
         .search-results.show { display: block; }
-        .search-item { padding: 16px 20px; border-bottom: 1px solid #f1f5f9; cursor: pointer; transition: all 0.2s; }
-        .search-item:hover { background: #eff6ff; padding-left: 24px; }
-        .search-item:last-child { border: none; }
+        .search-item { padding: 14px 18px; border-bottom: 1px solid #f1f5f9; cursor: pointer; }
+        .search-item:hover { background: #eff6ff; }
         .search-name { font-weight: 600; color: #1e293b; font-size: 15px; }
-        .search-addr { font-size: 13px; color: #64748b; margin-top: 4px; }
+        .search-addr { font-size: 13px; color: #64748b; margin-top: 3px; }
 
         /* Mapa */
-        #map { position: absolute; top: 60px; left: 0; right: 0; bottom: 85px; }
+        #map { position: absolute; top: 56px; left: 0; right: 0; bottom: 80px; }
 
-        /* Controles Lado Direito */
+        /* Controles */
         .map-controls {
-            position: fixed; right: 16px; top: 160px; z-index: 900; display: flex; flex-direction: column; gap: 10px;
+            position: fixed; right: 14px; top: 150px; z-index: 900; display: flex; flex-direction: column; gap: 8px;
         }
         .ctrl-btn {
-            width: 52px; height: 52px; border-radius: 16px; border: none; background: #fff;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.12); font-size: 22px; cursor: pointer;
+            width: 48px; height: 48px; border-radius: 14px; border: none; background: #fff;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.1); font-size: 20px; cursor: pointer;
             display: flex; align-items: center; justify-content: center; color: #475569; transition: all 0.2s;
         }
-        .ctrl-btn:hover { background: #eff6ff; color: #2563eb; transform: scale(1.05); }
-        .ctrl-btn.active { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; box-shadow: 0 4px 16px rgba(37,99,235,0.4); }
+        .ctrl-btn:hover { background: #eff6ff; color: #2563eb; }
+        .ctrl-btn.active { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; }
 
-        /* Painel de Rota */
+        /* Painel de Rota — COMPACTO e SEM TEXTOS EXCESSIVOS */
         .route-panel {
-            position: fixed; bottom: 95px; left: 12px; right: 12px; background: #fff; border-radius: 20px;
-            box-shadow: 0 -8px 32px rgba(0,0,0,0.15); z-index: 900; max-height: 280px; overflow: hidden; display: none; flex-direction: column;
+            position: fixed; bottom: 90px; left: 16px; right: 16px; background: #fff; border-radius: 16px;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.12); z-index: 900; padding: 14px 18px; display: none;
         }
-        .route-panel.show { display: flex; }
-        .route-header {
-            padding: 16px 20px; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; display: flex; justify-content: space-between; align-items: center;
-        }
-        .route-info { display: flex; gap: 24px; font-size: 15px; font-weight: 600; }
-        .route-close { background: none; border: none; color: #fff; font-size: 24px; cursor: pointer; opacity: 0.8; transition: opacity 0.2s; }
-        .route-close:hover { opacity: 1; }
-        .route-steps { padding: 16px 20px; overflow-y: auto; flex: 1; background: #fafbfc; }
-        .step-item { display: flex; gap: 14px; padding: 12px 0; border-bottom: 1px solid #e2e8f0; align-items: flex-start; }
-        .step-item:last-child { border: none; }
-        .step-icon { font-size: 22px; min-width: 32px; text-align: center; }
-        .step-text { font-size: 14px; color: #334155; line-height: 1.6; }
+        .route-panel.show { display: block; }
+        .route-header { display: flex; justify-content: space-between; align-items: center; }
+        .route-info { display: flex; gap: 20px; font-size: 15px; font-weight: 700; color: #1e293b; }
+        .route-close { background: none; border: none; font-size: 22px; cursor: pointer; color: #94a3b8; }
+        .route-instruction { margin-top: 10px; padding-top: 10px; border-top: 1px solid #f1f5f9; font-size: 14px; color: #475569; }
 
         /* Barra Inferior */
         .bottom-bar {
-            position: fixed; bottom: 0; left: 0; right: 0; height: 85px; background: #fff;
-            display: flex; align-items: center; justify-content: space-around; padding: 0 12px;
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.08); z-index: 999;
+            position: fixed; bottom: 0; left: 0; right: 0; height: 80px; background: #fff;
+            display: flex; align-items: center; justify-content: space-around; padding: 0 8px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.06); z-index: 999;
         }
         .nav-btn {
-            display: flex; flex-direction: column; align-items: center; gap: 4px;
-            background: none; border: none; color: #64748b; cursor: pointer; padding: 10px 14px; border-radius: 14px; transition: all 0.2s;
+            display: flex; flex-direction: column; align-items: center; gap: 3px;
+            background: none; border: none; color: #64748b; cursor: pointer; padding: 8px 12px; border-radius: 12px; transition: all 0.2s;
         }
         .nav-btn:hover { background: #eff6ff; color: #2563eb; }
         .nav-btn.main {
-            background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; width: 64px; height: 64px; border-radius: 50%;
-            margin-top: -24px; box-shadow: 0 6px 20px rgba(37,99,235,0.4);
+            background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; width: 58px; height: 58px; border-radius: 50%;
+            margin-top: -20px; box-shadow: 0 4px 16px rgba(37,99,235,0.35);
         }
-        .nav-btn.main:hover { transform: scale(1.1); }
-        .nav-icon { font-size: 24px; }
-        .nav-label { font-size: 12px; font-weight: 600; }
+        .nav-icon { font-size: 22px; }
+        .nav-label { font-size: 11px; font-weight: 600; }
 
-        /* Aviso */
         .toast {
-            position: fixed; bottom: 110px; left: 50%; transform: translateX(-50%);
-            background: rgba(15,23,42,0.9); color: #fff; padding: 14px 28px; border-radius: 50px;
-            font-size: 14px; z-index: 2000; opacity: 0; transition: all 0.3s; pointer-events: none;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%);
+            background: rgba(15,23,42,0.9); color: #fff; padding: 12px 24px; border-radius: 50px;
+            font-size: 14px; z-index: 2000; opacity: 0; transition: opacity 0.3s; pointer-events: none;
         }
-        .toast.show { opacity: 1; transform: translateX(-50%) translateY(-5px); }
+        .toast.show { opacity: 1; }
 
-        /* Melhorias no mapa */
-        .leaflet-container { background: #e2e8f0 !important; }
+        /* ESCONDE TODOS OS RÓTULOS E TEXTOS DO MAPA */
+        .leaflet-tooltip-pane, .leaflet-routing-container, .leaflet-control-attribution { display: none !important; }
     </style>
 </head>
 <body>
 
 <!-- Tela de Permissões -->
 <div id="permScreen" class="perm-screen">
-    <h1>📍 GPS Rotas Premium</h1>
-    <p>Para funcionar corretamente, preciso de acesso à sua localização, salvar mapas e enviar avisos. Permita tudo quando o celular pedir, tá bom?</p>
-    <button id="btnGrantPerm" class="perm-btn">Começar a Usar</button>
+    <h1>📍 GPS Rotas</h1>
+    <p>Preciso de acesso à sua localização para traçar rotas e salvar mapas. Permita tudo quando o celular pedir.</p>
+    <button id="btnGrantPerm" class="perm-btn">Começar</button>
 </div>
 
 <!-- Cabeçalho -->
 <div class="header">
-    <span class="header-title">🗺️ GPS Rotas Premium</span>
+    <span class="header-title">🗺️ GPS Rotas</span>
     <span id="netBadge" class="status-badge offline">Sem internet</span>
 </div>
 
 <!-- Busca -->
 <div class="search-container">
-    <span style="font-size:20px; color:#94a3b8;">🔍</span>
     <input id="searchInput" class="search-input" placeholder="Buscar lugar, endereço ou CEP...">
     <button id="searchBtn" class="search-btn">➜</button>
 </div>
 <div id="searchResults" class="search-results"></div>
 
-<!-- Controles do Mapa -->
+<!-- Controles -->
 <div class="map-controls">
     <button class="ctrl-btn" id="zoomIn">+</button>
     <button class="ctrl-btn" id="zoomOut">−</button>
-    <button class="ctrl-btn active" id="btnFollow" title="Seguir minha posição">🎯</button>
+    <button class="ctrl-btn active" id="btnFollow" title="Seguir direção">🧭</button>
 </div>
 
 <!-- Mapa -->
 <div id="map"></div>
 
-<!-- Painel de Rota -->
+<!-- Painel de Rota — PEQUENO E LIMPO -->
 <div id="routePanel" class="route-panel">
     <div class="route-header">
         <div class="route-info">
@@ -175,7 +157,7 @@
         </div>
         <button class="route-close" id="closeRoute">✕</button>
     </div>
-    <div id="routeSteps" class="route-steps"></div>
+    <div id="routeInstruction" class="route-instruction"></div>
 </div>
 
 <!-- Barra Inferior -->
@@ -210,6 +192,8 @@ let routingControl = null;
 let followMode = true;
 let voiceEnabled = true;
 let watchId = null;
+let currentHeading = 0;
+let isNavigating = false;
 
 // ========== PERMISSÕES ==========
 async function checkAndRequestPermissions() {
@@ -224,7 +208,7 @@ async function checkAndRequestPermissions() {
         await markPermissionsDone();
         document.getElementById('permScreen').classList.add('hidden');
         initApp();
-        showToast('✅ Tudo pronto! Bem-vindo!');
+        showToast('✅ Tudo pronto!');
     });
 }
 
@@ -262,39 +246,37 @@ function initApp() {
     startTrackingPosition();
     setupSearch();
     setupControls();
-    window.addEventListener('online', () => { updateNetStatus(); showToast('✅ Conectado à internet!'); });
-    window.addEventListener('offline', () => { updateNetStatus(); showToast('⚠️ Sem internet — usando mapa salvo!'); });
+    setupCompass();
+    window.addEventListener('online', updateNetStatus);
+    window.addEventListener('offline', updateNetStatus);
 }
 
-// ========== MAPA ESTILIZADO — AQUI É ONDE FICA BONITO 🎨 ==========
+// ========== MAPA LIMPO — SEM RÓTULOS ==========
 function initMap() {
-    map = L.map('map', { zoomControl: false, attributionControl: false }).setView([-14.85, -39.55], 15);
+    map = L.map('map', { zoomControl: false, attributionControl: false, maxZoom: 19 }).setView([-14.85, -39.55], 16);
 
-    // 🎨 MAPA ESTILIZADO — MUITO MAIS BONITO E DETALHADO!
-    // Ruas, bairros, áreas verdes, construções, águas — tudo colorido e destacado
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    // 🗺️ Mapa BEM LIMPO — sem nomes de ruas aparecendo na tela
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
         attribution: '© CARTO, © OpenStreetMap',
-        maxZoom: 19,
-        crossOrigin: true
+        maxZoom: 19, crossOrigin: true
     }).addTo(map);
 
-    // Salva blocos do mapa automaticamente
     map.on('tileload', (e) => {
-        if (e.tile && e.tile.src) {
+        if (e.tile?.src) {
             tilesCache[e.tile.src] = { url: e.tile.src, timestamp: Date.now() };
             saveTilesToStorage();
         }
     });
-
     loadCachedTiles();
 }
 
 function saveTilesToStorage() {
     try {
+        const data = JSON.stringify(tilesCache);
         if (window.Capacitor?.Plugins?.Preferences) {
-            window.Capacitor.Plugins.Preferences.set({ key: 'savedMapTiles', value: JSON.stringify(tilesCache) });
-        } else { localStorage.setItem('savedMapTiles', JSON.stringify(tilesCache)); }
-    } catch { localStorage.setItem('savedMapTiles', JSON.stringify(tilesCache)); }
+            window.Capacitor.Plugins.Preferences.set({ key: 'savedMapTiles', value: data });
+        } else { localStorage.setItem('savedMapTiles', data); }
+    } catch {}
 }
 
 function loadCachedTiles() {
@@ -302,53 +284,81 @@ function loadCachedTiles() {
         if (window.Capacitor?.Plugins?.Preferences) {
             window.Capacitor.Plugins.Preferences.get({ key: 'savedMapTiles' }).then(r => { if (r.value) tilesCache = JSON.parse(r.value); });
         } else { const s = localStorage.getItem('savedMapTiles'); if (s) tilesCache = JSON.parse(s); }
-    } catch { const s = localStorage.getItem('savedMapTiles'); if (s) tilesCache = JSON.parse(s); }
+    } catch {}
 }
 
 async function saveMapArea() {
     showToast('💾 Salvando mapa...');
     saveTilesToStorage();
-    await sendNotification('Mapa Salvo ✅', 'A área do mapa foi salva e está disponível sem internet!');
-    showToast('✅ Mapa salvo! Funciona sem internet!');
+    showToast('✅ Mapa salvo!');
 }
 
-// ========== RASTREAMENTO — MAPA SEGUE VOCÊ 🎯 ==========
+// ========== BUSCA COMPASSO/GIRO DO MAPA 🧭 ==========
+function setupCompass() {
+    // Gira o mapa de acordo com a direção que você está andando
+    window.addEventListener('deviceorientationabsolute', (e) => {
+        if (e.alpha !== null && followMode && isNavigating) {
+            currentHeading = 360 - (e.alpha || 0);
+            rotateMap();
+        }
+    });
+}
+
+function rotateMap() {
+    if (!map || !followMode || !isNavigating) return;
+    const center = map.getCenter();
+    map.setView(center, map.getZoom(), { animate: false });
+    document.querySelector('.leaflet-map-pane').style.transform =
+        document.querySelector('.leaflet-map-pane').style.transform.replace(/rotate\(-?[\d.]+deg\)/, '') +
+        ` rotate(${-currentHeading}deg)`;
+}
+
+// ========== RASTREAMENTO + GIRO ==========
 function startTrackingPosition() {
     if (!navigator.geolocation) return;
 
     const updatePosition = (pos) => {
         lastPosition = pos.coords;
         showPosition(pos.coords);
+
+        // Segue e gira o mapa na direção que anda
         if (followMode) {
-            map.panTo([pos.coords.latitude, pos.coords.longitude], { animate: true, duration: 0.6 });
+            // No modo navegação, posiciona a câmera um pouco abaixo pra ver o caminho à frente
+            if (isNavigating) {
+                map.panTo([pos.coords.latitude - 0.0015, pos.coords.longitude], { animate: true, duration: 0.4 });
+            } else {
+                map.panTo([pos.coords.latitude, pos.coords.longitude], { animate: true, duration: 0.4 });
+            }
+
+            // Se tiver velocidade, usa pra calcular direção
+            if (pos.coords.speed > 0.5 && pos.coords.heading !== null) {
+                currentHeading = pos.coords.heading;
+                rotateMap();
+            }
         }
     };
 
-    const handleError = (err) => console.warn('Erro GPS:', err);
-
     if (window.Capacitor?.Plugins?.Geolocation) {
         window.Capacitor.Plugins.Geolocation.watchPosition(
-            { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 },
+            { enableHighAccuracy: true, timeout: 3000, maximumAge: 0 },
             updatePosition
         );
     } else {
-        watchId = navigator.geolocation.watchPosition(updatePosition, handleError, {
-            enableHighAccuracy: true, timeout: 5000, maximumAge: 0
+        watchId = navigator.geolocation.watchPosition(updatePosition, ()=>{}, {
+            enableHighAccuracy: true, timeout: 3000, maximumAge: 0
         });
     }
 }
 
 function showPosition(c) {
-    const lat = c.latitude, lng = c.longitude;
-
     if (marker) {
-        marker.setLatLng([lat, lng]);
+        marker.setLatLng([c.latitude, c.longitude]);
     } else {
-        marker = L.marker([lat, lng], {
+        marker = L.marker([c.latitude, c.longitude], {
             icon: L.divIcon({
                 className: 'my-location',
-                html: `<div style="width:20px;height:20px;background:linear-gradient(135deg,#2563eb,#1d4ed8);border:4px solid #fff;border-radius:50%;box-shadow:0 0 0 6px rgba(37,99,235,0.25);"></div>`,
-                iconSize: [20, 20], iconAnchor: [10, 10]
+                html: `<div style="width:22px;height:22px;background:linear-gradient(135deg,#2563eb,#1d4ed8);border:4px solid #fff;border-radius:50%;box-shadow:0 0 0 6px rgba(37,99,235,0.25);"></div>`,
+                iconSize: [22, 22], iconAnchor: [11, 11]
             })
         }).addTo(map);
     }
@@ -371,7 +381,7 @@ function setupSearch() {
             results.classList.remove('show');
             input.value = name;
             map.setView([lat, lng], 17);
-            if (confirm(`Traçar rota até:\n${name}?`)) startRouteTo(lat, lng, name);
+            if (confirm(`Iniciar rota até:\n${name}?`)) startRouteTo(lat, lng, name);
         }
     });
 }
@@ -386,7 +396,7 @@ async function searchPlace(query) {
         const results = document.getElementById('searchResults');
         results.innerHTML = '';
         if (data.length === 0) {
-            results.innerHTML = '<div style="padding:30px;text-align:center;color:#64748b;">Nenhum resultado encontrado</div>';
+            results.innerHTML = '<div style="padding:24px;text-align:center;color:#64748b;">Nenhum resultado encontrado</div>';
         } else {
             data.forEach(r => {
                 const div = document.createElement('div');
@@ -400,7 +410,7 @@ async function searchPlace(query) {
     } catch { showToast('❌ Erro na busca'); }
 }
 
-// ========== ROTAS ==========
+// ========== ROTAS — SEM TEXTOS EXCESSIVOS ==========
 function startRouteTo(lat, lng, name) {
     if (!lastPosition) { showToast('⚠️ Aguarde o GPS encontrar sua posição'); return; }
     if (!navigator.onLine) { showToast('⚠️ Precisa de internet para calcular rota'); return; }
@@ -418,12 +428,14 @@ function startRouteTo(lat, lng, name) {
         lineOptions: {
             styles: [
                 { color: '#ffffff', opacity: 0.9, weight: 12 },
-                { color: '#2563eb', opacity: 1, weight: 7 }
+                { color: '#2563eb', opacity: 1, weight: 6 }
             ]
         },
         addWaypoints: false,
         draggableWaypoints: false,
-        fitSelectedRoutes: true
+        fitSelectedRoutes: true,
+        showInstructions: false, // ✅ DESLIGA TODOS OS TEXTOS DA ROTA
+        showItinerary: false     // ✅ DESLIGA O PAINEL DE PASSOS
     }).addTo(map);
 
     routingControl.on('routesfound', (e) => {
@@ -433,36 +445,24 @@ function startRouteTo(lat, lng, name) {
 
         document.getElementById('routeDist').textContent = `${distKm} km`;
         document.getElementById('routeTime').textContent = `${timeMin} min`;
+        document.getElementById('routeInstruction').textContent = 'Siga a rota azul no mapa';
+        document.getElementById('routePanel').classList.add('show');
 
-        showRouteSteps(route.instructions);
-        speak(`Rota calculada para ${name}. Distância de ${distKm} quilômetros, cerca de ${timeMin} minutos.`);
-        showToast('✅ Rota pronta! Siga as indicações');
+        isNavigating = true; // ✅ ATIVA MODO NAVEGAÇÃO — MAPA GIRA E SEGUE
+        followMode = true;
+        document.getElementById('btnFollow').classList.add('active');
+
+        speak(`Rota iniciada para ${name}. Distância de ${distKm} quilômetros, aproximadamente ${timeMin} minutos. Siga a linha azul no mapa.`);
+        showToast('✅ Rota iniciada! Siga a rota azul');
     });
-}
-
-function showRouteSteps(steps) {
-    const panel = document.getElementById('routePanel');
-    const container = document.getElementById('routeSteps');
-    container.innerHTML = '';
-
-    const icons = {
-        Straight: '⬆️', TurnRight: '↩️', TurnLeft: '↪️',
-        SlightRight: '↗️', SlightLeft: '↖️', SharpRight: '➡️',
-        SharpLeft: '⬅️', Finish: '🏁', Start: '🚩'
-    };
-
-    steps.forEach(s => {
-        const icon = icons[s.type] || '➡️';
-        const dist = s.distance > 0 ? ` (${Math.round(s.distance)} m)` : '';
-        container.innerHTML += `<div class="step-item"><span class="step-icon">${icon}</span><span class="step-text">${s.text}${dist}</span></div>`;
-    });
-
-    panel.classList.add('show');
 }
 
 document.getElementById('closeRoute').addEventListener('click', () => {
     document.getElementById('routePanel').classList.remove('show');
     if (routingControl) { map.removeControl(routingControl); routingControl = null; }
+    isNavigating = false; // ✅ DESLIGA O GIRO DO MAPA
+    document.querySelector('.leaflet-map-pane').style.transform = '';
+    speak('Rota encerrada.');
 });
 
 // ========== CONTROLES ==========
@@ -473,7 +473,11 @@ function setupControls() {
     document.getElementById('btnFollow').addEventListener('click', () => {
         followMode = !followMode;
         document.getElementById('btnFollow').classList.toggle('active', followMode);
-        showToast(followMode ? '🎯 Seguindo sua posição' : '📍 Seguir desativado');
+        if (!followMode) {
+            isNavigating = false;
+            document.querySelector('.leaflet-map-pane').style.transform = '';
+        }
+        showToast(followMode ? '🧭 Seguindo direção' : '📍 Seguir desativado');
     });
 
     document.getElementById('btnLoc').addEventListener('click', () => {
@@ -481,16 +485,16 @@ function setupControls() {
             map.setView([lastPosition.latitude, lastPosition.longitude], 17);
             followMode = true;
             document.getElementById('btnFollow').classList.add('active');
-            showToast('📍 Centralizado na sua posição');
-        } else {
-            showToast('⏳ Buscando posição...');
+            showToast('📍 Centralizado');
         }
     });
 
+    // 🔊 VOZ — FUNCIONA NATIVAMENTE NO CELULAR
     document.getElementById('btnVoice').addEventListener('click', () => {
         voiceEnabled = !voiceEnabled;
         document.querySelector('#btnVoice .nav-icon').textContent = voiceEnabled ? '🔊' : '🔇';
         showToast(voiceEnabled ? '🔊 Voz ativada' : '🔇 Voz desativada');
+        if (voiceEnabled) speak('Voz ativada. Siga as instruções de navegação.');
     });
 
     document.getElementById('btnSave').addEventListener('click', saveMapArea);
@@ -508,21 +512,35 @@ function setupControls() {
     document.getElementById('btnClear').addEventListener('click', () => {
         if (routingControl) { map.removeControl(routingControl); routingControl = null; }
         document.getElementById('routePanel').classList.remove('show');
+        isNavigating = false;
+        document.querySelector('.leaflet-map-pane').style.transform = '';
         tilesCache = {};
         saveTilesToStorage();
         showToast('🗑️ Limpo!');
     });
 }
 
-// ========== VOZ ==========
+// ========== VOZ — FUNCIONA SEM PLUGINS EXTRAS 🗣️ ==========
 function speak(texto) {
     if (!voiceEnabled || !window.speechSynthesis) return;
-    window.speechSynthesis.cancel();
+    window.speechSynthesis.cancel(); // Para qualquer fala anterior
     const fala = new SpeechSynthesisUtterance(texto);
     fala.lang = 'pt-BR';
-    fala.rate = 1.05;
-    fala.volume = 1;
+    fala.rate = 1.0;
+    fala.pitch = 1.0;
+    fala.volume = 1.0;
+
+    // Tenta usar uma voz em português se disponível
+    const vozes = window.speechSynthesis.getVoices();
+    const vozPt = vozes.find(v => v.lang === 'pt-BR' || v.lang === 'pt');
+    if (vozPt) fala.voice = vozPt;
+
     window.speechSynthesis.speak(fala);
+}
+
+// Carrega vozes quando estiverem prontas
+if (window.speechSynthesis) {
+    window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
 }
 
 // ========== UTILITÁRIOS ==========
@@ -530,13 +548,6 @@ function updateNetStatus() {
     const badge = document.getElementById('netBadge');
     if (navigator.onLine) { badge.textContent = 'Online'; badge.className = 'status-badge online'; }
     else { badge.textContent = 'Sem internet'; badge.className = 'status-badge offline'; }
-}
-
-async function sendNotification(title, body) {
-    if (window.Capacitor?.Plugins?.LocalNotifications) {
-        try { await window.Capacitor.Plugins.LocalNotifications.schedule({ notifications: [{ title, body, id: Date.now() }] }); }
-        catch {}
-    }
 }
 
 function showToast(msg) {

@@ -1,1 +1,499 @@
-qwe
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <!-- Meta tag essencial para empacotamento em APK: desativa zoom e adapta à tela -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VetPro - Sistema Veterinário</title>
+    <!-- Ícones via FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #0d9488; /* Teal veterinário */
+            --primary-dark: #0f766e;
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border: #e5e7eb;
+            --danger: #ef4444;
+            --success: #10b981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent; /* Remove brilho de clique no mobile */
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden; /* Evita scroll no body, mantendo-o apenas no conteúdo */
+        }
+
+        /* Header / Topbar */
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 10;
+        }
+
+        header h1 {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        header .icons i {
+            font-size: 1.2rem;
+            margin-left: 15px;
+            cursor: pointer;
+        }
+
+        /* Container Principal */
+        main {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            padding-bottom: 80px; /* Espaço para a barra inferior */
+        }
+
+        /* Telas da Aplicação */
+        .app-screen {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .app-screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cards Gerais */
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+        }
+
+        /* Dashboard Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .stat-card i {
+            font-size: 24px;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .stat-card h3 {
+            font-size: 1.5rem;
+            color: var(--text-main);
+        }
+
+        .stat-card p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* Listas (Consultas, Pacientes) */
+        .list-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .list-item:last-child {
+            border-bottom: none;
+        }
+
+        .avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background-color: #e0f2fe;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            margin-right: 12px;
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-info h4 {
+            font-size: 1rem;
+            margin-bottom: 2px;
+        }
+
+        .item-info p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge.pendente { background: #fef3c7; color: #d97706; }
+        .badge.concluido { background: #d1fae5; color: #059669; }
+
+        /* Formulários e Botões */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:active {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-floating {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 10px rgba(13, 148, 136, 0.4);
+            border: none;
+            z-index: 100;
+        }
+
+        /* Bottom Navigation - Foco em Mobile/APK */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            border-top: 1px solid var(--border);
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.75rem;
+            width: 25%;
+        }
+
+        .nav-item i {
+            font-size: 1.3rem;
+            margin-bottom: 4px;
+            transition: 0.2s;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        .nav-item.active i {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1><i class="fa-solid fa-paw"></i> VetPro</h1>
+        <div class="icons">
+            <i class="fa-solid fa-bell"></i>
+            <i class="fa-solid fa-user-circle"></i>
+        </div>
+    </header>
+
+    <main>
+        <!-- TELA 1: DASHBOARD -->
+        <div id="screen-home" class="app-screen active">
+            <h2 style="margin-bottom: 15px; font-size: 1.2rem;">Resumo de Hoje</h2>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <i class="fa-solid fa-calendar-check"></i>
+                    <h3>12</h3>
+                    <p>Consultas</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fa-solid fa-syringe"></i>
+                    <h3>5</h3>
+                    <p>Vacinas</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fa-solid fa-bed-pulse"></i>
+                    <h3>2</h3>
+                    <p>Internados</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fa-solid fa-brazilian-real-sign"></i>
+                    <h3>R$ 850</h3>
+                    <p>Faturamento</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 style="margin-bottom: 10px; font-size: 1.1rem;">Próximos Atendimentos</h3>
+                
+                <div class="list-item">
+                    <div class="avatar"><i class="fa-solid fa-dog"></i></div>
+                    <div class="item-info">
+                        <h4>Thor (Golden Retriever)</h4>
+                        <p>Tutor: João Silva • 10:30</p>
+                    </div>
+                    <span class="badge pendente">Espera</span>
+                </div>
+                
+                <div class="list-item">
+                    <div class="avatar" style="background-color: #fce7f3; color: #db2777;"><i class="fa-solid fa-cat"></i></div>
+                    <div class="item-info">
+                        <h4>Luna (Siamês)</h4>
+                        <p>Tutor: Maria Souza • 11:00 - Vacina</p>
+                    </div>
+                    <span class="badge concluido">Em Sala</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- TELA 2: PACIENTES -->
+        <div id="screen-patients" class="app-screen">
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="Buscar paciente ou tutor...">
+            </div>
+
+            <div class="card">
+                <div class="list-item" onclick="openPatientDetails()">
+                    <div class="avatar"><i class="fa-solid fa-dog"></i></div>
+                    <div class="item-info">
+                        <h4>Max</h4>
+                        <p>Pug • 3 anos • Macho</p>
+                        <p style="font-size: 0.75rem;">Tutor: Carlos Eduardo</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-right" style="color: var(--text-muted)"></i>
+                </div>
+                <div class="list-item">
+                    <div class="avatar" style="background-color: #fce7f3; color: #db2777;"><i class="fa-solid fa-cat"></i></div>
+                    <div class="item-info">
+                        <h4>Nina</h4>
+                        <p>Persa • 1 ano • Fêmea</p>
+                        <p style="font-size: 0.75rem;">Tutor: Ana Paula</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-right" style="color: var(--text-muted)"></i>
+                </div>
+            </div>
+
+            <button class="btn-floating" onclick="alert('Abrir formulário de novo paciente')">
+                <i class="fa-solid fa-plus"></i>
+            </button>
+        </div>
+
+        <!-- TELA 3: NOVA CONSULTA / AGENDA -->
+        <div id="screen-schedule" class="app-screen">
+            <h2 style="margin-bottom: 15px; font-size: 1.2rem;">Nova Consulta</h2>
+            
+            <div class="card">
+                <form id="appointmentForm">
+                    <div class="form-group">
+                        <label>Paciente</label>
+                        <select class="form-control">
+                            <option>Selecionar Paciente...</option>
+                            <option>Thor (João Silva)</option>
+                            <option>Luna (Maria Souza)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Motivo / Sintomas</label>
+                        <input type="text" class="form-control" placeholder="Ex: Vômito, Checkup anual...">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Data e Hora</label>
+                        <input type="datetime-local" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Veterinário Responsável</label>
+                        <select class="form-control">
+                            <option>Dr. Roberto (Clínico Geral)</option>
+                            <option>Dra. Fernanda (Cirurgiã)</option>
+                        </select>
+                    </div>
+
+                    <button type="button" class="btn btn-primary" onclick="alert('Consulta Agendada!')">
+                        Agendar Atendimento
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- TELA 4: FINANCEIRO -->
+        <div id="screen-finance" class="app-screen">
+            <h2 style="margin-bottom: 15px; font-size: 1.2rem;">Gestão Financeira</h2>
+            
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <div>
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">Saldo do Dia</p>
+                        <h2 style="color: var(--success);">R$ 1.250,00</h2>
+                    </div>
+                    <button class="btn btn-primary" style="width: auto; padding: 8px 15px;"><i class="fa-solid fa-plus"></i> Lançar</button>
+                </div>
+                
+                <hr style="border: none; border-top: 1px solid var(--border); margin-bottom: 15px;">
+                
+                <h3 style="font-size: 1rem; margin-bottom: 10px;">Últimas Transações</h3>
+                
+                <div class="list-item">
+                    <div class="avatar" style="background: #d1fae5; color: #059669; width: 36px; height: 36px;"><i class="fa-solid fa-arrow-down"></i></div>
+                    <div class="item-info">
+                        <h4>Consulta - Max</h4>
+                        <p>PIX • Hoje, 09:30</p>
+                    </div>
+                    <span style="font-weight: bold; color: var(--success);">+ R$ 150,00</span>
+                </div>
+                
+                <div class="list-item">
+                    <div class="avatar" style="background: #d1fae5; color: #059669; width: 36px; height: 36px;"><i class="fa-solid fa-arrow-down"></i></div>
+                    <div class="item-info">
+                        <h4>Vacina V10 - Luna</h4>
+                        <p>Cartão Crédito • Hoje, 10:15</p>
+                    </div>
+                    <span style="font-weight: bold; color: var(--success);">+ R$ 120,00</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Barra de Navegação Inferior -->
+    <nav class="bottom-nav">
+        <div class="nav-item active" onclick="switchTab('home', this)">
+            <i class="fa-solid fa-house"></i>
+            <span>Início</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('patients', this)">
+            <i class="fa-solid fa-paw"></i>
+            <span>Pacientes</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('schedule', this)">
+            <i class="fa-solid fa-stethoscope"></i>
+            <span>Consultas</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('finance', this)">
+            <i class="fa-solid fa-wallet"></i>
+            <span>Finanças</span>
+        </div>
+    </nav>
+
+    <script>
+        // Lógica para alternar entre as abas do App
+        function switchTab(tabId, element) {
+            // Remove active de todos os ícones da barra
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            // Adiciona active no clicado
+            element.classList.add('active');
+
+            // Esconde todas as telas
+            document.querySelectorAll('.app-screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            
+            // Mostra a tela selecionada
+            document.getElementById('screen-' + tabId).classList.add('active');
+            
+            // Retorna ao topo ao trocar de aba (comportamento de app)
+            document.querySelector('main').scrollTo(0, 0);
+        }
+
+        function openPatientDetails() {
+            alert('Aqui abriria a ficha clínica completa do paciente: Histórico, Vacinas, Receituários e Exames.');
+        }
+    </script>
+</body>
+</html>

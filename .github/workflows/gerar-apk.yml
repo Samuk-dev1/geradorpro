@@ -69,6 +69,9 @@ jobs:
         npx cap init "$APP_NAME" com.gestoriptv.$APP_ID --web-dir www
         npx cap add android
 
+        # 🌐 LIBERA CONEXÕES HTTP (SEM HTTPS) NO CAPACITOR DE FORMA SEGURA VIA NODE
+        node -e "const fs = require('fs'); const cfg = JSON.parse(fs.readFileSync('capacitor.config.json')); cfg.server = { cleartext: true }; fs.writeFileSync('capacitor.config.json', JSON.stringify(cfg, null, 2));"
+
         # Aplica nome personalizado no Android
         STRINGS_FILE="android/app/src/main/res/values/strings.xml"
         if [ -f "$STRINGS_FILE" ]; then
@@ -103,6 +106,9 @@ jobs:
         # 🔑 TODAS AS PERMISSÕES
         MANIFEST_FILE="android/app/src/main/AndroidManifest.xml"
         if [ -f "$MANIFEST_FILE" ]; then
+          # 🌐 Liberar tráfego HTTP para a Evolution API (Adicionado aqui para resolver o bloqueio)
+          sed -i 's/<application/<application android:usesCleartextTraffic="true"/g' "$MANIFEST_FILE"
+
           # Notificações
           sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />' "$MANIFEST_FILE"
           sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />' "$MANIFEST_FILE"

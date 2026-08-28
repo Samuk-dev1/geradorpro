@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Gestor IPTV</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <!-- BIBLIOTECA DE GRÁFICOS (Adicionada de volta para os gráficos Neon) -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   
   <style>
@@ -12,70 +13,175 @@
 
     :root {
       /* CORES MODO CLARO */
-      --bg-body: #f4f6f9; --bg-card: #ffffff; --primary: #2962ff; --secondary: #00d2ff;
+      --bg-body: #f4f6f9;
+      --bg-card: #ffffff;
+      --primary: #2962ff;
+      --secondary: #00d2ff;
       --gradient-header: linear-gradient(135deg, #0022ff 0%, #00e1ff 100%);
-      --success: #10b981; --warning: #f59e0b; --danger: #ef4444;
-      --text-dark: #1e293b; --text-muted: #64748b; --border: #e2e8f0;
-      --bg-input: #f8fafc; --bg-nav: #ffffff; --bg-nav-center: #f1f5f9;
-      --shadow-sm: 0 2px 4px rgba(0,0,0,0.05); --shadow-md: 0 8px 16px rgba(0,0,0,0.08); --shadow-nav: 0 10px 30px rgba(0,0,0,0.12);
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --text-dark: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      
+      --bg-input: #f8fafc;
+      --bg-nav: #ffffff;
+      --bg-nav-center: #f1f5f9;
+      
+      --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+      --shadow-md: 0 8px 16px rgba(0,0,0,0.08);
+      --shadow-nav: 0 10px 30px rgba(0,0,0,0.12);
     }
 
-    /* CORES MODO ESCURO */
+    /* CORES MODO ESCURO (Dark Mode) */
     body.dark-theme {
-      --bg-body: #0f172a; --bg-card: #1e293b; --text-dark: #f8fafc; --text-muted: #94a3b8;
-      --border: #334155; --bg-input: #0f172a; --bg-nav: #1e293b; --bg-nav-center: #334155;
+      --bg-body: #0f172a;
+      --bg-card: #1e293b;
+      --text-dark: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #334155;
+      
+      --bg-input: #0f172a;
+      --bg-nav: #1e293b;
+      --bg-nav-center: #334155;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
     body { background-color: var(--bg-body); color: var(--text-dark); min-height: 100vh; overflow-x: hidden; transition: background-color 0.3s ease; }
 
-    .top-header-area { background: var(--gradient-header); padding: 20px 20px 80px 20px; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; color: #fff; position: relative; }
+    /* CABEÇALHO GRADIENTE TOP */
+    .top-header-area {
+      background: var(--gradient-header);
+      padding: 20px 20px 80px 20px;
+      border-bottom-left-radius: 30px;
+      border-bottom-right-radius: 30px;
+      color: #fff;
+      position: relative;
+    }
     .header-title-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
     .header-title-row h1 { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
     .header-title-row p { font-size: 11px; font-weight: 400; opacity: 0.9; margin-top: 2px; }
     
-    .header-actions { display: flex; gap: 10px; }
-    .action-btn { background: rgba(0,0,0,0.2); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; color: #fff; position: relative;}
+    .header-actions { display: flex; gap: 10px; align-items: center; }
+    .action-btn { background: rgba(0,0,0,0.2); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; color: #fff; }
     .action-btn:active { transform: scale(0.9); }
 
+    /* NOVA FUNÇÃO: INDICADOR WHATSAPP HEADER */
+    .wa-status-badge { display: flex; align-items: center; gap: 5px; background: rgba(0,0,0,0.2); padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; }
+    .wa-status-badge i { font-size: 14px; }
+    .wa-offline { color: #ff6b6b; }
+    .wa-online { color: #51cf66; }
+
+    /* MÉTRICAS (Os 4 botões do topo) */
     .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .metric-box { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 16px; padding: 16px; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+    .metric-box {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 16px;
+      padding: 16px;
+      text-align: center;
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+    }
     .metric-box .val { font-size: 24px; font-weight: 800; margin-bottom: 2px; }
     .metric-box .lbl { font-size: 13px; font-weight: 500; opacity: 0.9; }
 
-    .floating-nav-container { position: absolute; left: 20px; right: 20px; bottom: -35px; background: var(--bg-nav); border-radius: 40px; box-shadow: var(--shadow-nav); display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; z-index: 100; transition: background-color 0.3s; }
-    .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-muted); cursor: pointer; transition: 0.3s; width: 60px; }
-    .nav-item .icon-box { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; transition: 0.3s; }
+    /* NAVEGAÇÃO FLUTUANTE */
+    .floating-nav-container {
+      position: absolute; left: 20px; right: 20px; bottom: -35px;
+      background: var(--bg-nav); border-radius: 40px;
+      box-shadow: var(--shadow-nav);
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 15px;
+      z-index: 100;
+      transition: background-color 0.3s;
+    }
+    .nav-item {
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      color: var(--text-muted); cursor: pointer; transition: 0.3s;
+      width: 60px;
+    }
+    .nav-item .icon-box {
+      width: 40px; height: 40px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; transition: 0.3s;
+    }
     .nav-item span { font-size: 10px; font-weight: 600; text-align: center; }
+    
     .nav-item.active { color: var(--primary); }
     .nav-item.active .icon-box { background: var(--primary); color: #fff; box-shadow: 0 4px 10px rgba(41,98,255,0.3); }
+    
     .nav-item.btn-cadastrar { color: var(--text-dark); }
     .nav-item.btn-cadastrar .icon-box { background: var(--bg-nav-center); color: var(--text-dark); font-size: 20px; }
 
+    /* ÁREA DE CONTEÚDO */
     .main-content { padding: 60px 16px 20px 16px; }
     .screen { display: none; animation: fadeIn 0.3s ease forwards; }
     .screen.active { display: block; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    .neon-chart-container { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: var(--shadow-md); position: relative; overflow: hidden; transition: background-color 0.3s, border-color 0.3s; }
-    body.dark-theme .neon-chart-container { background: #0f172a; box-shadow: 0 0 25px rgba(0, 210, 255, 0.08); border: 1px solid rgba(0, 210, 255, 0.2); }
-    .neon-chart-header { font-size: 14px; font-weight: 700; color: var(--text-dark); margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
-    body.dark-theme .neon-chart-header i { text-shadow: 0 0 10px currentColor; }
+    /* GRÁFICOS NEON NA DASHBOARD */
+    .neon-chart-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-md);
+      position: relative;
+      overflow: hidden;
+      transition: background-color 0.3s, border-color 0.3s;
+    }
+    body.dark-theme .neon-chart-container {
+      background: #0f172a;
+      box-shadow: 0 0 25px rgba(0, 210, 255, 0.08);
+      border: 1px solid rgba(0, 210, 255, 0.2);
+    }
+    .neon-chart-header {
+      font-size: 14px; font-weight: 700; color: var(--text-dark); margin-bottom: 15px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    body.dark-theme .neon-chart-header i {
+      text-shadow: 0 0 10px currentColor;
+    }
 
+    /* FILTROS BOTÕES */
     .filter-row { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
     .filter-row::-webkit-scrollbar { display: none; }
-    .filter-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-muted); padding: 10px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; white-space: nowrap; cursor: pointer; box-shadow: var(--shadow-sm); transition: 0.2s; }
+    .filter-btn {
+      background: var(--bg-card); border: 1px solid var(--border); color: var(--text-muted);
+      padding: 10px 14px; border-radius: 6px; font-size: 13px; font-weight: 600;
+      white-space: nowrap; cursor: pointer; box-shadow: var(--shadow-sm); transition: 0.2s;
+    }
     .filter-btn.active { border-color: var(--primary); color: var(--primary); background: var(--bg-input); }
 
+    /* ====================================================
+       NOVA LISTA DE CLIENTES ULTRA-FINA COM OLHINHO
+       ==================================================== */
     .list-container { display: flex; flex-direction: column; gap: 8px; }
-    .cliente-list-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; transition: all 0.2s ease; border-left: 4px solid var(--primary); }
+    
+    .cliente-list-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      transition: all 0.2s ease;
+      border-left: 4px solid var(--primary);
+    }
     .cliente-list-item.vencido { border-left-color: var(--danger); }
     .cliente-list-item.vencendo { border-left-color: var(--warning); }
     .cliente-list-item:active { transform: scale(0.98); }
-    .cli-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; cursor: pointer; gap: 10px; }
+    
+    .cli-header { 
+      display: flex; justify-content: space-between; align-items: center; 
+      padding: 12px 14px; cursor: pointer; gap: 10px;
+    }
+    
     .cli-left { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
     .cli-name { font-size: 14px; font-weight: 700; color: var(--text-dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .cli-dias { font-size: 11px; font-weight: 600; white-space: nowrap; }
+    
     .cli-right { display: flex; align-items: center; gap: 12px; flex: none; }
     .cli-right i.fa-eye { color: var(--text-muted); font-size: 15px; }
 
@@ -84,6 +190,7 @@
     .badge-status.vencido { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
     .badge-status.vencendo { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
 
+    /* DASHBOARD WIDGETS & GROUPS */
     .widget-box { background: var(--bg-card); border-radius: 16px; padding: 16px; box-shadow: var(--shadow-sm); margin-bottom: 16px; transition: background-color 0.3s; }
     .widget-header { display: flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 700; margin-bottom: 16px; color: var(--text-dark); }
     .empty-state { text-align: center; color: var(--text-muted); font-size: 14px; padding: 20px 0; }
@@ -104,10 +211,16 @@
     .dash-item-actions { display: flex; gap: 6px; }
 
     .card-actions { display: flex; gap: 8px; }
-    .btn-action { flex: 1; background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 10px 0; font-size: 12px; font-weight: 600; color: var(--text-dark); display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; box-shadow: var(--shadow-sm); transition: 0.2s; }
+    .btn-action {
+      flex: 1; background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px;
+      padding: 10px 0; font-size: 12px; font-weight: 600; color: var(--text-dark);
+      display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; box-shadow: var(--shadow-sm);
+      transition: 0.2s;
+    }
     .btn-action:active { transform: scale(0.95); }
     .btn-action.trash { flex: none; width: 44px; background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3); color: var(--danger); }
 
+    /* TELA DE COBRANÇA E CONFIGURAÇÕES */
     .panel-box { background: var(--bg-card); border-radius: 16px; padding: 20px; box-shadow: var(--shadow-md); margin-bottom: 20px; transition: background-color 0.3s; }
     .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
     .panel-header h3 { font-size: 16px; font-weight: 700; color: var(--text-dark); display: flex; align-items: center; gap: 8px; }
@@ -116,6 +229,7 @@
     input, select, textarea { width: 100%; padding: 12px 14px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 10px; font-size: 14px; color: var(--text-dark); outline: none; transition: 0.2s; }
     input:focus, select:focus, textarea:focus { border-color: var(--primary); }
 
+    /* CHAVINHA iOS */
     .switch { position: relative; display: inline-block; width: 48px; height: 26px; }
     .switch input { opacity: 0; width: 0; height: 0; }
     .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .4s; border-radius: 34px; }
@@ -123,10 +237,12 @@
     input:checked + .slider { background-color: var(--success); }
     input:checked + .slider:before { transform: translateX(22px); }
 
+    /* BOTÕES GERAIS */
     .btn-gradient { width: 100%; background: var(--gradient-header); color: #fff; font-weight: 700; font-size: 15px; padding: 14px; border: none; border-radius: 12px; cursor: pointer; box-shadow: var(--shadow-md); display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.2s; }
     .btn-gradient:active { transform: scale(0.98); }
     .btn-outline { width: 100%; background: transparent; color: var(--text-dark); font-weight: 600; font-size: 14px; padding: 12px; border: 1px solid var(--border); border-radius: 12px; cursor: pointer; margin-bottom: 10px; }
 
+    /* MODAIS */
     .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
     .modal.open { display: flex; animation: fadeIn 0.2s ease; }
     .modal-content { background: var(--bg-card); border-radius: 20px; padding: 24px; width: 100%; max-width: 400px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.3); transition: background-color 0.3s; }
@@ -136,12 +252,19 @@
 
     #renov-info { font-size: 14px; color: var(--text-dark); margin-bottom: 15px; background: var(--bg-input); padding: 12px; border-radius: 8px; text-align: center; border: 1px solid var(--border); }
 
+    /* EVOLUTION QR CODE BOX */
+    .qr-box { background: #fff; padding: 15px; border-radius: 10px; text-align: center; margin-bottom: 15px; border: 2px dashed var(--border); }
+    .qr-box img { max-width: 100%; border-radius: 8px; }
+    .evo-status-text { text-align: center; font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 10px; }
+
+    /* TOAST */
     .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #334155; color: #fff; padding: 12px 24px; border-radius: 30px; font-weight: 600; font-size: 14px; box-shadow: var(--shadow-md); z-index: 9999; opacity: 0; transition: 0.4s ease; text-align: center; white-space: nowrap; pointer-events: none; }
     .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
     .search-bar { display: flex; gap: 8px; flex: 1; }
     .search-bar input { flex: 1; border-radius: 12px; padding: 10px 16px; }
 
+    /* ESTILO MODAL DETALHES CLIENTE */
     .cli-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; background: var(--bg-input); padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
     .cli-info-item { font-size: 11px; color: var(--text-muted); }
     .cli-info-item strong { color: var(--text-dark); display: block; font-size: 13px; margin-top: 2px; }
@@ -157,20 +280,14 @@
         <h1><i class="fas fa-tv"></i> <span id="header-empresa-nome">Gestor IPTV</span></h1>
         <p>Gestão profissional | Cobrança Automática</p>
       </div>
-      
-      <!-- INÍCIO BOTÕES DO TOPO (COM WHATSAPP) -->
       <div class="header-actions">
-        <!-- BOTÃO STATUS DO WHATSAPP -->
-        <div class="action-btn" id="btn-status-wa" onclick="abrirModalWhatsApp()" style="background: rgba(239, 68, 68, 0.2); color: var(--danger);">
-          <i class="fab fa-whatsapp"></i>
-          <span id="wa-dot" style="position:absolute; top:-2px; right:-2px; width:10px; height:10px; background:var(--danger); border-radius:50%; border:2px solid var(--gradient-header);"></span>
+        <!-- NOVA FUNÇÃO: Indicador Dinâmico da Conexão do WhatsApp (Evolution) -->
+        <div class="wa-status-badge wa-offline" id="wa-badge-status" onclick="navegarPara('configuracoes')">
+          <i class="fab fa-whatsapp"></i> <span id="wa-badge-text">Off</span>
         </div>
-        
         <div class="action-btn" onclick="navegarPara('configuracoes')"><i class="fas fa-cog"></i></div>
         <div class="action-btn" onclick="toggleTheme()"><i class="fas fa-moon" id="theme-icon"></i></div>
       </div>
-      <!-- FIM BOTÕES DO TOPO -->
-      
     </div>
     
     <div class="metrics-grid">
@@ -182,11 +299,21 @@
 
     <!-- MENU FLUTUANTE -->
     <div class="floating-nav-container">
-      <div class="nav-item active" onclick="navegarPara('dashboard', this)"><div class="icon-box"><i class="fas fa-chart-bar"></i></div><span>Dashboard</span></div>
-      <div class="nav-item" id="nav-clientes" onclick="navegarPara('clientes', this)"><div class="icon-box"><i class="fas fa-user-friends"></i></div><span>Clientes</span></div>
-      <div class="nav-item btn-cadastrar" onclick="navegarPara('planos', this)"><div class="icon-box"><i class="fas fa-list-alt"></i></div><span>Planos</span></div>
-      <div class="nav-item" onclick="navegarPara('templates', this)"><div class="icon-box"><i class="fas fa-paper-plane"></i></div><span>Templates</span></div>
-      <div class="nav-item" onclick="navegarPara('configuracoes', this)"><div class="icon-box"><i class="fas fa-cog"></i></div><span>Config</span></div>
+      <div class="nav-item active" onclick="navegarPara('dashboard', this)">
+        <div class="icon-box"><i class="fas fa-chart-bar"></i></div><span>Dashboard</span>
+      </div>
+      <div class="nav-item" id="nav-clientes" onclick="navegarPara('clientes', this)">
+        <div class="icon-box"><i class="fas fa-user-friends"></i></div><span>Clientes</span>
+      </div>
+      <div class="nav-item btn-cadastrar" onclick="navegarPara('planos', this)">
+        <div class="icon-box"><i class="fas fa-list-alt"></i></div><span>Planos</span>
+      </div>
+      <div class="nav-item" onclick="navegarPara('templates', this)">
+        <div class="icon-box"><i class="fas fa-paper-plane"></i></div><span>Templates</span>
+      </div>
+      <div class="nav-item" onclick="navegarPara('configuracoes', this)">
+        <div class="icon-box"><i class="fas fa-cog"></i></div><span>Config</span>
+      </div>
     </div>
   </header>
 
@@ -194,32 +321,60 @@
     
     <!-- TELA: DASHBOARD -->
     <section id="screen-dashboard" class="screen active">
-      <div class="neon-chart-container"><div class="neon-chart-header"><i class="fas fa-chart-area" style="color:var(--secondary)"></i> Vencimentos (7 Dias)</div><div style="position: relative; height: 180px;"><canvas id="chartEstatistica"></canvas></div></div>
-      <div class="neon-chart-container"><div class="neon-chart-header"><i class="fas fa-chart-pie" style="color:var(--primary)"></i> Status Geral</div><div style="position: relative; height: 220px; display: flex; justify-content: center;"><canvas id="chartRosca"></canvas></div></div>
-      <div class="widget-box"><div class="widget-header"><i class="fas fa-filter" style="color:var(--primary)"></i> Filtro Rápido</div><div class="dash-resumo-grid" id="dash-resumo-dinamico"></div></div>
-      <div class="widget-box"><div class="widget-header"><i class="fas fa-bolt" style="color:var(--warning)"></i> Disparar Lembretes</div><div id="dash-vencimentos"></div></div>
+      
+      <div class="neon-chart-container">
+        <div class="neon-chart-header"><i class="fas fa-chart-area" style="color:var(--secondary)"></i> Vencimentos (Próximos 7 Dias)</div>
+        <div style="position: relative; height: 180px;"><canvas id="chartEstatistica"></canvas></div>
+      </div>
+
+      <div class="neon-chart-container">
+        <div class="neon-chart-header"><i class="fas fa-chart-pie" style="color:var(--primary)"></i> Status Geral da Base</div>
+        <div style="position: relative; height: 220px; display: flex; justify-content: center;"><canvas id="chartRosca"></canvas></div>
+      </div>
+
+      <div class="widget-box">
+        <div class="widget-header"><i class="fas fa-filter" style="color:var(--primary)"></i> Filtro Rápido</div>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:14px; line-height:1.4;">
+          Estes blocos são gerados com base nas <b>Chaves de Cobrança</b> ativas em seus Templates. Toque em um deles para ver a lista de clientes!
+        </p>
+        <div class="dash-resumo-grid" id="dash-resumo-dinamico"></div>
+      </div>
+
+      <div class="widget-box">
+        <div class="widget-header"><i class="fas fa-bolt" style="color:var(--warning)"></i> Disparar Lembretes</div>
+        <div id="dash-vencimentos"></div>
+      </div>
     </section>
 
     <!-- TELA: CLIENTES -->
     <section id="screen-clientes" class="screen">
       <div style="display:flex; gap:10px; margin-bottom: 16px; align-items:center;">
-        <div class="search-bar"><input type="text" id="busca-cliente" placeholder="🔍 Buscar cliente..." oninput="executarFiltro()"></div>
+        <div class="search-bar">
+          <input type="text" id="busca-cliente" placeholder="🔍 Buscar cliente..." oninput="executarFiltro()">
+        </div>
         <button class="btn-gradient" style="width:auto; padding: 10px 16px; margin:0; border-radius:12px;" onclick="abrirModalCliente()"><i class="fas fa-user-plus"></i> Novo</button>
       </div>
+
       <div class="filter-row" id="container-filtros">
         <button class="filter-btn active" data-filtro="todos" onclick="setFiltro('todos', this)">Todos</button>
         <button class="filter-btn" data-filtro="ativos" onclick="setFiltro('ativos', this)">Ativos</button>
-        <button class="filter-btn" data-filtro="breve" onclick="setFiltro('breve', this)">Breve</button>
+        <button class="filter-btn" data-filtro="breve" onclick="setFiltro('breve', this)">Vencem Breve</button>
         <button class="filter-btn" data-filtro="vencidos" onclick="setFiltro('vencidos', this)">Vencidos</button>
-        <button class="filter-btn" data-filtro="hoje" onclick="setFiltro('hoje', this)" style="display:none;">Filtrado Data</button>
+        <button class="filter-btn" data-filtro="hoje" onclick="setFiltro('hoje', this)" style="display:none;">Filtrado Data Específica</button>
       </div>
+      
+      <!-- LISTA DE CLIENTES EM FORMATO COMPACTO (SOMENTE LINHAS) -->
       <div class="list-container" id="lista-clientes"></div>
     </section>
     
     <!-- TELA: PLANOS -->
     <section id="screen-planos" class="screen">
       <div class="panel-box">
-        <div class="panel-header"><h3><i class="fas fa-list-alt" style="color:var(--primary)"></i> Gerenciar Planos</h3><button class="btn-action" style="padding:4px 10px; font-size:11px;" onclick="abrirModalPlano()">+ Novo</button></div>
+        <div class="panel-header">
+          <h3><i class="fas fa-list-alt" style="color:var(--primary)"></i> Gerenciar Planos</h3>
+          <button class="btn-action" style="padding:4px 10px; font-size:11px;" onclick="abrirModalPlano()">+ Novo</button>
+        </div>
+        <p style="font-size:12px; color:var(--text-muted); margin: 8px 0 16px 0;">Crie e edite os planos oferecidos aos clientes.</p>
         <div id="lista-planos" style="display:flex; flex-direction:column; gap:8px;"></div>
       </div>
     </section>
@@ -227,38 +382,121 @@
     <!-- TELA: TEMPLATES -->
     <section id="screen-templates" class="screen">
       <div class="panel-box">
-        <div class="panel-header"><h3><i class="fas fa-paper-plane" style="color:var(--warning)"></i> Templates de Lembrete</h3><button class="btn-action" style="padding:4px 10px; font-size:11px;" onclick="abrirModalTemplate()">+ Novo</button></div>
+        <div class="panel-header">
+          <h3><i class="fas fa-paper-plane" style="color:var(--warning)"></i> Templates de Lembrete</h3>
+          <button class="btn-action" style="padding:4px 10px; font-size:11px;" onclick="abrirModalTemplate()">+ Novo</button>
+        </div>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">
+          Ative as chaves para liberar os atalhos e avisos automáticos na Dashboard principal!
+        </p>
         <div id="lista-templates" style="display:flex; flex-direction:column; gap:12px;"></div>
       </div>
+      <button class="btn-gradient" onclick="dispararNotificacao()"><i class="fas fa-bell"></i> Testar Alerta no Celular</button>
     </section>
 
     <!-- TELA: CONFIGURAÇÕES -->
     <section id="screen-configuracoes" class="screen">
+      
+      <!-- NOVA FUNÇÃO: INTEGRAÇÃO EVOLUTION API -->
+      <div class="panel-box">
+        <div class="panel-header"><h3><i class="fab fa-whatsapp" style="color:var(--success)"></i> Conexão WhatsApp API</h3></div>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">Conecte sua Evolution API (v2.3.7) para envios automáticos.</p>
+        
+        <div class="form-group"><label>URL Base da API</label><input type="text" id="evo-url" placeholder="Ex: https://sua-api.com"></div>
+        <div class="form-group"><label>Global API Key</label><input type="password" id="evo-key" placeholder="Sua chave secreta"></div>
+        <div class="form-group"><label>Nome da Instância</label><input type="text" id="evo-instance" placeholder="Ex: gestor_iptv"></div>
+        
+        <button class="btn-gradient" style="margin-bottom:10px;" onclick="salvarConfigEvo()"><i class="fas fa-save"></i> Salvar Credenciais</button>
+        
+        <div id="evo-actions" style="display:none; flex-direction:column; gap:8px; margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border);">
+           <button class="btn-outline" style="border-color:var(--success); color:var(--success);" id="btn-conectar-evo" onclick="abrirModalQrCode()"><i class="fas fa-qrcode"></i> Conectar / Gerar QR Code</button>
+           <div style="display:flex; gap:8px;">
+             <button class="btn-action" style="color:var(--warning); border-color:var(--warning);" onclick="desconectarEvolution()">Desconectar</button>
+             <button class="btn-action trash" style="flex:1" onclick="excluirInstanciaEvolution()">Excluir Instância</button>
+           </div>
+        </div>
+      </div>
+
       <div class="panel-box">
         <div class="panel-header"><h3><i class="fas fa-building" style="color:var(--primary)"></i> Dados da Empresa</h3></div>
-        <div class="form-group"><label>Nome da Empresa</label><input type="text" id="cfg-nome"></div>
+        <div class="form-group">
+          <label>Nome da Empresa</label>
+          <input type="text" id="cfg-nome" placeholder="Gestor IPTV">
+          <small style="color:var(--text-muted); font-size:11px;">Aparecerá no topo do app.</small>
+        </div>
         <div class="form-group"><label>Telefone / WhatsApp</label><input type="text" id="cfg-contato"></div>
         <div class="form-group"><label>Chave Pix</label><input type="text" id="cfg-pix"></div>
-        <button class="btn-gradient" onclick="salvarConfiguracoes()"><i class="fas fa-save"></i> Salvar</button>
+        <button class="btn-gradient" onclick="salvarConfiguracoes()"><i class="fas fa-save"></i> Salvar Configurações</button>
+      </div>
+
+      <div class="panel-box">
+        <div class="panel-header"><h3><i class="fas fa-clock" style="color:var(--warning)"></i> Horários de Notificação</h3></div>
+        <div style="display:flex; gap:10px; margin-bottom: 16px;">
+           <input type="time" id="notif-hr-1" style="flex:1">
+           <input type="time" id="notif-hr-2" style="flex:1">
+           <input type="time" id="notif-hr-3" style="flex:1">
+        </div>
+        <button class="btn-outline" style="border-color:var(--primary); color:var(--primary);" onclick="salvarNotifConfig()">Salvar Horários</button>
+        <button class="btn-outline" style="border-color:var(--success); color:var(--success);" onclick="solicitarPermissaoNotif()">Permitir Alertas no Android</button>
+      </div>
+
+      <div class="panel-box">
+        <div class="panel-header"><h3><i class="fas fa-cloud-download-alt" style="color:var(--success)"></i> Backup</h3></div>
+        <button class="btn-gradient" style="margin-bottom:12px;" onclick="exportarBackup()"><i class="fas fa-upload"></i> Salvar Backup</button>
+        <label style="font-size:13px; color:var(--text-muted); display:block; margin-bottom:8px;">Restaurar Dados:</label>
+        <input type="file" id="arquivo-backup" accept=".json" onchange="importarBackup(event)" style="margin-bottom: 16px;">
+        
+        <!-- BOTÃO DELETAR TODOS OS DADOS (ZONA DE PERIGO) -->
+        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(239, 68, 68, 0.3);">
+            <label style="font-size:13px; color:var(--danger); display:block; margin-bottom:8px; font-weight:700;"><i class="fas fa-exclamation-triangle"></i> Zona de Perigo:</label>
+            <button class="btn-outline" style="border-color:var(--danger); color:var(--danger);" onclick="apagarTodosOsDados()"><i class="fas fa-trash-alt"></i> Apagar Todos os Dados</button>
+        </div>
       </div>
     </section>
 
   </main>
 
-  <!-- MODAL: DETALHES DO CLIENTE -->
+  <!-- NOVA FUNÇÃO: MODAL QR CODE EVOLUTION -->
+  <div class="modal" id="modal-qrcode">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 style="color:var(--success)"><i class="fas fa-qrcode"></i> Escanear WhatsApp</h3>
+        <button class="close-btn" onclick="fecharModalQrCode()">&times;</button>
+      </div>
+      <div class="qr-box">
+        <div id="qr-loading" style="padding: 20px 0;"><i class="fas fa-spinner fa-spin fa-2x" style="color:var(--primary)"></i><br><br>Gerando QR Code...</div>
+        <img id="qr-image" src="" alt="QR Code" style="display:none;">
+      </div>
+      <p class="evo-status-text" id="qr-status-text">Aguardando leitura do QR Code...</p>
+    </div>
+  </div>
+
+  <!-- ==============================================
+       MODAL: JANELA DE DETALHES DO CLIENTE 
+       ============================================== -->
   <div class="modal" id="modal-detalhes-cliente">
     <div class="modal-content">
       <div class="modal-header" style="margin-bottom: 10px;">
-        <h3 id="detalhe-nome" style="font-size: 16px;"></h3>
+        <h3 id="detalhe-nome" style="font-size: 16px;"><i class="fas fa-user-circle"></i> Nome do Cliente</h3>
         <button class="close-btn" onclick="fecharModal('modal-detalhes-cliente')">&times;</button>
       </div>
-      <div style="margin-bottom: 20px;"><span id="detalhe-status" class="badge-status"></span></div>
+      
+      <div style="margin-bottom: 20px;">
+          <span id="detalhe-status" class="badge-status">Status</span>
+      </div>
+      
       <div class="cli-info-grid">
         <div class="cli-info-item">Vencimento <strong id="detalhe-vencimento"></strong></div>
         <div class="cli-info-item">Telefone <strong id="detalhe-telefone"></strong></div>
         <div class="cli-info-item">Plano <strong id="detalhe-plano"></strong></div>
         <div class="cli-info-item">Valor Mensal <strong id="detalhe-valor"></strong></div>
+        <div class="cli-info-item">Usuário App <strong id="detalhe-usuario"></strong></div>
+        <div class="cli-info-item">Senha App <strong id="detalhe-senha-painel"></strong></div>
+        <div class="cli-info-item">Aplicativo <strong id="detalhe-app"></strong></div>
+        <div class="cli-info-item">MAC <strong id="detalhe-mac"></strong></div>
+        <div class="cli-info-item cli-info-full">Servidor / Provedor <strong id="detalhe-provedor"></strong></div>
       </div>
+      
       <div class="card-actions">
         <button class="btn-action" id="btn-detalhe-cobrar"><i class="fas fa-paper-plane" style="color:var(--primary)"></i> Cobrar</button>
         <button class="btn-action" id="btn-detalhe-editar"><i class="fas fa-pencil-alt" style="color:var(--warning)"></i> Editar</button>
@@ -271,154 +509,287 @@
   <!-- MODAL: CADASTRAR/EDITAR CLIENTE -->
   <div class="modal" id="modal-cliente">
     <div class="modal-content">
-      <div class="modal-header"><h3 id="modal-cliente-titulo">Cadastrar Cliente</h3><button class="close-btn" onclick="fecharModal('modal-cliente')">&times;</button></div>
+      <div class="modal-header">
+        <h3 id="modal-cliente-titulo">Cadastrar Cliente</h3>
+        <button class="close-btn" onclick="fecharModal('modal-cliente')">&times;</button>
+      </div>
       <input type="hidden" id="cli-id">
-      <div class="form-group"><label>Nome</label><input type="text" id="cli-nome" required></div>
-      <div class="form-group"><label>Telefone</label><input type="tel" id="cli-telefone"></div>
-      <div class="form-group"><label>Vencimento</label><input type="date" id="cli-vencimento" required></div>
+      
+      <div class="form-group"><label>Nome Completo</label><input type="text" id="cli-nome" required></div>
+      <div class="form-group"><label>Telefone / WhatsApp</label><input type="tel" id="cli-telefone"></div>
+      
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+        <div class="form-group">
+          <label>Usuário (Painel)</label>
+          <input type="text" id="cli-usuario" placeholder="Opcional">
+        </div>
+        <div class="form-group">
+          <label>Senha (Painel)</label>
+          <input type="text" id="cli-senha-painel" placeholder="Opcional">
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label>Servidor / Provedor</label>
+        <input type="text" id="cli-provedor" placeholder="Opcional (Ex: BobTV)">
+      </div>
+      
+      <div class="form-group"><label>Data de Vencimento</label><input type="date" id="cli-vencimento" required></div>
+      
+      <div class="form-group">
+        <label>MAC Address</label>
+        <input type="text" id="cli-mac" placeholder="Opcional: 00:1A:2B:3C:4D:5E" oninput="formatarMAC(this)" maxlength="17">
+      </div>
+      <div class="form-group"><label>Senha do Aplicativo</label><input type="text" id="cli-senha" placeholder="Opcional..."></div>
+      <div class="form-group"><label>Aplicativo Usado</label><input type="text" id="cli-app" placeholder="Opcional (Ex: Smartters)"></div>
       <div class="form-group"><label>Plano</label><select id="cli-plano"></select></div>
+      
       <input type="hidden" id="cli-valor">
-      <button class="btn-gradient" onclick="salvarCliente()">Salvar</button>
+      <div class="form-group" style="display:none;"><label>Status</label><select id="cli-status"><option value="Ativo">Ativo</option><option value="Inativo">Inativo</option></select></div>
+      <button class="btn-gradient" onclick="salvarCliente()">Salvar Cadastro</button>
+    </div>
+  </div>
+
+  <!-- MODAL: PLANO -->
+  <div class="modal" id="modal-plano">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Cadastrar Plano</h3>
+        <button class="close-btn" onclick="fecharModal('modal-plano')">&times;</button>
+      </div>
+      <input type="hidden" id="plano-id">
+      <div class="form-group"><label>Nome do Plano</label><input type="text" id="plano-nome" required></div>
+      <div class="form-group"><label>Valor Mensal (R$)</label><input type="number" step="0.01" id="plano-valor" required></div>
+      <div class="form-group"><label>Validade em Dias</label><input type="number" id="plano-dias" value="30" required></div>
+      <button class="btn-gradient" onclick="salvarPlano()">Salvar Plano</button>
     </div>
   </div>
 
   <!-- MODAL: TEMPLATE -->
   <div class="modal" id="modal-template">
     <div class="modal-content">
-      <div class="modal-header"><h3 id="modal-template-titulo">Regra de Lembrete</h3><button class="close-btn" onclick="fecharModal('modal-template')">&times;</button></div>
+      <div class="modal-header">
+        <h3 id="modal-template-titulo">Regra de Lembrete</h3>
+        <button class="close-btn" onclick="fecharModal('modal-template')">&times;</button>
+      </div>
       <input type="hidden" id="tpl-id">
-      <div class="form-group"><label>Nome</label><input type="text" id="tpl-nome"></div>
+      <div class="form-group"><label>Nome da Regra</label><input type="text" id="tpl-nome"></div>
       <div class="form-group">
         <label>Disparo Automático</label>
         <select id="tpl-tipo">
+          <option value="avulso">Sem Alarme (Uso Manual)</option>
+          <option value="lembrete_5">5 Dias Antes</option>
           <option value="lembrete_3">3 Dias Antes</option>
           <option value="lembrete_2">2 Dias Antes</option>
+          <option value="lembrete_1">1 Dia Antes</option>
           <option value="vencimento_hoje">Dia do Vencimento</option>
-          <option value="vencido">Após o Vencimento</option>
+          <option value="vencido">Após o Vencimento (Vencido)</option>
+          <option value="renovacao">Mensagem Pós-Renovação</option>
         </select>
       </div>
-      <div class="form-group"><label>Mensagem</label><textarea id="tpl-mensagem" rows="5"></textarea></div>
-      <button class="btn-gradient" onclick="salvarTemplate()">Salvar</button>
+      <div class="form-group">
+        <label>Texto da Mensagem</label>
+        <textarea id="tpl-mensagem" rows="5"></textarea>
+        <small style="color:var(--text-muted); font-size:11px;">Use: {nome}, {data}, {valor}, {empresa}</small>
+      </div>
+      <button class="btn-gradient" onclick="salvarTemplate()">Salvar Regra</button>
+    </div>
+  </div>
+
+  <!-- MODAL: ENVIAR MENSAGEM -->
+  <div class="modal" id="modal-enviar-msg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 style="color:var(--warning)"><i class="fas fa-paper-plane"></i> Enviar Template</h3>
+        <button class="close-btn" onclick="fecharModal('modal-enviar-msg')">&times;</button>
+      </div>
+      <input type="hidden" id="msg-cli-id">
+      <div class="form-group">
+        <label>Modelo de Mensagem:</label>
+        <select id="msg-template-select" onchange="atualizarPreviewMensagem()"></select>
+      </div>
+      <div class="form-group">
+        <textarea id="msg-preview" rows="6" style="border-color:var(--warning)"></textarea>
+      </div>
+      <button class="btn-gradient" onclick="dispararWhatsAppManual()"><i class="fab fa-whatsapp"></i> Enviar p/ WhatsApp</button>
     </div>
   </div>
 
   <!-- MODAL: RENOVAR -->
   <div class="modal" id="modal-renovacao">
     <div class="modal-content">
-      <div class="modal-header"><h3><i class="fas fa-sync"></i> Renovar Plano</h3><button class="close-btn" onclick="fecharModal('modal-renovacao')">&times;</button></div>
+      <div class="modal-header">
+        <h3 style="color:var(--success)"><i class="fas fa-sync"></i> Renovar Plano</h3>
+        <button class="close-btn" onclick="fecharModal('modal-renovacao')">&times;</button>
+      </div>
       <input type="hidden" id="renov-cli-id">
       <p id="renov-info"></p>
-      <div class="form-group"><label>Recibo</label><textarea id="renov-mensagem" rows="4"></textarea></div>
-      <button class="btn-gradient" onclick="confirmarRenovacao(true)"><i class="fab fa-whatsapp"></i> Renovar e Enviar Recibo</button>
+      <div class="form-group">
+        <label>Recibo (WhatsApp)</label>
+        <textarea id="renov-mensagem" rows="4" style="border-color:var(--success)"></textarea>
+      </div>
+      <button class="btn-gradient" style="background:var(--success); margin-bottom:8px;" onclick="confirmarRenovacao(true)"><i class="fab fa-whatsapp"></i> Renovar e Enviar Recibo</button>
+      <button class="btn-outline" onclick="confirmarRenovacao(false)">Apenas Renovar</button>
     </div>
   </div>
-
-  <!-- INÍCIO: MODAL NOVO PARA CONECTAR WHATSAPP (COM CÓDIGO OU QR) -->
-  <div class="modal" id="modal-whatsapp-connect">
-    <div class="modal-content" style="text-align: center;">
-      <div class="modal-header">
-        <h3 style="color:var(--success)"><i class="fab fa-whatsapp"></i> Conectar WhatsApp</h3>
-        <button class="close-btn" onclick="fecharModal('modal-whatsapp-connect')">&times;</button>
-      </div>
-
-      <!-- BOTÕES DAS ABAS (QR / CÓDIGO) -->
-      <div class="filter-row" style="justify-content: center; margin-bottom: 20px;">
-        <button class="filter-btn active" id="tab-qr" onclick="mudarAbaWhatsapp('qr')">QR Code</button>
-        <button class="filter-btn" id="tab-codigo" onclick="mudarAbaWhatsapp('codigo')">Código 8 Dígitos</button>
-      </div>
-      
-      <!-- TELA: QR CODE -->
-      <div id="aba-wa-qr">
-        <p style="font-size:13px; color:var(--text-muted); margin-bottom:15px;">
-          Use outro celular para ler o QR Code abaixo.
-        </p>
-        <div id="wa-qr-container" style="background: #fff; padding: 15px; border-radius: 10px; display: inline-block; margin-bottom: 15px; min-width: 250px; min-height: 250px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border);">
-          <i class="fas fa-spinner fa-spin" style="font-size: 30px; color: var(--primary);" id="wa-loading"></i>
-          <img id="wa-qr-img" src="" style="display: none; max-width: 100%; border-radius: 8px;">
-        </div>
-      </div>
-
-      <!-- TELA: CÓDIGO POR NÚMERO -->
-      <div id="aba-wa-codigo" style="display: none;">
-        <p style="font-size:13px; color:var(--text-muted); margin-bottom:15px;">
-          Digite seu WhatsApp (com DDD) para receber um código de conexão na tela.
-        </p>
-        <div class="form-group" style="text-align: left;">
-          <input type="tel" id="wa-numero-telefone" placeholder="Ex: 5511999999999" style="text-align: center; font-size: 18px; font-weight: bold; letter-spacing: 2px;">
-        </div>
-        <button class="btn-gradient" id="btn-gerar-codigo" onclick="gerarCodigoWhatsApp()" style="margin-bottom: 15px;">
-          <i class="fas fa-key"></i> Gerar Código
-        </button>
-        
-        <!-- ONDE APARECE O CÓDIGO DE 8 DÍGITOS -->
-        <div id="wa-codigo-container" style="display: none; margin-bottom: 15px;">
-          <p style="font-size:12px; color:var(--primary); font-weight:bold; margin-bottom:8px;">Seu Código de Pareamento:</p>
-          <div id="wa-codigo-texto" style="font-size: 34px; font-weight: 900; letter-spacing: 8px; color: var(--text-dark); background: var(--bg-input); padding: 15px; border-radius: 10px; border: 2px dashed var(--primary);">
-            ----
-          </div>
-          <p style="font-size:11px; color:var(--text-muted); margin-top:10px;">Aparecerá uma notificação no seu WhatsApp. Digite o código acima lá.</p>
-        </div>
-      </div>
-
-      <div id="wa-status-text" style="font-size: 14px; font-weight: 600; margin-bottom: 15px; margin-top: 10px;">Aguardando conexão...</div>
-      
-      <button class="btn-gradient" style="background:var(--danger); display:none;" id="btn-desconectar-wa" onclick="desconectarWhatsApp()">
-        <i class="fas fa-sign-out-alt"></i> Desconectar WhatsApp
-      </button>
-    </div>
-  </div>
-  <!-- FIM MODAL WHATSAPP -->
 
   <!-- TOAST -->
-  <div id="toast" class="toast">Mensagem</div>
+  <div id="toast" class="toast">Mensagem de Sucesso</div>
 
 <script>
-// ========== CONFIGURAÇÕES DO SERVIDOR CLOUDPANEL ==========
-// Substitua depois pelos dados reais da sua hospedagem CloudPanel
-const API_EVOLUTION = "https://zap.seudominio.com"; // Onde a Evolution API vai rodar
-const API_GLOBAL_KEY = "SUA_SENHA_EVOLUTION"; 
-const NOME_INSTANCIA = "samuel"; 
-const URL_MEU_BACKEND = "https://painel.seudominio.com/sync.php"; // O arquivo PHP que criaremos
+// ========== LÓGICA DO MODO ESCURO (DARK MODE) E RE-RENDER DE GRÁFICOS ==========
+function toggleTheme() {
+  const isDark = document.body.classList.toggle('dark-theme');
+  const icon = document.getElementById('theme-icon');
+  if (isDark) {
+    icon.classList.replace('fa-moon', 'fa-sun');
+    localStorage.setItem('theme', 'dark');
+  } else {
+    icon.classList.replace('fa-sun', 'fa-moon');
+    localStorage.setItem('theme', 'light');
+  }
+  
+  if(document.getElementById('screen-dashboard').classList.contains('active')){
+      renderizarDashboard();
+  }
+}
 
-// ========== LÓGICA DO MODO ESCURO E THEME ==========
-function toggleTheme() { document.body.classList.toggle('dark-theme'); renderizarDashboard(); }
+function loadTheme() {
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'dark') {
+    document.body.classList.add('dark-theme');
+    const icon = document.getElementById('theme-icon');
+    if(icon) icon.classList.replace('fa-moon', 'fa-sun');
+  }
+}
 
 // ========== BANCO E VARIÁVEIS GERAIS ==========
-let db; let cfgEmpresa = { nome: '', contato: '', pix: '' }; let filtroAtualGlobal = 'todos'; let toastTimeout;
-let lineChartInstance = null; let doughnutChartInstance = null;
+let db;
+let cfgEmpresa = { nome: '', contato: '', email: '', pix: '' };
+let cfgNotif = { horarios: ['09:00', '13:00', '18:00'] }; 
+let filtroAtualGlobal = 'todos';
+let toastTimeout;
+
+// NOVA FUNÇÃO: VARIÁVEIS EVOLUTION API
+let cfgEvo = { url: '', key: '', instance: '' };
+let evoPollingInterval = null;
+let isEvoOnline = false;
+
+// Instâncias dos Gráficos
+let lineChartInstance = null;
+let doughnutChartInstance = null;
 
 window.onload = async () => {
-  await initBanco(); await carregarConfiguracoes(); await popularTemplatesPadrao();
-  await renderizarDashboard(); await renderizarPlanosSelect(); await renderizarPlanos(); await renderizarClientes();
-  checarStatusWhatsApp();
+  loadTheme();
+  await initBanco();
+  await carregarConfiguracoes();
+  await carregarNotifConfig();
+  await popularTemplatesPadrao();
+  await renderizarDashboard();
+  await renderizarPlanosSelect();
+  await renderizarPlanos();
+  await renderizarClientes();
+  solicitarPermissaoNotif();
+  verificarStatusEvolution(); // Inicia a verificação de status do WhatsApp
 };
 
 function navegarPara(telaId, el) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(`screen-${telaId}`).classList.add('active');
-  if (el) { document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); el.classList.add('active'); }
-  if (telaId === 'dashboard') renderizarDashboard(); if (telaId === 'clientes') renderizarClientes();
-  if (telaId === 'templates') renderizarTemplates(); if (telaId === 'planos') renderizarPlanos();
+  
+  if (el) {
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  if (telaId === 'dashboard') renderizarDashboard();
+  if (telaId === 'clientes') renderizarClientes();
+  if (telaId === 'templates') renderizarTemplates();
+  if (telaId === 'planos') renderizarPlanos();
+}
+
+function verClientesFiltrados(filtro) {
+  filtroAtualGlobal = filtro;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  
+  const navBtnClientes = document.getElementById('nav-clientes');
+  navegarPara('clientes', navBtnClientes);
+  
+  const btnVisivel = document.querySelector(`.filter-btn[data-filtro="${filtro}"]`);
+  if(btnVisivel) {
+      btnVisivel.classList.add('active');
+      btnVisivel.style.display = 'inline-block';
+  } else {
+      const btnOculto = document.querySelector(`.filter-btn[data-filtro="hoje"]`);
+      btnOculto.classList.add('active');
+      btnOculto.style.display = 'inline-block';
+      if(typeof filtro === 'number') btnOculto.textContent = `Faltam ${filtro} Dias`;
+      else if(filtro === 'hoje') btnOculto.textContent = `Vencem Hoje`;
+  }
+  executarFiltro();
+}
+
+function setFiltro(tipo, el) {
+  filtroAtualGlobal = tipo;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  executarFiltro();
+}
+
+function executarFiltro() {
+  const busca = document.getElementById('busca-cliente').value.toLowerCase();
+  renderizarClientesListagem(filtroAtualGlobal, busca);
 }
 
 function abrirModal(id) { document.getElementById(id).classList.add('open'); }
 function fecharModal(id) { document.getElementById(id).classList.remove('open'); }
-function mostrarToast(texto) { const t = document.getElementById('toast'); t.textContent = texto; t.classList.add('show'); if(toastTimeout) clearTimeout(toastTimeout); toastTimeout = setTimeout(() => { t.classList.remove('show'); }, 3500); }
-function calcularStatus(dataVenc) { const hoje = new Date(); hoje.setHours(0,0,0,0); const dt = new Date(dataVenc+'T00:00:00'); dt.setHours(0,0,0,0); const diff = Math.ceil((dt - hoje) / (1000*60*60*24)); if (diff < 0) return {texto:'Vencido', classe:'vencido', dias:diff}; return {texto:'Ativo', classe:'ativo', dias:diff}; }
-function formatDataBr(dataString) { return dataString.split('-').reverse().join('/'); }
+function mostrarToast(texto) {
+  const t = document.getElementById('toast');
+  t.textContent = texto;
+  t.classList.add('show');
+  if(toastTimeout) clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => { t.classList.remove('show'); }, 3500);
+}
 
-// ========== BANCO DE DADOS INDEXEDDB ==========
+function calcularStatus(dataVenc) {
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  const dt = new Date(dataVenc+'T00:00:00'); dt.setHours(0,0,0,0);
+  const diff = Math.ceil((dt - hoje) / (1000*60*60*24));
+  if (diff < 0) return {texto:'Vencido', classe:'vencido', dias:diff};
+  if (diff === 0) return {texto:'Ativo', classe:'ativo', dias:0};
+  return {texto:'Ativo', classe:'ativo', dias:diff};
+}
+function formatDataBr(dataString) {
+  return dataString.split('-').reverse().join('/');
+}
+
+function formatarMAC(input) {
+  let val = input.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+  let newVal = '';
+  for(let i = 0; i < val.length; i++) {
+      if (i > 0 && i % 2 === 0) { newVal += ':'; }
+      newVal += val[i];
+  }
+  input.value = newVal.substring(0, 17);
+}
+
+// ========== BANCO DE DADOS ==========
 async function initBanco() {
   db = await new Promise((res, rej) => {
     const req = indexedDB.open('IPTVDBPro', 6); 
     req.onupgradeneeded = e => {
       const d = e.target.result;
       if(!d.objectStoreNames.contains('config')) d.createObjectStore('config', {keyPath:'id'}).add({id:1});
+      if(!d.objectStoreNames.contains('notif_config')) d.createObjectStore('notif_config', {keyPath:'id'}).add({id:1, horarios:['09:00', '13:00', '18:00']});
       if(!d.objectStoreNames.contains('planos')) d.createObjectStore('planos', {keyPath:'id', autoIncrement:true});
       if(!d.objectStoreNames.contains('templates')) d.createObjectStore('templates', {keyPath:'id', autoIncrement:true});
-      if(!d.objectStoreNames.contains('clientes')) d.createObjectStore('clientes', {keyPath:'id', autoIncrement:true});
+      if(!d.objectStoreNames.contains('clientes')) {
+        const s = d.createObjectStore('clientes', {keyPath:'id', autoIncrement:true});
+        s.createIndex('nome','nome'); s.createIndex('mac','mac',{unique:true});
+      }
     };
     req.onsuccess = e => res(e.target.result);
+    req.onerror = rej;
   });
 }
 function tx(store, mode='readonly') { return db.transaction(store, mode).objectStore(store); }
@@ -426,162 +797,788 @@ function getAll(store) { return new Promise(r => tx(store).getAll().onsuccess = 
 function put(store, obj) { return new Promise((res, rej) => { const req = tx(store,'readwrite').put(obj); req.onsuccess = e => res(e.target.result); req.onerror = rej; }); }
 function del(store, id) { return new Promise(r => tx(store,'readwrite').delete(id).onsuccess = r); }
 
-// ========== NOVO: SINCRONIZAR COM CLOUDPANEL ==========
-async function sincronizarComServidor() {
+// APAGAR TUDO (ZONA DE PERIGO)
+async function apagarTodosOsDados() {
+  if(confirm('🚨 ATENÇÃO! Isso vai apagar TODOS os seus clientes, planos e regras. Essa ação NÃO tem como ser desfeita. Tem certeza?')) {
+      if(confirm('Tem certeza ABSOLUTA? Todo o banco de dados será limpo.')) {
+          await new Promise(r => tx('clientes', 'readwrite').clear().onsuccess = r);
+          await new Promise(r => tx('planos', 'readwrite').clear().onsuccess = r);
+          await new Promise(r => tx('templates', 'readwrite').clear().onsuccess = r);
+          mostrarToast('🗑️ Todos os dados foram apagados permanentemente.');
+          setTimeout(() => location.reload(), 1500);
+      }
+  }
+}
+
+// ========== CONFIGURAÇÕES ==========
+async function carregarConfiguracoes(){
+  const c = await new Promise(r => tx('config').get(1).onsuccess = e => r(e.target.result || {}));
+  
+  cfgEmpresa = { nome: c.nome_empresa||'', contato: c.contato||'', pix: c.chave_pix||'' };
+  document.getElementById('cfg-nome').value = cfgEmpresa.nome; 
+  document.getElementById('cfg-contato').value = cfgEmpresa.contato; 
+  document.getElementById('cfg-pix').value = cfgEmpresa.pix;
+
+  // Carrega infos da API da Evolution
+  cfgEvo = { url: c.evo_url||'', key: c.evo_key||'', instance: c.evo_instance||'' };
+  document.getElementById('evo-url').value = cfgEvo.url;
+  document.getElementById('evo-key').value = cfgEvo.key;
+  document.getElementById('evo-instance').value = cfgEvo.instance;
+  if(cfgEvo.url && cfgEvo.key && cfgEvo.instance) {
+    document.getElementById('evo-actions').style.display = 'flex';
+  }
+
+  const headerNome = document.getElementById('header-empresa-nome');
+  if(headerNome) headerNome.textContent = cfgEmpresa.nome || 'Gestor IPTV';
+}
+
+async function salvarConfiguracoes(){
+  cfgEmpresa = { nome: document.getElementById('cfg-nome').value, contato: document.getElementById('cfg-contato').value, pix: document.getElementById('cfg-pix').value };
+  
+  // Temos que pegar o objeto inteiro para não apagar a config do evolution
+  const c = await new Promise(r => tx('config').get(1).onsuccess = e => r(e.target.result || {id:1}));
+  c.nome_empresa = cfgEmpresa.nome;
+  c.contato = cfgEmpresa.contato;
+  c.chave_pix = cfgEmpresa.pix;
+
+  await put('config', c); 
+  
+  const headerNome = document.getElementById('header-empresa-nome');
+  if(headerNome) headerNome.textContent = cfgEmpresa.nome || 'Gestor IPTV';
+
+  mostrarToast('✅ Dados Salvos!');
+}
+
+// NOVA FUNÇÃO: SALVAR EVOLUTION API
+async function salvarConfigEvo() {
+  cfgEvo = { 
+    url: document.getElementById('evo-url').value.replace(/\/$/, ''), 
+    key: document.getElementById('evo-key').value, 
+    instance: document.getElementById('evo-instance').value 
+  };
+  
+  if(!cfgEvo.url || !cfgEvo.key || !cfgEvo.instance) return mostrarToast('Preencha os 3 campos da API!');
+  
+  const c = await new Promise(r => tx('config').get(1).onsuccess = e => r(e.target.result || {id:1}));
+  c.evo_url = cfgEvo.url; 
+  c.evo_key = cfgEvo.key; 
+  c.evo_instance = cfgEvo.instance;
+  
+  await put('config', c);
+  document.getElementById('evo-actions').style.display = 'flex';
+  mostrarToast('✅ Credenciais da API Salvas!');
+  verificarStatusEvolution();
+}
+
+// ========== LÓGICA DA EVOLUTION API ==========
+
+function atualizarBadgeWhatsApp(isOnline) {
+  isEvoOnline = isOnline;
+  const badge = document.getElementById('wa-badge-status');
+  const txt = document.getElementById('wa-badge-text');
+  if(isOnline) {
+    badge.className = 'wa-status-badge wa-online';
+    txt.textContent = 'Online';
+    document.getElementById('btn-conectar-evo').innerHTML = '<i class="fas fa-check"></i> Instância Conectada';
+  } else {
+    badge.className = 'wa-status-badge wa-offline';
+    txt.textContent = 'Offline';
+    document.getElementById('btn-conectar-evo').innerHTML = '<i class="fas fa-qrcode"></i> Conectar / Gerar QR Code';
+  }
+}
+
+async function verificarStatusEvolution() {
+  if(!cfgEvo.url || !cfgEvo.instance) return atualizarBadgeWhatsApp(false);
   try {
-    const dados = {
-      empresa: cfgEmpresa,
-      clientes: await getAll('clientes'),
-      templates: await getAll('templates')
-    };
-    fetch(URL_MEU_BACKEND, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(dados)
+    const res = await fetch(`${cfgEvo.url}/instance/connectionState/${cfgEvo.instance}`, {
+      headers: { 'apikey': cfgEvo.key }
     });
-  } catch(e) { console.log("Erro na sincronização", e); }
+    const json = await res.json();
+    atualizarBadgeWhatsApp(json.instance?.state === 'open');
+  } catch(e) {
+    atualizarBadgeWhatsApp(false);
+  }
+}
+
+function abrirModalQrCode() {
+  if(!cfgEvo.url || !cfgEvo.instance) return mostrarToast('Salve as credenciais primeiro!');
+  abrirModal('modal-qrcode');
+  document.getElementById('qr-loading').style.display = 'block';
+  document.getElementById('qr-image').style.display = 'none';
+  document.getElementById('qr-status-text').textContent = 'Conectando à API...';
+  conectarEvolution();
+}
+
+function fecharModalQrCode() {
+  fecharModal('modal-qrcode');
+  if(evoPollingInterval) clearInterval(evoPollingInterval);
+}
+
+async function conectarEvolution() {
+  try {
+    let res = await fetch(`${cfgEvo.url}/instance/connect/${cfgEvo.instance}`, { headers: { 'apikey': cfgEvo.key } });
+    
+    if(res.status === 404) {
+      document.getElementById('qr-status-text').textContent = 'Criando instância...';
+      const createRes = await fetch(`${cfgEvo.url}/instance/create`, {
+        method: 'POST',
+        headers: { 'apikey': cfgEvo.key, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ instanceName: cfgEvo.instance, qrcode: true, integration: 'WHATSAPP-BAILEYS' })
+      });
+      if(!createRes.ok) throw new Error('Erro ao criar instância');
+      res = await fetch(`${cfgEvo.url}/instance/connect/${cfgEvo.instance}`, { headers: { 'apikey': cfgEvo.key } });
+    }
+
+    const data = await res.json();
+    
+    if(data.base64) {
+      document.getElementById('qr-loading').style.display = 'none';
+      document.getElementById('qr-image').src = data.base64;
+      document.getElementById('qr-image').style.display = 'inline-block';
+      document.getElementById('qr-status-text').textContent = 'Escaneie o QR Code com o seu WhatsApp';
+      iniciarPollingConexao();
+    } else if (data.instance?.state === 'open') {
+      fecharModalQrCode();
+      atualizarBadgeWhatsApp(true);
+      mostrarToast('✅ WhatsApp já está conectado!');
+    }
+  } catch(e) {
+    document.getElementById('qr-status-text').textContent = 'Erro ao conectar. Verifique os dados da API.';
+    document.getElementById('qr-loading').style.display = 'none';
+  }
+}
+
+function iniciarPollingConexao() {
+  if(evoPollingInterval) clearInterval(evoPollingInterval);
+  evoPollingInterval = setInterval(async () => {
+    try {
+      const res = await fetch(`${cfgEvo.url}/instance/connectionState/${cfgEvo.instance}`, { headers: { 'apikey': cfgEvo.key } });
+      const json = await res.json();
+      if(json.instance?.state === 'open') {
+        clearInterval(evoPollingInterval);
+        fecharModalQrCode();
+        atualizarBadgeWhatsApp(true);
+        mostrarToast('✅ WhatsApp Conectado com Sucesso!');
+      }
+    } catch(e) {}
+  }, 3000);
+}
+
+async function desconectarEvolution() {
+  if(!confirm('Tem certeza que deseja desconectar o WhatsApp?')) return;
+  try {
+    await fetch(`${cfgEvo.url}/instance/logout/${cfgEvo.instance}`, { method: 'DELETE', headers: { 'apikey': cfgEvo.key } });
+    mostrarToast('⚠️ WhatsApp desconectado.');
+    atualizarBadgeWhatsApp(false);
+  } catch(e) { mostrarToast('Erro ao desconectar.'); }
+}
+
+async function excluirInstanciaEvolution() {
+  if(!confirm('Isso vai EXCLUIR a instância na Evolution API. Tem certeza?')) return;
+  try {
+    await fetch(`${cfgEvo.url}/instance/delete/${cfgEvo.instance}`, { method: 'DELETE', headers: { 'apikey': cfgEvo.key } });
+    mostrarToast('🗑️ Instância excluída da API.');
+    atualizarBadgeWhatsApp(false);
+  } catch(e) { mostrarToast('Erro ao excluir instância.'); }
+}
+
+// NOVA FUNÇÃO ABRIR WHATSAPP (Com envio API invisível)
+async function abrirWhatsApp(telefone, msg) {
+  const num = (telefone || '').replace(/\D/g,'');
+  if(!num) return mostrarToast('Cliente sem telefone salvo!');
+  
+  const fNum = num.startsWith('55') ? num : '55' + num;
+
+  if (isEvoOnline && cfgEvo.url && cfgEvo.key) {
+    try {
+      mostrarToast('Enviando via API...');
+      const res = await fetch(`${cfgEvo.url}/message/sendText/${cfgEvo.instance}`, {
+        method: 'POST',
+        headers: { 'apikey': cfgEvo.key, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          number: fNum,
+          options: { delay: 1200, presence: 'composing' },
+          textMessage: { text: msg }
+        })
+      });
+      if(res.ok) {
+        mostrarToast('✅ Mensagem enviada silenciosamente!');
+      } else {
+        throw new Error('Erro na API');
+      }
+    } catch(e) {
+      mostrarToast('❌ Falha na API. Abrindo app do WhatsApp...');
+      window.open(`https://wa.me/${fNum}?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+  } else {
+    // Se estiver off, usa o link direto
+    window.open(`https://wa.me/${fNum}?text=${encodeURIComponent(msg)}`, '_blank');
+  }
 }
 
 // ========== DASHBOARD ==========
 async function renderizarDashboard() {
-  const clisBrutos = await getAll('clientes'); const clis = clisBrutos.map(c => ({...c, _sts: calcularStatus(c.data_vencimento)}));
-  document.getElementById('qtd-ativos').textContent = clis.length;
+  const clisBrutos = await getAll('clientes');
+  const planos = await getAll('planos');
+  const templates = await getAll('templates');
+  const ativosTpls = templates.filter(t => t.ativo);
+  
+  let total = clisBrutos.length, ativos = 0, vencHoje = 0, vencidos = 0, faturamento = 0;
+  
+  const clis = clisBrutos.map(c => ({...c, _sts: calcularStatus(c.data_vencimento)}));
+  let countDias = {1:0, 2:0, 3:0, 4:0, 5:0};
+
+  clis.forEach(c => {
+    if (c._sts.texto === 'Ativo') { ativos++; faturamento += Number(c.valor); }
+    if (c._sts.dias === 0) vencHoje++;
+    if (c._sts.dias < 0) vencidos++;
+    if (c._sts.dias > 0 && c._sts.dias <= 5) countDias[c._sts.dias]++;
+  });
+
+  document.getElementById('qtd-ativos').textContent = total;
+  document.getElementById('qtd-ativos-reais').textContent = ativos;
+  document.getElementById('qtd-vencidos').textContent = vencidos;
+  document.getElementById('faturamento').textContent = `R$ ${faturamento.toFixed(2)}`;
+
+  const isDark = document.body.classList.contains('dark-theme');
+  const textColor = isDark ? '#f8fafc' : '#1e293b';
+  const gridColor = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
+
   const canvasLine = document.getElementById('chartEstatistica');
-  if(canvasLine) { const ctxLine = canvasLine.getContext('2d'); if(lineChartInstance) lineChartInstance.destroy(); lineChartInstance = new Chart(ctxLine, { type: 'line', data: { labels: ['Hoje','Amanhã'], datasets: [{ label: 'Vencimentos', data: [0,0], borderColor: '#00d2ff' }] }, options: { responsive: true, maintainAspectRatio: false } }); }
+  if(canvasLine) {
+      const ctxLine = canvasLine.getContext('2d');
+      let gradientLine = ctxLine.createLinearGradient(0, 0, 0, 180);
+      gradientLine.addColorStop(0, 'rgba(0, 210, 255, 0.5)');
+      gradientLine.addColorStop(1, 'rgba(0, 210, 255, 0.01)');
+
+      const datasLabels = [];
+      const qtdsData = [];
+      for (let i = 0; i <= 6; i++) {
+        const d = new Date(); d.setDate(d.getDate() + i);
+        const dtIso = d.toISOString().split('T')[0];
+        datasLabels.push(i === 0 ? 'Hoje' : d.toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit'}));
+        qtdsData.push(clis.filter(c => c.data_vencimento === dtIso).length);
+      }
+
+      if(lineChartInstance) lineChartInstance.destroy();
+      lineChartInstance = new Chart(ctxLine, {
+        type: 'line',
+        data: {
+          labels: datasLabels,
+          datasets: [{
+            label: 'Vencimentos', data: qtdsData, borderColor: '#00d2ff', backgroundColor: gradientLine,
+            borderWidth: 3, pointBackgroundColor: '#00d2ff', pointBorderColor: '#fff', pointBorderWidth: 2,
+            pointRadius: 4, pointHoverRadius: 6, fill: true, tension: 0.4
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { display: false }, ticks: { color: textColor, font: {family: 'Inter', size: 10} } },
+            y: { grid: { color: gridColor, borderDash: [5, 5] }, ticks: { color: textColor, font: {family: 'Inter', size: 10}, stepSize: 1, beginAtZero: true } }
+          },
+          animation: { duration: 2000, easing: 'easeOutQuart' }
+        }
+      });
+  }
+
+  const canvasDoughnut = document.getElementById('chartRosca');
+  if(canvasDoughnut) {
+      const ctxDoughnut = canvasDoughnut.getContext('2d');
+      if(doughnutChartInstance) doughnutChartInstance.destroy();
+      doughnutChartInstance = new Chart(ctxDoughnut, {
+        type: 'doughnut',
+        data: {
+          labels: ['Ativos', 'Vencem Hoje', 'Vencidos'],
+          datasets: [{ data: [ativos, vencHoje, vencidos], backgroundColor: ['#10b981', '#f59e0b', '#ef4444'], borderWidth: 0, hoverOffset: 6 }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false, cutout: '75%',
+          plugins: { legend: { position: 'bottom', labels: { color: textColor, padding: 15, font: { family: 'Inter', size: 12, weight: '500' }, usePointStyle: true } } },
+          animation: { animateScale: true, animateRotate: true, duration: 2000, easing: 'easeOutQuart' }
+        }
+      });
+  }
+
+  let htmlResumoCards = '';
+  if (ativosTpls.some(t => t.tipo === 'vencido')) {
+      htmlResumoCards += `<div class="resumo-card" onclick="verClientesFiltrados('vencidos')">
+          <div class="resumo-header"><div class="lbl"><i class="fas fa-exclamation-circle" style="color:var(--danger)"></i> Vencidos</div><div class="badge" style="background:rgba(239, 68, 68, 0.15); color:var(--danger)">${vencidos}</div></div></div>`;
+  }
+  if (ativosTpls.some(t => t.tipo === 'vencimento_hoje')) {
+      htmlResumoCards += `<div class="resumo-card" onclick="verClientesFiltrados('hoje')">
+          <div class="resumo-header"><div class="lbl"><i class="fas fa-calendar-day" style="color:var(--warning)"></i> Vencem Hoje</div><div class="badge" style="background:rgba(245, 158, 11, 0.15); color:var(--warning)">${vencHoje}</div></div></div>`;
+  }
+  for(let i=1; i<=5; i++) {
+      if(ativosTpls.some(t => t.tipo === `lembrete_${i}`)) {
+          htmlResumoCards += `<div class="resumo-card" onclick="verClientesFiltrados(${i})">
+              <div class="resumo-header"><div class="lbl"><i class="fas fa-clock" style="color:var(--primary)"></i> Em ${i} dia${i>1?'s':''}</div><div class="badge" style="background:rgba(41, 98, 255, 0.15); color:var(--primary)">${countDias[i]}</div></div></div>`;
+      }
+  }
+  document.getElementById('dash-resumo-dinamico').innerHTML = htmlResumoCards || '<div class="empty-state">Nenhum gatilho ativado na aba Templates.</div>';
+
+  let htmlDashVenc = '';
+  const renderGroup = (tituloGroup, tipoTpl, filtroFuncao, iconeCor) => {
+      const grupo = clis.filter(filtroFuncao);
+      if (grupo.length === 0) return '';
+      let html = `<div class="dash-group-title" style="border-bottom: 2px solid ${iconeCor}; display:inline-block; margin-bottom:10px;">${tituloGroup}</div>`;
+      grupo.forEach(c => {
+          html += `
+          <div class="dash-item">
+            <div class="dash-item-info">
+              <div class="dash-item-name">${c.nome}</div>
+              <div class="dash-item-date">${c.telefone || 'Sem telefone'} &nbsp;|&nbsp; Vence: ${formatDataBr(c.data_vencimento)}</div>
+            </div>
+            <div class="dash-item-actions">
+              <button class="btn-action" style="padding:6px 10px; font-size:12px; border-color:var(--border);" title="Renovar" onclick="abrirModalRenovacao(${c.id})"><i class="fas fa-sync" style="color:var(--primary)"></i></button>
+              <button class="btn-action" style="padding:6px 10px; font-size:12px; border-color:var(--success); color:var(--success); font-weight:700;" onclick="enviarLembreteRapido(${c.id}, '${tipoTpl}')"><i class="fab fa-whatsapp"></i> Zap</button>
+            </div>
+          </div>`;
+      });
+      return html;
+  };
+
+  if (ativosTpls.some(t => t.tipo === 'vencimento_hoje')) htmlDashVenc += renderGroup('🟠 Vencem Hoje', 'vencimento_hoje', c => c._sts.dias === 0, 'var(--warning)');
+  if (ativosTpls.some(t => t.tipo === 'lembrete_1')) htmlDashVenc += renderGroup('🟡 Vencem em 1 Dia', 'lembrete_1', c => c._sts.dias === 1, 'var(--primary)');
+  if (ativosTpls.some(t => t.tipo === 'lembrete_2')) htmlDashVenc += renderGroup('🟡 Vencem em 2 Dias', 'lembrete_2', c => c._sts.dias === 2, 'var(--primary)');
+  if (ativosTpls.some(t => t.tipo === 'lembrete_3')) htmlDashVenc += renderGroup('🟡 Vencem em 3 Dias', 'lembrete_3', c => c._sts.dias === 3, 'var(--primary)');
+  if (ativosTpls.some(t => t.tipo === 'vencido')) htmlDashVenc += renderGroup('🔴 Vencidos', 'vencido', c => c._sts.dias < 0, 'var(--danger)');
+
+  document.getElementById('dash-vencimentos').innerHTML = htmlDashVenc || '<div class="empty-state">Sem clientes engatilhados hoje.</div>';
 }
 
-// ========== CLIENTES CRUD ==========
-async function renderizarClientes() {
-  let clis = await getAll('clientes');
-  document.getElementById('lista-clientes').innerHTML = clis.map(c => {
-    let s = calcularStatus(c.data_vencimento);
-    return `<div class="cliente-list-item ${s.classe}" onclick="abrirModalDetalhesCliente(${c.id})"><div class="cli-header"><span>${c.nome}</span></div></div>`;
-  }).join('');
+async function enviarLembreteRapido(idCli, tipoTpl) {
+  const c = (await getAll('clientes')).find(x => x.id === idCli);
+  const ts = await getAll('templates');
+  const tplAtivo = ts.find(t => t.tipo === tipoTpl && t.ativo);
+  if (!c) return mostrarToast('Cliente não encontrado.');
+  if (!tplAtivo) return mostrarToast('Template não encontrado para este dia.');
+  const msg = tplAtivo.mensagem.replace(/{nome}/g, c.nome).replace(/{data}/g, formatDataBr(c.data_vencimento)).replace(/{valor}/g, c.valor).replace(/{empresa}/g, cfgEmpresa.nome);
+  abrirWhatsApp(c.telefone, msg);
 }
-function abrirModalCliente(){ document.getElementById('cli-id').value=''; document.getElementById('cli-nome').value=''; document.getElementById('cli-vencimento').value=''; abrirModal('modal-cliente'); }
 
-async function salvarCliente(){
-  const c = { nome: document.getElementById('cli-nome').value, telefone: document.getElementById('cli-telefone').value, plano: document.getElementById('cli-plano').value, data_vencimento: document.getElementById('cli-vencimento').value, valor: document.getElementById('cli-valor').value };
-  if(document.getElementById('cli-id').value) c.id = Number(document.getElementById('cli-id').value);
-  await put('clientes', c); fecharModal('modal-cliente'); mostrarToast('Salvo!'); renderizarClientes(); renderizarDashboard();
-  sincronizarComServidor();
-}
-async function excluirCliente(id){ if(confirm('Excluir?')) { await del('clientes',id); renderizarClientes(); sincronizarComServidor(); } }
-
+// ========== ABRIR MODAL DE DETALHES DO CLIENTE ==========
 async function abrirModalDetalhesCliente(id) {
-  const c = (await getAll('clientes')).find(x => x.id === id); if(!c) return;
-  document.getElementById('detalhe-nome').innerHTML = c.nome; document.getElementById('detalhe-vencimento').textContent = formatDataBr(c.data_vencimento); document.getElementById('detalhe-telefone').textContent = c.telefone; document.getElementById('detalhe-plano').textContent = c.plano;
-  document.getElementById('btn-detalhe-excluir').onclick = () => { fecharModal('modal-detalhes-cliente'); excluirCliente(c.id); };
+  const clis = await getAll('clientes');
+  const c = clis.find(x => x.id === id);
+  if(!c) return;
+
+  const sts = calcularStatus(c.data_vencimento);
+
+  document.getElementById('detalhe-nome').innerHTML = `<i class="fas fa-user-circle" style="color:var(--primary)"></i> ${c.nome}`;
+  const badge = document.getElementById('detalhe-status');
+  badge.className = `badge-status ${sts.classe}`;
+  badge.textContent = sts.texto;
+
+  document.getElementById('detalhe-vencimento').textContent = formatDataBr(c.data_vencimento);
+  document.getElementById('detalhe-telefone').textContent = c.telefone || 'Não info';
+  document.getElementById('detalhe-plano').textContent = c.plano;
+  document.getElementById('detalhe-valor').textContent = `R$ ${Number(c.valor).toFixed(2)}`;
+  document.getElementById('detalhe-usuario').textContent = c.usuario || 'N/A';
+  document.getElementById('detalhe-senha-painel').textContent = c.senha_painel || 'N/A';
+  document.getElementById('detalhe-app').textContent = c.aplicativo || 'N/A';
+  document.getElementById('detalhe-mac').textContent = c.mac || 'N/A';
+  document.getElementById('detalhe-provedor').textContent = c.provedor || 'N/A';
+
+  // Configura as ações dos botões dentro do modal
+  document.getElementById('btn-detalhe-cobrar').onclick = () => { fecharModal('modal-detalhes-cliente'); abrirModalEnviarMsg(c.id); };
+  document.getElementById('btn-detalhe-editar').onclick = () => { fecharModal('modal-detalhes-cliente'); editarCliente(c.id); };
   document.getElementById('btn-detalhe-renovar').onclick = () => { fecharModal('modal-detalhes-cliente'); abrirModalRenovacao(c.id); };
+  document.getElementById('btn-detalhe-excluir').onclick = () => { fecharModal('modal-detalhes-cliente'); excluirCliente(c.id); };
+
   abrirModal('modal-detalhes-cliente');
 }
 
+// ========== CLIENTES LISTAGEM (FORMATO LINHA COMPACTO COM OLHO) ==========
+async function renderizarClientesListagem(filtro, busca) {
+  let clis = await getAll('clientes');
+  clis = clis.map(c => ({...c, _sts: calcularStatus(c.data_vencimento)}));
+
+  if (filtro === 'ativos') clis = clis.filter(c => c._sts.dias >= 0);
+  else if (filtro === 'breve') clis = clis.filter(c => c._sts.dias > 0 && c._sts.dias <= 5);
+  else if (filtro === 'vencidos') clis = clis.filter(c => c._sts.dias < 0);
+  else if (filtro === 'hoje') clis = clis.filter(c => c._sts.dias === 0);
+  else if (typeof filtro === 'number') clis = clis.filter(c => c._sts.dias === filtro);
+  
+  if (busca) {
+    clis = clis.filter(c => c.nome.toLowerCase().includes(busca) || (c.telefone||'').includes(busca));
+  }
+
+  document.getElementById('lista-clientes').innerHTML = clis.map(c => {
+    let strDias = '';
+    let colorDias = 'var(--primary)';
+    
+    if(c._sts.dias === 0) { strDias = 'Vence hoje'; colorDias = 'var(--warning)'; }
+    else if(c._sts.dias > 0) { strDias = `Faltam ${c._sts.dias}d`; }
+    else { strDias = `Vencido há ${c._sts.dias * -1}d`; colorDias = 'var(--danger)'; }
+
+    return `
+      <div class="cliente-list-item ${c._sts.classe}" onclick="abrirModalDetalhesCliente(${c.id})">
+        <div class="cli-header" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; cursor: pointer; gap: 10px;">
+          
+          <div style="display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0;">
+            <i class="fas fa-user-circle" style="color: var(--primary); font-size: 16px;"></i>
+            <span style="font-size: 14px; font-weight: 700; color: var(--text-dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${c.nome}</span>
+            <span style="font-size: 11px; font-weight: 600; color: ${colorDias}; white-space: nowrap;">${strDias}</span>
+          </div>
+          
+          <div style="display: flex; align-items: center; gap: 12px; flex: none;">
+            <i class="fas fa-eye" style="color: var(--text-muted); font-size: 14px;"></i>
+            <div class="badge-status ${c._sts.classe}">${c._sts.texto}</div>
+          </div>
+
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+async function renderizarClientes() { executarFiltro(); }
+
+// ========== PLANOS CRUD ==========
+async function renderizarPlanosSelect(){
+  const ps = await getAll('planos');
+  const sel = document.getElementById('cli-plano');
+  sel.innerHTML = ps.map(p=>`<option value="${p.nome}" data-valor="${p.valor}">${p.nome} — R$ ${Number(p.valor).toFixed(2)}</option>`).join('');
+  sel.onchange = ()=>{ const opt = sel.selectedOptions[0]; if(opt) document.getElementById('cli-valor').value = opt.dataset.valor; };
+  if(ps.length > 0) sel.onchange();
+}
+async function renderizarPlanos(){
+  const ps = await getAll('planos');
+  document.getElementById('lista-planos').innerHTML = ps.map(p=>`
+    <div style="display:flex; justify-content:space-between; align-items:center; padding:12px; border:1px solid var(--border); border-radius:10px; background:var(--bg-input);">
+      <div><strong style="font-size:14px; color:var(--text-dark);">${p.nome}</strong><br><small style="color:var(--text-muted)">R$ ${Number(p.valor).toFixed(2)} — ${p.dias} dias</small></div>
+      <button class="btn-action trash" style="width:36px; padding:6px;" onclick="excluirPlano(${p.id})"><i class="fas fa-trash-alt"></i></button>
+    </div>
+  `).join('');
+}
+function abrirModalPlano(){ document.getElementById('plano-id').value=''; document.getElementById('plano-nome').value=''; document.getElementById('plano-valor').value=''; document.getElementById('plano-dias').value='30'; abrirModal('modal-plano'); }
+async function salvarPlano(){
+  const p = {nome: document.getElementById('plano-nome').value, valor: Number(document.getElementById('plano-valor').value), dias: Number(document.getElementById('plano-dias').value)};
+  if(document.getElementById('plano-id').value) p.id = Number(document.getElementById('plano-id').value);
+  await put('planos', p); fecharModal('modal-plano'); mostrarToast('✅ Plano Salvo!'); renderizarPlanos(); renderizarPlanosSelect(); renderizarDashboard();
+}
+async function excluirPlano(id){ if(confirm('Excluir plano?')){ await del('planos',id); renderizarPlanos(); } }
+
+// ========== CLIENTES CRUD ==========
+function abrirModalCliente(){ 
+  document.getElementById('modal-cliente-titulo').textContent='Cadastrar Cliente'; 
+  document.getElementById('cli-id').value=''; 
+  document.getElementById('cli-nome').value=''; 
+  document.getElementById('cli-telefone').value=''; 
+  document.getElementById('cli-usuario').value=''; 
+  document.getElementById('cli-senha-painel').value=''; 
+  document.getElementById('cli-provedor').value=''; 
+  document.getElementById('cli-mac').value=''; 
+  document.getElementById('cli-senha').value=''; 
+  document.getElementById('cli-app').value=''; 
+  document.getElementById('cli-vencimento').value=''; 
+  abrirModal('modal-cliente'); 
+}
+
+async function salvarCliente(){
+  const idStr = document.getElementById('cli-id').value;
+  const c = {
+    nome: document.getElementById('cli-nome').value, 
+    telefone: document.getElementById('cli-telefone').value, 
+    usuario: document.getElementById('cli-usuario').value,
+    senha_painel: document.getElementById('cli-senha-painel').value,
+    provedor: document.getElementById('cli-provedor').value,
+    mac: document.getElementById('cli-mac').value, 
+    senha: document.getElementById('cli-senha').value,
+    aplicativo: document.getElementById('cli-app').value,
+    plano: document.getElementById('cli-plano').value, 
+    valor: Number(document.getElementById('cli-valor').value), 
+    data_vencimento: document.getElementById('cli-vencimento').value, 
+    status: 'Ativo'
+  };
+  
+  if(!c.nome || !c.data_vencimento) return mostrarToast('Preencha os campos obrigatórios (Nome e Data)!');
+  if(idStr) c.id = Number(idStr);
+  
+  try { await put('clientes', c); } catch { return mostrarToast('Erro ao salvar. Verifique os dados!'); }
+  fecharModal('modal-cliente'); mostrarToast('✅ Cliente Salvo!'); renderizarClientes(); renderizarDashboard(); await recalcularNotificacoesGlobal();
+}
+
+async function editarCliente(id){
+  const c = (await getAll('clientes')).find(x=>x.id===id); if(!c) return;
+  document.getElementById('modal-cliente-titulo').textContent='Editar Cliente';
+  document.getElementById('cli-id').value=c.id; 
+  document.getElementById('cli-nome').value=c.nome; 
+  document.getElementById('cli-telefone').value=c.telefone || ''; 
+  document.getElementById('cli-usuario').value=c.usuario || ''; 
+  document.getElementById('cli-senha-painel').value=c.senha_painel || ''; 
+  document.getElementById('cli-provedor').value=c.provedor || ''; 
+  document.getElementById('cli-mac').value=c.mac || ''; 
+  document.getElementById('cli-senha').value=c.senha || ''; 
+  document.getElementById('cli-app').value=c.aplicativo || ''; 
+  document.getElementById('cli-plano').value=c.plano; 
+  document.getElementById('cli-valor').value=c.valor; 
+  document.getElementById('cli-vencimento').value=c.data_vencimento;
+  abrirModal('modal-cliente');
+}
+async function excluirCliente(id){ if(confirm('Excluir cliente permanentemente?')) { await del('clientes',id); mostrarToast('🗑️ Excluído!'); renderizarClientes(); renderizarDashboard(); await recalcularNotificacoesGlobal(); } }
+
+// ========== RENOVAÇÃO & WHATSAPP ==========
 async function abrirModalRenovacao(id) {
   const c = (await getAll('clientes')).find(x => x.id === id); if(!c) return;
+  const p = (await getAll('planos')).find(p => p.nome === c.plano);
+  const dias = p ? p.dias : 30;
+
+  let base = new Date(c.data_vencimento + 'T00:00:00');
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  if (base < hoje) base = hoje;
+  const novaData = new Date(base.getFullYear(), base.getMonth() + Math.max(1, Math.round(dias/30)), base.getDate());
+  
   document.getElementById('renov-cli-id').value = id;
+  document.getElementById('renov-info').innerHTML = `O plano de <b>${c.nome}</b> passará a vencer em <br><b style="font-size:18px; color:var(--primary);">${novaData.toLocaleDateString('pt-BR')}</b>.`;
+
+  const tpl = (await getAll('templates')).find(t => t.tipo === 'renovacao');
+  let msg = tpl ? tpl.mensagem : `Olá {nome}! Assinatura renovada até {data}. Obrigado!`;
+  document.getElementById('renov-mensagem').value = msg.replace(/{nome}/g, c.nome).replace(/{data}/g, novaData.toLocaleDateString('pt-BR')).replace(/{valor}/g, c.valor).replace(/{empresa}/g, cfgEmpresa.nome);
   abrirModal('modal-renovacao');
 }
+
 async function confirmarRenovacao(enviarZap) {
-  const c = (await getAll('clientes')).find(x => x.id === Number(document.getElementById('renov-cli-id').value));
-  c.data_vencimento = new Date(new Date().setMonth(new Date().getMonth()+1)).toISOString().split('T')[0];
-  await put('clientes', c); fecharModal('modal-renovacao'); renderizarClientes();
-  sincronizarComServidor();
-}
-
-// ========== PLANOS E TEMPLATES ==========
-async function renderizarPlanosSelect(){ const ps = await getAll('planos'); const sel = document.getElementById('cli-plano'); sel.innerHTML = ps.map(p=>`<option value="${p.nome}" data-valor="${p.valor}">${p.nome}</option>`).join(''); sel.onchange = ()=>{ if(sel.selectedOptions[0]) document.getElementById('cli-valor').value = sel.selectedOptions[0].dataset.valor; }; if(ps.length > 0) sel.onchange(); }
-async function renderizarPlanos(){ const ps = await getAll('planos'); document.getElementById('lista-planos').innerHTML = ps.map(p=>`<div>${p.nome} - R$ ${p.valor} <button onclick="excluirPlano(${p.id})">X</button></div>`).join(''); }
-function abrirModalPlano(){ abrirModal('modal-plano'); }
-async function salvarPlano(){ await put('planos', {nome: document.getElementById('plano-nome').value, valor: document.getElementById('plano-valor').value, dias: document.getElementById('plano-dias').value}); fecharModal('modal-plano'); renderizarPlanos(); renderizarPlanosSelect(); }
-async function excluirPlano(id){ await del('planos',id); renderizarPlanos(); }
-
-async function popularTemplatesPadrao() { if((await getAll('templates')).length === 0) { await put('templates', {nome:'Vence Hoje', tipo:'vencimento_hoje', ativo:true, mensagem:'Olá {nome}! Sua fatura vence hoje.'}); } }
-async function renderizarTemplates() { const ts = await getAll('templates'); document.getElementById('lista-templates').innerHTML = ts.map(t=>`<div>${t.nome} <button onclick="excluirTemplate(${t.id})">X</button></div>`).join(''); }
-function abrirModalTemplate(){ abrirModal('modal-template'); }
-async function salvarTemplate(){ await put('templates', {nome: document.getElementById('tpl-nome').value, tipo: document.getElementById('tpl-tipo').value, mensagem: document.getElementById('tpl-mensagem').value, ativo: true }); fecharModal('modal-template'); renderizarTemplates(); sincronizarComServidor(); }
-async function excluirTemplate(id){ await del('templates',id); renderizarTemplates(); sincronizarComServidor(); }
-
-// ========== CONFIGURAÇÕES GERAIS ==========
-async function carregarConfiguracoes(){ const c = await new Promise(r => tx('config').get(1).onsuccess = e => r(e.target.result || {})); cfgEmpresa = { nome: c.nome_empresa||'', contato: c.contato||'', pix: c.chave_pix||'' }; document.getElementById('header-empresa-nome').textContent = cfgEmpresa.nome || 'Gestor IPTV'; }
-async function salvarConfiguracoes(){ await put('config', {id:1, nome_empresa: document.getElementById('cfg-nome').value, contato: document.getElementById('cfg-contato').value, chave_pix: document.getElementById('cfg-pix').value}); carregarConfiguracoes(); sincronizarComServidor(); mostrarToast('Salvo!'); }
-
-// ========== LÓGICA DO WHATSAPP E CÓDIGO (EVOLUTION API) ==========
-function mudarAbaWhatsapp(aba) {
-  document.getElementById('tab-qr').classList.remove('active'); document.getElementById('tab-codigo').classList.remove('active');
-  document.getElementById('aba-wa-qr').style.display = 'none'; document.getElementById('aba-wa-codigo').style.display = 'none';
-  document.getElementById('tab-' + aba).classList.add('active'); document.getElementById('aba-wa-' + aba).style.display = 'block';
-}
-
-async function checarStatusWhatsApp() {
-  try {
-    const res = await fetch(`${API_EVOLUTION}/instance/connectionState/${NOME_INSTANCIA}`, { headers: { "apikey": API_GLOBAL_KEY } });
-    const data = await res.json();
-    const btn = document.getElementById('btn-status-wa'); const dot = document.getElementById('wa-dot'); const statusText = document.getElementById('wa-status-text'); const btnDesc = document.getElementById('btn-desconectar-wa');
-    
-    if (data.instance?.state === 'open') {
-      btn.style.background = 'rgba(16, 185, 129, 0.2)'; btn.style.color = 'var(--success)'; dot.style.background = 'var(--success)';
-      statusText.innerHTML = '<span style="color:var(--success)">WhatsApp Conectado e Pronto!</span>'; btnDesc.style.display = 'inline-block';
-      document.getElementById('aba-wa-qr').style.display = 'none'; document.getElementById('aba-wa-codigo').style.display = 'none'; document.querySelector('.filter-row').style.display = 'none';
-    } else {
-      btn.style.background = 'rgba(239, 68, 68, 0.2)'; btn.style.color = 'var(--danger)'; dot.style.background = 'var(--danger)';
-      statusText.innerHTML = '<span style="color:var(--danger)">Desconectado</span>'; btnDesc.style.display = 'none';
-      document.querySelector('.filter-row').style.display = 'flex'; mudarAbaWhatsapp('qr');
-    }
-  } catch(e) { console.log("Evolution API não configurada ainda."); }
-}
-
-async function abrirModalWhatsApp() {
-  abrirModal('modal-whatsapp-connect'); checarStatusWhatsApp();
-  document.getElementById('wa-loading').style.display = 'block'; document.getElementById('wa-qr-img').style.display = 'none';
+  const id = Number(document.getElementById('renov-cli-id').value);
+  const c = (await getAll('clientes')).find(x => x.id === id);
+  const p = (await getAll('planos')).find(p => p.nome === c.plano);
   
-  // Sempre tenta puxar o QR Code ao abrir
-  try {
-    const res = await fetch(`${API_EVOLUTION}/instance/connect/${NOME_INSTANCIA}`, { headers: { "apikey": API_GLOBAL_KEY } });
-    const data = await res.json();
-    if (data.base64) {
-      document.getElementById('wa-loading').style.display = 'none';
-      document.getElementById('wa-qr-img').src = data.base64; document.getElementById('wa-qr-img').style.display = 'block';
-    }
-  } catch(e) { document.getElementById('wa-loading').style.display = 'none'; document.getElementById('wa-status-text').innerHTML = "Servidor offline."; }
+  let base = new Date(c.data_vencimento + 'T00:00:00');
+  if (base < new Date()) base = new Date();
+  const novaData = new Date(base.getFullYear(), base.getMonth() + Math.max(1, Math.round((p?p.dias:30)/30)), base.getDate());
+  
+  c.data_vencimento = novaData.toISOString().split('T')[0];
+  await put('clientes', c);
+  
+  fecharModal('modal-renovacao'); 
+  await renderizarClientes(); 
+  await renderizarDashboard(); 
+  await recalcularNotificacoesGlobal();
+  mostrarToast('✅ Plano Renovado com sucesso!');
+  
+  if(enviarZap) abrirWhatsApp(c.telefone, document.getElementById('renov-mensagem').value);
 }
 
-async function gerarCodigoWhatsApp() {
-  const numeroBruto = document.getElementById('wa-numero-telefone').value.replace(/\D/g, '');
-  if (numeroBruto.length < 12) return mostrarToast('Digite o número com o 55 e o DDD!');
-  
-  const btnGerar = document.getElementById('btn-gerar-codigo');
-  btnGerar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Solicitando...';
-  btnGerar.disabled = true;
+async function abrirModalEnviarMsg(idCli) {
+  const c = (await getAll('clientes')).find(x => x.id === idCli); if(!c) return;
+  document.getElementById('msg-cli-id').value = idCli;
+  const ts = await getAll('templates');
+  document.getElementById('msg-template-select').innerHTML = ts.map(t => `<option value="${t.id}">${t.nome}</option>`).join('');
+  if(ts.length > 0) atualizarPreviewMensagem();
+  abrirModal('modal-enviar-msg');
+}
 
-  try {
-    // A API puxa o QR Code novamente, mas passando o 'number' na URL gera o código
-    const res = await fetch(`${API_EVOLUTION}/instance/connect/${NOME_INSTANCIA}?number=${numeroBruto}`, { 
-      headers: { "apikey": API_GLOBAL_KEY } 
-    });
-    const data = await res.json();
-    
-    if (data.pairingCode || data.code) {
-      document.getElementById('wa-codigo-container').style.display = 'block';
-      document.getElementById('wa-codigo-texto').textContent = data.pairingCode || data.code;
-      document.getElementById('wa-status-text').innerHTML = "<span style='color:var(--primary)'>Código gerado! Digite ele no seu WhatsApp.</span>";
-    } else {
-      mostrarToast('Não foi possível gerar. Tente QR Code.');
-    }
-  } catch(e) { 
-    mostrarToast('Erro de comunicação com o servidor.'); 
+async function atualizarPreviewMensagem() {
+  const c = (await getAll('clientes')).find(x => x.id === Number(document.getElementById('msg-cli-id').value));
+  const t = (await getAll('templates')).find(x => x.id === Number(document.getElementById('msg-template-select').value));
+  if(!c || !t) return;
+  document.getElementById('msg-preview').value = t.mensagem.replace(/{nome}/g, c.nome).replace(/{data}/g, formatDataBr(c.data_vencimento)).replace(/{valor}/g, c.valor).replace(/{empresa}/g, cfgEmpresa.nome);
+}
+
+function dispararWhatsAppManual() {
+  getAll('clientes').then(clis => {
+    const c = clis.find(x => x.id === Number(document.getElementById('msg-cli-id').value));
+    if(c) { abrirWhatsApp(c.telefone, document.getElementById('msg-preview').value); fecharModal('modal-enviar-msg'); }
+  });
+}
+
+// ========== TEMPLATES E COBRANÇAS ==========
+async function popularTemplatesPadrao() {
+  if((await getAll('templates')).length === 0) {
+    await put('templates', {nome:'Vence Hoje', tipo:'vencimento_hoje', ativo:true, mensagem:'Olá {nome}! Sua assinatura VENCE HOJE ({data}). Valor: R$ {valor}. Regularize para não perder o acesso!'});
+    await put('templates', {nome:'Lembrete 2 Dias', tipo:'lembrete_2', ativo:false, mensagem:'Olá {nome}! Faltam 2 dias para sua assinatura vencer.'});
+    await put('templates', {nome:'Aviso de Vencido', tipo:'vencido', ativo:true, mensagem:'Olá {nome}! Notamos que sua assinatura venceu em {data}. Regularize para reativar seu acesso.'});
+    await put('templates', {nome:'Renovação', tipo:'renovacao', ativo:true, mensagem:'Obrigado {nome}! Plano renovado até {data}.'});
+  }
+}
+async function renderizarTemplates() {
+  const ts = await getAll('templates');
+  document.getElementById('lista-templates').innerHTML = ts.map(t=>`
+    <div style="border:1px solid var(--border); border-radius:12px; padding:16px; background:var(--bg-input);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <strong style="font-size:14px; color:var(--text-dark)">${t.nome}</strong>
+        ${t.tipo !== 'avulso' && t.tipo !== 'renovacao' ? `<label class="switch"><input type="checkbox" ${t.ativo?'checked':''} onchange="toggleTemplate(${t.id}, this.checked)"><span class="slider"></span></label>` : '<span style="font-size:11px; color:var(--text-muted)">Manual</span>'}
+      </div>
+      <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px; line-height:1.4;">${t.mensagem.substring(0,60)}...</p>
+      <div style="display:flex; gap:8px;">
+        <button class="btn-action" style="flex:1" onclick="editarTemplate(${t.id})">Editar</button>
+        <button class="btn-action trash" onclick="excluirTemplate(${t.id})"><i class="fas fa-trash-alt"></i></button>
+      </div>
+    </div>
+  `).join('');
+}
+window.toggleTemplate = async function(id, ativo) {
+  const t = (await getAll('templates')).find(x=>x.id===id);
+  if(t) { t.ativo = ativo; await put('templates', t); await renderizarDashboard(); await recalcularNotificacoesGlobal(); }
+}
+function abrirModalTemplate(){ document.getElementById('tpl-id').value=''; document.getElementById('tpl-nome').value=''; document.getElementById('tpl-mensagem').value=''; abrirModal('modal-template'); }
+async function editarTemplate(id){ const t = (await getAll('templates')).find(x=>x.id===id); document.getElementById('tpl-id').value=t.id; document.getElementById('tpl-nome').value=t.nome; document.getElementById('tpl-tipo').value=t.tipo||'avulso'; document.getElementById('tpl-mensagem').value=t.mensagem; abrirModal('modal-template'); }
+async function salvarTemplate(){
+  const t = { nome: document.getElementById('tpl-nome').value, tipo: document.getElementById('tpl-tipo').value, mensagem: document.getElementById('tpl-mensagem').value, ativo: true };
+  if(document.getElementById('tpl-id').value) { t.id = Number(document.getElementById('tpl-id').value); t.ativo = (await getAll('templates')).find(x=>x.id===t.id).ativo; }
+  await put('templates', t); fecharModal('modal-template'); mostrarToast('✅ Regra Salva!'); renderizarTemplates(); renderizarDashboard(); await recalcularNotificacoesGlobal();
+}
+async function excluirTemplate(id){ if(confirm('Excluir regra?')){ await del('templates',id); renderizarTemplates(); renderizarDashboard(); } }
+
+// ========== MOTOR DE NOTIFICAÇÕES ==========
+async function carregarNotifConfig(){
+  const c = await new Promise(r => tx('notif_config').get(1).onsuccess = e => r(e.target.result || {horarios:['09:00','13:00','18:00']}));
+  cfgNotif.horarios = c.horarios || ['09:00','13:00','18:00'];
+  document.getElementById('notif-hr-1').value = cfgNotif.horarios[0]||''; document.getElementById('notif-hr-2').value = cfgNotif.horarios[1]||''; document.getElementById('notif-hr-3').value = cfgNotif.horarios[2]||'';
+}
+
+async function salvarNotifConfig(){
+  cfgNotif.horarios = [document.getElementById('notif-hr-1').value, document.getElementById('notif-hr-2').value, document.getElementById('notif-hr-3').value];
+  await put('notif_config', {id:1, horarios:cfgNotif.horarios}); await recalcularNotificacoesGlobal(); mostrarToast('✅ Horários Atualizados!');
+}
+
+async function solicitarPermissaoNotif() {
+  if ('Notification' in window) { 
+    const p = await Notification.requestPermission(); 
+    if(p === 'granted') mostrarToast('Notificações Web ativadas!'); 
   }
   
-  btnGerar.innerHTML = '<i class="fas fa-key"></i> Gerar Código';
-  btnGerar.disabled = false;
+  if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications) { 
+    const LocalNotifications = window.Capacitor.Plugins.LocalNotifications;
+    await LocalNotifications.requestPermissions(); 
+    
+    try {
+      await LocalNotifications.createChannel({ 
+        id: 'alertas_gestor', 
+        name: 'Alertas do Gestor', 
+        description: 'Notificações de vencimento de clientes',
+        importance: 5, 
+        visibility: 1, 
+        vibration: true
+      });
+      mostrarToast('✅ Alertas Mobile ativados no Android!'); 
+    } catch(e) { console.log(e); }
+  }
 }
 
-async function desconectarWhatsApp() {
-  if(!confirm("Desconectar o WhatsApp?")) return;
-  await fetch(`${API_EVOLUTION}/instance/logout/${NOME_INSTANCIA}`, { method: 'DELETE', headers: { "apikey": API_GLOBAL_KEY } });
-  checarStatusWhatsApp(); abrirModalWhatsApp();
+async function dispararNotificacao() {
+  if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications) {
+      await window.Capacitor.Plugins.LocalNotifications.schedule({
+        notifications: [{ 
+          id: 999, 
+          title: '📆 Teste de Sistema', 
+          body: 'As notificações nativas do Android estão funcionando!', 
+          schedule: { at: new Date(Date.now() + 1500), allowWhileIdle: true }, 
+          channelId: 'alertas_gestor' 
+        }]
+      });
+      mostrarToast('🔔 Alerta enviado! Aguarde 1 segundo...');
+  } else {
+      mostrarToast('❌ Capacitor inativo. Gere o APK para testar.');
+  }
 }
 
-setInterval(checarStatusWhatsApp, 15000); // Checa a cada 15 seg
+async function recalcularNotificacoesGlobal() {
+  if (!window.Capacitor || !window.Capacitor.Plugins || !window.Capacitor.Plugins.LocalNotifications) return;
+  const LocalNotifications = window.Capacitor.Plugins.LocalNotifications;
+
+  try {
+      const pending = await LocalNotifications.getPending();
+      if(pending.notifications.length > 0) await LocalNotifications.cancel(pending);
+  } catch(e) {}
+
+  const clis = await getAll('clientes');
+  const ativos = clis.filter(c => c.status === 'Ativo');
+  
+  const clientesPorData = {};
+  ativos.forEach(c => {
+      if(!clientesPorData[c.data_vencimento]) clientesPorData[c.data_vencimento] = [];
+      clientesPorData[c.data_vencimento].push(c);
+  });
+
+  const horariosValidos = cfgNotif.horarios.filter(h => h && h.trim() !== '');
+  const templates = await getAll('templates');
+  
+  const diasParaAvisar = [];
+  if (templates.find(t => t.tipo === 'vencimento_hoje' && t.ativo !== false)) diasParaAvisar.push(0);
+  if (templates.find(t => t.tipo === 'lembrete_1' && t.ativo !== false)) diasParaAvisar.push(1);
+  if (templates.find(t => t.tipo === 'lembrete_2' && t.ativo !== false)) diasParaAvisar.push(2);
+  if (templates.find(t => t.tipo === 'lembrete_3' && t.ativo !== false)) diasParaAvisar.push(3);
+  if (templates.find(t => t.tipo === 'lembrete_4' && t.ativo !== false)) diasParaAvisar.push(4);
+  if (templates.find(t => t.tipo === 'lembrete_5' && t.ativo !== false)) diasParaAvisar.push(5);
+
+  let idAlarme = 1;
+  const novaAgenda = [];
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  const dataLimiteFuturo = new Date(); dataLimiteFuturo.setDate(dataLimiteFuturo.getDate() + 40);
+
+  for (const dataStr in clientesPorData) {
+      const listaDoDia = clientesPorData[dataStr];
+      const dataVencimento = new Date(dataStr + 'T00:00:00');
+      
+      if (dataVencimento < hoje || dataVencimento > dataLimiteFuturo) continue;
+
+      const nomes = listaDoDia.map(c => c.nome);
+
+      for (const horaEscolhida of horariosValidos) {
+          const [h, m] = horaEscolhida.split(':').map(Number);
+          
+          for (const antecedencia of diasParaAvisar) {
+              const toque = new Date(dataVencimento);
+              toque.setDate(toque.getDate() - antecedencia);
+              toque.setHours(h, m, 0, 0);
+
+              if (toque > new Date()) {
+                  let tTitulo, tCorpo;
+                  if (antecedencia === 0) {
+                      tTitulo = listaDoDia.length === 1 ? '🔴 Cliente Vencendo HOJE!' : `🔴 ${listaDoDia.length} Clientes Vencendo HOJE!`;
+                      tCorpo = listaDoDia.length === 1 ? `O plano de ${nomes[0]} vence hoje!` : `Vencem hoje: ${nomes.slice(0,3).join(', ')}...`;
+                  } else {
+                      tTitulo = listaDoDia.length === 1 ? `🟡 Vencimento em ${antecedencia} dia(s)` : `🟡 ${listaDoDia.length} Clientes vencem em ${antecedencia} dia(s)!`;
+                      tCorpo = listaDoDia.length === 1 ? `Lembrete: O plano de ${nomes[0]} vencerá em breve.` : `Prepare as cobranças: ${nomes.slice(0,3).join(', ')}...`;
+                  }
+
+                  novaAgenda.push({
+                      id: idAlarme++,
+                      title: tTitulo,
+                      body: tCorpo,
+                      schedule: { at: toque, allowWhileIdle: true },
+                      channelId: 'alertas_gestor'
+                  });
+              }
+          }
+      }
+  }
+
+  if (novaAgenda.length > 0) {
+      try { await LocalNotifications.schedule({ notifications: novaAgenda }); } catch(e) {}
+  }
+}
+
+// ========== BACKUP ==========
+async function exportarBackup(){
+  const dados = { config: cfgEmpresa, notif: cfgNotif, clientes: await getAll('clientes'), planos: await getAll('planos'), templates: await getAll('templates') };
+  const str = JSON.stringify(dados, null, 2);
+  const name = `Backup_IPTV_${new Date().toISOString().slice(0,10)}.json`;
+  
+  if (navigator.share) {
+    try {
+      const file = new File([str], name, {type: "application/json"});
+      await navigator.share({ title: 'Backup IPTV', files: [file] });
+      return mostrarToast('✅ Backup compartilhado!');
+    } catch(e) {}
+  }
+  
+  const b = new Blob([str], {type:'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = name; a.click();
+  mostrarToast('✅ Backup baixado!');
+}
+async function importarBackup(e){
+  const f = e.target.files?.[0]; if(!f || !confirm('Atenção: Os dados atuais serão substituídos. Continuar?')) return;
+  try {
+    const d = JSON.parse(await f.text());
+    if(d.config) await put('config', {id:1, nome_empresa:d.config.nome, contato:d.config.contato, chave_pix:d.config.pix});
+    if(d.planos) for(const p of d.planos) { delete p.id; await put('planos', p); }
+    if(d.templates) for(const t of d.templates) { delete t.id; await put('templates', t); }
+    if(d.clientes) for(const c of d.clientes) { delete c.id; await put('clientes', c); }
+    mostrarToast('✅ Restaurado!'); setTimeout(()=> location.reload(), 1500);
+  } catch(err){ mostrarToast('❌ Erro ao importar!'); }
+}
 </script>
 </body>
 </html>

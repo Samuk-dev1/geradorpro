@@ -44,9 +44,22 @@
             z-index: 10;
         }
 
-        .header-title h1 { font-size: 20px; font-weight: 700; }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .menu-icon {
+            font-size: 28px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .menu-icon:active { transform: scale(0.9); opacity: 0.7; }
+
+        .header-title h1 { font-size: 18px; font-weight: 700; line-height: 1; }
         .header-title p { 
-            font-size: 13px; 
+            font-size: 12px; 
             color: var(--text-secondary); 
             cursor: pointer; 
             display: flex;
@@ -54,7 +67,6 @@
             gap: 4px;
             margin-top: 4px;
         }
-        
         .header-title p:active { opacity: 0.7; }
 
         .notification-btn {
@@ -73,209 +85,115 @@
         }
         .notification-btn:active { transform: scale(0.9); }
 
-        /* SEARCH BAR */
-        .search-container { padding: 10px 20px; }
-        .search-box {
-            display: flex;
-            align-items: center;
-            background: #e9ecef;
-            padding: 12px 15px;
-            border-radius: 12px;
-            color: var(--text-secondary);
+        /* MENU LATERAL (SIDEBAR) */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 200;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s;
         }
-        .search-box input {
-            border: none;
-            background: transparent;
-            margin-left: 10px;
-            width: 100%;
-            font-size: 14px;
-            outline: none;
-        }
-
-        /* CATEGORIES */
-        .categories {
-            display: flex;
-            gap: 15px;
-            padding: 10px 20px;
-            overflow-x: auto;
-            scrollbar-width: none; 
-        }
-        .categories::-webkit-scrollbar { display: none; }
-        
-        .category-item {
+        .sidebar {
+            position: fixed;
+            top: 0; left: -280px; width: 280px; height: 100%;
+            background: var(--surface);
+            z-index: 201;
+            box-shadow: 2px 0 15px rgba(0,0,0,0.1);
+            transition: left 0.3s ease;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            min-width: 70px;
-            cursor: pointer;
         }
-        .category-item:active { opacity: 0.7; }
-        .category-icon {
-            width: 60px;
-            height: 60px;
-            background: var(--surface);
-            border-radius: 15px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 28px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            margin-bottom: 8px;
-        }
-        .category-item span { font-size: 12px; font-weight: 500; }
-
-        /* DESTAQUES (Horizontal Scroll) */
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 20px 10px;
-        }
-        .section-header h2 { font-size: 18px; font-weight: 700; }
-        .section-header span { font-size: 13px; color: var(--text-secondary); font-weight: 500; }
-
-        .highlights {
-            display: flex;
-            gap: 15px;
-            padding: 0 20px 10px;
-            overflow-x: auto;
-            scrollbar-width: none;
-        }
-        .highlights::-webkit-scrollbar { display: none; }
-
-        .highlight-card {
-            min-width: 240px;
-            background: var(--surface);
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            position: relative;
-        }
-        .highlight-card img {
-            width: 100%;
-            height: 140px;
-            object-fit: cover;
-        }
-        .badge {
-            position: absolute;
-            top: 10px;
-            left: 10px;
+        .sidebar.open { left: 0; }
+        .sidebar-overlay.open { display: block; opacity: 1; }
+        
+        .sidebar-header {
+            padding: 30px 20px;
             background: var(--primary);
             color: white;
-            padding: 4px 10px;
-            border-radius: 8px;
-            font-size: 11px;
-            font-weight: 600;
         }
+        .sidebar-header h2 { font-size: 18px; margin-bottom: 5px; }
+        .sidebar-header p { font-size: 13px; opacity: 0.8; }
+        
+        .sidebar-menu { list-style: none; padding: 20px 0; }
+        .sidebar-menu li {
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+        .sidebar-menu li i { font-size: 22px; color: var(--text-secondary); }
+        .sidebar-menu li:active { background: #f1f3f5; }
+
+        /* GESTÃO DE TELAS (VIEWS) */
+        .app-view { display: none; animation: fadeIn 0.3s ease; }
+        .app-view.active-view { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* SEARCH BAR */
+        .search-container { padding: 10px 20px; }
+        .search-box { display: flex; align-items: center; background: #e9ecef; padding: 12px 15px; border-radius: 12px; color: var(--text-secondary); }
+        .search-box input { border: none; background: transparent; margin-left: 10px; width: 100%; font-size: 14px; outline: none; }
+
+        /* CATEGORIES */
+        .categories { display: flex; gap: 15px; padding: 10px 20px; overflow-x: auto; scrollbar-width: none; }
+        .categories::-webkit-scrollbar { display: none; }
+        .category-item { display: flex; flex-direction: column; align-items: center; min-width: 70px; cursor: pointer; }
+        .category-item:active { opacity: 0.7; }
+        .category-icon { width: 60px; height: 60px; background: var(--surface); border-radius: 15px; display: flex; justify-content: center; align-items: center; font-size: 28px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 8px; }
+        .category-item span { font-size: 12px; font-weight: 500; }
+
+        /* DESTAQUES & RESTAURANTES */
+        .section-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 20px 10px; }
+        .section-header h2 { font-size: 18px; font-weight: 700; }
+        .section-header span { font-size: 13px; color: var(--text-secondary); font-weight: 500; cursor: pointer; }
+
+        .highlights { display: flex; gap: 15px; padding: 0 20px 10px; overflow-x: auto; scrollbar-width: none; }
+        .highlights::-webkit-scrollbar { display: none; }
+        .highlight-card { min-width: 240px; background: var(--surface); border-radius: 15px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: relative; }
+        .highlight-card img { width: 100%; height: 140px; object-fit: cover; }
+        .badge { position: absolute; top: 10px; left: 10px; background: var(--primary); color: white; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 600; }
         .card-info { padding: 12px; }
         .card-info h3 { font-size: 16px; margin-bottom: 4px; }
         .card-info p { font-size: 12px; color: var(--text-secondary); margin-bottom: 12px; }
         .card-actions { display: flex; justify-content: space-between; align-items: center; }
         .rating { color: var(--warning); font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 4px;}
-        
         .action-btns { display: flex; gap: 15px; }
-        .action-btn { 
-            background: #f1f3f5;
-            border-radius: 50%;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: var(--text-primary);
-            cursor: pointer;
-            transition: 0.2s;
-        }
+        .action-btn { background: #f1f3f5; border-radius: 50%; width: 32px; height: 32px; display: flex; justify-content: center; align-items: center; color: var(--text-primary); cursor: pointer; transition: 0.2s; }
         .action-btn:active { background: #dee2e6; transform: scale(0.9); }
-        .action-btn i { font-size: 18px; }
-
-        /* LISTA DE RESTAURANTES */
-        .restaurant-list {
-            padding: 0 20px 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        .restaurant-card {
-            display: flex;
-            align-items: center;
-            background: var(--surface);
-            padding: 12px;
-            border-radius: 15px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            gap: 15px;
-        }
-        .restaurant-card img {
-            width: 65px;
-            height: 65px;
-            border-radius: 12px;
-            object-fit: cover;
-        }
+        
+        .restaurant-list { padding: 0 20px 20px; display: flex; flex-direction: column; gap: 15px; }
+        .restaurant-card { display: flex; align-items: center; background: var(--surface); padding: 12px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); gap: 15px; cursor: pointer;}
+        .restaurant-card:active { transform: scale(0.98); }
+        .restaurant-card img { width: 65px; height: 65px; border-radius: 12px; object-fit: cover; }
         .rest-info { flex: 1; }
         .rest-info h3 { font-size: 15px; margin-bottom: 4px; }
         .rest-info p { font-size: 12px; color: var(--text-secondary); margin-bottom: 2px;}
         .rest-rating { font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 4px; }
 
+        /* TELAS SECUNDÁRIAS (Pedidos, Favoritos, Perfil) */
+        .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; text-align: center; color: var(--text-secondary); }
+        .empty-state i { font-size: 60px; margin-bottom: 15px; color: #ced4da; }
+        .empty-state h3 { color: var(--text-primary); margin-bottom: 5px; font-size: 18px; }
+
         /* BOTTOM NAV */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: var(--surface);
-            display: flex;
-            justify-content: space-around;
-            padding: 12px 0 20px;
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
-            border-top-left-radius: 25px;
-            border-top-right-radius: 25px;
-            z-index: 100;
-        }
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: var(--text-secondary);
-            text-decoration: none;
-            cursor: pointer;
-            transition: color 0.3s;
-            width: 25%;
-        }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--surface); display: flex; justify-content: space-around; padding: 12px 0 20px; box-shadow: 0 -5px 20px rgba(0,0,0,0.05); border-top-left-radius: 25px; border-top-right-radius: 25px; z-index: 100; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-secondary); text-decoration: none; cursor: pointer; transition: color 0.3s; width: 25%; }
         .nav-item.active { color: var(--primary); }
         .nav-item i { font-size: 24px; margin-bottom: 4px; transition: transform 0.2s; }
         .nav-item.active i { transform: translateY(-3px); font-weight: fill; }
         .nav-item span { font-size: 11px; font-weight: 600; }
 
-        /* TOAST NOTIFICATION (Substituto visual do Alert) */
-        #toast {
-            visibility: hidden;
-            min-width: 250px;
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            border-radius: 10px;
-            padding: 16px;
-            position: fixed;
-            z-index: 1000;
-            left: 50%;
-            bottom: 100px;
-            transform: translateX(-50%);
-            font-size: 14px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            opacity: 0;
-            transition: opacity 0.3s, bottom 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        #toast.show {
-            visibility: visible;
-            opacity: 1;
-            bottom: 120px;
-        }
+        /* TOAST */
+        #toast { visibility: hidden; min-width: 250px; background-color: #333; color: #fff; text-align: center; border-radius: 10px; padding: 16px; position: fixed; z-index: 1000; left: 50%; bottom: 100px; transform: translateX(-50%); font-size: 14px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); opacity: 0; transition: opacity 0.3s, bottom 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        #toast.show { visibility: visible; opacity: 1; bottom: 120px; }
         #toast i { font-size: 20px; color: var(--success); }
-
     </style>
 </head>
 <body>
@@ -283,147 +201,226 @@
     <!-- TOAST (Notificação Visual) -->
     <div id="toast"><i class="ph-fill ph-check-circle"></i> <span id="toast-msg">Mensagem</span></div>
 
+    <!-- MENU LATERAL (SIDEBAR) -->
+    <div class="sidebar-overlay" onclick="toggleMenu()"></div>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>Samuel Dev</h2>
+            <p>samuel@email.com</p>
+        </div>
+        <ul class="sidebar-menu">
+            <li onclick="toggleMenu(); showToast('Acessando Endereços...')"><i class="ph ph-map-pin"></i> Meus Endereços</li>
+            <li onclick="toggleMenu(); showToast('Acessando Cupons...')"><i class="ph ph-ticket"></i> Cupons de Desconto</li>
+            <li onclick="toggleMenu(); showToast('Acessando Pagamentos...')"><i class="ph ph-credit-card"></i> Formas de Pagamento</li>
+            <li onclick="toggleMenu(); showToast('Acessando Configurações...')"><i class="ph ph-gear"></i> Configurações</li>
+            <li onclick="toggleMenu(); showToast('Saindo da conta...')"><i class="ph ph-sign-out" style="color: #dc3545;"></i> Sair</li>
+        </ul>
+    </div>
+
     <!-- CABEÇALHO -->
     <header>
-        <div class="header-title">
-            <h1><i class="ph-bold ph-list"></i> Delivery</h1>
-            <p onclick="obterLocalizacaoGPS()"><i class="ph-fill ph-map-pin" style="color:var(--primary)"></i> <span id="localizacao-texto">Obter localização atual...</span></p>
+        <div class="header-left">
+            <!-- BOTÃO DOS TRÊS TRACINHOS -->
+            <i class="ph-bold ph-list menu-icon" onclick="toggleMenu()"></i>
+            <div class="header-title">
+                <h1>Delivery</h1>
+                <p onclick="obterLocalizacaoGPS()"><i class="ph-fill ph-map-pin" style="color:var(--primary)"></i> <span id="localizacao-texto">Obter localização atual...</span></p>
+            </div>
         </div>
         <button class="notification-btn" onclick="dispararNotificacaoNativa()">
             <i class="ph-fill ph-bell-ringing" style="color:var(--primary)"></i>
         </button>
     </header>
 
-    <!-- BARRA DE PESQUISA -->
-    <div class="search-container">
-        <div class="search-box">
-            <i class="ph-bold ph-magnifying-glass"></i>
-            <input type="text" placeholder="Buscar pratos, restaurantes...">
-        </div>
-    </div>
 
-    <!-- CATEGORIAS -->
-    <div class="categories">
-        <div class="category-item" onclick="showToast('Categoria: Hambúrguer')">
-            <div class="category-icon">🍔</div>
-            <span>Hambúrguer</span>
+    <!-- ===================================== -->
+    <!-- TELA 1: INÍCIO (Home)                 -->
+    <!-- ===================================== -->
+    <div id="view-inicio" class="app-view active-view">
+        <div class="search-container">
+            <div class="search-box">
+                <i class="ph-bold ph-magnifying-glass"></i>
+                <input type="text" placeholder="Buscar pratos, restaurantes...">
+            </div>
         </div>
-        <div class="category-item" onclick="showToast('Categoria: Pizza')">
-            <div class="category-icon">🍕</div>
-            <span>Pizza</span>
-        </div>
-        <div class="category-item" onclick="showToast('Categoria: Japonesa')">
-            <div class="category-icon">🍣</div>
-            <span>Japonesa</span>
-        </div>
-        <div class="category-item" onclick="showToast('Categoria: Saudável')">
-            <div class="category-icon">🥗</div>
-            <span>Saudável</span>
-        </div>
-    </div>
 
-    <!-- DESTAQUES -->
-    <div class="section-header">
-        <h2>Destaques</h2>
-        <span>Ver todos</span>
-    </div>
+        <div class="categories">
+            <div class="category-item" onclick="showToast('Abrindo: Hambúrguer')">
+                <div class="category-icon">🍔</div><span>Hambúrguer</span>
+            </div>
+            <div class="category-item" onclick="showToast('Abrindo: Pizza')">
+                <div class="category-icon">🍕</div><span>Pizza</span>
+            </div>
+            <div class="category-item" onclick="showToast('Abrindo: Japonesa')">
+                <div class="category-icon">🍣</div><span>Japonesa</span>
+            </div>
+            <div class="category-item" onclick="showToast('Abrindo: Saudável')">
+                <div class="category-icon">🥗</div><span>Saudável</span>
+            </div>
+        </div>
 
-    <div class="highlights">
-        <!-- CARD 1 -->
-        <div class="highlight-card">
-            <div class="badge">Mais pedido</div>
-            <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Burger">
-            <div class="card-info">
-                <h3>Smash Burger</h3>
-                <p>Suculento e delicioso</p>
-                <div class="card-actions">
-                    <div class="rating"><i class="ph-fill ph-star"></i> 4.8</div>
-                    <div class="action-btns">
-                        <div class="action-btn" onclick="compartilharApp('Smash Burger', 'Dá uma olhada nesse lanche delicioso!')">
-                            <i class="ph-bold ph-share-network"></i>
+        <div class="section-header">
+            <h2>Destaques</h2><span onclick="showToast('Ver todos os destaques')">Ver todos</span>
+        </div>
+
+        <div class="highlights">
+            <!-- Card Smash Burger -->
+            <div class="highlight-card">
+                <div class="badge">Mais pedido</div>
+                <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Burger">
+                <div class="card-info">
+                    <h3>Smash Burger</h3><p>Suculento e delicioso</p>
+                    <div class="card-actions">
+                        <div class="rating"><i class="ph-fill ph-star"></i> 4.8</div>
+                        <div class="action-btns">
+                            <div class="action-btn" onclick="compartilharApp('Smash Burger', 'Olha esse lanche!')"><i class="ph-bold ph-share-network"></i></div>
+                            <div class="action-btn" onclick="copiarTexto('Smash Burger - Peça já!')"><i class="ph-bold ph-copy"></i></div>
                         </div>
-                        <div class="action-btn" onclick="copiarTexto('Smash Burger - Peça já!')">
-                            <i class="ph-bold ph-copy"></i>
+                    </div>
+                </div>
+            </div>
+            <!-- Card Pizza -->
+            <div class="highlight-card">
+                <div class="badge" style="background: #e83f3f;">Promoção</div>
+                <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Pizza">
+                <div class="card-info">
+                    <h3>Pizza Pepperoni</h3><p>Massa fina e crocante</p>
+                    <div class="card-actions">
+                        <div class="rating"><i class="ph-fill ph-star"></i> 4.7</div>
+                        <div class="action-btns">
+                            <div class="action-btn" onclick="compartilharApp('Pizza Pepperoni', 'Promoção imperdível de pizza!')"><i class="ph-bold ph-share-network"></i></div>
+                            <div class="action-btn" onclick="copiarTexto('Cupom: PIZZA10')"><i class="ph-bold ph-copy"></i></div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- CARD 2 -->
-        <div class="highlight-card">
-            <div class="badge" style="background: #e83f3f;">Promoção</div>
-            <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Pizza">
-            <div class="card-info">
-                <h3>Pizza Pepperoni</h3>
-                <p>Massa fina e crocante</p>
-                <div class="card-actions">
-                    <div class="rating"><i class="ph-fill ph-star"></i> 4.7</div>
-                    <div class="action-btns">
-                        <div class="action-btn" onclick="compartilharApp('Pizza Pepperoni', 'Promoção imperdível de pizza hoje!')">
-                            <i class="ph-bold ph-share-network"></i>
-                        </div>
-                        <div class="action-btn" onclick="copiarTexto('Cupom: PIZZA10')">
-                            <i class="ph-bold ph-copy"></i>
-                        </div>
-                    </div>
+        <div class="section-header">
+            <h2>Restaurantes</h2><span onclick="showToast('Lista de restaurantes')">Ver todos</span>
+        </div>
+
+        <div class="restaurant-list">
+            <div class="restaurant-card" onclick="showToast('Abrindo Burger House...')">
+                <img src="https://images.unsplash.com/photo-1550547660-d9450f859349?ixlib=rb-1.2.1&auto=format&fit=crop&w=150&q=80" alt="Burger House">
+                <div class="rest-info">
+                    <h3>Burger House</h3><p>Hambúrgueres artesanais</p><p>30-40 min • 🏍️ Grátis</p>
+                </div>
+                <div class="rest-rating"><i class="ph-fill ph-star" style="color:var(--warning)"></i> 4.8</div>
+            </div>
+            <div class="restaurant-card" onclick="showToast('Abrindo Pizza Prime...')">
+                <img src="https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?ixlib=rb-1.2.1&auto=format&fit=crop&w=150&q=80" alt="Pizza Prime">
+                <div class="rest-info">
+                    <h3>Pizza Prime</h3><p>Pizzas e massas italianas</p><p>25-35 min • 🏍️ R$ 4,90</p>
+                </div>
+                <div class="rest-rating"><i class="ph-fill ph-star" style="color:var(--warning)"></i> 4.7</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================================== -->
+    <!-- TELA 2: PEDIDOS                       -->
+    <!-- ===================================== -->
+    <div id="view-pedidos" class="app-view">
+        <div class="section-header"><h2>Meus Pedidos</h2></div>
+        <div class="empty-state">
+            <i class="ph ph-receipt"></i>
+            <h3>Nenhum pedido recente</h3>
+            <p>Você ainda não fez nenhum pedido no app.</p>
+        </div>
+    </div>
+
+    <!-- ===================================== -->
+    <!-- TELA 3: FAVORITOS                     -->
+    <!-- ===================================== -->
+    <div id="view-favoritos" class="app-view">
+        <div class="section-header"><h2>Meus Favoritos</h2></div>
+        <div class="empty-state">
+            <i class="ph ph-heart-break"></i>
+            <h3>Lista vazia</h3>
+            <p>Os restaurantes e pratos que você favoritar aparecerão aqui.</p>
+        </div>
+    </div>
+
+    <!-- ===================================== -->
+    <!-- TELA 4: PERFIL                        -->
+    <!-- ===================================== -->
+    <div id="view-perfil" class="app-view">
+        <div class="section-header"><h2>Meu Perfil</h2></div>
+        <div class="restaurant-list" style="margin-top: 10px;">
+            <div class="restaurant-card" onclick="showToast('Abrindo Configurações de Conta')">
+                <div style="background:var(--primary); color:white; width: 50px; height:50px; border-radius:50%; display:flex; justify-content:center; align-items:center; font-size:20px; font-weight:bold;">S</div>
+                <div class="rest-info">
+                    <h3>Samuel Dev</h3>
+                    <p>Editar meus dados</p>
+                </div>
+                <i class="ph-bold ph-caret-right"></i>
+            </div>
+            <div class="restaurant-card" onclick="toggleMenu()">
+                <i class="ph ph-list" style="font-size: 30px; color:var(--text-secondary)"></i>
+                <div class="rest-info">
+                    <h3>Menu Completo</h3>
+                    <p>Endereços, Pagamentos e Sair</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- RESTAURANTES -->
-    <div class="section-header">
-        <h2>Restaurantes</h2>
-        <span>Ver todos</span>
-    </div>
-
-    <div class="restaurant-list">
-        <div class="restaurant-card" onclick="showToast('Abrindo Burger House...')">
-            <img src="https://images.unsplash.com/photo-1550547660-d9450f859349?ixlib=rb-1.2.1&auto=format&fit=crop&w=150&q=80" alt="Burger House">
-            <div class="rest-info">
-                <h3>Burger House</h3>
-                <p>Hambúrgueres artesanais</p>
-                <p>30-40 min • 🏍️ Grátis</p>
-            </div>
-            <div class="rest-rating"><i class="ph-fill ph-star" style="color:var(--warning)"></i> 4.8</div>
-        </div>
-
-        <div class="restaurant-card" onclick="showToast('Abrindo Pizza Prime...')">
-            <img src="https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?ixlib=rb-1.2.1&auto=format&fit=crop&w=150&q=80" alt="Pizza Prime">
-            <div class="rest-info">
-                <h3>Pizza Prime</h3>
-                <p>Pizzas e massas italianas</p>
-                <p>25-35 min • 🏍️ R$ 4,90</p>
-            </div>
-            <div class="rest-rating"><i class="ph-fill ph-star" style="color:var(--warning)"></i> 4.7</div>
-        </div>
-    </div>
 
     <!-- MENU INFERIOR -->
     <nav class="bottom-nav" id="bottomNav">
-        <div class="nav-item active" onclick="mudarAba(this, 'Início')">
-            <i class="ph-bold ph-house"></i>
-            <span>Início</span>
+        <div class="nav-item active" onclick="mudarTela('inicio', this)">
+            <i class="ph-bold ph-house"></i><span>Início</span>
         </div>
-        <div class="nav-item" onclick="mudarAba(this, 'Pedidos')">
-            <i class="ph-bold ph-receipt"></i>
-            <span>Pedidos</span>
+        <div class="nav-item" onclick="mudarTela('pedidos', this)">
+            <i class="ph-bold ph-receipt"></i><span>Pedidos</span>
         </div>
-        <div class="nav-item" onclick="mudarAba(this, 'Favoritos'); salvarFavorito()">
-            <i class="ph-bold ph-heart"></i>
-            <span>Favoritos</span>
+        <div class="nav-item" onclick="mudarTela('favoritos', this); salvarFavorito()">
+            <i class="ph-bold ph-heart"></i><span>Favoritos</span>
         </div>
-        <div class="nav-item" onclick="mudarAba(this, 'Perfil')">
-            <i class="ph-bold ph-user"></i>
-            <span>Perfil</span>
+        <div class="nav-item" onclick="mudarTela('perfil', this)">
+            <i class="ph-bold ph-user"></i><span>Perfil</span>
         </div>
     </nav>
 
     <!-- LÓGICA JAVASCRIPT & CAPACITOR -->
     <script>
-        // --- FUNÇÕES DE UI / VISUAIS ---
-        
+        // --- FUNÇÕES DE NAVEGAÇÃO DE TELAS ---
+        function mudarTela(nomeTela, elementoNav) {
+            // Esconde todas as telas
+            document.querySelectorAll('.app-view').forEach(view => {
+                view.classList.remove('active-view');
+            });
+            // Mostra a tela clicada
+            document.getElementById(`view-${nomeTela}`).classList.add('active-view');
+
+            // Atualiza botões do menu inferior
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+                const icon = item.querySelector('i');
+                icon.classList.remove('ph-fill');
+                icon.classList.add('ph-bold');
+            });
+
+            // Ativa o botão clicado
+            elementoNav.classList.add('active');
+            const iconAtivo = elementoNav.querySelector('i');
+            iconAtivo.classList.remove('ph-bold');
+            iconAtivo.classList.add('ph-fill');
+            
+            // Volta a tela para o topo
+            window.scrollTo(0,0);
+        }
+
+        // --- FUNÇÃO DO MENU LATERAL (TRÊS TRACINHOS) ---
+        function toggleMenu() {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('open');
+        }
+
+        // --- FUNÇÕES VISUAIS (TOAST) ---
         function showToast(mensagem) {
             const toast = document.getElementById("toast");
             document.getElementById("toast-msg").innerText = mensagem;
@@ -431,57 +428,29 @@
             setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
         }
 
-        function mudarAba(elemento, nomeAba) {
-            // Remove 'active' de todos os itens
-            const items = document.querySelectorAll('.nav-item');
-            items.forEach(item => {
-                item.classList.remove('active');
-                // Troca ícone preenchido por ícone em negrito (efeito visual)
-                const icon = item.querySelector('i');
-                icon.classList.remove('ph-fill');
-                icon.classList.add('ph-bold');
-            });
-
-            // Adiciona 'active' no clicado
-            elemento.classList.add('active');
-            const iconAtivo = elemento.querySelector('i');
-            iconAtivo.classList.remove('ph-bold');
-            iconAtivo.classList.add('ph-fill');
-            
-            if(nomeAba !== 'Favoritos') {
-                showToast(`Aba aberta: ${nomeAba}`);
-            }
-        }
-
-
         // --- INTEGRAÇÃO CAPACITOR (GERAÇÃO DE APK) ---
         
-        // 1. NOTIFICAÇÕES LOCAIS (@capacitor/local-notifications)
+        // 1. NOTIFICAÇÕES LOCAIS
         async function dispararNotificacaoNativa() {
             try {
                 if (window.Capacitor && window.Capacitor.Plugins && Capacitor.Plugins.LocalNotifications) {
                     await Capacitor.Plugins.LocalNotifications.requestPermissions();
                     await Capacitor.Plugins.LocalNotifications.schedule({
-                        notifications: [
-                            {
-                                title: "Seu pedido saiu! 🛵",
-                                body: "O entregador já está a caminho do seu endereço.",
-                                id: new Date().getTime(),
-                                schedule: { at: new Date(Date.now() + 1000 * 3) } // Dispara em 3 seg
-                            }
-                        ]
+                        notifications: [{
+                            title: "Seu pedido saiu! 🛵",
+                            body: "O entregador já está a caminho do seu endereço.",
+                            id: new Date().getTime(),
+                            schedule: { at: new Date(Date.now() + 1000 * 3) } 
+                        }]
                     });
                     showToast("Notificação do Android agendada para 3 seg!");
                 } else {
                     showToast("Web: Notificação de Pedido Enviada!");
                 }
-            } catch (e) {
-                console.error(e);
-                showToast("Erro ao agendar notificação.");
-            }
+            } catch (e) { showToast("Erro ao agendar notificação."); }
         }
 
-        // 2. GEOLOCALIZAÇÃO (@capacitor/geolocation)
+        // 2. GEOLOCALIZAÇÃO
         async function obterLocalizacaoGPS() {
             const textoLocal = document.getElementById("localizacao-texto");
             textoLocal.innerText = "Buscando GPS...";
@@ -502,25 +471,18 @@
             }
         }
 
-        // 3. COMPARTILHAMENTO (@capacitor/share)
+        // 3. COMPARTILHAMENTO
         async function compartilharApp(titulo, texto) {
             try {
                 if (window.Capacitor && window.Capacitor.Plugins && Capacitor.Plugins.Share) {
                     await Capacitor.Plugins.Share.share({
-                        title: titulo,
-                        text: texto,
-                        url: 'https://seusite.com.br',
-                        dialogTitle: 'Compartilhar'
+                        title: titulo, text: texto, url: 'https://seusite.com.br', dialogTitle: 'Compartilhar'
                     });
-                } else {
-                    showToast(`Web Compartilhar: ${titulo}`);
-                }
-            } catch (e) {
-                console.error(e);
-            }
+                } else { showToast(`Web Compartilhar: ${titulo}`); }
+            } catch (e) { console.error(e); }
         }
 
-        // 4. ÁREA DE TRANSFERÊNCIA / CLIPBOARD (@capacitor/clipboard)
+        // 4. CLIPBOARD (COPIAR)
         async function copiarTexto(texto) {
             try {
                 if (window.Capacitor && window.Capacitor.Plugins && Capacitor.Plugins.Clipboard) {
@@ -530,26 +492,17 @@
                     navigator.clipboard.writeText(texto);
                     showToast(`Copiado: ${texto}`);
                 }
-            } catch (e) {
-                showToast("Erro ao copiar.");
-            }
+            } catch (e) { showToast("Erro ao copiar."); }
         }
 
-        // 5. PREFERÊNCIAS OFFLINE (@capacitor/preferences)
+        // 5. PREFERÊNCIAS (OFFLINE)
         async function salvarFavorito() {
             try {
                 if (window.Capacitor && window.Capacitor.Plugins && Capacitor.Plugins.Preferences) {
-                    await Capacitor.Plugins.Preferences.set({
-                        key: 'aba_favoritos_status',
-                        value: 'acessada'
-                    });
-                    showToast("Favoritos abertos e salvos no celular (Offline)!");
-                } else {
-                    showToast("Web: Salvo no banco de dados local.");
+                    await Capacitor.Plugins.Preferences.set({ key: 'aba_favoritos_status', value: 'acessada' });
+                    // showToast disparado pela troca de tela, então omiti aqui para não encavalar
                 }
-            } catch (e) {
-                console.error(e);
-            }
+            } catch (e) { console.error(e); }
         }
     </script>
 </body>

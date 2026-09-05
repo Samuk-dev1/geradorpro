@@ -3,506 +3,482 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Delivery App - Profissional</title>
-    <!-- Ícones do Phosphor Icons -->
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <title>Cláudia Collection - Controle Premium</title>
+    <!-- Ícones FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Biblioteca de Gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --bg-color: #f8f9fa;
-            --surface: #ffffff;
-            --text-primary: #1a1a1a;
-            --text-secondary: #6c757d;
-            --primary: #5c3b99;
-            --warning: #ffc107;
-            --success: #28a745;
+            /* Paleta Premium */
+            --bg-body: #FDFBF7;
+            --header-pink: #F8D0D6;
+            --text-dark: #2C181A;
+            --text-muted: #6B5B5D;
+            --gold: #D4AF37;
+            
+            /* Cores Dashboard */
+            --card-vendido: #FFF8D6;
+            --card-recebido: #E2F2E6;
+            --card-areceber: #FFF3CD;
+            --card-atraso: #F8D7DA;
+            
+            /* Botões e Interações */
+            --btn-green: #25D366; 
+            --btn-teal: #198754;
+            --btn-burgundy: #903053;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg-body); color: var(--text-dark); padding-bottom: 80px; overflow-x: hidden; }
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-primary);
-            padding-bottom: 80px; 
-            overflow-x: hidden;
-        }
-
-        /* HEADER */
+        /* CABEÇALHO */
         header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 20px 10px;
-            background: var(--bg-color);
-            position: sticky;
-            top: 0;
-            z-index: 10;
+            background-color: var(--header-pink); padding: 15px 20px;
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 100;
+            border-bottom-left-radius: 20px; border-bottom-right-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .menu-icon {
-            font-size: 28px;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        .menu-icon:active { transform: scale(0.9); opacity: 0.7; }
-
-        .header-title h1 { font-size: 18px; font-weight: 700; line-height: 1; }
-        .header-title p { 
-            font-size: 12px; 
-            color: var(--text-secondary); 
-            cursor: pointer; 
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            margin-top: 4px;
-        }
-        .header-title p:active { opacity: 0.7; }
-
-        .notification-btn {
-            background: var(--surface);
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            transition: transform 0.1s;
-        }
-        .notification-btn:active { transform: scale(0.9); }
+        .header-title { display: flex; flex-direction: column; align-items: center; flex-grow: 1; }
+        .header-title h1 { font-size: 1.1rem; font-weight: 700; color: var(--text-dark); }
+        .header-icon { font-size: 1.3rem; cursor: pointer; color: var(--text-dark); padding: 5px; }
+        .header-logo { color: var(--gold); font-size: 1.5rem; margin-bottom: 2px;}
 
         /* MENU LATERAL (SIDEBAR) */
         .sidebar-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 200;
-            display: none;
-            opacity: 0;
-            transition: opacity 0.3s;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 1050;
+            opacity: 0; visibility: hidden; transition: 0.3s;
         }
+        .sidebar-overlay.active { opacity: 1; visibility: visible; }
+        
         .sidebar {
-            position: fixed;
-            top: 0; left: -280px; width: 280px; height: 100%;
-            background: var(--surface);
-            z-index: 201;
+            position: fixed; top: 0; left: -280px; width: 280px; height: 100%;
+            background: #FFF; z-index: 1051; transition: left 0.3s ease;
             box-shadow: 2px 0 15px rgba(0,0,0,0.1);
-            transition: left 0.3s ease;
-            display: flex;
-            flex-direction: column;
+            display: flex; flex-direction: column;
         }
         .sidebar.open { left: 0; }
-        .sidebar-overlay.open { display: block; opacity: 1; }
-        
-        .sidebar-header {
-            padding: 30px 20px;
-            background: var(--primary);
-            color: white;
-        }
-        .sidebar-header h2 { font-size: 18px; margin-bottom: 5px; }
-        .sidebar-header p { font-size: 13px; opacity: 0.8; }
-        
-        .sidebar-menu { list-style: none; padding: 20px 0; }
-        .sidebar-menu li {
-            padding: 15px 20px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            font-size: 16px;
-            font-weight: 500;
-            color: var(--text-primary);
-            cursor: pointer;
-        }
-        .sidebar-menu li i { font-size: 22px; color: var(--text-secondary); }
-        .sidebar-menu li:active { background: #f1f3f5; }
+        .sidebar-header { background: var(--header-pink); padding: 30px 20px 20px; text-align: center; }
+        .sidebar-header img { width: 70px; height: 70px; border-radius: 50%; border: 3px solid #FFF; margin-bottom: 10px; object-fit: cover;}
+        .sidebar-menu { list-style: none; padding: 20px 0; flex-grow: 1; }
+        .sidebar-menu li { padding: 15px 25px; font-size: 1rem; color: var(--text-dark); border-bottom: 1px solid #F0F0F0; display: flex; align-items: center; gap: 15px; cursor: pointer;}
+        .sidebar-menu li:hover { background: #F9F9F9; color: var(--btn-burgundy); }
+        .sidebar-menu li i { font-size: 1.2rem; width: 20px; text-align: center; color: var(--gold);}
 
-        /* GESTÃO DE TELAS (VIEWS) */
-        .app-view { display: none; animation: fadeIn 0.3s ease; }
-        .app-view.active-view { display: block; }
-
+        /* TELAS E TRANSIÇÕES */
+        .view { display: none; animation: fadeIn 0.4s ease; padding: 20px; }
+        .view.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .section-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 15px; color: var(--text-dark); }
 
-        /* SEARCH BAR */
-        .search-container { padding: 10px 20px; }
-        .search-box { display: flex; align-items: center; background: #e9ecef; padding: 12px 15px; border-radius: 12px; color: var(--text-secondary); }
-        .search-box input { border: none; background: transparent; margin-left: 10px; width: 100%; font-size: 14px; outline: none; }
+        /* DASHBOARD CARDS */
+        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px; }
+        .dash-card { padding: 15px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.04); display: flex; flex-direction: column; justify-content: space-between; border: 1px solid rgba(0,0,0,0.03); }
+        .dash-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 0.85rem; color: var(--text-muted); font-weight: 600; }
+        .dash-value { font-size: 1.2rem; font-weight: 800; }
+        .card-vendido { background-color: var(--card-vendido); }
+        .card-recebido { background-color: var(--card-recebido); }
+        .card-areceber { background-color: var(--card-areceber); }
+        .card-atraso { background-color: var(--card-atraso); }
 
-        /* CATEGORIES */
-        .categories { display: flex; gap: 15px; padding: 10px 20px; overflow-x: auto; scrollbar-width: none; }
-        .categories::-webkit-scrollbar { display: none; }
-        .category-item { display: flex; flex-direction: column; align-items: center; min-width: 70px; cursor: pointer; }
-        .category-item:active { opacity: 0.7; }
-        .category-icon { width: 60px; height: 60px; background: var(--surface); border-radius: 15px; display: flex; justify-content: center; align-items: center; font-size: 28px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 8px; }
-        .category-item span { font-size: 12px; font-weight: 500; }
+        /* LISTAS (Clientes, Contas, etc) */
+        .list-group { background: #FFF; border-radius: 12px; padding: 5px 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 15px; }
+        .list-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 5px; border-bottom: 1px solid #F0F0F0; }
+        .list-item:last-child { border-bottom: none; }
+        .item-info { display: flex; align-items: center; gap: 12px; flex-grow: 1; cursor: pointer; }
+        .avatar { width: 45px; height: 45px; border-radius: 50%; background-color: var(--header-pink); display: flex; align-items: center; justify-content: center; overflow: hidden; border: 2px solid #EEE;}
+        .avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .item-text h4 { font-size: 0.95rem; margin-bottom: 3px; }
+        .item-text p { font-size: 0.8rem; color: var(--text-muted); }
 
-        /* DESTAQUES & RESTAURANTES */
-        .section-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 20px 10px; }
-        .section-header h2 { font-size: 18px; font-weight: 700; }
-        .section-header span { font-size: 13px; color: var(--text-secondary); font-weight: 500; cursor: pointer; }
-
-        .highlights { display: flex; gap: 15px; padding: 0 20px 10px; overflow-x: auto; scrollbar-width: none; }
-        .highlights::-webkit-scrollbar { display: none; }
-        .highlight-card { min-width: 240px; background: var(--surface); border-radius: 15px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: relative; }
-        .highlight-card img { width: 100%; height: 140px; object-fit: cover; }
-        .badge { position: absolute; top: 10px; left: 10px; background: var(--primary); color: white; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 600; }
-        .card-info { padding: 12px; }
-        .card-info h3 { font-size: 16px; margin-bottom: 4px; }
-        .card-info p { font-size: 12px; color: var(--text-secondary); margin-bottom: 12px; }
-        .card-actions { display: flex; justify-content: space-between; align-items: center; }
-        .rating { color: var(--warning); font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 4px;}
-        .action-btns { display: flex; gap: 15px; }
-        .action-btn { background: #f1f3f5; border-radius: 50%; width: 32px; height: 32px; display: flex; justify-content: center; align-items: center; color: var(--text-primary); cursor: pointer; transition: 0.2s; }
-        .action-btn:active { background: #dee2e6; transform: scale(0.9); }
+        /* BOTÕES */
+        .btn-cobrar { background: transparent; border: 1px solid var(--btn-green); color: var(--btn-green); padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; gap: 5px; cursor: pointer; }
+        .btn-block { width: 100%; padding: 14px; border-radius: 10px; font-size: 1rem; font-weight: bold; border: none; cursor: pointer; margin-bottom: 10px; color: #FFF; box-shadow: 0 4px 6px rgba(0,0,0,0.1);}
+        .btn-teal { background: var(--btn-teal); }
+        .btn-burgundy { background: var(--btn-burgundy); }
         
-        .restaurant-list { padding: 0 20px 20px; display: flex; flex-direction: column; gap: 15px; }
-        .restaurant-card { display: flex; align-items: center; background: var(--surface); padding: 12px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); gap: 15px; cursor: pointer;}
-        .restaurant-card:active { transform: scale(0.98); }
-        .restaurant-card img { width: 65px; height: 65px; border-radius: 12px; object-fit: cover; }
-        .rest-info { flex: 1; }
-        .rest-info h3 { font-size: 15px; margin-bottom: 4px; }
-        .rest-info p { font-size: 12px; color: var(--text-secondary); margin-bottom: 2px;}
-        .rest-rating { font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 4px; }
+        /* BOTÃO FLUTUANTE (FAB) PARA NOVO CLIENTE */
+        .fab { position: fixed; bottom: 90px; right: 20px; width: 55px; height: 55px; background: var(--btn-burgundy); color: #FFF; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; box-shadow: 0 4px 10px rgba(144, 48, 83, 0.4); border: none; cursor: pointer; z-index: 99; transition: transform 0.2s;}
+        .fab:active { transform: scale(0.9); }
 
-        /* TELAS SECUNDÁRIAS (Pedidos, Favoritos, Perfil) */
-        .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; text-align: center; color: var(--text-secondary); }
-        .empty-state i { font-size: 60px; margin-bottom: 15px; color: #ced4da; }
-        .empty-state h3 { color: var(--text-primary); margin-bottom: 5px; font-size: 18px; }
+        /* NAVEGAÇÃO INFERIOR */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #FFF; display: flex; justify-content: space-between; padding: 10px 15px 20px 15px; box-shadow: 0 -4px 15px rgba(0,0,0,0.05); border-top-left-radius: 20px; border-top-right-radius: 20px; z-index: 1000; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); font-size: 0.7rem; gap: 4px; flex: 1; cursor: pointer; transition: 0.3s; }
+        .nav-item i { font-size: 1.3rem; }
+        .nav-item.active { color: var(--btn-burgundy); }
 
-        /* BOTTOM NAV */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--surface); display: flex; justify-content: space-around; padding: 12px 0 20px; box-shadow: 0 -5px 20px rgba(0,0,0,0.05); border-top-left-radius: 25px; border-top-right-radius: 25px; z-index: 100; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-secondary); text-decoration: none; cursor: pointer; transition: color 0.3s; width: 25%; }
-        .nav-item.active { color: var(--primary); }
-        .nav-item i { font-size: 24px; margin-bottom: 4px; transition: transform 0.2s; }
-        .nav-item.active i { transform: translateY(-3px); font-weight: fill; }
-        .nav-item span { font-size: 11px; font-weight: 600; }
+        /* MODAIS */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
+        .modal-content { background: var(--bg-body); width: 90%; max-width: 380px; border-radius: 20px; padding: 25px 20px; position: relative; animation: scaleIn 0.3s ease; box-shadow: 0 10px 25px rgba(0,0,0,0.2);}
+        .modal-content-pink { background: var(--header-pink); text-align: center; }
+        @keyframes scaleIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .modal-close { position: absolute; top: 15px; right: 15px; font-size: 1.3rem; color: var(--text-dark); cursor: pointer; background: rgba(255,255,255,0.5); width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center;}
+        
+        /* FORMULÁRIOS E FOTOS */
+        .form-control { width: 100%; padding: 14px; border-radius: 10px; border: 1px solid #DDD; margin-bottom: 15px; background: #FFF; font-size: 1rem; }
+        .foto-upload-container { display: flex; flex-direction: column; align-items: center; margin-bottom: 20px; }
+        .foto-preview { width: 90px; height: 90px; border-radius: 50%; background: #EEE; border: 3px solid var(--gold); display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 10px; position: relative; }
+        .foto-preview img { width: 100%; height: 100%; object-fit: cover; }
+        .foto-preview i { font-size: 2rem; color: #CCC; }
+        .custom-file-upload { display: inline-block; padding: 6px 12px; cursor: pointer; color: var(--btn-burgundy); font-weight: bold; font-size: 0.9rem; border: 1px solid var(--btn-burgundy); border-radius: 20px; }
+        input[type="file"] { display: none; }
 
-        /* TOAST */
-        #toast { visibility: hidden; min-width: 250px; background-color: #333; color: #fff; text-align: center; border-radius: 10px; padding: 16px; position: fixed; z-index: 1000; left: 50%; bottom: 100px; transform: translateX(-50%); font-size: 14px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); opacity: 0; transition: opacity 0.3s, bottom 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        #toast.show { visibility: visible; opacity: 1; bottom: 120px; }
-        #toast i { font-size: 20px; color: var(--success); }
+        /* GRÁFICOS */
+        .chart-container { background: #FFF; padding: 15px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.04); height: 260px; position: relative; width: 100%; }
+        .chart-wrapper { position: relative; height: 100%; width: 100%; }
     </style>
 </head>
 <body>
 
-    <!-- TOAST (Notificação Visual) -->
-    <div id="toast"><i class="ph-fill ph-check-circle"></i> <span id="toast-msg">Mensagem</span></div>
+    <!-- CABEÇALHO -->
+    <header>
+        <i class="fas fa-bars header-icon" onclick="toggleSidebar()"></i>
+        <div class="header-title">
+            <i class="fas fa-crown header-logo"></i>
+            <h1 id="header-text">Painel Inicial</h1>
+        </div>
+        <i class="fas fa-bell header-icon"></i>
+    </header>
 
-    <!-- MENU LATERAL (SIDEBAR) -->
-    <div class="sidebar-overlay" onclick="toggleMenu()"></div>
-    <div class="sidebar">
+    <!-- MENU LATERAL -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+    <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <h2>Samuel Dev</h2>
-            <p>samuel@email.com</p>
+            <!-- Coloque a foto da Cláudia aqui, se houver -->
+            <img src="https://i.pravatar.cc/150?img=47" alt="Perfil">
+            <h3 style="color:var(--text-dark);">Cláudia Collection</h3>
+            <p style="font-size:0.8rem; color:var(--text-muted);">Administradora</p>
         </div>
         <ul class="sidebar-menu">
-            <li onclick="toggleMenu(); showToast('Acessando Endereços...')"><i class="ph ph-map-pin"></i> Meus Endereços</li>
-            <li onclick="toggleMenu(); showToast('Acessando Cupons...')"><i class="ph ph-ticket"></i> Cupons de Desconto</li>
-            <li onclick="toggleMenu(); showToast('Acessando Pagamentos...')"><i class="ph ph-credit-card"></i> Formas de Pagamento</li>
-            <li onclick="toggleMenu(); showToast('Acessando Configurações...')"><i class="ph ph-gear"></i> Configurações</li>
-            <li onclick="toggleMenu(); showToast('Saindo da conta...')"><i class="ph ph-sign-out" style="color: #dc3545;"></i> Sair</li>
+            <li onclick="toggleSidebar(); switchView('view-inicio', 'Painel Inicial', document.getElementById('nav-inicio'))"><i class="fas fa-home"></i> Início</li>
+            <li><i class="fas fa-cog"></i> Configurações</li>
+            <li><i class="fas fa-box"></i> Categorias de Produtos</li>
+            <li><i class="fas fa-cloud-download-alt"></i> Backup de Dados</li>
+            <li><i class="fas fa-question-circle"></i> Ajuda / Suporte</li>
+            <li style="color: #E74C3C; margin-top: auto; border-bottom: none;"><i class="fas fa-sign-out-alt" style="color: #E74C3C;"></i> Sair do App</li>
         </ul>
     </div>
 
-    <!-- CABEÇALHO -->
-    <header>
-        <div class="header-left">
-            <!-- BOTÃO DOS TRÊS TRACINHOS -->
-            <i class="ph-bold ph-list menu-icon" onclick="toggleMenu()"></i>
-            <div class="header-title">
-                <h1>Delivery</h1>
-                <p onclick="obterLocalizacaoGPS()"><i class="ph-fill ph-map-pin" style="color:var(--primary)"></i> <span id="localizacao-texto">Obter localização atual...</span></p>
+    <!-- 1. TELA: INÍCIO (DASHBOARD) -->
+    <div id="view-inicio" class="view active">
+        <h2 class="section-title">Resumo do Mês</h2>
+        <div class="dashboard-grid">
+            <div class="dash-card card-vendido">
+                <div class="dash-header"><i class="fas fa-sack-dollar" style="color:#D4AC0D;"></i> Vendido:</div>
+                <div class="dash-value">R$ 6.850,00</div>
             </div>
-        </div>
-        <button class="notification-btn" onclick="dispararNotificacaoNativa()">
-            <i class="ph-fill ph-bell-ringing" style="color:var(--primary)"></i>
-        </button>
-    </header>
-
-
-    <!-- ===================================== -->
-    <!-- TELA 1: INÍCIO (Home)                 -->
-    <!-- ===================================== -->
-    <div id="view-inicio" class="app-view active-view">
-        <div class="search-container">
-            <div class="search-box">
-                <i class="ph-bold ph-magnifying-glass"></i>
-                <input type="text" placeholder="Buscar pratos, restaurantes...">
+            <div class="dash-card card-recebido">
+                <div class="dash-header"><i class="fas fa-money-bill-wave" style="color:#27AE60;"></i> Recebido:</div>
+                <div class="dash-value">R$ 4.200,00</div>
+            </div>
+            <div class="dash-card card-areceber">
+                <div class="dash-header"><i class="fas fa-clock" style="color:#D68910;"></i> A Receber:</div>
+                <div class="dash-value">R$ 2.650,00</div>
+            </div>
+            <div class="dash-card card-atraso">
+                <div class="dash-header"><i class="fas fa-minus-circle" style="color:#C0392B;"></i> Em Atraso:</div>
+                <div class="dash-value">R$ 1.150,00</div>
             </div>
         </div>
 
-        <div class="categories">
-            <div class="category-item" onclick="showToast('Abrindo: Hambúrguer')">
-                <div class="category-icon">🍔</div><span>Hambúrguer</span>
-            </div>
-            <div class="category-item" onclick="showToast('Abrindo: Pizza')">
-                <div class="category-icon">🍕</div><span>Pizza</span>
-            </div>
-            <div class="category-item" onclick="showToast('Abrindo: Japonesa')">
-                <div class="category-icon">🍣</div><span>Japonesa</span>
-            </div>
-            <div class="category-item" onclick="showToast('Abrindo: Saudável')">
-                <div class="category-icon">🥗</div><span>Saudável</span>
-            </div>
-        </div>
-
-        <div class="section-header">
-            <h2>Destaques</h2><span onclick="showToast('Ver todos os destaques')">Ver todos</span>
-        </div>
-
-        <div class="highlights">
-            <!-- Card Smash Burger -->
-            <div class="highlight-card">
-                <div class="badge">Mais pedido</div>
-                <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Burger">
-                <div class="card-info">
-                    <h3>Smash Burger</h3><p>Suculento e delicioso</p>
-                    <div class="card-actions">
-                        <div class="rating"><i class="ph-fill ph-star"></i> 4.8</div>
-                        <div class="action-btns">
-                            <div class="action-btn" onclick="compartilharApp('Smash Burger', 'Olha esse lanche!')"><i class="ph-bold ph-share-network"></i></div>
-                            <div class="action-btn" onclick="copiarTexto('Smash Burger - Peça já!')"><i class="ph-bold ph-copy"></i></div>
-                        </div>
+        <h2 class="section-title">Contas a Receber Próximas</h2>
+        <div class="list-group">
+            <div class="list-item">
+                <div class="item-info">
+                    <div class="avatar"><img src="https://i.pravatar.cc/100?img=1" alt="Avatar"></div>
+                    <div class="item-text">
+                        <h4>Maria Silva</h4>
+                        <p>R$ 100,00 Vence Amanhã</p>
                     </div>
                 </div>
+                <button class="btn-cobrar" onclick="abrirZap('Maria Silva', '100,00', '5511999999999', 'amanhã')">Cobrar <i class="fab fa-whatsapp"></i></button>
             </div>
-            <!-- Card Pizza -->
-            <div class="highlight-card">
-                <div class="badge" style="background: #e83f3f;">Promoção</div>
-                <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Pizza">
-                <div class="card-info">
-                    <h3>Pizza Pepperoni</h3><p>Massa fina e crocante</p>
-                    <div class="card-actions">
-                        <div class="rating"><i class="ph-fill ph-star"></i> 4.7</div>
-                        <div class="action-btns">
-                            <div class="action-btn" onclick="compartilharApp('Pizza Pepperoni', 'Promoção imperdível de pizza!')"><i class="ph-bold ph-share-network"></i></div>
-                            <div class="action-btn" onclick="copiarTexto('Cupom: PIZZA10')"><i class="ph-bold ph-copy"></i></div>
-                        </div>
+            <div class="list-item">
+                <div class="item-info">
+                    <div class="avatar"><img src="https://i.pravatar.cc/100?img=5" alt="Avatar"></div>
+                    <div class="item-text">
+                        <h4>Ana Paula</h4>
+                        <p style="color: #E74C3C; font-weight:bold;">R$ 150,00 Atrasado</p>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <div class="section-header">
-            <h2>Restaurantes</h2><span onclick="showToast('Lista de restaurantes')">Ver todos</span>
-        </div>
-
-        <div class="restaurant-list">
-            <div class="restaurant-card" onclick="showToast('Abrindo Burger House...')">
-                <img src="https://images.unsplash.com/photo-1550547660-d9450f859349?ixlib=rb-1.2.1&auto=format&fit=crop&w=150&q=80" alt="Burger House">
-                <div class="rest-info">
-                    <h3>Burger House</h3><p>Hambúrgueres artesanais</p><p>30-40 min • 🏍️ Grátis</p>
-                </div>
-                <div class="rest-rating"><i class="ph-fill ph-star" style="color:var(--warning)"></i> 4.8</div>
-            </div>
-            <div class="restaurant-card" onclick="showToast('Abrindo Pizza Prime...')">
-                <img src="https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?ixlib=rb-1.2.1&auto=format&fit=crop&w=150&q=80" alt="Pizza Prime">
-                <div class="rest-info">
-                    <h3>Pizza Prime</h3><p>Pizzas e massas italianas</p><p>25-35 min • 🏍️ R$ 4,90</p>
-                </div>
-                <div class="rest-rating"><i class="ph-fill ph-star" style="color:var(--warning)"></i> 4.7</div>
+                <button class="btn-cobrar" onclick="abrirZap('Ana Paula', '150,00', '5511999999999', 'atrasada')">Cobrar <i class="fab fa-whatsapp"></i></button>
             </div>
         </div>
     </div>
 
-    <!-- ===================================== -->
-    <!-- TELA 2: PEDIDOS                       -->
-    <!-- ===================================== -->
-    <div id="view-pedidos" class="app-view">
-        <div class="section-header"><h2>Meus Pedidos</h2></div>
-        <div class="empty-state">
-            <i class="ph ph-receipt"></i>
-            <h3>Nenhum pedido recente</h3>
-            <p>Você ainda não fez nenhum pedido no app.</p>
-        </div>
-    </div>
-
-    <!-- ===================================== -->
-    <!-- TELA 3: FAVORITOS                     -->
-    <!-- ===================================== -->
-    <div id="view-favoritos" class="app-view">
-        <div class="section-header"><h2>Meus Favoritos</h2></div>
-        <div class="empty-state">
-            <i class="ph ph-heart-break"></i>
-            <h3>Lista vazia</h3>
-            <p>Os restaurantes e pratos que você favoritar aparecerão aqui.</p>
-        </div>
-    </div>
-
-    <!-- ===================================== -->
-    <!-- TELA 4: PERFIL                        -->
-    <!-- ===================================== -->
-    <div id="view-perfil" class="app-view">
-        <div class="section-header"><h2>Meu Perfil</h2></div>
-        <div class="restaurant-list" style="margin-top: 10px;">
-            <div class="restaurant-card" onclick="showToast('Abrindo Configurações de Conta')">
-                <div style="background:var(--primary); color:white; width: 50px; height:50px; border-radius:50%; display:flex; justify-content:center; align-items:center; font-size:20px; font-weight:bold;">S</div>
-                <div class="rest-info">
-                    <h3>Samuel Dev</h3>
-                    <p>Editar meus dados</p>
+    <!-- 2. TELA: CLIENTES -->
+    <div id="view-clientes" class="view">
+        <h2 class="section-title">Meus Clientes</h2>
+        <input type="text" class="form-control" placeholder="Buscar cliente por nome..." style="margin-bottom: 20px;">
+        
+        <div class="list-group" id="lista-clientes-dinamica">
+            <!-- Clientes Iniciais -->
+            <div class="list-item">
+                <div class="item-info" onclick="abrirModalDetalheCliente('Maria Silva', 'R$ 500,00', '15/09/2023', 'https://i.pravatar.cc/100?img=1')">
+                    <div class="avatar"><img src="https://i.pravatar.cc/100?img=1" alt="Avatar"></div>
+                    <div class="item-text"><h4>Maria Silva</h4><p>Última compra: 15/09/2023</p></div>
                 </div>
-                <i class="ph-bold ph-caret-right"></i>
+                <i class="fas fa-chevron-right" style="color:#CCC;"></i>
             </div>
-            <div class="restaurant-card" onclick="toggleMenu()">
-                <i class="ph ph-list" style="font-size: 30px; color:var(--text-secondary)"></i>
-                <div class="rest-info">
-                    <h3>Menu Completo</h3>
-                    <p>Endereços, Pagamentos e Sair</p>
+            <div class="list-item">
+                <div class="item-info" onclick="abrirModalDetalheCliente('Ana Paula', 'R$ 150,00', '02/10/2023', 'https://i.pravatar.cc/100?img=5')">
+                    <div class="avatar"><img src="https://i.pravatar.cc/100?img=5" alt="Avatar"></div>
+                    <div class="item-text"><h4>Ana Paula</h4><p>Última compra: 02/10/2023</p></div>
                 </div>
+                <i class="fas fa-chevron-right" style="color:#CCC;"></i>
             </div>
         </div>
+
+        <!-- Botão Flutuante (Novo Cliente) -->
+        <button class="fab" onclick="abrirModalNovoCliente()"><i class="fas fa-plus"></i></button>
     </div>
 
+    <!-- 3. TELA: NOVA VENDA -->
+    <div id="view-vendas" class="view">
+        <h2 class="section-title">Registrar Venda</h2>
+        <div style="background: #FFF; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+            <label style="font-weight:bold; margin-bottom: 8px; display:block;">Cliente</label>
+            <select class="form-control">
+                <option>Maria Silva</option>
+                <option>Ana Paula</option>
+            </select>
+            <label style="font-weight:bold; margin-bottom: 8px; display:block;">Valor Total (R$)</label>
+            <input type="number" class="form-control" placeholder="Ex: 300.00">
+            <button class="btn-block btn-teal" onclick="alert('Venda simulada com sucesso!')">Confirmar Venda</button>
+        </div>
+    </div>
 
-    <!-- MENU INFERIOR -->
-    <nav class="bottom-nav" id="bottomNav">
-        <div class="nav-item active" onclick="mudarTela('inicio', this)">
-            <i class="ph-bold ph-house"></i><span>Início</span>
+    <!-- 4. TELA: FINANCEIRO / GRÁFICOS -->
+    <div id="view-financeiro" class="view">
+        <h2 class="section-title">Relatório de Vendas</h2>
+        
+        <!-- Container corrigido com altura fixa -->
+        <div class="chart-container">
+            <h4 style="text-align:center; margin-bottom:10px; color:var(--text-dark);">Vendas por Categoria</h4>
+            <div class="chart-wrapper">
+                <canvas id="graficoPizza"></canvas>
+            </div>
         </div>
-        <div class="nav-item" onclick="mudarTela('pedidos', this)">
-            <i class="ph-bold ph-receipt"></i><span>Pedidos</span>
+
+        <div class="chart-container">
+            <h4 style="text-align:center; margin-bottom:10px; color:var(--text-dark);">Evolução Mensal</h4>
+            <div class="chart-wrapper">
+                <canvas id="graficoLinha"></canvas>
+            </div>
         </div>
-        <div class="nav-item" onclick="mudarTela('favoritos', this); salvarFavorito()">
-            <i class="ph-bold ph-heart"></i><span>Favoritos</span>
+    </div>
+
+    <!-- 5. TELA: ESTOQUE -->
+    <div id="view-estoque" class="view">
+        <h2 class="section-title">Estoque Atual</h2>
+        <div class="list-group">
+            <div class="list-item">
+                <div class="item-info">
+                    <div class="avatar" style="border-radius:8px;"><i class="fas fa-ring"></i></div>
+                    <div class="item-text"><h4>Anel Ouro Semijoia</h4><p>10 unid. disponíveis</p></div>
+                </div>
+            </div>
         </div>
-        <div class="nav-item" onclick="mudarTela('perfil', this)">
-            <i class="ph-bold ph-user"></i><span>Perfil</span>
+    </div>
+
+    <!-- MODAL 1: ADICIONAR NOVO CLIENTE (COM FOTO) -->
+    <div class="modal-overlay" id="modalNovoCliente">
+        <div class="modal-content">
+            <i class="fas fa-times modal-close" onclick="fecharModalNovoCliente()"></i>
+            <h2 class="section-title" style="text-align:center;">Novo Cliente</h2>
+            
+            <div class="foto-upload-container">
+                <div class="foto-preview">
+                    <img id="preview-img" src="" style="display:none;" alt="Preview">
+                    <i id="preview-icon" class="fas fa-user"></i>
+                </div>
+                <label for="foto-input" class="custom-file-upload">
+                    <i class="fas fa-camera"></i> Escolher Foto
+                </label>
+                <input id="foto-input" type="file" accept="image/*" onchange="carregarFoto(event)">
+            </div>
+
+            <input type="text" id="novo-cli-nome" class="form-control" placeholder="Nome da Cliente">
+            <input type="tel" id="novo-cli-zap" class="form-control" placeholder="WhatsApp (DDD + Número)">
+            
+            <button class="btn-block btn-burgundy" onclick="salvarNovoCliente()">Salvar Cliente</button>
+        </div>
+    </div>
+
+    <!-- MODAL 2: DETALHES DO CLIENTE (RESUMO DE CONTA) -->
+    <div class="modal-overlay" id="modalDetalheCliente">
+        <div class="modal-content modal-content-pink">
+            <i class="fas fa-times modal-close" onclick="fecharModalDetalhe()"></i>
+            <div class="avatar" style="width:80px; height:80px; margin: 0 auto 10px auto; border:3px solid #FFF;">
+                <img id="detalhe-img" src="" alt="Avatar">
+            </div>
+            <h2 id="detalhe-nome" style="margin-bottom: 15px;">Nome</h2>
+            <div style="background: #FFF; padding: 20px; border-radius: 15px; text-align: left;">
+                <p style="margin-bottom: 10px;"><strong>Total em Aberto:</strong> <span id="detalhe-aberto" style="color:var(--text-dark); font-weight:bold;"></span></p>
+                <p style="margin-bottom: 20px;"><strong>Última Compra:</strong> <span id="detalhe-ultima"></span></p>
+                <button class="btn-block btn-teal" style="background:var(--btn-green);" onclick="alert('Abrindo WhatsApp...')"><i class="fab fa-whatsapp"></i> Cobrar Cliente</button>
+                <button class="btn-block" style="background:#EEE; color:var(--text-dark);" onclick="fecharModalDetalhe()">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NAVEGAÇÃO INFERIOR -->
+    <nav class="bottom-nav">
+        <div id="nav-inicio" class="nav-item active" onclick="switchView('view-inicio', 'Painel Inicial', this)">
+            <i class="fas fa-home"></i> Início
+        </div>
+        <div class="nav-item" onclick="switchView('view-clientes', 'Clientes', this)">
+            <i class="fas fa-users"></i> Clientes
+        </div>
+        <div class="nav-item" onclick="switchView('view-vendas', 'Nova Venda', this)">
+            <i class="fas fa-plus-circle"></i> Vendas
+        </div>
+        <div class="nav-item" onclick="switchView('view-financeiro', 'Relatórios', this); renderizarGraficos();">
+            <i class="fas fa-chart-pie"></i> Financeiro
+        </div>
+        <div class="nav-item" onclick="switchView('view-estoque', 'Estoque', this)">
+            <i class="fas fa-box-open"></i> Estoque
         </div>
     </nav>
 
-    <!-- LÓGICA JAVASCRIPT & CAPACITOR -->
     <script>
-        // --- FUNÇÕES DE NAVEGAÇÃO DE TELAS ---
-        function mudarTela(nomeTela, elementoNav) {
-            // Esconde todas as telas
-            document.querySelectorAll('.app-view').forEach(view => {
-                view.classList.remove('active-view');
-            });
-            // Mostra a tela clicada
-            document.getElementById(`view-${nomeTela}`).classList.add('active-view');
-
-            // Atualiza botões do menu inferior
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-                const icon = item.querySelector('i');
-                icon.classList.remove('ph-fill');
-                icon.classList.add('ph-bold');
-            });
-
-            // Ativa o botão clicado
-            elementoNav.classList.add('active');
-            const iconAtivo = elementoNav.querySelector('i');
-            iconAtivo.classList.remove('ph-bold');
-            iconAtivo.classList.add('ph-fill');
-            
-            // Volta a tela para o topo
-            window.scrollTo(0,0);
-        }
-
-        // --- FUNÇÃO DO MENU LATERAL (TRÊS TRACINHOS) ---
-        function toggleMenu() {
-            const sidebar = document.querySelector('.sidebar');
-            const overlay = document.querySelector('.sidebar-overlay');
+        // --- 1. CONTROLE DO MENU LATERAL (HAMBURGER) ---
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
             sidebar.classList.toggle('open');
-            overlay.classList.toggle('open');
+            overlay.classList.toggle('active');
         }
 
-        // --- FUNÇÕES VISUAIS (TOAST) ---
-        function showToast(mensagem) {
-            const toast = document.getElementById("toast");
-            document.getElementById("toast-msg").innerText = mensagem;
-            toast.className = "show";
-            setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
+        // --- 2. NAVEGAÇÃO DAS TELAS ---
+        function switchView(viewId, title, element) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            
+            document.getElementById(viewId).classList.add('active');
+            element.classList.add('active');
+            document.getElementById('header-text').innerText = title;
         }
 
-        // --- INTEGRAÇÃO CAPACITOR (GERAÇÃO DE APK) ---
-        
-        // 1. NOTIFICAÇÕES LOCAIS
-        async function dispararNotificacaoNativa() {
-            try {
-                if (window.Capacitor && window.Capacitor.Plugins && Capacitor.Plugins.LocalNotifications) {
-                    await Capacitor.Plugins.LocalNotifications.requestPermissions();
-                    await Capacitor.Plugins.LocalNotifications.schedule({
-                        notifications: [{
-                            title: "Seu pedido saiu! 🛵",
-                            body: "O entregador já está a caminho do seu endereço.",
-                            id: new Date().getTime(),
-                            schedule: { at: new Date(Date.now() + 1000 * 3) } 
-                        }]
-                    });
-                    showToast("Notificação do Android agendada para 3 seg!");
-                } else {
-                    showToast("Web: Notificação de Pedido Enviada!");
+        // --- 3. WHATSAPP ---
+        function abrirZap(nome, valor, telefone, detalhe) {
+            let msg = detalhe === 'atrasada' 
+                ? `Oi, ${nome}! Passando para te lembrar que sua parcela de R$ ${valor} está pendente. ❤️`
+                : `Oi, ${nome}! Passando para te lembrar que sua parcela de R$ ${valor} vence ${detalhe}. ❤️`;
+            window.open(`https://wa.me/${telefone}?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        // --- 4. CADASTRO DE NOVO CLIENTE COM FOTO ---
+        let fotoBase64Atual = ""; // Variável para guardar a imagem convertida
+
+        function abrirModalNovoCliente() {
+            document.getElementById('modalNovoCliente').style.display = 'flex';
+            // Reseta o formulário ao abrir
+            document.getElementById('novo-cli-nome').value = '';
+            document.getElementById('novo-cli-zap').value = '';
+            document.getElementById('preview-img').style.display = 'none';
+            document.getElementById('preview-icon').style.display = 'block';
+            fotoBase64Atual = ""; 
+        }
+
+        function fecharModalNovoCliente() {
+            document.getElementById('modalNovoCliente').style.display = 'none';
+        }
+
+        // Lê a imagem carregada pelo usuário e mostra o preview
+        function carregarFoto(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    fotoBase64Atual = e.target.result; // Salva o Base64
+                    document.getElementById('preview-img').src = fotoBase64Atual;
+                    document.getElementById('preview-img').style.display = 'block';
+                    document.getElementById('preview-icon').style.display = 'none';
                 }
-            } catch (e) { showToast("Erro ao agendar notificação."); }
-        }
-
-        // 2. GEOLOCALIZAÇÃO
-        async function obterLocalizacaoGPS() {
-            const textoLocal = document.getElementById("localizacao-texto");
-            textoLocal.innerText = "Buscando GPS...";
-            try {
-                if (window.Capacitor && window.Capacitor.Plugins && Capacitor.Plugins.Geolocation) {
-                    const coords = await Capacitor.Plugins.Geolocation.getCurrentPosition();
-                    textoLocal.innerText = `Lat: ${coords.coords.latitude.toFixed(4)}`;
-                    showToast("Localização capturada com sucesso!");
-                } else {
-                    setTimeout(() => {
-                        textoLocal.innerText = "Rua das Flores, 123";
-                        showToast("Web: Localização simulada.");
-                    }, 800);
-                }
-            } catch (e) {
-                textoLocal.innerText = "Erro ao buscar GPS";
-                showToast("Ative o GPS do celular.");
+                reader.readAsDataURL(file);
             }
         }
 
-        // 3. COMPARTILHAMENTO
-        async function compartilharApp(titulo, texto) {
-            try {
-                if (window.Capacitor && window.Capacitor.Plugins && Capacitor.Plugins.Share) {
-                    await Capacitor.Plugins.Share.share({
-                        title: titulo, text: texto, url: 'https://seusite.com.br', dialogTitle: 'Compartilhar'
-                    });
-                } else { showToast(`Web Compartilhar: ${titulo}`); }
-            } catch (e) { console.error(e); }
+        function salvarNovoCliente() {
+            const nome = document.getElementById('novo-cli-nome').value;
+            if (!nome) { alert("O nome da cliente é obrigatório!"); return; }
+            
+            // Se não carregou foto, usa um avatar padrão
+            const fotoSource = fotoBase64Atual !== "" ? fotoBase64Atual : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png";
+
+            // Cria o elemento HTML do novo cliente
+            const novoItem = document.createElement('div');
+            novoItem.className = 'list-item';
+            novoItem.innerHTML = `
+                <div class="item-info" onclick="abrirModalDetalheCliente('${nome}', 'R$ 0,00', 'Hoje', '${fotoSource}')">
+                    <div class="avatar"><img src="${fotoSource}" alt="Avatar"></div>
+                    <div class="item-text"><h4>${nome}</h4><p>Novo cliente cadastrado</p></div>
+                </div>
+                <i class="fas fa-chevron-right" style="color:#CCC;"></i>
+            `;
+            
+            // Adiciona no topo da lista
+            const lista = document.getElementById('lista-clientes-dinamica');
+            lista.insertBefore(novoItem, lista.firstChild);
+            
+            fecharModalNovoCliente();
         }
 
-        // 4. CLIPBOARD (COPIAR)
-        async function copiarTexto(texto) {
-            try {
-                if (window.Capacitor && window.Capacitor.Plugins && Capacitor.Plugins.Clipboard) {
-                    await Capacitor.Plugins.Clipboard.write({ string: texto });
-                    showToast("Copiado para o celular!");
-                } else {
-                    navigator.clipboard.writeText(texto);
-                    showToast(`Copiado: ${texto}`);
-                }
-            } catch (e) { showToast("Erro ao copiar."); }
+        // --- 5. MODAL DE DETALHES (QUANDO CLICA EM UM CLIENTE) ---
+        function abrirModalDetalheCliente(nome, aberto, ultima, imgSrc) {
+            document.getElementById('detalhe-nome').innerText = nome;
+            document.getElementById('detalhe-aberto').innerText = aberto;
+            document.getElementById('detalhe-ultima').innerText = ultima;
+            document.getElementById('detalhe-img').src = imgSrc;
+            document.getElementById('modalDetalheCliente').style.display = 'flex';
         }
 
-        // 5. PREFERÊNCIAS (OFFLINE)
-        async function salvarFavorito() {
-            try {
-                if (window.Capacitor && window.Capacitor.Plugins && Capacitor.Plugins.Preferences) {
-                    await Capacitor.Plugins.Preferences.set({ key: 'aba_favoritos_status', value: 'acessada' });
-                    // showToast disparado pela troca de tela, então omiti aqui para não encavalar
-                }
-            } catch (e) { console.error(e); }
+        function fecharModalDetalhe() {
+            document.getElementById('modalDetalheCliente').style.display = 'none';
+        }
+
+        // --- 6. GRÁFICOS ORGANIZADOS ---
+        let graficosCriados = false;
+        function renderizarGraficos() {
+            if(graficosCriados) return; 
+            
+            // IMPORTANTE: maintainAspectRatio: false e responsive: true garantem que o gráfico
+            // respeite a altura de 250px do .chart-container definida no CSS.
+            
+            const ctxPizza = document.getElementById('graficoPizza').getContext('2d');
+            new Chart(ctxPizza, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Semijoias', 'Cabelo', 'Cama/Mesa'],
+                    datasets: [{
+                        data: [45, 30, 25],
+                        backgroundColor: ['#1ABC9C', '#9B59B6', '#F1C40F'],
+                        borderWidth: 0
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } }
+            });
+
+            const ctxLinha = document.getElementById('graficoLinha').getContext('2d');
+            new Chart(ctxLinha, {
+                type: 'line',
+                data: {
+                    labels: ['Mai', 'Jun', 'Jul', 'Ago', 'Set'],
+                    datasets: [{
+                        label: 'Faturamento',
+                        data: [1500, 2300, 1800, 3200, 4200],
+                        borderColor: '#D4AF37',
+                        backgroundColor: 'rgba(212, 175, 55, 0.2)',
+                        fill: true, tension: 0.3
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            graficosCriados = true;
         }
     </script>
 </body>

@@ -1,485 +1,1080 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cláudia Collection - Controle Premium</title>
-    <!-- Ícones FontAwesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Biblioteca de Gráficos -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        :root {
-            /* Paleta Premium */
-            --bg-body: #FDFBF7;
-            --header-pink: #F8D0D6;
-            --text-dark: #2C181A;
-            --text-muted: #6B5B5D;
-            --gold: #D4AF37;
-            
-            /* Cores Dashboard */
-            --card-vendido: #FFF8D6;
-            --card-recebido: #E2F2E6;
-            --card-areceber: #FFF3CD;
-            --card-atraso: #F8D7DA;
-            
-            /* Botões e Interações */
-            --btn-green: #25D366; 
-            --btn-teal: #198754;
-            --btn-burgundy: #903053;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Cláudia Collection — Premium Finance</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.js"></script>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body {
+  background:linear-gradient(180deg,#fdf2f8 0%,#fff7ed 50%,#faf5ff 100%);
+  color:#2d2a3e;
+  font-family:'Poppins', sans-serif;
+  overflow-x:hidden;
+  -webkit-font-smoothing: antialiased;
+  min-height:100vh;
+}
+h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg-body); color: var(--text-dark); padding-bottom: 80px; overflow-x: hidden; }
+@keyframes orbFloat { 0%,100% { transform: translate(0,0); } 50% { transform: translate(30px,-20px); } }
+@keyframes orbPulse { 0%,100% { transform: translate(-50%,-50%) scale(1); opacity:0.6; } 50% { transform: translate(-50%,-50%) scale(1.3); opacity:0.9; } }
+@keyframes spinRing { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes logoPulse { 0%,100% { transform: scale(1); filter: drop-shadow(0 0 20px #ec4899) drop-shadow(0 0 40px #f59e0b); } 50% { transform: scale(1.08); filter: drop-shadow(0 0 30px #ec4899) drop-shadow(0 0 60px #8b5cf6); } }
+@keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+@keyframes loadBar { 0% { width: 0%; } 100% { width: 100%; } }
+@keyframes headerGlow { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+@keyframes floatOrb { 0%,100% { transform: translate(0,0); } 50% { transform: translate(15px,-15px); } }
+@keyframes floatBtn { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+@keyframes floatCard { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@keyframes fadeIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
+@keyframes sparkle { 0% { opacity:0; transform: scale(0) rotate(0deg); } 50% { opacity:1; transform: scale(1) rotate(180deg); } 100% { opacity:0; transform: scale(0) rotate(360deg); } }
+@keyframes particleFloat { 0% { transform: translateY(0) translateX(0); opacity:0; } 10% { opacity:0.6; } 90% { opacity:0.6; } 100% { transform: translateY(-600px) translateX(30px); opacity:0; } }
+@keyframes toastIn { from { opacity:0; transform: translateY(-15px); } to { opacity:1; transform: translateY(0); } }
 
-        /* CABEÇALHO */
-        header {
-            background-color: var(--header-pink); padding: 15px 20px;
-            display: flex; align-items: center; justify-content: space-between;
-            position: sticky; top: 0; z-index: 100;
-            border-bottom-left-radius: 20px; border-bottom-right-radius: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        }
-        .header-title { display: flex; flex-direction: column; align-items: center; flex-grow: 1; }
-        .header-title h1 { font-size: 1.1rem; font-weight: 700; color: var(--text-dark); }
-        .header-icon { font-size: 1.3rem; cursor: pointer; color: var(--text-dark); padding: 5px; }
-        .header-logo { color: var(--gold); font-size: 1.5rem; margin-bottom: 2px;}
+.app-wrapper {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  position: relative;
+  background:linear-gradient(180deg,#fdf2f8 0%,#fff7ed 50%,#faf5ff 100%);
+  padding-bottom: 90px;
+  overflow: hidden;
+}
 
-        /* MENU LATERAL (SIDEBAR) */
-        .sidebar-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5); z-index: 1050;
-            opacity: 0; visibility: hidden; transition: 0.3s;
-        }
-        .sidebar-overlay.active { opacity: 1; visibility: visible; }
-        
-        .sidebar {
-            position: fixed; top: 0; left: -280px; width: 280px; height: 100%;
-            background: #FFF; z-index: 1051; transition: left 0.3s ease;
-            box-shadow: 2px 0 15px rgba(0,0,0,0.1);
-            display: flex; flex-direction: column;
-        }
-        .sidebar.open { left: 0; }
-        .sidebar-header { background: var(--header-pink); padding: 30px 20px 20px; text-align: center; }
-        .sidebar-header img { width: 70px; height: 70px; border-radius: 50%; border: 3px solid #FFF; margin-bottom: 10px; object-fit: cover;}
-        .sidebar-menu { list-style: none; padding: 20px 0; flex-grow: 1; }
-        .sidebar-menu li { padding: 15px 25px; font-size: 1rem; color: var(--text-dark); border-bottom: 1px solid #F0F0F0; display: flex; align-items: center; gap: 15px; cursor: pointer;}
-        .sidebar-menu li:hover { background: #F9F9F9; color: var(--btn-burgundy); }
-        .sidebar-menu li i { font-size: 1.2rem; width: 20px; text-align: center; color: var(--gold);}
+/* SPLASH */
+#splashScreen {
+  position:fixed; inset:0; z-index:9999;
+  background:linear-gradient(135deg,#1a0a1f 0%,#2d0f3a 30%,#1a0a1f 60%,#3d0a2e 100%);
+  display:flex; align-items:center; justify-content:center; flex-direction:column;
+  overflow:hidden;
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
 
-        /* TELAS E TRANSIÇÕES */
-        .view { display: none; animation: fadeIn 0.4s ease; padding: 20px; }
-        .view.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .section-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 15px; color: var(--text-dark); }
+/* HEADER */
+.app-header {
+  background:linear-gradient(135deg,#be185d 0%,#db2777 25%,#c026d3 55%,#9333ea 85%,#7c3aed 100%);
+  background-size:200% 200%;
+  animation:headerGlow 6s ease infinite;
+  padding:20px 20px 30px;
+  border-radius:0 0 36px 36px;
+  color:white;
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 10px 50px rgba(190,24,93,0.4);
+}
 
-        /* DASHBOARD CARDS */
-        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px; }
-        .dash-card { padding: 15px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.04); display: flex; flex-direction: column; justify-content: space-between; border: 1px solid rgba(0,0,0,0.03); }
-        .dash-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 0.85rem; color: var(--text-muted); font-weight: 600; }
-        .dash-value { font-size: 1.2rem; font-weight: 800; }
-        .card-vendido { background-color: var(--card-vendido); }
-        .card-recebido { background-color: var(--card-recebido); }
-        .card-areceber { background-color: var(--card-areceber); }
-        .card-atraso { background-color: var(--card-atraso); }
+.balance-card {
+  background:white;
+  border-radius:24px;
+  padding:22px;
+  margin:-18px 16px 20px;
+  position:relative;
+  z-index:2;
+  border:1px solid rgba(236,72,153,0.1);
+  box-shadow:0 20px 60px rgba(190,24,93,0.18);
+}
 
-        /* LISTAS (Clientes, Contas, etc) */
-        .list-group { background: #FFF; border-radius: 12px; padding: 5px 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 15px; }
-        .list-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 5px; border-bottom: 1px solid #F0F0F0; }
-        .list-item:last-child { border-bottom: none; }
-        .item-info { display: flex; align-items: center; gap: 12px; flex-grow: 1; cursor: pointer; }
-        .avatar { width: 45px; height: 45px; border-radius: 50%; background-color: var(--header-pink); display: flex; align-items: center; justify-content: center; overflow: hidden; border: 2px solid #EEE;}
-        .avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .item-text h4 { font-size: 0.95rem; margin-bottom: 3px; }
-        .item-text p { font-size: 0.8rem; color: var(--text-muted); }
+.page { display:none; animation: fadeIn .4s ease; }
+.page.active { display:block; }
 
-        /* BOTÕES */
-        .btn-cobrar { background: transparent; border: 1px solid var(--btn-green); color: var(--btn-green); padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; gap: 5px; cursor: pointer; }
-        .btn-block { width: 100%; padding: 14px; border-radius: 10px; font-size: 1rem; font-weight: bold; border: none; cursor: pointer; margin-bottom: 10px; color: #FFF; box-shadow: 0 4px 6px rgba(0,0,0,0.1);}
-        .btn-teal { background: var(--btn-teal); }
-        .btn-burgundy { background: var(--btn-burgundy); }
-        
-        /* BOTÃO FLUTUANTE (FAB) PARA NOVO CLIENTE */
-        .fab { position: fixed; bottom: 90px; right: 20px; width: 55px; height: 55px; background: var(--btn-burgundy); color: #FFF; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; box-shadow: 0 4px 10px rgba(144, 48, 83, 0.4); border: none; cursor: pointer; z-index: 99; transition: transform 0.2s;}
-        .fab:active { transform: scale(0.9); }
+.kpi-card {
+  background:white;
+  border-radius:20px;
+  padding:16px;
+  border:1px solid rgba(236,72,153,0.1);
+  box-shadow:0 8px 30px rgba(190,24,93,0.08);
+  transition:all .4s;
+  animation:floatCard 6s ease-in-out infinite;
+}
+.kpi-card:hover { transform:translateY(-6px) scale(1.02); box-shadow:0 15px 40px rgba(190,24,93,0.15); }
 
-        /* NAVEGAÇÃO INFERIOR */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #FFF; display: flex; justify-content: space-between; padding: 10px 15px 20px 15px; box-shadow: 0 -4px 15px rgba(0,0,0,0.05); border-top-left-radius: 20px; border-top-right-radius: 20px; z-index: 1000; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); font-size: 0.7rem; gap: 4px; flex: 1; cursor: pointer; transition: 0.3s; }
-        .nav-item i { font-size: 1.3rem; }
-        .nav-item.active { color: var(--btn-burgundy); }
+.list-card {
+  background:white;
+  border-radius:20px;
+  box-shadow:0 8px 30px rgba(190,24,93,0.08);
+  overflow:hidden;
+  border:1px solid rgba(236,72,153,0.08);
+  margin-bottom:12px;
+}
 
-        /* MODAIS */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
-        .modal-content { background: var(--bg-body); width: 90%; max-width: 380px; border-radius: 20px; padding: 25px 20px; position: relative; animation: scaleIn 0.3s ease; box-shadow: 0 10px 25px rgba(0,0,0,0.2);}
-        .modal-content-pink { background: var(--header-pink); text-align: center; }
-        @keyframes scaleIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .modal-close { position: absolute; top: 15px; right: 15px; font-size: 1.3rem; color: var(--text-dark); cursor: pointer; background: rgba(255,255,255,0.5); width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center;}
-        
-        /* FORMULÁRIOS E FOTOS */
-        .form-control { width: 100%; padding: 14px; border-radius: 10px; border: 1px solid #DDD; margin-bottom: 15px; background: #FFF; font-size: 1rem; }
-        .foto-upload-container { display: flex; flex-direction: column; align-items: center; margin-bottom: 20px; }
-        .foto-preview { width: 90px; height: 90px; border-radius: 50%; background: #EEE; border: 3px solid var(--gold); display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 10px; position: relative; }
-        .foto-preview img { width: 100%; height: 100%; object-fit: cover; }
-        .foto-preview i { font-size: 2rem; color: #CCC; }
-        .custom-file-upload { display: inline-block; padding: 6px 12px; cursor: pointer; color: var(--btn-burgundy); font-weight: bold; font-size: 0.9rem; border: 1px solid var(--btn-burgundy); border-radius: 20px; }
-        input[type="file"] { display: none; }
+.list-item {
+  display:flex; align-items:center; gap:12px;
+  padding:14px;
+  border-bottom:1px solid #fce7f3;
+  cursor:pointer;
+  transition:all .3s;
+}
+.list-item:last-child { border-bottom:none; }
+.list-item:hover { background:linear-gradient(90deg,#fdf2f8,transparent); }
 
-        /* GRÁFICOS */
-        .chart-container { background: #FFF; padding: 15px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.04); height: 260px; position: relative; width: 100%; }
-        .chart-wrapper { position: relative; height: 100%; width: 100%; }
-    </style>
+.list-item-avatar {
+  width:46px;height:46px;border-radius:50%;
+  background:linear-gradient(135deg,#be185d,#db2777,#c026d3,#9333ea);
+  background-size:200% 200%;
+  animation:headerGlow 5s ease infinite;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;font-weight:700;color:white;
+  flex-shrink:0;overflow:hidden;
+  box-shadow:0 4px 12px rgba(190,24,93,0.25);
+  border: 2px solid white;
+}
+.list-item-avatar img { width:100%; height:100%; object-fit:cover; }
+
+.list-item-content { flex: 1; }
+
+/* BOTTOM NAV FIXA */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  background: rgba(255,255,255,0.98);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top:1px solid #fce7f3;
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
+  z-index: 1000;
+  box-shadow:0 -8px 40px rgba(190,24,93,0.1);
+}
+.nav-btn {
+  display:flex; flex-direction:column; align-items:center; gap:3px;
+  padding:6px; cursor:pointer; background:none; border:none;
+  color:#9a95b0; font-family:'Poppins',sans-serif;
+  transition:all .3s;
+}
+.nav-btn.active { color:#db2777; }
+.nav-btn.active span { font-weight:700; }
+.nav-btn i { font-size:22px; }
+.nav-btn span { font-size:9px; font-weight:600; }
+
+/* FAB */
+.fab {
+  position: fixed;
+  bottom: 85px;
+  right: calc(50% - 220px);
+  width:60px; height:60px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#be185d,#db2777,#c026d3,#9333ea);
+  background-size:200% 200%;
+  animation:headerGlow 4s ease infinite, floatBtn 3s ease-in-out infinite;
+  color:white; border:none; font-size:26px; cursor:pointer;
+  box-shadow:0 8px 30px rgba(190,24,93,0.5), 0 0 40px rgba(192,38,211,0.3);
+  display:flex; align-items:center; justify-content:center;
+  z-index:999; transition:all .3s;
+}
+.fab:hover { transform:scale(1.1) rotate(90deg); }
+@media (max-width: 480px) {
+  .fab { right: 20px; }
+}
+
+.modal-overlay {
+  position:fixed; inset:0;
+  background:rgba(45,42,62,0.5);
+  backdrop-filter:blur(6px);
+  z-index:2000;
+  display:none;
+  align-items:flex-end;
+  justify-content:center;
+}
+.modal-overlay.show { display:flex; }
+.modal {
+  background:white;
+  border-radius:28px 28px 0 0;
+  width:100%;
+  max-width:480px;
+  max-height:88vh;
+  overflow-y:auto;
+  animation:slideUp .35s cubic-bezier(0.16,1,0.3,1);
+}
+
+.form-control {
+  width:100%;
+  padding:13px 15px;
+  background:#fdf2f8;
+  border:1.5px solid #fce7f3;
+  border-radius:14px;
+  color:#2d2a3e;
+  font-size:13px;
+  font-family:'Poppins',sans-serif;
+  transition:all .3s;
+  margin-top:6px;
+}
+.form-control:focus { outline:none; border-color:#ec4899; background:white; }
+
+.btn-primary {
+  width:100%;
+  padding:14px;
+  border-radius:14px;
+  border:none;
+  background:linear-gradient(135deg,#be185d,#db2777,#c026d3,#9333ea);
+  background-size:200% 200%;
+  animation:headerGlow 4s ease infinite;
+  color:white;
+  font-size:14px;
+  font-weight:600;
+  cursor:pointer;
+  font-family:'Poppins',sans-serif;
+  box-shadow:0 6px 25px rgba(190,24,93,0.35);
+  transition:all .3s;
+}
+.btn-primary:hover { transform:translateY(-2px); box-shadow:0 10px 35px rgba(190,24,93,0.45); }
+
+.btn-secondary {
+  padding:12px 20px;
+  border-radius:14px;
+  border:1.5px solid #fce7f3;
+  background:white;
+  color:#5a5670;
+  font-size:13px;
+  font-weight:600;
+  cursor:pointer;
+  font-family:'Poppins',sans-serif;
+  transition:all .3s;
+  flex:1;
+}
+.btn-secondary:hover { border-color:#ec4899; color:#db2777; }
+
+.mini-tab {
+  padding:10px 16px;
+  border-radius:12px;
+  background:#fdf2f8;
+  border:none;
+  font-size:12px;
+  font-weight:600;
+  color:#9a95b0;
+  cursor:pointer;
+  white-space:nowrap;
+  font-family:'Poppins',sans-serif;
+  transition:all .3s;
+}
+.mini-tab.active {
+  background:linear-gradient(135deg,#be185d,#db2777);
+  color:white;
+  box-shadow:0 4px 15px rgba(190,24,93,0.3);
+}
+
+.status-pending { display:inline-block;font-size:9px;font-weight:700;padding:3px 10px;border-radius:20px;margin-top:4px;text-transform:uppercase;background:#fef3c7;color:#d97706; }
+.status-paid { display:inline-block;font-size:9px;font-weight:700;padding:3px 10px;border-radius:20px;margin-top:4px;text-transform:uppercase;background:#d1fae5;color:#059669; }
+.status-overdue { display:inline-block;font-size:9px;font-weight:700;padding:3px 10px;border-radius:20px;margin-top:4px;text-transform:uppercase;background:#fee2e2;color:#dc2626; }
+.status-today { display:inline-block;font-size:9px;font-weight:700;padding:3px 10px;border-radius:20px;margin-top:4px;text-transform:uppercase;background:#dbeafe;color:#2563eb; }
+.status-low { display:inline-block;font-size:9px;font-weight:700;padding:3px 10px;border-radius:20px;margin-top:4px;text-transform:uppercase;background:#fef3c7;color:#d97706; }
+.status-out { display:inline-block;font-size:9px;font-weight:700;padding:3px 10px;border-radius:20px;margin-top:4px;text-transform:uppercase;background:#fee2e2;color:#dc2626; }
+
+.cat-pill { display:inline-flex;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:600; }
+.cat-pill.pink { background:#fce7f3;color:#db2777; }
+.cat-pill.purple { background:#ede9fe;color:#7c3aed; }
+.cat-pill.green { background:#d1fae5;color:#059669; }
+.cat-pill.blue { background:#dbeafe;color:#2563eb; }
+
+.toast-container {
+  position:fixed; top:20px; left:50%; transform:translateX(-50%);
+  z-index:3000; display:flex; flex-direction:column; gap:8px;
+  width:calc(100% - 40px); max-width:400px;
+}
+.toast {
+  background:white; border-radius:14px; padding:12px 16px;
+  box-shadow:0 6px 25px rgba(0,0,0,0.12);
+  display:flex; align-items:center; gap:10px;
+  font-size:13px; border-left:4px solid #059669;
+  animation:toastIn .35s ease; font-family:'Poppins',sans-serif;
+}
+.toast.error { border-left-color:#dc2626; }
+.toast.warning { border-left-color:#d97706; }
+
+.empty-state { text-align:center; padding:40px 20px; color:#9a95b0; }
+.empty-state i { font-size:48px; margin-bottom:12px; opacity:0.4; }
+.empty-state p { font-size:13px; }
+
+.chart-wrap { background:white; border-radius:20px; padding:18px; box-shadow:0 8px 30px rgba(190,24,93,0.08); border:1px solid rgba(236,72,153,0.08); margin-bottom:12px; }
+.chart-container { position:relative; height:220px; }
+
+.content-area { padding:0 16px 16px; position:relative; z-index:1; }
+.section-header { display:flex; align-items:center; justify-content:space-between; margin:20px 0 12px; }
+.section-title { font-size:16px; font-weight:700; font-family:'Playfair Display',serif; }
+.section-link { font-size:12px; color:#db2777; font-weight:600; cursor:pointer; }
+
+::-webkit-scrollbar { width:4px; height:4px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:#fbcfe8; border-radius:2px; }
+
+#floatingParticles { position:absolute; inset:0; pointer-events:none; overflow:hidden; z-index:0; }
+
+.image-upload-preview {
+  width:76px;height:76px;border-radius:50%;
+  background:linear-gradient(135deg,#fce7f3,#ede9fe);
+  border:2px dashed #db2777;
+  display:flex;align-items:center;justify-content:center;
+  color:#db2777;font-size:28px;cursor:pointer;overflow:hidden;
+  transition:all .3s;
+}
+.image-upload-preview:hover { border-style:solid; transform:scale(1.05); }
+.image-upload-preview img { width:100%; height:100%; object-fit:cover; }
+
+.installment-preview {
+  background:#fdf2f8;
+  border-radius:14px;
+  padding:12px;
+  margin-top:10px;
+  border:1px solid #fce7f3;
+}
+.installment-item {
+  display:flex;justify-content:space-between;align-items:center;
+  padding:8px 10px;background:white;border-radius:10px;
+  font-size:12px;margin-bottom:4px;
+}
+
+.sale-item-row {
+  display:grid;
+  grid-template-columns: 1fr 60px 80px 32px;
+  gap:6px;
+  align-items:end;
+  margin-bottom:8px;
+}
+
+.modal-handle {
+  width:44px;height:5px;background:#fce7f3;border-radius:3px;margin:14px auto;
+}
+.modal-header {
+  padding:16px 22px;display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid #fce7f3;
+}
+.modal-header h3 { margin:0;font-family:'Playfair Display',serif;font-size:18px; }
+.modal-close {
+  width:34px;height:34px;border-radius:10px;background:#fdf2f8;border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:18px;color:#9a95b0;
+}
+.modal-body { padding:22px; }
+
+/* Botões rápidos em listas */
+.btn-action-outline {
+  background: white; border: 1px solid #fce7f3; padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; cursor: pointer; color: #db2777; transition: all .3s; box-shadow: 0 2px 5px rgba(190,24,93,0.05);
+}
+.btn-action-outline:hover { background: #fdf2f8; border-color: #fbcfe8; }
+.btn-icon-sm {
+  border:none; width:30px; height:30px; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:16px; transition:all .3s;
+}
+.btn-icon-sm:hover { transform: scale(1.05); }
+
+</style>
 </head>
 <body>
 
-    <!-- CABEÇALHO -->
-    <header>
-        <i class="fas fa-bars header-icon" onclick="toggleSidebar()"></i>
-        <div class="header-title">
-            <i class="fas fa-crown header-logo"></i>
-            <h1 id="header-text">Painel Inicial</h1>
-        </div>
-        <i class="fas fa-bell header-icon"></i>
-    </header>
+<!-- SPLASH SCREEN -->
+<div id="splashScreen">
+  <div style="position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(236,72,153,0.4) 0%,transparent 70%);top:-100px;left:-100px;animation:orbFloat 8s ease-in-out infinite;"></div>
+  <div style="position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(245,158,11,0.35) 0%,transparent 70%);bottom:-50px;right:-50px;animation:orbFloat 10s ease-in-out infinite reverse;"></div>
+  <div style="position:absolute;width:250px;height:250px;border-radius:50%;background:radial-gradient(circle,rgba(139,92,246,0.4) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);animation:orbPulse 3s ease-in-out infinite;"></div>
+  <div style="position:absolute;width:280px;height:280px;border-radius:50%;border:2px solid transparent;border-top-color:#ec4899;border-right-color:#f59e0b;animation:spinRing 2s linear infinite;opacity:0.8;"></div>
+  <div style="position:absolute;width:220px;height:220px;border-radius:50%;border:2px solid transparent;border-bottom-color:#8b5cf6;border-left-color:#ec4899;animation:spinRing 1.5s linear infinite reverse;opacity:0.6;"></div>
+  <div style="position:absolute;width:340px;height:340px;border-radius:50%;border:1px solid rgba(236,72,153,0.3);animation:spinRing 4s linear infinite;opacity:0.4;"></div>
+  
+  <div style="position:relative;z-index:2;text-align:center;">
+    <div style="font-size:64px;margin-bottom:16px;animation:logoPulse 1.5s ease-in-out infinite;">
+      <svg width="80" height="80" viewBox="0 0 24 24" fill="none">
+        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="url(#hg)"/>
+        <defs><linearGradient id="hg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ec4899"/><stop offset="50%" stop-color="#f472b6"/><stop offset="100%" stop-color="#f59e0b"/></linearGradient></defs>
+      </svg>
+    </div>
+    <h1 style="font-family:'Playfair Display',serif;font-size:32px;font-weight:800;background:linear-gradient(90deg,#ec4899,#f59e0b,#8b5cf6,#ec4899);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:gradientShift 3s ease infinite;margin:0;letter-spacing:1px;">Cláudia Collection</h1>
+    <p style="color:rgba(255,255,255,0.6);font-size:12px;letter-spacing:4px;text-transform:uppercase;margin-top:8px;font-family:'Poppins',sans-serif;">Premium Finance</p>
+  </div>
+  
+  <div style="position:relative;z-index:2;width:200px;height:3px;background:rgba(255,255,255,0.1);border-radius:2px;margin-top:40px;overflow:hidden;">
+    <div style="height:100%;width:0%;background:linear-gradient(90deg,#ec4899,#f59e0b,#8b5cf6);border-radius:2px;animation:loadBar 2.8s ease-out forwards;box-shadow:0 0 10px #ec4899;"></div>
+  </div>
+  <p id="loadingText" style="color:rgba(255,255,255,0.4);font-size:10px;letter-spacing:2px;margin-top:12px;font-family:'Poppins',sans-serif;">CARREGANDO...</p>
+  <div id="sparkles" style="position:absolute;inset:0;pointer-events:none;"></div>
+</div>
 
-    <!-- MENU LATERAL -->
-    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <!-- Coloque a foto da Cláudia aqui, se houver -->
-            <img src="https://i.pravatar.cc/150?img=47" alt="Perfil">
-            <h3 style="color:var(--text-dark);">Cláudia Collection</h3>
-            <p style="font-size:0.8rem; color:var(--text-muted);">Administradora</p>
+<!-- MAIN APP -->
+<div id="mainApp" style="opacity:0;transition:opacity 0.6s ease;">
+<div class="app-wrapper">
+  <div id="floatingParticles"></div>
+
+  <!-- HEADER -->
+  <header class="app-header">
+    <div style="position:absolute;top:-60px;right:-40px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,0.25) 0%,transparent 70%);animation:floatOrb 6s ease-in-out infinite;"></div>
+    <div style="position:absolute;bottom:-70px;left:-30px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(245,158,11,0.35) 0%,transparent 70%);animation:floatOrb 8s ease-in-out infinite reverse;"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1;">
+      <div style="display:flex;align-items:center;gap:12px;cursor:pointer;" onclick="openProfileModal()">
+        <div id="mainAvatar" style="width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,rgba(255,255,255,0.4),rgba(255,255,255,0.15));border:2px solid rgba(255,255,255,0.7);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:white;overflow:hidden;box-shadow:0 0 20px rgba(255,255,255,0.3);animation:floatBtn 4s ease-in-out infinite;position:relative;">C</div>
+        <div>
+          <div style="font-size:11px;opacity:0.85;">Olá,</div>
+          <div id="profileName" style="font-size:15px;font-weight:600;">Cláudia</div>
         </div>
-        <ul class="sidebar-menu">
-            <li onclick="toggleSidebar(); switchView('view-inicio', 'Painel Inicial', document.getElementById('nav-inicio'))"><i class="fas fa-home"></i> Início</li>
-            <li><i class="fas fa-cog"></i> Configurações</li>
-            <li><i class="fas fa-box"></i> Categorias de Produtos</li>
-            <li><i class="fas fa-cloud-download-alt"></i> Backup de Dados</li>
-            <li><i class="fas fa-question-circle"></i> Ajuda / Suporte</li>
-            <li style="color: #E74C3C; margin-top: auto; border-bottom: none;"><i class="fas fa-sign-out-alt" style="color: #E74C3C;"></i> Sair do App</li>
-        </ul>
+      </div>
+      <button onclick="navigateTo('receivable')" style="width:42px;height:42px;border-radius:14px;background:rgba(255,255,255,0.2);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.25);color:white;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;position:relative;animation:floatBtn 4.5s ease-in-out infinite;">
+        <i class="ri-notification-3-line"></i>
+        <span id="alertBadge" style="position:absolute;top:-3px;right:-3px;background:linear-gradient(135deg,#ef4444,#dc2626);color:white;font-size:9px;font-weight:700;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 5px;box-shadow:0 0 10px rgba(239,68,68,0.6);">0</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- BALANCE CARD -->
+  <div class="balance-card" id="balanceCard">
+    <div style="font-size:11px;color:#9a95b0;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin-bottom:6px;">Saldo do mês</div>
+    <div id="balanceValue" style="font-size:32px;font-weight:800;background:linear-gradient(135deg,#be185d,#db2777,#c026d3,#9333ea);background-size:200% 200%;animation:gradientShift 4s ease infinite;-webkit-background-clip:text;background-clip:text;color:transparent;">R$ 0,00</div>
+    <div style="font-size:11px;color:#9a95b0;margin-top:4px;">Recebido - Despesas</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:18px;padding-top:18px;border-top:1px solid #fce7f3;">
+      <div onclick="openQuickSale()" style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:10px 4px;border-radius:16px;transition:all .3s;animation:floatBtn 5s ease-in-out infinite;">
+        <div style="width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;background:linear-gradient(135deg,#fce7f3,#fbcfe8);color:#db2777;box-shadow:0 4px 15px rgba(219,39,119,0.2);"><i class="ri-shopping-cart-line"></i></div>
+        <span style="font-size:10px;color:#5a5670;font-weight:600;">Nova Venda</span>
+      </div>
+      <div onclick="openQuickClient()" style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:10px 4px;border-radius:16px;transition:all .3s;animation:floatBtn 5.5s ease-in-out infinite 0.2s;">
+        <div style="width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;background:linear-gradient(135deg,#d1fae5,#a7f3d0);color:#059669;box-shadow:0 4px 15px rgba(5,150,105,0.2);"><i class="ri-user-add-line"></i></div>
+        <span style="font-size:10px;color:#5a5670;font-weight:600;">+ Cliente</span>
+      </div>
+      <div onclick="navigateTo('receivable')" style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:10px 4px;border-radius:16px;transition:all .3s;animation:floatBtn 6s ease-in-out infinite 0.4s;">
+        <div style="width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;background:linear-gradient(135deg,#fef3c7,#fde68a);color:#d97706;box-shadow:0 4px 15px rgba(217,119,6,0.2);"><i class="ri-money-dollar-circle-line"></i></div>
+        <span style="font-size:10px;color:#5a5670;font-weight:600;">A Receber</span>
+      </div>
+      <div onclick="openQuickExpense()" style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:10px 4px;border-radius:16px;transition:all .3s;animation:floatBtn 6.5s ease-in-out infinite 0.6s;">
+        <div style="width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;background:linear-gradient(135deg,#ede9fe,#ddd6fe);color:#7c3aed;box-shadow:0 4px 15px rgba(124,58,237,0.2);"><i class="ri-bill-line"></i></div>
+        <span style="font-size:10px;color:#5a5670;font-weight:600;">Despesa</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-area">
+    <!-- HOME -->
+    <div class="page active" id="page-home">
+      <div id="dashboardAlerts"></div>
+      <div class="section-header"><div class="section-title">Resumo Financeiro</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:8px;">
+        <div class="kpi-card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><span style="font-size:10px;color:#9a95b0;font-weight:600;text-transform:uppercase;">Vendido</span><div style="width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,#fce7f3,#fbcfe8);color:#db2777;"><i class="ri-shopping-bag-line"></i></div></div><div id="kpiSold" style="font-size:20px;font-weight:700;">R$ 0,00</div><div style="font-size:10px;color:#9a95b0;margin-top:3px;">Este mês</div></div>
+        <div class="kpi-card" style="animation-delay:0.3s;"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><span style="font-size:10px;color:#9a95b0;font-weight:600;text-transform:uppercase;">Recebido</span><div style="width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,#d1fae5,#6ee7b7);color:#059669;"><i class="ri-bank-card-line"></i></div></div><div id="kpiReceived" style="font-size:20px;font-weight:700;">R$ 0,00</div><div style="font-size:10px;color:#9a95b0;margin-top:3px;">Confirmado</div></div>
+        <div class="kpi-card" style="animation-delay:0.6s;"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><span style="font-size:10px;color:#9a95b0;font-weight:600;text-transform:uppercase;">A Receber</span><div style="width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,#fef3c7,#fcd34d);color:#d97706;"><i class="ri-time-line"></i></div></div><div id="kpiReceivable" style="font-size:20px;font-weight:700;">R$ 0,00</div><div id="kpiReceivableCount" style="font-size:10px;color:#9a95b0;margin-top:3px;">0 parcelas</div></div>
+        <div class="kpi-card" style="animation-delay:0.9s;"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><span style="font-size:10px;color:#9a95b0;font-weight:600;text-transform:uppercase;">Atrasado</span><div style="width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,#fee2e2,#fca5a5);color:#dc2626;"><i class="ri-alarm-warning-line"></i></div></div><div id="kpiOverdue" style="font-size:20px;font-weight:700;">R$ 0,00</div><div id="kpiOverdueCount" style="font-size:10px;color:#9a95b0;margin-top:3px;">0 parcelas</div></div>
+      </div>
+      <div class="section-header"><div class="section-title">Próximos Vencimentos</div><div class="section-link" onclick="navigateTo('receivable')">Ver todos →</div></div>
+      <div class="list-card" id="upcomingList"><div class="empty-state"><i class="ri-checkbox-circle-line"></i><p>Tudo em ordem!</p></div></div>
+      <div class="section-header"><div class="section-title">Vendas por Categoria</div></div>
+      <div class="chart-wrap"><div class="chart-container"><canvas id="homeChart"></canvas></div></div>
+      <div class="section-header"><div class="section-title">Clientes</div><div class="section-link" onclick="navigateTo('clients')">Ver todas →</div></div>
+      <div class="list-card" id="clientsHomeList"><div class="empty-state"><i class="ri-user-heart-line"></i><p>Cadastre suas clientes!</p></div></div>
     </div>
 
-    <!-- 1. TELA: INÍCIO (DASHBOARD) -->
-    <div id="view-inicio" class="view active">
-        <h2 class="section-title">Resumo do Mês</h2>
-        <div class="dashboard-grid">
-            <div class="dash-card card-vendido">
-                <div class="dash-header"><i class="fas fa-sack-dollar" style="color:#D4AC0D;"></i> Vendido:</div>
-                <div class="dash-value">R$ 6.850,00</div>
-            </div>
-            <div class="dash-card card-recebido">
-                <div class="dash-header"><i class="fas fa-money-bill-wave" style="color:#27AE60;"></i> Recebido:</div>
-                <div class="dash-value">R$ 4.200,00</div>
-            </div>
-            <div class="dash-card card-areceber">
-                <div class="dash-header"><i class="fas fa-clock" style="color:#D68910;"></i> A Receber:</div>
-                <div class="dash-value">R$ 2.650,00</div>
-            </div>
-            <div class="dash-card card-atraso">
-                <div class="dash-header"><i class="fas fa-minus-circle" style="color:#C0392B;"></i> Em Atraso:</div>
-                <div class="dash-value">R$ 1.150,00</div>
-            </div>
-        </div>
-
-        <h2 class="section-title">Contas a Receber Próximas</h2>
-        <div class="list-group">
-            <div class="list-item">
-                <div class="item-info">
-                    <div class="avatar"><img src="https://i.pravatar.cc/100?img=1" alt="Avatar"></div>
-                    <div class="item-text">
-                        <h4>Maria Silva</h4>
-                        <p>R$ 100,00 Vence Amanhã</p>
-                    </div>
-                </div>
-                <button class="btn-cobrar" onclick="abrirZap('Maria Silva', '100,00', '5511999999999', 'amanhã')">Cobrar <i class="fab fa-whatsapp"></i></button>
-            </div>
-            <div class="list-item">
-                <div class="item-info">
-                    <div class="avatar"><img src="https://i.pravatar.cc/100?img=5" alt="Avatar"></div>
-                    <div class="item-text">
-                        <h4>Ana Paula</h4>
-                        <p style="color: #E74C3C; font-weight:bold;">R$ 150,00 Atrasado</p>
-                    </div>
-                </div>
-                <button class="btn-cobrar" onclick="abrirZap('Ana Paula', '150,00', '5511999999999', 'atrasada')">Cobrar <i class="fab fa-whatsapp"></i></button>
-            </div>
-        </div>
+    <!-- CLIENTES -->
+    <div class="page" id="page-clients">
+      <div style="font-size:20px;font-weight:700;font-family:'Playfair Display',serif;padding:16px 0 8px;">Clientes</div>
+      <div style="position:relative;margin-bottom:14px;"><i class="ri-search-line" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#9a95b0;"></i><input type="text" placeholder="Buscar cliente..." id="searchClient" oninput="renderClients()" class="form-control" style="padding-left:42px;margin-top:0;"></div>
+      <div class="list-card" id="clientsList"><div class="empty-state"><i class="ri-user-heart-line"></i><p>Nenhuma cliente cadastrada.</p></div></div>
     </div>
 
-    <!-- 2. TELA: CLIENTES -->
-    <div id="view-clientes" class="view">
-        <h2 class="section-title">Meus Clientes</h2>
-        <input type="text" class="form-control" placeholder="Buscar cliente por nome..." style="margin-bottom: 20px;">
-        
-        <div class="list-group" id="lista-clientes-dinamica">
-            <!-- Clientes Iniciais -->
-            <div class="list-item">
-                <div class="item-info" onclick="abrirModalDetalheCliente('Maria Silva', 'R$ 500,00', '15/09/2023', 'https://i.pravatar.cc/100?img=1')">
-                    <div class="avatar"><img src="https://i.pravatar.cc/100?img=1" alt="Avatar"></div>
-                    <div class="item-text"><h4>Maria Silva</h4><p>Última compra: 15/09/2023</p></div>
-                </div>
-                <i class="fas fa-chevron-right" style="color:#CCC;"></i>
-            </div>
-            <div class="list-item">
-                <div class="item-info" onclick="abrirModalDetalheCliente('Ana Paula', 'R$ 150,00', '02/10/2023', 'https://i.pravatar.cc/100?img=5')">
-                    <div class="avatar"><img src="https://i.pravatar.cc/100?img=5" alt="Avatar"></div>
-                    <div class="item-text"><h4>Ana Paula</h4><p>Última compra: 02/10/2023</p></div>
-                </div>
-                <i class="fas fa-chevron-right" style="color:#CCC;"></i>
-            </div>
-        </div>
-
-        <!-- Botão Flutuante (Novo Cliente) -->
-        <button class="fab" onclick="abrirModalNovoCliente()"><i class="fas fa-plus"></i></button>
+    <!-- CLIENTE DETALHE -->
+    <div class="page" id="page-client-detail">
+      <div style="display:flex;align-items:center;gap:10px;padding:16px 0 4px;"><div onclick="navigateTo('clients')" style="width:40px;height:40px;border-radius:12px;background:white;border:1px solid #fce7f3;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 15px rgba(190,24,93,0.08);"><i class="ri-arrow-left-line"></i></div><div style="font-size:20px;font-weight:700;font-family:'Playfair Display',serif;flex:1;">Detalhes</div></div>
+      <div style="background:linear-gradient(135deg,#be185d,#db2777,#c026d3,#9333ea);background-size:200% 200%;animation:headerGlow 6s ease infinite;margin:10px -16px 20px;padding:28px 20px 36px;border-radius:0 0 28px 28px;color:white;text-align:center;position:relative;overflow:hidden;">
+        <div id="detailAvatar" style="width:84px;height:84px;border-radius:50%;background:linear-gradient(135deg,rgba(255,255,255,0.4),rgba(255,255,255,0.15));border:3px solid rgba(255,255,255,0.7);margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:700;overflow:hidden;box-shadow:0 0 30px rgba(255,255,255,0.3);animation:floatBtn 4s ease-in-out infinite;">C</div>
+        <div id="detailName" style="font-size:22px;font-weight:700;">Carregando...</div>
+        <div id="detailPhone" style="font-size:12px;opacity:0.9;margin-top:6px;">--</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:-28px 0 20px;position:relative;z-index:2;">
+        <div style="background:white;border-radius:18px;padding:14px;text-align:center;box-shadow:0 8px 30px rgba(190,24,93,0.1);"><div style="font-size:10px;color:#9a95b0;text-transform:uppercase;font-weight:600;">Comprado</div><div id="statBought" style="font-size:18px;font-weight:700;margin-top:4px;color:#db2777;">R$ 0</div></div>
+        <div style="background:white;border-radius:18px;padding:14px;text-align:center;box-shadow:0 8px 30px rgba(5,150,105,0.1);"><div style="font-size:10px;color:#9a95b0;text-transform:uppercase;font-weight:600;">Pago</div><div id="statPaid" style="font-size:18px;font-weight:700;margin-top:4px;color:#059669;">R$ 0</div></div>
+        <div style="background:white;border-radius:18px;padding:14px;text-align:center;box-shadow:0 8px 30px rgba(217,119,6,0.1);"><div style="font-size:10px;color:#9a95b0;text-transform:uppercase;font-weight:600;">Em Aberto</div><div id="statOpen" style="font-size:18px;font-weight:700;margin-top:4px;color:#d97706;">R$ 0</div></div>
+        <div style="background:white;border-radius:18px;padding:14px;text-align:center;box-shadow:0 8px 30px rgba(220,38,38,0.1);"><div style="font-size:10px;color:#9a95b0;text-transform:uppercase;font-weight:600;">Atrasado</div><div id="statOverdue" style="font-size:18px;font-weight:700;margin-top:4px;color:#dc2626;">R$ 0</div></div>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:16px;">
+        <button id="detailWhatsapp" style="flex:1;background:linear-gradient(135deg,#22c55e,#16a34a);color:white;padding:12px;border-radius:14px;border:none;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 4px 15px rgba(34,197,94,0.3);animation:floatBtn 5s ease-in-out infinite;"><i class="ri-whatsapp-line"></i> Contatar</button>
+        <button id="detailEdit" style="flex:1;background:white;color:#5a5670;padding:12px;border-radius:14px;border:1.5px solid #fce7f3;font-size:13px;font-weight:600;cursor:pointer;"><i class="ri-edit-line"></i> Editar Cliente</button>
+      </div>
+      <div class="section-header"><div class="section-title">Parcelas</div></div>
+      <div class="list-card" id="detailInstallments"><div class="empty-state"><i class="ri-file-list-line"></i><p>Sem parcelas.</p></div></div>
+      <div class="section-header"><div class="section-title">Histórico</div></div>
+      <div class="list-card" id="detailSales"><div class="empty-state"><i class="ri-shopping-cart-line"></i><p>Sem compras.</p></div></div>
     </div>
 
-    <!-- 3. TELA: NOVA VENDA -->
-    <div id="view-vendas" class="view">
-        <h2 class="section-title">Registrar Venda</h2>
-        <div style="background: #FFF; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-            <label style="font-weight:bold; margin-bottom: 8px; display:block;">Cliente</label>
-            <select class="form-control">
-                <option>Maria Silva</option>
-                <option>Ana Paula</option>
-            </select>
-            <label style="font-weight:bold; margin-bottom: 8px; display:block;">Valor Total (R$)</label>
-            <input type="number" class="form-control" placeholder="Ex: 300.00">
-            <button class="btn-block btn-teal" onclick="alert('Venda simulada com sucesso!')">Confirmar Venda</button>
-        </div>
+    <!-- A RECEBER -->
+    <div class="page" id="page-receivable">
+      <div style="font-size:20px;font-weight:700;font-family:'Playfair Display',serif;padding:16px 0 8px;">Contas a Receber</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+        <div style="background:white;border-radius:18px;padding:14px;border:1px solid rgba(245,158,11,0.1);box-shadow:0 8px 30px rgba(217,119,6,0.08);"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;"><div style="font-size:10px;color:#9a95b0;font-weight:600;text-transform:uppercase;">Total a Receber</div><div style="width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;background:linear-gradient(135deg,#fef3c7,#fcd34d);color:#d97706;"><i class="ri-money-dollar-circle-line"></i></div></div><div id="recTotal" style="font-size:18px;font-weight:700;color:#d97706;">R$ 0</div></div>
+        <div style="background:white;border-radius:18px;padding:14px;border:1px solid rgba(239,68,68,0.1);box-shadow:0 8px 30px rgba(220,38,38,0.08);"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;"><div style="font-size:10px;color:#9a95b0;font-weight:600;text-transform:uppercase;">Total Atrasado</div><div style="width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;background:linear-gradient(135deg,#fee2e2,#fca5a5);color:#dc2626;"><i class="ri-alarm-warning-line"></i></div></div><div id="recOverdue" style="font-size:18px;font-weight:700;color:#dc2626;">R$ 0</div></div>
+      </div>
+      <div id="recTabs" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;scrollbar-width:none;">
+        <button class="mini-tab active" onclick="switchRecTab('today')">Hoje</button>
+        <button class="mini-tab" onclick="switchRecTab('week')">7 dias</button>
+        <button class="mini-tab" onclick="switchRecTab('overdue')">Atrasadas</button>
+        <button class="mini-tab" onclick="switchRecTab('all')">Todas</button>
+        <button class="mini-tab" onclick="switchRecTab('paid')">Pagas</button>
+      </div>
+      <div class="list-card" id="receivableList"><div class="empty-state"><i class="ri-checkbox-circle-line"></i><p>Nenhuma parcela.</p></div></div>
     </div>
 
-    <!-- 4. TELA: FINANCEIRO / GRÁFICOS -->
-    <div id="view-financeiro" class="view">
-        <h2 class="section-title">Relatório de Vendas</h2>
-        
-        <!-- Container corrigido com altura fixa -->
-        <div class="chart-container">
-            <h4 style="text-align:center; margin-bottom:10px; color:var(--text-dark);">Vendas por Categoria</h4>
-            <div class="chart-wrapper">
-                <canvas id="graficoPizza"></canvas>
-            </div>
-        </div>
-
-        <div class="chart-container">
-            <h4 style="text-align:center; margin-bottom:10px; color:var(--text-dark);">Evolução Mensal</h4>
-            <div class="chart-wrapper">
-                <canvas id="graficoLinha"></canvas>
-            </div>
-        </div>
+    <!-- VENDAS -->
+    <div class="page" id="page-sales">
+      <div style="font-size:20px;font-weight:700;font-family:'Playfair Display',serif;padding:16px 0 8px;">Vendas</div>
+      <div class="list-card" id="salesList"><div class="empty-state"><i class="ri-shopping-cart-line"></i><p>Nenhuma venda registrada.</p></div></div>
     </div>
 
-    <!-- 5. TELA: ESTOQUE -->
-    <div id="view-estoque" class="view">
-        <h2 class="section-title">Estoque Atual</h2>
-        <div class="list-group">
-            <div class="list-item">
-                <div class="item-info">
-                    <div class="avatar" style="border-radius:8px;"><i class="fas fa-ring"></i></div>
-                    <div class="item-text"><h4>Anel Ouro Semijoia</h4><p>10 unid. disponíveis</p></div>
-                </div>
-            </div>
-        </div>
+    <!-- PRODUTOS -->
+    <div class="page" id="page-products">
+      <div style="font-size:20px;font-weight:700;font-family:'Playfair Display',serif;padding:16px 0 8px;">Produtos & Estoque</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+        <div style="background:white;border-radius:18px;padding:14px;border:1px solid rgba(59,130,246,0.1);box-shadow:0 8px 30px rgba(37,99,235,0.08);"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;"><div style="font-size:10px;color:#9a95b0;font-weight:600;text-transform:uppercase;">Valor Investido</div><div style="width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;background:linear-gradient(135deg,#dbeafe,#93c5fd);color:#2563eb;"><i class="ri-wallet-line"></i></div></div><div id="stockInvested" style="font-size:18px;font-weight:700;">R$ 0</div></div>
+        <div style="background:white;border-radius:18px;padding:14px;border:1px solid rgba(239,68,68,0.1);box-shadow:0 8px 30px rgba(220,38,38,0.08);"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;"><div style="font-size:10px;color:#9a95b0;font-weight:600;text-transform:uppercase;">Estoque Baixo</div><div style="width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;background:linear-gradient(135deg,#fee2e2,#fca5a5);color:#dc2626;"><i class="ri-alert-line"></i></div></div><div id="stockLowCount" style="font-size:18px;font-weight:700;color:#dc2626;">0</div></div>
+      </div>
+      <div style="position:relative;margin-bottom:14px;"><i class="ri-search-line" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#9a95b0;"></i><input type="text" placeholder="Buscar produto..." id="searchProduct" oninput="renderProducts()" class="form-control" style="padding-left:42px;margin-top:0;"></div>
+      <div class="list-card" id="productsList"><div class="empty-state"><i class="ri-gift-line"></i><p>Nenhum produto cadastrado.</p></div></div>
     </div>
 
-    <!-- MODAL 1: ADICIONAR NOVO CLIENTE (COM FOTO) -->
-    <div class="modal-overlay" id="modalNovoCliente">
-        <div class="modal-content">
-            <i class="fas fa-times modal-close" onclick="fecharModalNovoCliente()"></i>
-            <h2 class="section-title" style="text-align:center;">Novo Cliente</h2>
-            
-            <div class="foto-upload-container">
-                <div class="foto-preview">
-                    <img id="preview-img" src="" style="display:none;" alt="Preview">
-                    <i id="preview-icon" class="fas fa-user"></i>
-                </div>
-                <label for="foto-input" class="custom-file-upload">
-                    <i class="fas fa-camera"></i> Escolher Foto
-                </label>
-                <input id="foto-input" type="file" accept="image/*" onchange="carregarFoto(event)">
-            </div>
-
-            <input type="text" id="novo-cli-nome" class="form-control" placeholder="Nome da Cliente">
-            <input type="tel" id="novo-cli-zap" class="form-control" placeholder="WhatsApp (DDD + Número)">
-            
-            <button class="btn-block btn-burgundy" onclick="salvarNovoCliente()">Salvar Cliente</button>
-        </div>
+    <!-- MAIS -->
+    <div class="page" id="page-more">
+      <div style="font-size:20px;font-weight:700;font-family:'Playfair Display',serif;padding:16px 0 8px;">Mais</div>
+      <div class="list-card" style="margin-bottom:16px;">
+        <div class="list-item" onclick="openQuickExpense()"><div style="width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,#fee2e2,#fca5a5);color:#dc2626;flex-shrink:0;"><i class="ri-bill-line"></i></div><div style="flex:1;"><div style="font-size:13px;font-weight:600;">Despesas</div><div style="font-size:11px;color:#9a95b0;">Lançar e ver gastos</div></div><i class="ri-arrow-right-s-line" style="color:#9a95b0;"></i></div>
+        <div class="list-item" onclick="navigateTo('reports')"><div style="width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,#ede9fe,#c4b5fd);color:#7c3aed;flex-shrink:0;"><i class="ri-bar-chart-box-line"></i></div><div style="flex:1;"><div style="font-size:13px;font-weight:600;">Relatórios</div><div style="font-size:11px;color:#9a95b0;">Análise financeira completa</div></div><i class="ri-arrow-right-s-line" style="color:#9a95b0;"></i></div>
+      </div>
+      <div class="list-card" style="margin-bottom:16px;">
+        <div class="list-item" onclick="exportData()"><div style="width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,#dbeafe,#93c5fd);color:#2563eb;flex-shrink:0;"><i class="ri-download-cloud-line"></i></div><div style="flex:1;"><div style="font-size:13px;font-weight:600;">Backup / Exportar</div><div style="font-size:11px;color:#9a95b0;">Salvar seus dados</div></div><i class="ri-arrow-right-s-line" style="color:#9a95b0;"></i></div>
+        <label class="list-item" style="margin:0;"><div style="width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,#d1fae5,#6ee7b7);color:#059669;flex-shrink:0;"><i class="ri-upload-cloud-line"></i></div><div style="flex:1;"><div style="font-size:13px;font-weight:600;">Importar Dados</div><div style="font-size:11px;color:#9a95b0;">Restaurar backup</div></div><input type="file" accept=".json" style="display:none;" onchange="importData(event)"></label>
+        <div class="list-item" onclick="openProfileModal()"><div style="width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,#fce7f3,#fbcfe8);color:#db2777;flex-shrink:0;"><i class="ri-user-settings-line"></i></div><div style="flex:1;"><div style="font-size:13px;font-weight:600;">Perfil</div><div style="font-size:11px;color:#9a95b0;">Editar foto, nome e loja</div></div><i class="ri-arrow-right-s-line" style="color:#9a95b0;"></i></div>
+      </div>
+      <div style="text-align:center;padding:20px;color:#9a95b0;font-size:11px;"><p style="font-weight:700;background:linear-gradient(90deg,#db2777,#c026d3,#9333ea);-webkit-background-clip:text;background-clip:text;color:transparent;font-size:14px;font-family:'Playfair Display',serif;">Cláudia Collection</p><p style="margin-top:4px;">Sistema Premium v2.0</p></div>
     </div>
 
-    <!-- MODAL 2: DETALHES DO CLIENTE (RESUMO DE CONTA) -->
-    <div class="modal-overlay" id="modalDetalheCliente">
-        <div class="modal-content modal-content-pink">
-            <i class="fas fa-times modal-close" onclick="fecharModalDetalhe()"></i>
-            <div class="avatar" style="width:80px; height:80px; margin: 0 auto 10px auto; border:3px solid #FFF;">
-                <img id="detalhe-img" src="" alt="Avatar">
-            </div>
-            <h2 id="detalhe-nome" style="margin-bottom: 15px;">Nome</h2>
-            <div style="background: #FFF; padding: 20px; border-radius: 15px; text-align: left;">
-                <p style="margin-bottom: 10px;"><strong>Total em Aberto:</strong> <span id="detalhe-aberto" style="color:var(--text-dark); font-weight:bold;"></span></p>
-                <p style="margin-bottom: 20px;"><strong>Última Compra:</strong> <span id="detalhe-ultima"></span></p>
-                <button class="btn-block btn-teal" style="background:var(--btn-green);" onclick="alert('Abrindo WhatsApp...')"><i class="fab fa-whatsapp"></i> Cobrar Cliente</button>
-                <button class="btn-block" style="background:#EEE; color:var(--text-dark);" onclick="fecharModalDetalhe()">Fechar</button>
-            </div>
-        </div>
+    <!-- REPORTS -->
+    <div class="page" id="page-reports">
+      <div style="display:flex;align-items:center;gap:10px;padding:16px 0 4px;"><div onclick="navigateTo('more')" style="width:40px;height:40px;border-radius:12px;background:white;border:1px solid #fce7f3;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 15px rgba(190,24,93,0.08);"><i class="ri-arrow-left-line"></i></div><div style="font-size:20px;font-weight:700;font-family:'Playfair Display',serif;flex:1;">Relatórios</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;">
+        <div style="background:white;border-radius:18px;padding:14px;box-shadow:0 8px 30px rgba(190,24,93,0.08);"><div style="font-size:10px;color:#9a95b0;text-transform:uppercase;font-weight:600;">Vendido</div><div id="repSold" style="font-size:18px;font-weight:700;margin-top:4px;">R$ 0</div></div>
+        <div style="background:white;border-radius:18px;padding:14px;box-shadow:0 8px 30px rgba(5,150,105,0.08);"><div style="font-size:10px;color:#9a95b0;text-transform:uppercase;font-weight:600;">Recebido</div><div id="repReceived" style="font-size:18px;font-weight:700;margin-top:4px;">R$ 0</div></div>
+        <div style="background:white;border-radius:18px;padding:14px;box-shadow:0 8px 30px rgba(220,38,38,0.08);"><div style="font-size:10px;color:#9a95b0;text-transform:uppercase;font-weight:600;">Despesas</div><div id="repExp" style="font-size:18px;font-weight:700;margin-top:4px;">R$ 0</div></div>
+        <div style="background:white;border-radius:18px;padding:14px;box-shadow:0 8px 30px rgba(124,58,237,0.08);"><div style="font-size:10px;color:#9a95b0;text-transform:uppercase;font-weight:600;">Lucro</div><div id="repProfit" style="font-size:18px;font-weight:700;margin-top:4px;">R$ 0</div></div>
+      </div>
+      <div class="chart-wrap"><div style="font-size:14px;font-weight:600;margin-bottom:12px;font-family:'Playfair Display',serif;">Vendas por Categoria</div><div class="chart-container"><canvas id="reportChart"></canvas></div></div>
     </div>
 
-    <!-- NAVEGAÇÃO INFERIOR -->
-    <nav class="bottom-nav">
-        <div id="nav-inicio" class="nav-item active" onclick="switchView('view-inicio', 'Painel Inicial', this)">
-            <i class="fas fa-home"></i> Início
+  </div>
+
+  <!-- FAB FIXO -->
+  <button class="fab" id="fabBtn" onclick="openQuickSale()"><i class="ri-add-line"></i></button>
+
+  <!-- BOTTOM NAV FIXA -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" onclick="navigateTo('home')"><i class="ri-home-5-fill"></i><span>Início</span></button>
+    <button class="nav-btn" onclick="navigateTo('clients')"><i class="ri-user-heart-line"></i><span>Clientes</span></button>
+    <button class="nav-btn" onclick="navigateTo('sales')"><i class="ri-shopping-cart-line"></i><span>Vendas</span></button>
+    <button class="nav-btn" onclick="navigateTo('products')"><i class="ri-store-2-line"></i><span>Estoque</span></button>
+    <button class="nav-btn" onclick="navigateTo('more')"><i class="ri-apps-line"></i><span>Mais</span></button>
+  </nav>
+</div>
+
+<!-- MODAL: PERFIL -->
+<div id="profileModal" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <h3>Seu Perfil</h3>
+      <button class="modal-close" onclick="closeModal('profileModal')"><i class="ri-close-line"></i></button>
+    </div>
+    <div class="modal-body">
+      <div style="text-align:center;margin-bottom:20px;">
+        <div class="image-upload-preview" style="margin:0 auto 10px;width:96px;height:96px;" onclick="document.getElementById('profileImage').click()" id="profileImagePreview">
+          <i class="ri-camera-line"></i>
         </div>
-        <div class="nav-item" onclick="switchView('view-clientes', 'Clientes', this)">
-            <i class="fas fa-users"></i> Clientes
+        <input type="file" id="profileImage" accept="image/*" style="display:none;" onchange="handleProfileImage(event)">
+        <p style="font-size:11px;color:#9a95b0;">Clique para alterar a foto</p>
+      </div>
+      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:#5a5670;">Seu nome</label><input type="text" id="profileNameInput" class="form-control" placeholder="Cláudia"></div>
+      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:#5a5670;">Nome da loja</label><input type="text" id="storeNameInput" class="form-control" value="Cláudia Collection"></div>
+      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:#5a5670;">Dia padrão de vencimento</label><input type="number" id="dueDayInput" class="form-control" value="10" min="1" max="28"></div>
+      <button class="btn-primary" onclick="saveProfile()"><i class="ri-save-line"></i> Salvar Perfil</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: CLIENTE -->
+<div id="clientModal" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <h3 id="clientModalTitle">Nova Cliente</h3>
+      <button class="modal-close" onclick="closeModal('clientModal')"><i class="ri-close-line"></i></button>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;">
+        <div class="image-upload-preview" onclick="document.getElementById('clientImage').click()" id="clientImagePreview" style="width:70px;height:70px;border-radius:16px;"><i class="ri-camera-line"></i></div>
+        <input type="file" id="clientImage" accept="image/*" style="display:none;" onchange="handleClientImage(event)">
+        <div><h4 style="font-size:14px;font-weight:600;">Foto da cliente</h4><p style="font-size:11px;color:#9a95b0;margin-top:4px;">Opcional</p></div>
+      </div>
+      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:#5a5670;">Nome *</label><input type="text" id="clientName" class="form-control" placeholder="Ex: Maria da Silva"></div>
+      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:#5a5670;">Telefone *</label><input type="text" id="clientPhone" class="form-control" placeholder="(00) 00000-0000" oninput="formatPhone(this)"></div>
+      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:#5a5670;">Endereço</label><input type="text" id="clientAddress" class="form-control" placeholder="Rua, número, bairro"></div>
+      <button class="btn-primary" onclick="saveClient()"><i class="ri-save-line"></i> Salvar Cliente</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: PRODUTO -->
+<div id="productModal" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <h3 id="productModalTitle">Novo Produto</h3>
+      <button class="modal-close" onclick="closeModal('productModal')"><i class="ri-close-line"></i></button>
+    </div>
+    <div class="modal-body">
+      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:#5a5670;">Nome *</label><input type="text" id="productName" class="form-control" placeholder="Ex: Kit Shampoo"></div>
+      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:#5a5670;">Categoria</label>
+        <select id="productCategory" class="form-control">
+          <option>Semijoias</option><option>Roupa de cama</option><option>Produtos para cabelo</option>
+          <option>Perfumes</option><option>Cuidados pessoais</option><option>Outros</option>
+        </select>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+        <div><label style="font-size:12px;font-weight:600;color:#5a5670;">Preço</label><input type="number" id="productPrice" step="0.01" class="form-control"></div>
+        <div><label style="font-size:12px;font-weight:600;color:#5a5670;">Estoque</label><input type="number" id="productStock" value="0" class="form-control"></div>
+      </div>
+      <button class="btn-primary" onclick="saveProduct()"><i class="ri-save-line"></i> Salvar Produto</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: VENDA -->
+<div id="saleModal" class="modal-overlay">
+  <div class="modal" style="max-height:90vh;">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <h3>Nova Venda</h3>
+      <button class="modal-close" onclick="closeModal('saleModal')"><i class="ri-close-line"></i></button>
+    </div>
+    <div class="modal-body">
+      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:#5a5670;">Cliente *</label><select id="saleClient" class="form-control"><option value="">Selecione...</option></select></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><label style="font-size:12px;font-weight:600;color:#5a5670;">Produtos</label><button class="btn-secondary" style="padding:6px 12px;flex:none;" onclick="addSaleItem()"><i class="ri-add-line"></i> Item</button></div>
+      <div id="saleItems"></div>
+      <div style="margin-top:14px;margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:#5a5670;">Total da Venda</label><input type="text" id="saleTotal" readonly class="form-control" style="background:linear-gradient(135deg,#fce7f3,#ede9fe);color:#db2777;font-weight:800;font-size:18px;text-align:center;border-color:#fbcfe8;"></div>
+      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:#5a5670;">Forma de pagamento</label><select id="salePaymentType" class="form-control" onchange="updateSaleForm()"><option value="vista">À Vista</option><option value="parcelado">Parcelado / Fiado</option></select></div>
+      <div id="parceladoFields" style="display:none;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+          <div><label style="font-size:12px;font-weight:600;color:#5a5670;">Entrada (R$)</label><input type="number" id="saleEntry" step="0.01" min="0" value="0" class="form-control" oninput="updateInstallments()"></div>
+          <div><label style="font-size:12px;font-weight:600;color:#5a5670;">Parcelas</label><input type="number" id="saleInstallments" min="1" value="2" class="form-control" oninput="updateInstallments()"></div>
         </div>
-        <div class="nav-item" onclick="switchView('view-vendas', 'Nova Venda', this)">
-            <i class="fas fa-plus-circle"></i> Vendas
-        </div>
-        <div class="nav-item" onclick="switchView('view-financeiro', 'Relatórios', this); renderizarGraficos();">
-            <i class="fas fa-chart-pie"></i> Financeiro
-        </div>
-        <div class="nav-item" onclick="switchView('view-estoque', 'Estoque', this)">
-            <i class="fas fa-box-open"></i> Estoque
-        </div>
-    </nav>
+        <div style="margin-bottom:10px;"><label style="font-size:12px;font-weight:600;color:#5a5670;">1º Vencimento</label><input type="date" id="saleFirstDue" class="form-control" onchange="updateInstallments()"></div>
+        <div id="installmentPreview"></div>
+      </div>
+      <button class="btn-primary" style="margin-top:12px;" onclick="saveSale()"><i class="ri-check-line"></i> Confirmar Venda</button>
+    </div>
+  </div>
+</div>
 
-    <script>
-        // --- 1. CONTROLE DO MENU LATERAL (HAMBURGER) ---
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebarOverlay');
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('active');
-        }
+<!-- MODAL: PAGAMENTO -->
+<div id="paymentModal" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <h3>Registrar Pagamento</h3>
+      <button class="modal-close" onclick="closeModal('paymentModal')"><i class="ri-close-line"></i></button>
+    </div>
+    <div class="modal-body">
+      <div id="paymentInfo" style="background:linear-gradient(135deg,#fdf2f8,#ede9fe);border-radius:14px;padding:14px;margin-bottom:16px;font-size:13px;border:1px solid #fce7f3;"></div>
+      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:#5a5670;">Valor (R$)</label><input type="number" id="paymentAmount" step="0.01" min="0" class="form-control"></div>
+      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:#5a5670;">Forma</label>
+        <select id="paymentMethod" class="form-control">
+          <option value="Dinheiro">Dinheiro</option><option value="Pix">Pix</option>
+          <option value="Cartão">Cartão</option><option value="Transferência">Transferência</option>
+        </select>
+      </div>
+      <button class="btn-primary" style="background:linear-gradient(135deg,#059669,#10b981);" onclick="confirmPayment()"><i class="ri-check-line"></i> Confirmar</button>
+    </div>
+  </div>
+</div>
 
-        // --- 2. NAVEGAÇÃO DAS TELAS ---
-        function switchView(viewId, title, element) {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            
-            document.getElementById(viewId).classList.add('active');
-            element.classList.add('active');
-            document.getElementById('header-text').innerText = title;
-        }
+<!-- MODAL: DESPESA -->
+<div id="expenseModal" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <h3>Nova Despesa</h3>
+      <button class="modal-close" onclick="closeModal('expenseModal')"><i class="ri-close-line"></i></button>
+    </div>
+    <div class="modal-body">
+      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:#5a5670;">Descrição *</label><input type="text" id="expenseDesc" class="form-control" placeholder="Ex: Compra de mercadorias"></div>
+      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:#5a5670;">Valor *</label><input type="number" id="expenseValue" step="0.01" class="form-control"></div>
+      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:#5a5670;">Categoria</label>
+        <select id="expenseCategory" class="form-control">
+          <option value="Mercadorias">Compra de mercadorias</option><option value="Frete">Frete</option>
+          <option value="Embalagens">Embalagens</option><option value="Taxas">Taxas de cartão</option>
+          <option value="Publicidade">Publicidade</option><option value="Outros">Outros</option>
+        </select>
+      </div>
+      <button class="btn-primary" onclick="saveExpense()"><i class="ri-save-line"></i> Salvar</button>
+    </div>
+  </div>
+</div>
 
-        // --- 3. WHATSAPP ---
-        function abrirZap(nome, valor, telefone, detalhe) {
-            let msg = detalhe === 'atrasada' 
-                ? `Oi, ${nome}! Passando para te lembrar que sua parcela de R$ ${valor} está pendente. ❤️`
-                : `Oi, ${nome}! Passando para te lembrar que sua parcela de R$ ${valor} vence ${detalhe}. ❤️`;
-            window.open(`https://wa.me/${telefone}?text=${encodeURIComponent(msg)}`, '_blank');
-        }
+<!-- TOAST -->
+<div class="toast-container" id="toastContainer"></div>
 
-        // --- 4. CADASTRO DE NOVO CLIENTE COM FOTO ---
-        let fotoBase64Atual = ""; // Variável para guardar a imagem convertida
+</div>
 
-        function abrirModalNovoCliente() {
-            document.getElementById('modalNovoCliente').style.display = 'flex';
-            // Reseta o formulário ao abrir
-            document.getElementById('novo-cli-nome').value = '';
-            document.getElementById('novo-cli-zap').value = '';
-            document.getElementById('preview-img').style.display = 'none';
-            document.getElementById('preview-icon').style.display = 'block';
-            fotoBase64Atual = ""; 
-        }
+<script>
+// Animações iniciais
+(function(){
+  const sp=document.getElementById('sparkles');
+  const colors=['#ec4899','#f59e0b','#8b5cf6','#f472b6','#fbbf24','#a78bfa'];
+  for(let i=0;i<25;i++){const d=document.createElement('div');const sz=Math.random()*8+4;d.style.cssText=`position:absolute;width:${sz}px;height:${sz}px;background:${colors[i%6]};border-radius:50%;left:${Math.random()*100}%;top:${Math.random()*100}%;box-shadow:0 0 ${sz*2}px ${colors[i%6]};animation:sparkle ${1.5+Math.random()*2}s ease-in-out infinite;animation-delay:${Math.random()*2}s;`;sp.appendChild(d);}
+  const fp=document.getElementById('floatingParticles');
+  const pcolors=['rgba(236,72,153,0.3)','rgba(245,158,11,0.25)','rgba(139,92,246,0.25)'];
+  for(let i=0;i<12;i++){const d=document.createElement('div');const sz=Math.random()*8+4;d.style.cssText=`position:absolute;width:${sz}px;height:${sz}px;background:${pcolors[i%3]};border-radius:50%;left:${Math.random()*100}%;bottom:-20px;animation:particleFloat ${12+Math.random()*8}s linear infinite;animation-delay:${Math.random()*8}s;`;fp.appendChild(d);}
+  const lts=['CARREGANDO...','PREPARANDO MAGIA...','ACESSANDO DADOS...','QUASE PRONTO...'];let lti=0;
+  const ltInt=setInterval(()=>{lti=(lti+1)%lts.length;const el=document.getElementById('loadingText');if(el)el.textContent=lts[lti];},700);
+  setTimeout(()=>{clearInterval(ltInt);const splash=document.getElementById('splashScreen');const main=document.getElementById('mainApp');splash.style.opacity='0';splash.style.transform='scale(1.1)';setTimeout(()=>{splash.style.display='none';main.style.opacity='1';initApp();},600);},3000);
+})();
 
-        function fecharModalNovoCliente() {
-            document.getElementById('modalNovoCliente').style.display = 'none';
-        }
+// DATABASE
+const DB={profile:{name:'Cláudia',image:null,storeName:'Cláudia Collection',dueDay:10},clients:[],products:[],sales:[],installments:[],expenses:[],temp:{clientImage:null,editingClientId:null,editingProductId:null,currentPayment:null,currentClient:null,saleItemCount:0},charts:{home:null,report:null},reportPeriod:'month',recTab:'today'};
 
-        // Lê a imagem carregada pelo usuário e mostra o preview
-        function carregarFoto(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    fotoBase64Atual = e.target.result; // Salva o Base64
-                    document.getElementById('preview-img').src = fotoBase64Atual;
-                    document.getElementById('preview-img').style.display = 'block';
-                    document.getElementById('preview-icon').style.display = 'none';
-                }
-                reader.readAsDataURL(file);
-            }
-        }
+function saveDB(){localStorage.setItem('claudiaPremium',JSON.stringify({profile:DB.profile,clients:DB.clients,products:DB.products,sales:DB.sales,installments:DB.installments,expenses:DB.expenses}));}
+function loadDB(){const d=localStorage.getItem('claudiaPremium');if(d){const p=JSON.parse(d);DB.profile={...DB.profile,...(p.profile||{})};DB.clients=p.clients||[];DB.products=p.products||[];DB.sales=p.sales||[];DB.installments=p.installments||[];DB.expenses=p.expenses||[];}else{loadSampleData();}applyProfile();}
+function loadSampleData(){const today=todayStr();const addDays=n=>{const d=new Date();d.setDate(d.getDate()+n);return d.toISOString().split('T')[0];};DB.clients=[{id:genId(),name:'Maria da Silva',phone:'(73) 98811-2233',address:'Centro',notes:'',image:null,date:today},{id:genId(),name:'Ana Paula Souza',phone:'(73) 99922-3344',address:'',notes:'',image:null,date:today},{id:genId(),name:'Juliana Lima',phone:'(73) 98100-4455',address:'Bairro Novo',notes:'',image:null,date:today}];DB.products=[{id:genId(),name:'Kit Shampoo + Condicionador',category:'Produtos para cabelo',cost:45,price:85,stock:12},{id:genId(),name:'Colar de Pérolas Semijoia',category:'Semijoias',cost:60,price:130,stock:8},{id:genId(),name:'Jogo de Cama Casal',category:'Roupa de cama',cost:80,price:180,stock:5},{id:genId(),name:'Perfume Floral 100ml',category:'Perfumes',cost:55,price:120,stock:3},{id:genId(),name:'Creme Hidratante',category:'Cuidados pessoais',cost:18,price:40,stock:15},{id:genId(),name:'Brincos de Prata',category:'Semijoias',cost:25,price:65,stock:0}];const s1={id:genId(),clientId:DB.clients[0].id,date:today,items:[{productId:DB.products[0].id,productName:DB.products[0].name,qty:1,price:85},{productId:DB.products[1].id,productName:DB.products[1].name,qty:1,price:130}],total:215,paymentType:'parcelado',entry:50,installmentsCount:2,status:'parcial'};DB.sales.push(s1);DB.installments.push({id:genId(),saleId:s1.id,clientId:DB.clients[0].id,number:1,value:82.5,dueDate:addDays(2),status:'pending',paidDate:null,paidValue:0,paymentMethod:null},{id:genId(),saleId:s1.id,clientId:DB.clients[0].id,number:2,value:82.5,dueDate:addDays(32),status:'pending',paidDate:null,paidValue:0,paymentMethod:null});DB.expenses=[{id:genId(),desc:'Compra de mercadorias',value:350,date:today,category:'Mercadorias'}];saveDB();}
+function genId(){return Date.now().toString(36)+Math.random().toString(36).substr(2,5);}
+function fmtMoney(v){return 'R$ '+(Number(v)||0).toFixed(2).replace('.',',');}
+function fmtDateBR(d){if(!d)return'--';const p=d.split('-');return p[2]+'/'+p[1]+'/'+p[0];}
+function todayStr(){return new Date().toISOString().split('T')[0];}
+function getInitials(n){return n.split(' ').map(x=>x[0]).slice(0,2).join('').toUpperCase();}
+function onlyNumbers(s){return(s||'').replace(/\D/g,'');}
+function formatPhone(el){let v=el.value.replace(/\D/g,'').slice(0,11);if(v.length>0)v='('+v;if(v.length>3)v=v.slice(0,3)+') '+v.slice(3);if(v.length>10)v=v.slice(0,10)+'-'+v.slice(10);el.value=v;}
 
-        function salvarNovoCliente() {
-            const nome = document.getElementById('novo-cli-nome').value;
-            if (!nome) { alert("O nome da cliente é obrigatório!"); return; }
-            
-            // Se não carregou foto, usa um avatar padrão
-            const fotoSource = fotoBase64Atual !== "" ? fotoBase64Atual : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png";
+function toast(msg,type='success'){
+  const c=document.getElementById('toastContainer');const t=document.createElement('div');
+  t.className='toast'+(type==='error'?' error':type==='warning'?' warning':'');
+  const color=type==='error'?'#dc2626':type==='warning'?'#d97706':'#059669';
+  const icon=type==='error'?'ri-error-warning-fill':type==='warning'?'ri-alert-fill':'ri-checkbox-circle-fill';
+  t.innerHTML=`<i class="${icon}" style="font-size:20px;color:${color};"></i><span>${msg}</span>`;
+  c.appendChild(t);setTimeout(()=>{t.style.opacity='0';t.style.transition='all .3s';},2200);setTimeout(()=>t.remove(),2600);
+}
 
-            // Cria o elemento HTML do novo cliente
-            const novoItem = document.createElement('div');
-            novoItem.className = 'list-item';
-            novoItem.innerHTML = `
-                <div class="item-info" onclick="abrirModalDetalheCliente('${nome}', 'R$ 0,00', 'Hoje', '${fotoSource}')">
-                    <div class="avatar"><img src="${fotoSource}" alt="Avatar"></div>
-                    <div class="item-text"><h4>${nome}</h4><p>Novo cliente cadastrado</p></div>
-                </div>
-                <i class="fas fa-chevron-right" style="color:#CCC;"></i>
-            `;
-            
-            // Adiciona no topo da lista
-            const lista = document.getElementById('lista-clientes-dinamica');
-            lista.insertBefore(novoItem, lista.firstChild);
-            
-            fecharModalNovoCliente();
-        }
+function applyProfile(){
+  const a=document.getElementById('mainAvatar');
+  if(DB.profile.image)a.innerHTML=`<img src="${DB.profile.image}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+  else a.textContent=getInitials(DB.profile.name);
+  document.getElementById('profileName').textContent=DB.profile.name;
+}
 
-        // --- 5. MODAL DE DETALHES (QUANDO CLICA EM UM CLIENTE) ---
-        function abrirModalDetalheCliente(nome, aberto, ultima, imgSrc) {
-            document.getElementById('detalhe-nome').innerText = nome;
-            document.getElementById('detalhe-aberto').innerText = aberto;
-            document.getElementById('detalhe-ultima').innerText = ultima;
-            document.getElementById('detalhe-img').src = imgSrc;
-            document.getElementById('modalDetalheCliente').style.display = 'flex';
-        }
+function openProfileModal(){
+  document.getElementById('profileNameInput').value=DB.profile.name;
+  document.getElementById('storeNameInput').value=DB.profile.storeName;
+  document.getElementById('dueDayInput').value=DB.profile.dueDay;
+  const prev=document.getElementById('profileImagePreview');
+  prev.innerHTML=DB.profile.image?`<img src="${DB.profile.image}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`:'<i class="ri-camera-line"></i>';
+  openModal('profileModal');
+}
 
-        function fecharModalDetalhe() {
-            document.getElementById('modalDetalheCliente').style.display = 'none';
-        }
+function handleProfileImage(e){
+  const f=e.target.files[0];if(!f)return;const r=new FileReader();
+  r.onload=ev=>{DB.profile.image=ev.target.result;document.getElementById('profileImagePreview').innerHTML=`<img src="${ev.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;};
+  r.readAsDataURL(f);
+}
 
-        // --- 6. GRÁFICOS ORGANIZADOS ---
-        let graficosCriados = false;
-        function renderizarGraficos() {
-            if(graficosCriados) return; 
-            
-            // IMPORTANTE: maintainAspectRatio: false e responsive: true garantem que o gráfico
-            // respeite a altura de 250px do .chart-container definida no CSS.
-            
-            const ctxPizza = document.getElementById('graficoPizza').getContext('2d');
-            new Chart(ctxPizza, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Semijoias', 'Cabelo', 'Cama/Mesa'],
-                    datasets: [{
-                        data: [45, 30, 25],
-                        backgroundColor: ['#1ABC9C', '#9B59B6', '#F1C40F'],
-                        borderWidth: 0
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } }
-            });
+function saveProfile(){
+  DB.profile.name=document.getElementById('profileNameInput').value.trim()||'Cláudia';
+  DB.profile.storeName=document.getElementById('storeNameInput').value.trim()||'Cláudia Collection';
+  DB.profile.dueDay=Number(document.getElementById('dueDayInput').value)||10;
+  saveDB();applyProfile();closeModal('profileModal');toast('Perfil atualizado!','success');
+}
 
-            const ctxLinha = document.getElementById('graficoLinha').getContext('2d');
-            new Chart(ctxLinha, {
-                type: 'line',
-                data: {
-                    labels: ['Mai', 'Jun', 'Jul', 'Ago', 'Set'],
-                    datasets: [{
-                        label: 'Faturamento',
-                        data: [1500, 2300, 1800, 3200, 4200],
-                        borderColor: '#D4AF37',
-                        backgroundColor: 'rgba(212, 175, 55, 0.2)',
-                        fill: true, tension: 0.3
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
+function openModal(id){document.getElementById(id).classList.add('show');}
+function closeModal(id){document.getElementById(id).classList.remove('show');}
 
-            graficosCriados = true;
-        }
-    </script>
+function navigateTo(pageId){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const pg=document.getElementById('page-'+pageId);if(pg)pg.classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  const btns=document.querySelectorAll('.nav-btn');
+  const map={'home':0,'clients':1,'sales':2,'products':3,'more':4};
+  if(map[pageId]!==undefined&&btns[map[pageId]])btns[map[pageId]].classList.add('active');
+  document.getElementById('balanceCard').style.display=pageId==='home'?'block':'none';
+  const fab=document.getElementById('fabBtn');
+  fab.style.display=['home','clients','sales','products'].includes(pageId)?'flex':'none';
+  if(pageId==='clients')fab.onclick=openQuickClient;
+  else if(pageId==='products')fab.onclick=openProductModal;
+  else fab.onclick=openQuickSale;
+  renderPage(pageId);window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function renderPage(p){switch(p){case'home':renderHome();break;case'clients':renderClients();break;case'client-detail':renderClientDetail();break;case'receivable':renderReceivable();break;case'sales':renderSales();break;case'products':renderProducts();break;case'reports':renderReports();break;}updateAlertBadge();}
+function renderCurrentPage(){const a=document.querySelector('.page.active');if(a)renderPage(a.id.replace('page-',''));}
+function updateAlertBadge(){const today=todayStr();const c=DB.installments.filter(i=>i.status!=='paid'&&i.dueDate<=today).length;const b=document.getElementById('alertBadge');b.textContent=c;b.style.display=c>0?'flex':'none';}
+
+function renderHome(){
+  const now=new Date();const ms=new Date(now.getFullYear(),now.getMonth(),1).toISOString().split('T')[0];const me=new Date(now.getFullYear(),now.getMonth()+1,0).toISOString().split('T')[0];const today=todayStr();
+  const mS=DB.sales.filter(s=>s.date>=ms&&s.date<=me);const sold=mS.reduce((s,v)=>s+Number(v.total),0);
+  const mI=DB.installments.filter(i=>i.status==='paid'&&i.paidDate>=ms&&i.paidDate<=me);const rI=mI.reduce((s,v)=>s+Number(v.paidValue||v.value),0);
+  const rV=mS.filter(s=>s.paymentType==='vista').reduce((s,v)=>s+Number(v.total),0);const received=rI+rV;
+  const pend=DB.installments.filter(i=>i.status!=='paid');const recv=pend.reduce((s,v)=>s+(Number(v.value)-Number(v.paidValue||0)),0);
+  const over=pend.filter(i=>i.dueDate<today);const overT=over.reduce((s,v)=>s+(Number(v.value)-Number(v.paidValue||0)),0);
+  const mE=DB.expenses.filter(e=>e.date>=ms&&e.date<=me);const exp=mE.reduce((s,v)=>s+Number(v.value),0);
+  document.getElementById('balanceValue').textContent=fmtMoney(received-exp);
+  document.getElementById('kpiSold').textContent=fmtMoney(sold);document.getElementById('kpiReceived').textContent=fmtMoney(received);
+  document.getElementById('kpiReceivable').textContent=fmtMoney(recv);document.getElementById('kpiReceivableCount').textContent=pend.length+' parcelas';
+  document.getElementById('kpiOverdue').textContent=fmtMoney(overT);document.getElementById('kpiOverdueCount').textContent=over.length+' atrasadas';
+  
+  const alerts=[];const tInst=pend.filter(i=>i.dueDate===today);
+  if(tInst.length>0)alerts.push(`<div onclick="navigateTo('receivable')" style="background:linear-gradient(135deg,#eff6ff,#dbeafe);border-radius:18px;padding:14px;margin-bottom:12px;border:1px solid #bfdbfe;display:flex;align-items:center;gap:12px;cursor:pointer;"><div style="width:40px;height:40px;border-radius:12px;background:white;display:flex;align-items:center;justify-content:center;font-size:20px;color:#2563eb;flex-shrink:0;"><i class="ri-calendar-event-line"></i></div><div style="flex:1;"><div style="font-size:12px;font-weight:600;">Vencem hoje</div><div style="font-size:11px;color:#5a5670;">${tInst.length} parcela(s) para receber</div></div><span style="background:#2563eb;color:white;font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;">${tInst.length}</span></div>`);
+  if(over.length>0)alerts.push(`<div onclick="navigateTo('receivable')" style="background:linear-gradient(135deg,#fef2f2,#fee2e2);border-radius:18px;padding:14px;margin-bottom:12px;border:1px solid #fecaca;display:flex;align-items:center;gap:12px;cursor:pointer;"><div style="width:40px;height:40px;border-radius:12px;background:white;display:flex;align-items:center;justify-content:center;font-size:20px;color:#dc2626;flex-shrink:0;"><i class="ri-alarm-warning-line"></i></div><div style="flex:1;"><div style="font-size:12px;font-weight:600;">Parcelas atrasadas</div><div style="font-size:11px;color:#5a5670;">${over.length} cliente(s) com pagamento atrasado</div></div><span style="background:#dc2626;color:white;font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;">${over.length}</span></div>`);
+  document.getElementById('dashboardAlerts').innerHTML=alerts.join('');
+  
+  const upc=pend.filter(i=>i.dueDate>=today).sort((a,b)=>a.dueDate.localeCompare(b.dueDate)).slice(0,4);
+  const uEl=document.getElementById('upcomingList');
+  if(upc.length===0){uEl.innerHTML=`<div class="empty-state"><i class="ri-checkbox-circle-line"></i><p>Tudo em ordem! Nenhum vencimento próximo.</p></div>`;}
+  else{uEl.innerHTML=upc.map(i=>{const c=DB.clients.find(x=>x.id===i.clientId);return`<div class="list-item" onclick="openPaymentModal('${i.id}')"><div class="list-item-avatar">${c?(c.image?`<img src="${c.image}">`:getInitials(c.name)):'?'}</div><div class="list-item-content"><div style="font-size:13px;font-weight:600;">${c?c.name:'Cliente'}</div><div style="font-size:11px;color:#9a95b0;margin-top:3px;">${fmtDateBR(i.dueDate)} • Parcela ${i.number}</div></div><div style="text-align:right;"><div style="font-size:14px;font-weight:700;color:#db2777;">${fmtMoney(i.value)}</div><span class="status-pending">PENDENTE</span></div></div>`;}).join('');}
+  
+  const cEl=document.getElementById('clientsHomeList');
+  if(DB.clients.length===0){cEl.innerHTML=`<div class="empty-state"><i class="ri-user-heart-line"></i><p>Cadastre suas clientes!</p></div>`;}
+  else{cEl.innerHTML=DB.clients.slice(0,4).map(c=>{const cI=DB.installments.filter(i=>i.clientId===c.id&&i.status!=='paid');const op=cI.reduce((s,v)=>s+(Number(v.value)-Number(v.paidValue||0)),0);return`<div class="list-item" onclick="viewClientDetail('${c.id}')"><div class="list-item-avatar">${c.image?`<img src="${c.image}">`:getInitials(c.name)}</div><div class="list-item-content"><div style="font-size:13px;font-weight:600;">${c.name}</div><div style="font-size:11px;color:#9a95b0;margin-top:3px;">${c.phone}</div></div><div style="text-align:right;"><div style="font-size:12px;font-weight:700;color:${op>0?'#d97706':'#059669'};">${op>0?fmtMoney(op)+' aberto':'Em dia'}</div></div></div>`;}).join('');}
+  renderHomeChart();
+}
+
+function renderHomeChart(){
+  const ctx=document.getElementById('homeChart');if(!ctx)return;
+  const cats={};DB.sales.forEach(s=>s.items.forEach(it=>{const p=DB.products.find(x=>x.id===it.productId);const cat=p?p.category:'Outros';cats[cat]=(cats[cat]||0)+(Number(it.price)*Number(it.qty));}));
+  const colors=['#ec4899','#f59e0b','#8b5cf6','#10b981','#3b82f6','#ef4444','#06b6d4'];
+  if(DB.charts.home)DB.charts.home.destroy();
+  DB.charts.home=new Chart(ctx,{type:'doughnut',data:{labels:Object.keys(cats),datasets:[{data:Object.values(cats),backgroundColor:colors,borderWidth:0,hoverOffset:8}]},options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{position:'bottom',labels:{color:'#5a5670',font:{size:10,family:'Poppins'},padding:12,usePointStyle:true,pointStyle:'circle'}},tooltip:{callbacks:{label:c=>' '+c.label+': '+fmtMoney(c.parsed)}}}}});
+}
+
+function renderClients(){const s=(document.getElementById('searchClient')?.value||'').toLowerCase();let l=DB.clients.filter(c=>!s||c.name.toLowerCase().includes(s)||c.phone.includes(s));const el=document.getElementById('clientsList');if(l.length===0){el.innerHTML=`<div class="empty-state"><i class="ri-user-heart-line"></i><p>Nenhuma cliente cadastrada.</p></div>`;return;}el.innerHTML=l.map(c=>{const cS=DB.sales.filter(s=>s.clientId===c.id);const b=cS.reduce((s,v)=>s+Number(v.total),0);const cI=DB.installments.filter(i=>i.clientId===c.id&&i.status!=='paid');const op=cI.reduce((s,v)=>s+(Number(v.value)-Number(v.paidValue||0)),0);return`<div class="list-item" onclick="viewClientDetail('${c.id}')"><div class="list-item-avatar">${c.image?`<img src="${c.image}">`:getInitials(c.name)}</div><div class="list-item-content"><div style="font-size:13px;font-weight:600;">${c.name}</div><div style="font-size:11px;color:#9a95b0;margin-top:3px;"><i class="ri-whatsapp-line" style="color:#22c55e;"></i> ${c.phone}</div></div><div style="text-align:right;"><div style="font-size:14px;font-weight:700;color:${op>0?'#d97706':'#059669'};">${op>0?fmtMoney(op):'Em dia'}</div><div style="font-size:10px;color:#9a95b0;margin-top:2px;">Total: ${fmtMoney(b)}</div></div></div>`;}).join('');}
+
+function viewClientDetail(id){DB.temp.currentClient=id;const c=DB.clients.find(x=>x.id===id);if(!c)return;const av=document.getElementById('detailAvatar');av.innerHTML=c.image?`<img src="${c.image}" style="width:100%;height:100%;object-fit:cover;">`:getInitials(c.name);document.getElementById('detailName').textContent=c.name;document.getElementById('detailPhone').textContent=c.phone||'Telefone não cadastrado';const cS=DB.sales.filter(s=>s.clientId===c.id);const b=cS.reduce((s,v)=>s+Number(v.total),0);const cI=DB.installments.filter(i=>i.clientId===c.id);const pd=cI.filter(i=>i.status==='paid').reduce((s,v)=>s+Number(v.paidValue||v.value),0);const vP=cS.filter(s=>s.paymentType==='vista').reduce((s,v)=>s+Number(v.total),0);const aP=pd+vP;const pnd=cI.filter(i=>i.status!=='paid');const op=pnd.reduce((s,v)=>s+(Number(v.value)-Number(v.paidValue||0)),0);const today=todayStr();const ovd=pnd.filter(i=>i.dueDate<today).reduce((s,v)=>s+(Number(v.value)-Number(v.paidValue||0)),0);document.getElementById('statBought').textContent=fmtMoney(b);document.getElementById('statPaid').textContent=fmtMoney(aP);document.getElementById('statOpen').textContent=fmtMoney(op);document.getElementById('statOverdue').textContent=fmtMoney(ovd);document.getElementById('detailWhatsapp').onclick=()=>{const ph=onlyNumbers(c.phone);if(ph)window.open(`https://wa.me/55${ph}`,'_blank');else toast('Telefone não cadastrado','error');};document.getElementById('detailEdit').onclick=()=>editClient(id);const iEl=document.getElementById('detailInstallments');if(cI.length===0){iEl.innerHTML=`<div class="empty-state"><i class="ri-file-list-line"></i><p>Sem parcelas.</p></div>`;}else{iEl.innerHTML=cI.sort((a,b)=>a.number-b.number).map(i=>{const isOvd=i.dueDate<today&&i.status!=='paid';let cls='status-pending',lb='PENDENTE';if(i.status==='paid'){cls='status-paid';lb='PAGA';}else if(isOvd){cls='status-overdue';lb='ATRASADA';}return`<div class="list-item"><div class="list-item-content"><div style="font-size:13px;font-weight:600;">Parcela ${i.number}</div><div style="font-size:11px;color:#9a95b0;margin-top:3px;">Vencimento: ${fmtDateBR(i.dueDate)}</div></div><div style="text-align:right;"><div style="font-size:14px;font-weight:700;color:#db2777;">${fmtMoney(i.value)}</div><span class="${cls}">${lb}</span>${i.status!=='paid'?`<div style="display:flex;gap:4px;margin-top:6px;justify-content:flex-end;"><button class="btn-icon-sm" style="background:#d1fae5;color:#059669;border:none;width:28px;height:28px;border-radius:6px;cursor:pointer;" onclick="event.stopPropagation();chargeWhatsApp('${i.id}')" title="WhatsApp"><i class="ri-whatsapp-line"></i></button><button class="btn-icon-sm" style="background:#d1fae5;color:#059669;border:none;width:28px;height:28px;border-radius:6px;cursor:pointer;" onclick="event.stopPropagation();openPaymentModal('${i.id}')" title="Pagar"><i class="ri-check-line"></i></button></div>`:''}</div></div>`;}).join('');}const sEl=document.getElementById('detailSales');if(cS.length===0){sEl.innerHTML=`<div class="empty-state"><i class="ri-shopping-cart-line"></i><p>Sem compras.</p></div>`;}else{sEl.innerHTML=[...cS].sort((a,b)=>b.date.localeCompare(a.date)).map(s=>{const it=s.items.map(i=>`${i.qty}x ${i.productName}`).join(', ');return`<div class="list-item"><div class="list-item-content"><div style="font-size:13px;font-weight:600;">${fmtDateBR(s.date)}</div><div style="font-size:11px;color:#9a95b0;margin-top:3px;">${it}</div></div><div style="text-align:right;"><div style="font-size:14px;font-weight:700;color:#db2777;">${fmtMoney(s.total)}</div></div></div>`;}).join('');}navigateTo('client-detail');}
+
+function editClient(id){const c=DB.clients.find(x=>x.id===id);if(!c)return;DB.temp.editingClientId=id;DB.temp.clientImage=c.image||null;document.getElementById('clientModalTitle').textContent='Editar Cliente';document.getElementById('clientName').value=c.name;document.getElementById('clientPhone').value=c.phone;document.getElementById('clientAddress').value=c.address||'';document.getElementById('clientImagePreview').innerHTML=c.image?`<img src="${c.image}" style="width:100%;height:100%;object-fit:cover;border-radius:16px;">`:'<i class="ri-camera-line"></i>';openModal('clientModal');}
+function handleClientImage(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{DB.temp.clientImage=ev.target.result;document.getElementById('clientImagePreview').innerHTML=`<img src="${ev.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:16px;">`;};r.readAsDataURL(f);}
+function openQuickClient(){DB.temp.editingClientId=null;DB.temp.clientImage=null;document.getElementById('clientModalTitle').textContent='Nova Cliente';document.getElementById('clientName').value='';document.getElementById('clientPhone').value='';document.getElementById('clientAddress').value='';document.getElementById('clientImagePreview').innerHTML='<i class="ri-camera-line"></i>';openModal('clientModal');}
+
+function saveClient(){const n=document.getElementById('clientName').value.trim();const ph=document.getElementById('clientPhone').value.trim();if(!n){toast('Informe o nome!','error');return;}if(!ph){toast('Informe o telefone!','error');return;}const data={name:n,phone:ph,address:document.getElementById('clientAddress').value.trim(),notes:'',image:DB.temp.clientImage,date:todayStr()};if(DB.temp.editingClientId){const idx=DB.clients.findIndex(c=>c.id===DB.temp.editingClientId);if(idx>=0)DB.clients[idx]={...DB.clients[idx],...data,date:DB.clients[idx].date};toast('Cliente atualizada!','success');}else{DB.clients.push({id:genId(),...data});toast('Cliente cadastrada!','success');}saveDB();closeModal('clientModal');renderCurrentPage();}
+
+function switchRecTab(tab){DB.recTab=tab;document.querySelectorAll('#recTabs .mini-tab').forEach(t=>t.classList.remove('active'));const act=document.querySelector(`#recTabs .mini-tab[onclick="switchRecTab('${tab}')"]`);if(act)act.classList.add('active');renderReceivable();}
+
+// FUNÇÃO ATUALIZADA: MENSAGEM WHATSAPP DINÂMICA
+function chargeWhatsApp(instId){
+  const i=DB.installments.find(x=>x.id===instId);
+  if(!i)return;
+  const c=DB.clients.find(x=>x.id===i.clientId);
+  if(!c)return;
+  const phone=onlyNumbers(c.phone);
+  if(!phone){toast('Telefone não cadastrado','error');return;}
+  
+  const sale=DB.sales.find(s=>s.id===i.saleId);
+  let productNames="seus produtos";
+  if(sale && sale.items && sale.items.length>0){
+    productNames = sale.items.map(it => it.productName).join(', ');
+  }
+
+  const today=todayStr();
+  const firstName=c.name.split(' ')[0];
+  const loja=DB.profile.storeName || "Cláudia Collection";
+  let msg='';
+
+  if(i.dueDate<today){
+    msg=`Olá ${firstName}! Tudo bem?\n\nPassando aqui pela *${loja}* para lembrar que a sua parcela de *${fmtMoney(i.value)}* (referente a: ${productNames}) venceu no dia *${fmtDateBR(i.dueDate)}*.\n\nComo podemos combinar o acerto? Aguardo seu retorno! Obrigada ❤️`;
+  }else if(i.dueDate===today){
+    msg=`Olá ${firstName}, tudo bem?\n\nPassando aqui pela *${loja}* para te lembrar que a sua parcela de *${fmtMoney(i.value)}* (referente a: ${productNames}) vence *HOJE* (${fmtDateBR(i.dueDate)}).\n\nQualquer dúvida, estou à disposição. Obrigada! ✨`;
+  }else{
+    msg=`Olá ${firstName}, tudo bem?\n\nSó passando aqui pela *${loja}* para te lembrar que sua parcela de *${fmtMoney(i.value)}* (referente a: ${productNames}) vence no dia *${fmtDateBR(i.dueDate)}*.\n\nQualquer coisa, estou por aqui! 🥰`;
+  }
+  
+  window.open(`https://wa.me/55${phone}?text=${encodeURIComponent(msg)}`,'_blank');
+}
+
+function openPaymentModal(instId){const i=DB.installments.find(x=>x.id===instId);if(!i)return;DB.temp.currentPayment=instId;const c=DB.clients.find(x=>x.id===i.clientId);const remaining=Number(i.value)-Number(i.paidValue||0);document.getElementById('paymentInfo').innerHTML=`<strong>Cliente:</strong> ${c?c.name:'Cliente'}<br><strong>Parcela:</strong> ${i.number} • <strong style="color:#db2777;">${fmtMoney(i.value)}</strong><br><strong>Vencimento:</strong> ${fmtDateBR(i.dueDate)}${i.paidValue>0?`<br><strong style="color:#059669;">Já pago:</strong> ${fmtMoney(i.paidValue)}`:''}`;document.getElementById('paymentAmount').value=remaining.toFixed(2);openModal('paymentModal');}
+
+function confirmPayment(){const i=DB.installments.find(x=>x.id===DB.temp.currentPayment);if(!i)return;const amount=Number(document.getElementById('paymentAmount').value);const method=document.getElementById('paymentMethod').value;if(!amount||amount<=0){toast('Valor inválido!','error');return;}const totalPaid=Number(i.paidValue||0)+amount;if(totalPaid>=Number(i.value)-0.01){i.status='paid';i.paidValue=Number(i.value);i.paidDate=todayStr();i.paymentMethod=method;toast('Pagamento confirmado!','success');}else{i.paidValue=totalPaid;i.paymentMethod=method;if(!i.paidDate)i.paidDate=todayStr();toast(`Pagamento parcial de ${fmtMoney(amount)} registrado`,'warning');}const sale=DB.sales.find(s=>s.id===i.saleId);if(sale){const sInst=DB.installments.filter(x=>x.saleId===sale.id);sale.status=sInst.every(x=>x.status==='paid')?'paid':'parcial';}saveDB();closeModal('paymentModal');renderCurrentPage();}
+
+function renderReceivable(){const today=todayStr();const nw=new Date();nw.setDate(nw.getDate()+7);const nws=nw.toISOString().split('T')[0];let l=[];switch(DB.recTab){case'today':l=DB.installments.filter(i=>i.status!=='paid'&&i.dueDate===today);break;case'week':l=DB.installments.filter(i=>i.status!=='paid'&&i.dueDate>today&&i.dueDate<=nws);break;case'overdue':l=DB.installments.filter(i=>i.status!=='paid'&&i.dueDate<today);break;case'all':l=DB.installments.filter(i=>i.status!=='paid');break;case'paid':l=DB.installments.filter(i=>i.status==='paid');break;}l.sort((a,b)=>a.dueDate.localeCompare(b.dueDate));const pend=DB.installments.filter(i=>i.status!=='paid');const rT=pend.reduce((s,v)=>s+(Number(v.value)-Number(v.paidValue||0)),0);const ovd=pend.filter(i=>i.dueDate<today);const oT=ovd.reduce((s,v)=>s+(Number(v.value)-Number(v.paidValue||0)),0);document.getElementById('recTotal').textContent=fmtMoney(rT);document.getElementById('recOverdue').textContent=fmtMoney(oT);const el=document.getElementById('receivableList');if(l.length===0){el.innerHTML=`<div class="empty-state"><i class="ri-checkbox-circle-line"></i><p>Nenhuma parcela nesta aba.</p></div>`;return;}el.innerHTML=l.map(i=>{const c=DB.clients.find(x=>x.id===i.clientId);const isOvd=i.dueDate<today&&i.status!=='paid';const isTod=i.dueDate===today&&i.status!=='paid';let cls='status-pending',lb='PENDENTE';if(i.status==='paid'){cls='status-paid';lb='PAGA';}else if(isOvd){cls='status-overdue';lb='ATRASADA';}else if(isTod){cls='status-today';lb='HOJE';}return`<div class="list-item"><div class="list-item-avatar">${c?(c.image?`<img src="${c.image}">`:getInitials(c.name)):'?'}</div><div class="list-item-content"><div style="font-size:13px;font-weight:600;">${c?c.name:'Cliente'}</div><div style="font-size:11px;color:#9a95b0;margin-top:3px;">${fmtDateBR(i.dueDate)} • Parcela ${i.number}</div></div><div style="text-align:right;"><div style="font-size:14px;font-weight:700;color:#db2777;">${fmtMoney(i.value)}</div><span class="${cls}">${lb}</span>${i.status!=='paid'?`<div style="display:flex;gap:4px;margin-top:6px;justify-content:flex-end;"><button class="btn-icon-sm" style="background:#d1fae5;color:#059669;border:none;width:28px;height:28px;border-radius:6px;cursor:pointer;" onclick="event.stopPropagation();chargeWhatsApp('${i.id}')"><i class="ri-whatsapp-line"></i></button><button class="btn-icon-sm" style="background:#d1fae5;color:#059669;border:none;width:28px;height:28px;border-radius:6px;cursor:pointer;" onclick="event.stopPropagation();openPaymentModal('${i.id}')"><i class="ri-check-line"></i></button></div>`:''}</div></div>`;}).join('');}
+
+function renderSales(){const el=document.getElementById('salesList');if(DB.sales.length===0){el.innerHTML=`<div class="empty-state"><i class="ri-shopping-cart-line"></i><p>Nenhuma venda registrada.</p></div>`;return;}el.innerHTML=[...DB.sales].sort((a,b)=>b.date.localeCompare(a.date)).map(s=>{const c=DB.clients.find(x=>x.id===s.clientId);const it=s.items.map(i=>`${i.qty}x ${i.productName}`).join(', ');return`<div class="list-item"><div class="list-item-avatar">${c?(c.image?`<img src="${c.image}">`:getInitials(c.name)):'?'}</div><div class="list-item-content"><div style="font-size:13px;font-weight:600;">${c?c.name:'Cliente'}</div><div style="font-size:11px;color:#9a95b0;margin-top:3px;">${it}</div><div style="font-size:10px;color:#9a95b0;margin-top:2px;">${fmtDateBR(s.date)}</div></div><div style="text-align:right;"><div style="font-size:14px;font-weight:700;color:#db2777;">${fmtMoney(s.total)}</div></div></div>`;}).join('');}
+
+function openQuickSale(){
+  if(DB.clients.length===0){toast('Cadastre uma cliente primeiro!','error');return;}
+  if(DB.products.length===0){toast('Cadastre um produto primeiro!','error');return;}
+  const sel=document.getElementById('saleClient');
+  sel.innerHTML='<option value="">Selecione...</option>'+DB.clients.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+  const dueDay=DB.profile.dueDay||10;const now=new Date();let firstDue=new Date(now.getFullYear(),now.getMonth(),dueDay);if(firstDue<=now)firstDue=new Date(now.getFullYear(),now.getMonth()+1,dueDay);
+  document.getElementById('saleFirstDue').value=firstDue.toISOString().split('T')[0];
+  document.getElementById('salePaymentType').value='vista';
+  document.getElementById('saleEntry').value=0;
+  document.getElementById('saleInstallments').value=2;
+  DB.temp.saleItemCount=0;
+  document.getElementById('saleItems').innerHTML='';
+  addSaleItem();
+  updateSaleForm();
+  openModal('saleModal');
+}
+
+function addSaleItem(){
+  DB.temp.saleItemCount++;
+  const id=DB.temp.saleItemCount;
+  const opts=DB.products.map(p=>`<option value="${p.id}" data-price="${p.price}">${p.name} — ${fmtMoney(p.price)}</option>`).join('');
+  const div=document.createElement('div');
+  div.className='sale-item-row';div.id=`saleItem-${id}`;
+  div.innerHTML=`<select class="form-control" style="margin-top:0;" onchange="updateSaleTotal(this)"><option value="">Produto...</option>${opts}</select><input type="number" value="1" min="1" class="form-control" style="margin-top:0;padding:10px;font-size:12px;" onchange="updateSaleTotal()"><input type="number" step="0.01" min="0" class="form-control item-price" style="margin-top:0;padding:10px;font-size:12px;" placeholder="Preço" onchange="updateSaleTotal()"><button class="btn-icon-sm" style="background:#fee2e2;color:#dc2626;border:none;width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:14px;" onclick="removeSaleItem(${id})"><i class="ri-close-line"></i></button>`;
+  document.getElementById('saleItems').appendChild(div);
+  const select=div.querySelector('select');
+  const priceInput=div.querySelector('.item-price');
+  select.addEventListener('change',function(){const opt=this.selectedOptions[0];if(opt&&opt.dataset.price)priceInput.value=opt.dataset.price;updateSaleTotal();});
+}
+
+function removeSaleItem(id){
+  const items=document.querySelectorAll('.sale-item-row');
+  if(items.length<=1){toast('Mantenha pelo menos 1 item','error');return;}
+  document.getElementById(`saleItem-${id}`).remove();
+  updateSaleTotal();
+}
+
+function updateSaleTotal(){
+  let total=0;
+  document.querySelectorAll('.sale-item-row').forEach(row=>{
+    const sel=row.querySelector('select');
+    const qty=Number(row.querySelector('input[type="number"]:nth-child(2)').value)||0;
+    const price=Number(row.querySelector('.item-price').value)||0;
+    total+=qty*price;
+  });
+  document.getElementById('saleTotal').value=fmtMoney(total);
+  updateInstallments();
+}
+
+function updateSaleForm(){
+  const isParcelado=document.getElementById('salePaymentType').value==='parcelado';
+  document.getElementById('parceladoFields').style.display=isParcelado?'block':'none';
+  updateInstallments();
+}
+
+function updateInstallments(){
+  if(document.getElementById('salePaymentType').value!=='parcelado')return;
+  const totalStr=document.getElementById('saleTotal').value.replace(/R\$ |\./g,'').replace(',','.');
+  const total=Number(totalStr)||0;
+  const entry=Number(document.getElementById('saleEntry').value)||0;
+  const count=Number(document.getElementById('saleInstallments').value)||1;
+  const firstDue=document.getElementById('saleFirstDue').value;
+  const rest=Math.max(0,total-entry);
+  const val=count>0?rest/count:0;
+  let html=`<div class="installment-preview"><h4 style="font-size:11px;color:#9a95b0;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;font-weight:600;">Prévia</h4><div style="font-size:11px;color:#9a95b0;margin-bottom:6px;">Restante: <strong style="color:#db2777;">${fmtMoney(rest)}</strong> • ${count}x de ${fmtMoney(val)}</div>`;
+  if(firstDue){for(let i=0;i<count;i++){const d=new Date(firstDue);d.setMonth(d.getMonth()+i);html+=`<div class="installment-item"><span style="font-weight:700;color:#db2777;">${i+1}ª</span><span style="color:#9a95b0;font-size:11px;">${fmtDateBR(d.toISOString().split('T')[0])}</span><span style="font-weight:700;">${fmtMoney(val)}</span></div>`;}}
+  html+='</div>';
+  document.getElementById('installmentPreview').innerHTML=html;
+}
+
+function saveSale(){
+  const clientId=document.getElementById('saleClient').value;
+  if(!clientId){toast('Selecione uma cliente!','error');return;}
+  const items=[];let total=0;let hasError=false;
+  document.querySelectorAll('.sale-item-row').forEach((row,idx)=>{
+    const sel=row.querySelector('select');
+    const productId=sel.value;
+    const productName=sel.selectedOptions[0]?.text.split(' — ')[0]||'';
+    const qty=Number(row.querySelector('input[type="number"]:nth-child(2)').value)||0;
+    const price=Number(row.querySelector('.item-price').value)||0;
+    if(!productId){toast(`Selecione o produto ${idx+1}!`,'error');hasError=true;return;}
+    if(qty<=0){toast(`Quantidade inválida!`,'error');hasError=true;return;}
+    const p=DB.products.find(x=>x.id===productId);
+    if(p&&p.stock<qty){toast(`Estoque insuficiente: ${p.name}`,'error');hasError=true;return;}
+    items.push({productId,productName,qty,price});
+    total+=qty*price;
+  });
+  if(hasError||items.length===0)return;
+  const paymentType=document.getElementById('salePaymentType').value;
+  const entry=paymentType==='vista'?total:Number(document.getElementById('saleEntry').value)||0;
+  const instCount=paymentType==='vista'?0:Number(document.getElementById('saleInstallments').value)||1;
+  const firstDue=document.getElementById('saleFirstDue').value;
+  const sale={id:genId(),clientId,date:todayStr(),items,total,paymentType,entry,installmentsCount:instCount,status:paymentType==='vista'?'paid':'pending'};
+  DB.sales.push(sale);
+  items.forEach(it=>{const p=DB.products.find(x=>x.id===it.productId);if(p)p.stock-=it.qty;});
+  if(paymentType==='parcelado'&&firstDue){
+    const rest=Math.max(0,total-entry);const val=instCount>0?rest/instCount:0;
+    for(let i=0;i<instCount;i++){const d=new Date(firstDue);d.setMonth(d.getMonth()+i);DB.installments.push({id:genId(),saleId:sale.id,clientId,number:i+1,value:val,dueDate:d.toISOString().split('T')[0],status:'pending',paidDate:null,paidValue:0,paymentMethod:null});}
+    if(entry>0)sale.status='parcial';
+  }
+  saveDB();closeModal('saleModal');toast('Venda registrada!','success');renderCurrentPage();
+}
+
+// FUNÇÕES DE PRODUTO ATUALIZADAS
+function renderProducts(){
+  const s=(document.getElementById('searchProduct')?.value||'').toLowerCase();
+  let l=DB.products.filter(p=>!s||p.name.toLowerCase().includes(s));
+  const inv=DB.products.reduce((s,p)=>s+(Number(p.cost)*Number(p.stock)),0);
+  const ls=DB.products.filter(p=>p.stock>0&&p.stock<=5).length;
+  document.getElementById('stockInvested').textContent=fmtMoney(inv);
+  document.getElementById('stockLowCount').textContent=ls;
+  const el=document.getElementById('productsList');
+  if(l.length===0){el.innerHTML=`<div class="empty-state"><i class="ri-gift-line"></i><p>Nenhum produto cadastrado.</p></div>`;return;}
+  const cc={'Semijoias':'cat-pill pink','Roupa de cama':'cat-pill purple','Produtos para cabelo':'cat-pill green','Perfumes':'cat-pill pink','Cuidados pessoais':'cat-pill blue','Outros':'cat-pill purple'};
+  
+  el.innerHTML=l.map(p=>{
+    let cls='status-low',lb='OK';
+    if(p.stock===0){cls='status-out';lb='ESGOTADO';}else if(p.stock<=5){cls='status-low';lb='BAIXO';}
+    return`<div class="list-item"><div style="width:46px;height:46px;border-radius:14px;background:linear-gradient(135deg,#fdf2f8,#ede9fe);display:flex;align-items:center;justify-content:center;font-size:20px;color:#db2777;flex-shrink:0;"><i class="ri-gift-line"></i></div><div class="list-item-content"><div style="font-size:13px;font-weight:600;">${p.name}</div><div style="margin-top:3px;"><span class="${cc[p.category]||'cat-pill purple'}">${p.category}</span><span style="margin-left:6px;font-size:11px;color:#9a95b0;">Estoque: <strong>${p.stock}</strong></span></div></div><div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:6px;"><div style="font-size:14px;font-weight:700;color:#db2777;">${fmtMoney(p.price)}</div><span class="${cls}">${lb}</span><button class="btn-action-outline" onclick="editProduct('${p.id}')">Editar</button></div></div>`;
+  }).join('');
+}
+
+function openProductModal(){
+  DB.temp.editingProductId=null;
+  document.getElementById('productModalTitle').textContent='Novo Produto';
+  document.getElementById('productName').value='';
+  document.getElementById('productCategory').value='Semijoias';
+  document.getElementById('productPrice').value='';
+  document.getElementById('productStock').value=0;
+  openModal('productModal');
+}
+
+function editProduct(id){
+  const p=DB.products.find(x=>x.id===id);
+  if(!p)return;
+  DB.temp.editingProductId=id;
+  document.getElementById('productModalTitle').textContent='Editar Produto';
+  document.getElementById('productName').value=p.name;
+  document.getElementById('productCategory').value=p.category;
+  document.getElementById('productPrice').value=p.price;
+  document.getElementById('productStock').value=p.stock;
+  openModal('productModal');
+}
+
+function saveProduct(){
+  const n=document.getElementById('productName').value.trim();
+  const pr=Number(document.getElementById('productPrice').value);
+  if(!n){toast('Informe o nome!','error');return;}
+  if(!pr||pr<=0){toast('Informe o preço!','error');return;}
+  
+  const data = {
+    name:n,
+    category:document.getElementById('productCategory').value,
+    cost:0,
+    price:pr,
+    stock:Number(document.getElementById('productStock').value)||0
+  };
+  
+  if(DB.temp.editingProductId){
+    const idx = DB.products.findIndex(p=>p.id===DB.temp.editingProductId);
+    if(idx>=0) DB.products[idx] = {...DB.products[idx], ...data};
+    toast('Produto atualizado!','success');
+  } else {
+    DB.products.push({id:genId(), ...data});
+    toast('Produto cadastrado!','success');
+  }
+  
+  saveDB();closeModal('productModal');renderCurrentPage();
+}
+
+function openQuickExpense(){document.getElementById('expenseDesc').value='';document.getElementById('expenseValue').value='';document.getElementById('expenseCategory').value='Mercadorias';openModal('expenseModal');}
+function saveExpense(){const d=document.getElementById('expenseDesc').value.trim();const v=Number(document.getElementById('expenseValue').value);if(!d){toast('Informe a descrição!','error');return;}if(!v||v<=0){toast('Informe o valor!','error');return;}DB.expenses.push({id:genId(),desc:d,value:v,date:todayStr(),category:document.getElementById('expenseCategory').value});saveDB();closeModal('expenseModal');toast('Despesa lançada!','success');renderCurrentPage();}
+
+function exportData(){const data={profile:DB.profile,clients:DB.clients,products:DB.products,sales:DB.sales,installments:DB.installments,expenses:DB.expenses};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`backup-claudia-${todayStr()}.json`;a.click();URL.revokeObjectURL(url);toast('Backup exportado!','success');}
+function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);DB.profile={...DB.profile,...(d.profile||{})};DB.clients=d.clients||[];DB.products=d.products||[];DB.sales=d.sales||[];DB.installments=d.installments||[];DB.expenses=d.expenses||[];saveDB();applyProfile();toast('Dados importados!','success');renderCurrentPage();}catch(err){toast('Arquivo inválido!','error');}};r.readAsText(f);e.target.value='';}
+
+function renderReports(){const now=new Date();let st,en;switch(DB.reportPeriod){case'month':st=new Date(now.getFullYear(),now.getMonth(),1).toISOString().split('T')[0];en=new Date(now.getFullYear(),now.getMonth()+1,0).toISOString().split('T')[0];break;case'year':st=new Date(now.getFullYear(),0,1).toISOString().split('T')[0];en=new Date(now.getFullYear(),11,31).toISOString().split('T')[0];break;default:st='1900-01-01';en='2999-12-31';}const pS=DB.sales.filter(s=>s.date>=st&&s.date<=en);const sold=pS.reduce((s,v)=>s+Number(v.total),0);const pI=DB.installments.filter(i=>i.status==='paid'&&i.paidDate>=st&&i.paidDate<=en);const rI=pI.reduce((s,v)=>s+Number(v.paidValue||v.value),0);const rV=pS.filter(s=>s.paymentType==='vista').reduce((s,v)=>s+Number(v.total),0);const rec=rI+rV;const pE=DB.expenses.filter(e=>e.date>=st&&e.date<=en);const exp=pE.reduce((s,v)=>s+Number(v.value),0);document.getElementById('repSold').textContent=fmtMoney(sold);document.getElementById('repReceived').textContent=fmtMoney(rec);document.getElementById('repExp').textContent=fmtMoney(exp);document.getElementById('repProfit').textContent=fmtMoney(rec-exp);const cats={};pS.forEach(s=>s.items.forEach(it=>{const p=DB.products.find(x=>x.id===it.productId);const cat=p?p.category:'Outros';cats[cat]=(cats[cat]||0)+(Number(it.price)*Number(it.qty));}));const ctx=document.getElementById('reportChart');if(ctx){const colors=['#ec4899','#f59e0b','#8b5cf6','#10b981','#3b82f6','#ef4444'];if(DB.charts.report)DB.charts.report.destroy();DB.charts.report=new Chart(ctx,{type:'bar',data:{labels:Object.keys(cats),datasets:[{label:'Vendas',data:Object.values(cats),backgroundColor:colors,borderRadius:8}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+fmtMoney(c.parsed.y)}}},scales:{x:{ticks:{color:'#9a95b0',font:{size:9}},grid:{display:false}},y:{ticks:{color:'#9a95b0',font:{size:9},callback:v=>'R$'+v},grid:{color:'rgba(154,149,176,.1)'}}}}});}}
+
+function setReportPeriod(p){DB.reportPeriod=p;renderReports();}
+
+function initApp(){loadDB();renderHome();updateAlertBadge();console.log('%cCláudia Collection Premium','color:#ec4899;font-size:18px;font-weight:bold;');}
+</script>
 </body>
 </html>

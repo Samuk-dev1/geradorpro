@@ -34,6 +34,7 @@ h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
 @keyframes sparkle { 0% { opacity:0; transform: scale(0) rotate(0deg); } 50% { opacity:1; transform: scale(1) rotate(180deg); } 100% { opacity:0; transform: scale(0) rotate(360deg); } }
 @keyframes particleFloat { 0% { transform: translateY(0) translateX(0); opacity:0; } 10% { opacity:0.6; } 90% { opacity:0.6; } 100% { transform: translateY(-600px) translateX(30px); opacity:0; } }
 @keyframes toastIn { from { opacity:0; transform: translateY(-15px); } to { opacity:1; transform: translateY(0); } }
+@keyframes shineJewel { 0% { left: -150%; } 15% { left: 200%; } 100% { left: 200%; } }
 
 .app-wrapper {
   max-width: 480px;
@@ -81,16 +82,83 @@ h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
 .page { display:none; animation: fadeIn .4s ease; }
 .page.active { display:block; }
 
+/* ======== CARDS DE MÉTRICAS (ESTILO JOIAS PREMIUM) ======== */
 .kpi-card {
-  background:white;
-  border-radius:20px;
-  padding:16px;
-  border:1px solid rgba(236,72,153,0.1);
-  box-shadow:0 8px 30px rgba(190,24,93,0.08);
-  transition:all .4s;
-  animation:floatCard 6s ease-in-out infinite;
+  position: relative;
+  border-radius: 20px;
+  padding: 16px;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index: 1;
+  animation: floatCard 6s ease-in-out infinite;
 }
-.kpi-card:hover { transform:translateY(-6px) scale(1.02); box-shadow:0 15px 40px rgba(190,24,93,0.15); }
+.kpi-card:hover {
+  transform: translateY(-5px) scale(1.02);
+}
+/* Efeito de reflexo de diamante passando no fundo */
+.kpi-card::after {
+  content: ''; position: absolute;
+  top: 0; left: -150%; width: 50%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
+  transform: skewX(-25deg);
+  animation: shineJewel 6s infinite;
+  z-index: 0;
+}
+
+.kpi-card-content { position: relative; z-index: 2; }
+
+/* Ícone de marca d'água no fundo (detalhe luxuoso) */
+.kpi-bg-icon { 
+  position: absolute; right: -15px; bottom: -20px; 
+  font-size: 85px; opacity: 0.15; transform: rotate(-15deg); 
+  z-index: 0; transition: all 0.4s; 
+}
+.kpi-card:hover .kpi-bg-icon { transform: rotate(0deg) scale(1.1); opacity: 0.25; }
+
+/* Caixinha do Ícone principal */
+.kpi-icon-wrap { 
+  width:38px; height:38px; border-radius:12px; display:flex; align-items:center; justify-content:center; 
+  font-size:20px; position:relative; overflow:hidden; 
+}
+.kpi-icon-wrap::before { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(255,255,255,0.4),transparent); }
+
+/* 1. Ouro Rosa (Rose Gold) - Vendido / Comprado */
+.kpi-rosegold { background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%); border: 1px solid rgba(219,39,119,0.3); box-shadow: 0 8px 25px rgba(219,39,119,0.15); }
+.kpi-rosegold .kpi-icon-wrap { background: linear-gradient(135deg, #f472b6, #be185d); color: white; box-shadow: 0 4px 15px rgba(190,24,93,0.3); border: 1px solid #fbcfe8; }
+.kpi-rosegold .kpi-val { color: #9d174d; font-family: 'Playfair Display', serif; }
+.kpi-rosegold .kpi-bg-icon { color: #f9a8d4; }
+
+/* 2. Esmeralda (Emerald) - Recebido / Pago */
+.kpi-emerald { background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border: 1px solid rgba(5,150,105,0.3); box-shadow: 0 8px 25px rgba(5,150,105,0.15); }
+.kpi-emerald .kpi-icon-wrap { background: linear-gradient(135deg, #34d399, #047857); color: white; box-shadow: 0 4px 15px rgba(4,120,87,0.3); border: 1px solid #a7f3d0; }
+.kpi-emerald .kpi-val { color: #064e3b; font-family: 'Playfair Display', serif; }
+.kpi-emerald .kpi-bg-icon { color: #6ee7b7; }
+
+/* 3. Ouro (Gold) - A Receber / Em Aberto */
+.kpi-gold { background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border: 1px solid rgba(217,119,6,0.3); box-shadow: 0 8px 25px rgba(217,119,6,0.15); }
+.kpi-gold .kpi-icon-wrap { background: linear-gradient(135deg, #fbbf24, #b45309); color: white; box-shadow: 0 4px 15px rgba(180,83,9,0.3); border: 1px solid #fde68a; }
+.kpi-gold .kpi-val { color: #78350f; font-family: 'Playfair Display', serif; }
+.kpi-gold .kpi-bg-icon { color: #fcd34d; }
+
+/* 4. Rubi (Ruby) - Atrasado / Despesas / Alertas (Vermelho Elegante) */
+.kpi-ruby { background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); border: 1px solid rgba(220,38,38,0.3); box-shadow: 0 8px 25px rgba(220,38,38,0.15); }
+.kpi-ruby .kpi-icon-wrap { background: linear-gradient(135deg, #f87171, #b91c1c); color: white; box-shadow: 0 4px 15px rgba(185,28,28,0.3); border: 1px solid #fecaca; }
+.kpi-ruby .kpi-val { color: #7f1d1d; font-family: 'Playfair Display', serif; }
+.kpi-ruby .kpi-bg-icon { color: #fca5a5; }
+
+/* 5. Safira (Sapphire) - Investimentos */
+.kpi-sapphire { background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border: 1px solid rgba(37,99,235,0.3); box-shadow: 0 8px 25px rgba(37,99,235,0.15); }
+.kpi-sapphire .kpi-icon-wrap { background: linear-gradient(135deg, #60a5fa, #1d4ed8); color: white; box-shadow: 0 4px 15px rgba(29,78,216,0.3); border: 1px solid #bfdbfe; }
+.kpi-sapphire .kpi-val { color: #1e3a8a; font-family: 'Playfair Display', serif; }
+.kpi-sapphire .kpi-bg-icon { color: #93c5fd; }
+
+/* 6. Ametista (Amethyst) - Lucro / Resumo Geral */
+.kpi-amethyst { background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%); border: 1px solid rgba(147,51,234,0.3); box-shadow: 0 8px 25px rgba(147,51,234,0.15); }
+.kpi-amethyst .kpi-icon-wrap { background: linear-gradient(135deg, #c084fc, #7e22ce); color: white; box-shadow: 0 4px 15px rgba(126,34,206,0.3); border: 1px solid #e9d5ff; }
+.kpi-amethyst .kpi-val { color: #581c87; font-family: 'Playfair Display', serif; }
+.kpi-amethyst .kpi-bg-icon { color: #d8b4fe; }
+
+/* ======================================================== */
 
 .list-card {
   background:white;
@@ -447,13 +515,66 @@ h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
     <!-- HOME -->
     <div class="page active" id="page-home">
       <div id="dashboardAlerts"></div>
+      
       <div class="section-header"><div class="section-title">Resumo Financeiro</div></div>
+      
+      <!-- CARDS JOIAS (HOME) -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:8px;">
-        <div class="kpi-card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><span style="font-size:10px;color:#9a95b0;font-weight:600;text-transform:uppercase;">Vendido</span><div style="width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,#fce7f3,#fbcfe8);color:#db2777;"><i class="ri-shopping-bag-line"></i></div></div><div id="kpiSold" style="font-size:20px;font-weight:700;">R$ 0,00</div><div style="font-size:10px;color:#9a95b0;margin-top:3px;">Este mês</div></div>
-        <div class="kpi-card" style="animation-delay:0.3s;"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><span style="font-size:10px;color:#9a95b0;font-weight:600;text-transform:uppercase;">Recebido</span><div style="width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,#d1fae5,#6ee7b7);color:#059669;"><i class="ri-bank-card-line"></i></div></div><div id="kpiReceived" style="font-size:20px;font-weight:700;">R$ 0,00</div><div style="font-size:10px;color:#9a95b0;margin-top:3px;">Confirmado</div></div>
-        <div class="kpi-card" style="animation-delay:0.6s;"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><span style="font-size:10px;color:#9a95b0;font-weight:600;text-transform:uppercase;">A Receber</span><div style="width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,#fef3c7,#fcd34d);color:#d97706;"><i class="ri-time-line"></i></div></div><div id="kpiReceivable" style="font-size:20px;font-weight:700;">R$ 0,00</div><div id="kpiReceivableCount" style="font-size:10px;color:#9a95b0;margin-top:3px;">0 parcelas</div></div>
-        <div class="kpi-card" style="animation-delay:0.9s;"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><span style="font-size:10px;color:#9a95b0;font-weight:600;text-transform:uppercase;">Atrasado</span><div style="width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,#fee2e2,#fca5a5);color:#dc2626;"><i class="ri-alarm-warning-line"></i></div></div><div id="kpiOverdue" style="font-size:20px;font-weight:700;">R$ 0,00</div><div id="kpiOverdueCount" style="font-size:10px;color:#9a95b0;margin-top:3px;">0 parcelas</div></div>
+        
+        <!-- Vendido -->
+        <div class="kpi-card kpi-rosegold">
+          <i class="ri-vip-diamond-fill kpi-bg-icon"></i>
+          <div class="kpi-card-content">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+              <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#be185d;">Vendido</span>
+              <div class="kpi-icon-wrap"><i class="ri-shopping-bag-3-fill"></i></div>
+            </div>
+            <div id="kpiSold" class="kpi-val" style="font-size:20px;font-weight:800;">R$ 0,00</div>
+            <div style="font-size:10px;margin-top:3px;font-weight:600;color:#db2777;">Este mês</div>
+          </div>
+        </div>
+
+        <!-- Recebido -->
+        <div class="kpi-card kpi-emerald" style="animation-delay:0.3s;">
+          <i class="ri-safe-2-fill kpi-bg-icon"></i>
+          <div class="kpi-card-content">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+              <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#047857;">Recebido</span>
+              <div class="kpi-icon-wrap"><i class="ri-bank-card-fill"></i></div>
+            </div>
+            <div id="kpiReceived" class="kpi-val" style="font-size:20px;font-weight:800;">R$ 0,00</div>
+            <div style="font-size:10px;margin-top:3px;font-weight:600;color:#059669;">Confirmado</div>
+          </div>
+        </div>
+
+        <!-- A Receber -->
+        <div class="kpi-card kpi-gold" style="animation-delay:0.6s;">
+          <i class="ri-copper-coin-fill kpi-bg-icon"></i>
+          <div class="kpi-card-content">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+              <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#b45309;">A Receber</span>
+              <div class="kpi-icon-wrap"><i class="ri-calendar-event-fill"></i></div>
+            </div>
+            <div id="kpiReceivable" class="kpi-val" style="font-size:20px;font-weight:800;">R$ 0,00</div>
+            <div id="kpiReceivableCount" style="font-size:10px;margin-top:3px;font-weight:600;color:#d97706;">0 parcelas</div>
+          </div>
+        </div>
+
+        <!-- Atrasado (Vermelho) -->
+        <div class="kpi-card kpi-ruby" style="animation-delay:0.9s;">
+          <i class="ri-alarm-warning-fill kpi-bg-icon"></i>
+          <div class="kpi-card-content">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+              <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#b91c1c;">Atrasado</span>
+              <div class="kpi-icon-wrap"><i class="ri-alert-fill"></i></div>
+            </div>
+            <div id="kpiOverdue" class="kpi-val" style="font-size:20px;font-weight:800;">R$ 0,00</div>
+            <div id="kpiOverdueCount" style="font-size:10px;margin-top:3px;font-weight:600;color:#dc2626;">0 parcelas</div>
+          </div>
+        </div>
+
       </div>
+
       <div class="section-header"><div class="section-title">Próximos Vencimentos</div><div class="section-link" onclick="navigateTo('receivable')">Ver todos →</div></div>
       <div class="list-card" id="upcomingList"><div class="empty-state"><i class="ri-checkbox-circle-line"></i><p>Tudo em ordem!</p></div></div>
       <div class="section-header"><div class="section-title">Vendas por Categoria</div></div>
@@ -477,12 +598,44 @@ h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
         <div id="detailName" style="font-size:22px;font-weight:700;">Carregando...</div>
         <div id="detailPhone" style="font-size:12px;opacity:0.9;margin-top:6px;">--</div>
       </div>
+      
+      <!-- CARDS DETALHES DA CLIENTE -->
       <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:-28px 0 20px;position:relative;z-index:2;">
-        <div style="background:white;border-radius:18px;padding:14px;text-align:center;box-shadow:0 8px 30px rgba(190,24,93,0.1);"><div style="font-size:10px;color:#9a95b0;text-transform:uppercase;font-weight:600;">Comprado</div><div id="statBought" style="font-size:18px;font-weight:700;margin-top:4px;color:#db2777;">R$ 0</div></div>
-        <div style="background:white;border-radius:18px;padding:14px;text-align:center;box-shadow:0 8px 30px rgba(5,150,105,0.1);"><div style="font-size:10px;color:#9a95b0;text-transform:uppercase;font-weight:600;">Pago</div><div id="statPaid" style="font-size:18px;font-weight:700;margin-top:4px;color:#059669;">R$ 0</div></div>
-        <div style="background:white;border-radius:18px;padding:14px;text-align:center;box-shadow:0 8px 30px rgba(217,119,6,0.1);"><div style="font-size:10px;color:#9a95b0;text-transform:uppercase;font-weight:600;">Em Aberto</div><div id="statOpen" style="font-size:18px;font-weight:700;margin-top:4px;color:#d97706;">R$ 0</div></div>
-        <div style="background:white;border-radius:18px;padding:14px;text-align:center;box-shadow:0 8px 30px rgba(220,38,38,0.1);"><div style="font-size:10px;color:#9a95b0;text-transform:uppercase;font-weight:600;">Atrasado</div><div id="statOverdue" style="font-size:18px;font-weight:700;margin-top:4px;color:#dc2626;">R$ 0</div></div>
+        
+        <div class="kpi-card kpi-rosegold" style="padding:14px; animation:none;">
+          <i class="ri-vip-diamond-fill kpi-bg-icon"></i>
+          <div class="kpi-card-content">
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#be185d;">Comprado</div>
+            <div id="statBought" class="kpi-val" style="font-size:18px;font-weight:800;margin-top:4px;">R$ 0</div>
+          </div>
+        </div>
+        
+        <div class="kpi-card kpi-emerald" style="padding:14px; animation:none;">
+          <i class="ri-safe-2-fill kpi-bg-icon"></i>
+          <div class="kpi-card-content">
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#047857;">Pago</div>
+            <div id="statPaid" class="kpi-val" style="font-size:18px;font-weight:800;margin-top:4px;">R$ 0</div>
+          </div>
+        </div>
+        
+        <div class="kpi-card kpi-gold" style="padding:14px; animation:none;">
+          <i class="ri-copper-coin-fill kpi-bg-icon"></i>
+          <div class="kpi-card-content">
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#b45309;">Em Aberto</div>
+            <div id="statOpen" class="kpi-val" style="font-size:18px;font-weight:800;margin-top:4px;">R$ 0</div>
+          </div>
+        </div>
+        
+        <div class="kpi-card kpi-ruby" style="padding:14px; animation:none;">
+          <i class="ri-alarm-warning-fill kpi-bg-icon"></i>
+          <div class="kpi-card-content">
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#b91c1c;">Atrasado</div>
+            <div id="statOverdue" class="kpi-val" style="font-size:18px;font-weight:800;margin-top:4px;">R$ 0</div>
+          </div>
+        </div>
+
       </div>
+
       <div style="display:flex;gap:8px;margin-bottom:16px;">
         <button id="detailWhatsapp" style="flex:1;background:linear-gradient(135deg,#22c55e,#16a34a);color:white;padding:12px;border-radius:14px;border:none;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 4px 15px rgba(34,197,94,0.3);animation:floatBtn 5s ease-in-out infinite;"><i class="ri-whatsapp-line"></i> Contatar</button>
         <button id="detailEdit" style="flex:1;background:white;color:#5a5670;padding:12px;border-radius:14px;border:1.5px solid #fce7f3;font-size:13px;font-weight:600;cursor:pointer;"><i class="ri-edit-line"></i> Editar Cliente</button>
@@ -496,10 +649,34 @@ h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
     <!-- A RECEBER -->
     <div class="page" id="page-receivable">
       <div style="font-size:20px;font-weight:700;font-family:'Playfair Display',serif;padding:16px 0 8px;">Contas a Receber</div>
+      
+      <!-- CARDS A RECEBER -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
-        <div style="background:white;border-radius:18px;padding:14px;border:1px solid rgba(245,158,11,0.1);box-shadow:0 8px 30px rgba(217,119,6,0.08);"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;"><div style="font-size:10px;color:#9a95b0;font-weight:600;text-transform:uppercase;">Total a Receber</div><div style="width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;background:linear-gradient(135deg,#fef3c7,#fcd34d);color:#d97706;"><i class="ri-money-dollar-circle-line"></i></div></div><div id="recTotal" style="font-size:18px;font-weight:700;color:#d97706;">R$ 0</div></div>
-        <div style="background:white;border-radius:18px;padding:14px;border:1px solid rgba(239,68,68,0.1);box-shadow:0 8px 30px rgba(220,38,38,0.08);"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;"><div style="font-size:10px;color:#9a95b0;font-weight:600;text-transform:uppercase;">Total Atrasado</div><div style="width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;background:linear-gradient(135deg,#fee2e2,#fca5a5);color:#dc2626;"><i class="ri-alarm-warning-line"></i></div></div><div id="recOverdue" style="font-size:18px;font-weight:700;color:#dc2626;">R$ 0</div></div>
+        
+        <div class="kpi-card kpi-gold" style="animation:none;">
+          <i class="ri-copper-coin-fill kpi-bg-icon"></i>
+          <div class="kpi-card-content">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+              <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#b45309;">Total a Receber</div>
+              <div class="kpi-icon-wrap"><i class="ri-money-dollar-circle-fill"></i></div>
+            </div>
+            <div id="recTotal" class="kpi-val" style="font-size:18px;font-weight:800;">R$ 0</div>
+          </div>
+        </div>
+
+        <div class="kpi-card kpi-ruby" style="animation:none;">
+          <i class="ri-alarm-warning-fill kpi-bg-icon"></i>
+          <div class="kpi-card-content">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+              <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#b91c1c;">Total Atrasado</div>
+              <div class="kpi-icon-wrap"><i class="ri-alert-fill"></i></div>
+            </div>
+            <div id="recOverdue" class="kpi-val" style="font-size:18px;font-weight:800;">R$ 0</div>
+          </div>
+        </div>
+
       </div>
+
       <div id="recTabs" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;scrollbar-width:none;">
         <button class="mini-tab active" onclick="switchRecTab('today')">Hoje</button>
         <button class="mini-tab" onclick="switchRecTab('week')">7 dias</button>
@@ -519,10 +696,34 @@ h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
     <!-- PRODUTOS -->
     <div class="page" id="page-products">
       <div style="font-size:20px;font-weight:700;font-family:'Playfair Display',serif;padding:16px 0 8px;">Produtos & Estoque</div>
+      
+      <!-- CARDS ESTOQUE -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
-        <div style="background:white;border-radius:18px;padding:14px;border:1px solid rgba(59,130,246,0.1);box-shadow:0 8px 30px rgba(37,99,235,0.08);"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;"><div style="font-size:10px;color:#9a95b0;font-weight:600;text-transform:uppercase;">Valor Investido</div><div style="width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;background:linear-gradient(135deg,#dbeafe,#93c5fd);color:#2563eb;"><i class="ri-wallet-line"></i></div></div><div id="stockInvested" style="font-size:18px;font-weight:700;">R$ 0</div></div>
-        <div style="background:white;border-radius:18px;padding:14px;border:1px solid rgba(239,68,68,0.1);box-shadow:0 8px 30px rgba(220,38,38,0.08);"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;"><div style="font-size:10px;color:#9a95b0;font-weight:600;text-transform:uppercase;">Estoque Baixo</div><div style="width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;background:linear-gradient(135deg,#fee2e2,#fca5a5);color:#dc2626;"><i class="ri-alert-line"></i></div></div><div id="stockLowCount" style="font-size:18px;font-weight:700;color:#dc2626;">0</div></div>
+        
+        <div class="kpi-card kpi-sapphire" style="animation:none;">
+          <i class="ri-wallet-3-fill kpi-bg-icon"></i>
+          <div class="kpi-card-content">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+              <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#1e3a8a;">Valor Investido</div>
+              <div class="kpi-icon-wrap"><i class="ri-funds-box-fill"></i></div>
+            </div>
+            <div id="stockInvested" class="kpi-val" style="font-size:18px;font-weight:800;">R$ 0</div>
+          </div>
+        </div>
+        
+        <div class="kpi-card kpi-ruby" style="animation:none;">
+          <i class="ri-error-warning-fill kpi-bg-icon"></i>
+          <div class="kpi-card-content">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+              <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#b91c1c;">Estoque Baixo</div>
+              <div class="kpi-icon-wrap"><i class="ri-alert-fill"></i></div>
+            </div>
+            <div id="stockLowCount" class="kpi-val" style="font-size:18px;font-weight:800;">0</div>
+          </div>
+        </div>
+
       </div>
+
       <div style="position:relative;margin-bottom:14px;"><i class="ri-search-line" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#9a95b0;"></i><input type="text" placeholder="Buscar produto..." id="searchProduct" oninput="renderProducts()" class="form-control" style="padding-left:42px;margin-top:0;"></div>
       <div class="list-card" id="productsList"><div class="empty-state"><i class="ri-gift-line"></i><p>Nenhum produto cadastrado.</p></div></div>
     </div>
@@ -545,12 +746,15 @@ h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
     <!-- REPORTS -->
     <div class="page" id="page-reports">
       <div style="display:flex;align-items:center;gap:10px;padding:16px 0 4px;"><div onclick="navigateTo('more')" style="width:40px;height:40px;border-radius:12px;background:white;border:1px solid #fce7f3;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 15px rgba(190,24,93,0.08);"><i class="ri-arrow-left-line"></i></div><div style="font-size:20px;font-weight:700;font-family:'Playfair Display',serif;flex:1;">Relatórios</div></div>
+      
+      <!-- CARDS RELATÓRIOS -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;">
-        <div style="background:white;border-radius:18px;padding:14px;box-shadow:0 8px 30px rgba(190,24,93,0.08);"><div style="font-size:10px;color:#9a95b0;text-transform:uppercase;font-weight:600;">Vendido</div><div id="repSold" style="font-size:18px;font-weight:700;margin-top:4px;">R$ 0</div></div>
-        <div style="background:white;border-radius:18px;padding:14px;box-shadow:0 8px 30px rgba(5,150,105,0.08);"><div style="font-size:10px;color:#9a95b0;text-transform:uppercase;font-weight:600;">Recebido</div><div id="repReceived" style="font-size:18px;font-weight:700;margin-top:4px;">R$ 0</div></div>
-        <div style="background:white;border-radius:18px;padding:14px;box-shadow:0 8px 30px rgba(220,38,38,0.08);"><div style="font-size:10px;color:#9a95b0;text-transform:uppercase;font-weight:600;">Despesas</div><div id="repExp" style="font-size:18px;font-weight:700;margin-top:4px;">R$ 0</div></div>
-        <div style="background:white;border-radius:18px;padding:14px;box-shadow:0 8px 30px rgba(124,58,237,0.08);"><div style="font-size:10px;color:#9a95b0;text-transform:uppercase;font-weight:600;">Lucro</div><div id="repProfit" style="font-size:18px;font-weight:700;margin-top:4px;">R$ 0</div></div>
+        <div class="kpi-card kpi-rosegold" style="padding:14px; animation:none;"><i class="ri-vip-diamond-fill kpi-bg-icon"></i><div class="kpi-card-content"><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#be185d;">Vendido</div><div id="repSold" class="kpi-val" style="font-size:18px;font-weight:800;margin-top:4px;">R$ 0</div></div></div>
+        <div class="kpi-card kpi-emerald" style="padding:14px; animation:none;"><i class="ri-safe-2-fill kpi-bg-icon"></i><div class="kpi-card-content"><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#047857;">Recebido</div><div id="repReceived" class="kpi-val" style="font-size:18px;font-weight:800;margin-top:4px;">R$ 0</div></div></div>
+        <div class="kpi-card kpi-ruby" style="padding:14px; animation:none;"><i class="ri-shopping-cart-fill kpi-bg-icon"></i><div class="kpi-card-content"><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#b91c1c;">Despesas</div><div id="repExp" class="kpi-val" style="font-size:18px;font-weight:800;margin-top:4px;">R$ 0</div></div></div>
+        <div class="kpi-card kpi-amethyst" style="padding:14px; animation:none;"><i class="ri-sketching-fill kpi-bg-icon"></i><div class="kpi-card-content"><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#581c87;">Lucro</div><div id="repProfit" class="kpi-val" style="font-size:18px;font-weight:800;margin-top:4px;">R$ 0</div></div></div>
       </div>
+
       <div class="chart-wrap"><div style="font-size:14px;font-weight:600;margin-bottom:12px;font-family:'Playfair Display',serif;">Vendas por Categoria</div><div class="chart-container"><canvas id="reportChart"></canvas></div></div>
     </div>
 
@@ -815,9 +1019,13 @@ function renderHome(){
   const over=pend.filter(i=>i.dueDate<today);const overT=over.reduce((s,v)=>s+(Number(v.value)-Number(v.paidValue||0)),0);
   const mE=DB.expenses.filter(e=>e.date>=ms&&e.date<=me);const exp=mE.reduce((s,v)=>s+Number(v.value),0);
   document.getElementById('balanceValue').textContent=fmtMoney(received-exp);
-  document.getElementById('kpiSold').textContent=fmtMoney(sold);document.getElementById('kpiReceived').textContent=fmtMoney(received);
-  document.getElementById('kpiReceivable').textContent=fmtMoney(recv);document.getElementById('kpiReceivableCount').textContent=pend.length+' parcelas';
-  document.getElementById('kpiOverdue').textContent=fmtMoney(overT);document.getElementById('kpiOverdueCount').textContent=over.length+' atrasadas';
+  
+  document.getElementById('kpiSold').textContent=fmtMoney(sold);
+  document.getElementById('kpiReceived').textContent=fmtMoney(received);
+  document.getElementById('kpiReceivable').textContent=fmtMoney(recv);
+  document.getElementById('kpiReceivableCount').textContent=pend.length+' parcelas';
+  document.getElementById('kpiOverdue').textContent=fmtMoney(overT);
+  document.getElementById('kpiOverdueCount').textContent=over.length+' atrasadas';
   
   const alerts=[];const tInst=pend.filter(i=>i.dueDate===today);
   if(tInst.length>0)alerts.push(`<div onclick="navigateTo('receivable')" style="background:linear-gradient(135deg,#eff6ff,#dbeafe);border-radius:18px;padding:14px;margin-bottom:12px;border:1px solid #bfdbfe;display:flex;align-items:center;gap:12px;cursor:pointer;"><div style="width:40px;height:40px;border-radius:12px;background:white;display:flex;align-items:center;justify-content:center;font-size:20px;color:#2563eb;flex-shrink:0;"><i class="ri-calendar-event-line"></i></div><div style="flex:1;"><div style="font-size:12px;font-weight:600;">Vencem hoje</div><div style="font-size:11px;color:#5a5670;">${tInst.length} parcela(s) para receber</div></div><span style="background:#2563eb;color:white;font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;">${tInst.length}</span></div>`);
@@ -855,7 +1063,6 @@ function saveClient(){const n=document.getElementById('clientName').value.trim()
 
 function switchRecTab(tab){DB.recTab=tab;document.querySelectorAll('#recTabs .mini-tab').forEach(t=>t.classList.remove('active'));const act=document.querySelector(`#recTabs .mini-tab[onclick="switchRecTab('${tab}')"]`);if(act)act.classList.add('active');renderReceivable();}
 
-// FUNÇÃO ATUALIZADA: MENSAGEM WHATSAPP DINÂMICA
 function chargeWhatsApp(instId){
   const i=DB.installments.find(x=>x.id===instId);
   if(!i)return;
@@ -890,7 +1097,12 @@ function openPaymentModal(instId){const i=DB.installments.find(x=>x.id===instId)
 
 function confirmPayment(){const i=DB.installments.find(x=>x.id===DB.temp.currentPayment);if(!i)return;const amount=Number(document.getElementById('paymentAmount').value);const method=document.getElementById('paymentMethod').value;if(!amount||amount<=0){toast('Valor inválido!','error');return;}const totalPaid=Number(i.paidValue||0)+amount;if(totalPaid>=Number(i.value)-0.01){i.status='paid';i.paidValue=Number(i.value);i.paidDate=todayStr();i.paymentMethod=method;toast('Pagamento confirmado!','success');}else{i.paidValue=totalPaid;i.paymentMethod=method;if(!i.paidDate)i.paidDate=todayStr();toast(`Pagamento parcial de ${fmtMoney(amount)} registrado`,'warning');}const sale=DB.sales.find(s=>s.id===i.saleId);if(sale){const sInst=DB.installments.filter(x=>x.saleId===sale.id);sale.status=sInst.every(x=>x.status==='paid')?'paid':'parcial';}saveDB();closeModal('paymentModal');renderCurrentPage();}
 
-function renderReceivable(){const today=todayStr();const nw=new Date();nw.setDate(nw.getDate()+7);const nws=nw.toISOString().split('T')[0];let l=[];switch(DB.recTab){case'today':l=DB.installments.filter(i=>i.status!=='paid'&&i.dueDate===today);break;case'week':l=DB.installments.filter(i=>i.status!=='paid'&&i.dueDate>today&&i.dueDate<=nws);break;case'overdue':l=DB.installments.filter(i=>i.status!=='paid'&&i.dueDate<today);break;case'all':l=DB.installments.filter(i=>i.status!=='paid');break;case'paid':l=DB.installments.filter(i=>i.status==='paid');break;}l.sort((a,b)=>a.dueDate.localeCompare(b.dueDate));const pend=DB.installments.filter(i=>i.status!=='paid');const rT=pend.reduce((s,v)=>s+(Number(v.value)-Number(v.paidValue||0)),0);const ovd=pend.filter(i=>i.dueDate<today);const oT=ovd.reduce((s,v)=>s+(Number(v.value)-Number(v.paidValue||0)),0);document.getElementById('recTotal').textContent=fmtMoney(rT);document.getElementById('recOverdue').textContent=fmtMoney(oT);const el=document.getElementById('receivableList');if(l.length===0){el.innerHTML=`<div class="empty-state"><i class="ri-checkbox-circle-line"></i><p>Nenhuma parcela nesta aba.</p></div>`;return;}el.innerHTML=l.map(i=>{const c=DB.clients.find(x=>x.id===i.clientId);const isOvd=i.dueDate<today&&i.status!=='paid';const isTod=i.dueDate===today&&i.status!=='paid';let cls='status-pending',lb='PENDENTE';if(i.status==='paid'){cls='status-paid';lb='PAGA';}else if(isOvd){cls='status-overdue';lb='ATRASADA';}else if(isTod){cls='status-today';lb='HOJE';}return`<div class="list-item"><div class="list-item-avatar">${c?(c.image?`<img src="${c.image}">`:getInitials(c.name)):'?'}</div><div class="list-item-content"><div style="font-size:13px;font-weight:600;">${c?c.name:'Cliente'}</div><div style="font-size:11px;color:#9a95b0;margin-top:3px;">${fmtDateBR(i.dueDate)} • Parcela ${i.number}</div></div><div style="text-align:right;"><div style="font-size:14px;font-weight:700;color:#db2777;">${fmtMoney(i.value)}</div><span class="${cls}">${lb}</span>${i.status!=='paid'?`<div style="display:flex;gap:4px;margin-top:6px;justify-content:flex-end;"><button class="btn-icon-sm" style="background:#d1fae5;color:#059669;border:none;width:28px;height:28px;border-radius:6px;cursor:pointer;" onclick="event.stopPropagation();chargeWhatsApp('${i.id}')"><i class="ri-whatsapp-line"></i></button><button class="btn-icon-sm" style="background:#d1fae5;color:#059669;border:none;width:28px;height:28px;border-radius:6px;cursor:pointer;" onclick="event.stopPropagation();openPaymentModal('${i.id}')"><i class="ri-check-line"></i></button></div>`:''}</div></div>`;}).join('');}
+function renderReceivable(){const today=todayStr();const nw=new Date();nw.setDate(nw.getDate()+7);const nws=nw.toISOString().split('T')[0];let l=[];switch(DB.recTab){case'today':l=DB.installments.filter(i=>i.status!=='paid'&&i.dueDate===today);break;case'week':l=DB.installments.filter(i=>i.status!=='paid'&&i.dueDate>today&&i.dueDate<=nws);break;case'overdue':l=DB.installments.filter(i=>i.status!=='paid'&&i.dueDate<today);break;case'all':l=DB.installments.filter(i=>i.status!=='paid');break;case'paid':l=DB.installments.filter(i=>i.status==='paid');break;}l.sort((a,b)=>a.dueDate.localeCompare(b.dueDate));const pend=DB.installments.filter(i=>i.status!=='paid');const rT=pend.reduce((s,v)=>s+(Number(v.value)-Number(v.paidValue||0)),0);const ovd=pend.filter(i=>i.dueDate<today);const oT=ovd.reduce((s,v)=>s+(Number(v.value)-Number(v.paidValue||0)),0);
+  
+  document.getElementById('recTotal').textContent=fmtMoney(rT);
+  document.getElementById('recOverdue').textContent=fmtMoney(oT);
+  
+  const el=document.getElementById('receivableList');if(l.length===0){el.innerHTML=`<div class="empty-state"><i class="ri-checkbox-circle-line"></i><p>Nenhuma parcela nesta aba.</p></div>`;return;}el.innerHTML=l.map(i=>{const c=DB.clients.find(x=>x.id===i.clientId);const isOvd=i.dueDate<today&&i.status!=='paid';const isTod=i.dueDate===today&&i.status!=='paid';let cls='status-pending',lb='PENDENTE';if(i.status==='paid'){cls='status-paid';lb='PAGA';}else if(isOvd){cls='status-overdue';lb='ATRASADA';}else if(isTod){cls='status-today';lb='HOJE';}return`<div class="list-item"><div class="list-item-avatar">${c?(c.image?`<img src="${c.image}">`:getInitials(c.name)):'?'}</div><div class="list-item-content"><div style="font-size:13px;font-weight:600;">${c?c.name:'Cliente'}</div><div style="font-size:11px;color:#9a95b0;margin-top:3px;">${fmtDateBR(i.dueDate)} • Parcela ${i.number}</div></div><div style="text-align:right;"><div style="font-size:14px;font-weight:700;color:#db2777;">${fmtMoney(i.value)}</div><span class="${cls}">${lb}</span>${i.status!=='paid'?`<div style="display:flex;gap:4px;margin-top:6px;justify-content:flex-end;"><button class="btn-icon-sm" style="background:#d1fae5;color:#059669;border:none;width:28px;height:28px;border-radius:6px;cursor:pointer;" onclick="event.stopPropagation();chargeWhatsApp('${i.id}')"><i class="ri-whatsapp-line"></i></button><button class="btn-icon-sm" style="background:#d1fae5;color:#059669;border:none;width:28px;height:28px;border-radius:6px;cursor:pointer;" onclick="event.stopPropagation();openPaymentModal('${i.id}')"><i class="ri-check-line"></i></button></div>`:''}</div></div>`;}).join('');}
 
 function renderSales(){const el=document.getElementById('salesList');if(DB.sales.length===0){el.innerHTML=`<div class="empty-state"><i class="ri-shopping-cart-line"></i><p>Nenhuma venda registrada.</p></div>`;return;}el.innerHTML=[...DB.sales].sort((a,b)=>b.date.localeCompare(a.date)).map(s=>{const c=DB.clients.find(x=>x.id===s.clientId);const it=s.items.map(i=>`${i.qty}x ${i.productName}`).join(', ');return`<div class="list-item"><div class="list-item-avatar">${c?(c.image?`<img src="${c.image}">`:getInitials(c.name)):'?'}</div><div class="list-item-content"><div style="font-size:13px;font-weight:600;">${c?c.name:'Cliente'}</div><div style="font-size:11px;color:#9a95b0;margin-top:3px;">${it}</div><div style="font-size:10px;color:#9a95b0;margin-top:2px;">${fmtDateBR(s.date)}</div></div><div style="text-align:right;"><div style="font-size:14px;font-weight:700;color:#db2777;">${fmtMoney(s.total)}</div></div></div>`;}).join('');}
 
@@ -997,14 +1209,15 @@ function saveSale(){
   saveDB();closeModal('saleModal');toast('Venda registrada!','success');renderCurrentPage();
 }
 
-// FUNÇÕES DE PRODUTO ATUALIZADAS
 function renderProducts(){
   const s=(document.getElementById('searchProduct')?.value||'').toLowerCase();
   let l=DB.products.filter(p=>!s||p.name.toLowerCase().includes(s));
   const inv=DB.products.reduce((s,p)=>s+(Number(p.cost)*Number(p.stock)),0);
   const ls=DB.products.filter(p=>p.stock>0&&p.stock<=5).length;
+  
   document.getElementById('stockInvested').textContent=fmtMoney(inv);
   document.getElementById('stockLowCount').textContent=ls;
+  
   const el=document.getElementById('productsList');
   if(l.length===0){el.innerHTML=`<div class="empty-state"><i class="ri-gift-line"></i><p>Nenhum produto cadastrado.</p></div>`;return;}
   const cc={'Semijoias':'cat-pill pink','Roupa de cama':'cat-pill purple','Produtos para cabelo':'cat-pill green','Perfumes':'cat-pill pink','Cuidados pessoais':'cat-pill blue','Outros':'cat-pill purple'};
@@ -1070,7 +1283,14 @@ function saveExpense(){const d=document.getElementById('expenseDesc').value.trim
 function exportData(){const data={profile:DB.profile,clients:DB.clients,products:DB.products,sales:DB.sales,installments:DB.installments,expenses:DB.expenses};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`backup-claudia-${todayStr()}.json`;a.click();URL.revokeObjectURL(url);toast('Backup exportado!','success');}
 function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);DB.profile={...DB.profile,...(d.profile||{})};DB.clients=d.clients||[];DB.products=d.products||[];DB.sales=d.sales||[];DB.installments=d.installments||[];DB.expenses=d.expenses||[];saveDB();applyProfile();toast('Dados importados!','success');renderCurrentPage();}catch(err){toast('Arquivo inválido!','error');}};r.readAsText(f);e.target.value='';}
 
-function renderReports(){const now=new Date();let st,en;switch(DB.reportPeriod){case'month':st=new Date(now.getFullYear(),now.getMonth(),1).toISOString().split('T')[0];en=new Date(now.getFullYear(),now.getMonth()+1,0).toISOString().split('T')[0];break;case'year':st=new Date(now.getFullYear(),0,1).toISOString().split('T')[0];en=new Date(now.getFullYear(),11,31).toISOString().split('T')[0];break;default:st='1900-01-01';en='2999-12-31';}const pS=DB.sales.filter(s=>s.date>=st&&s.date<=en);const sold=pS.reduce((s,v)=>s+Number(v.total),0);const pI=DB.installments.filter(i=>i.status==='paid'&&i.paidDate>=st&&i.paidDate<=en);const rI=pI.reduce((s,v)=>s+Number(v.paidValue||v.value),0);const rV=pS.filter(s=>s.paymentType==='vista').reduce((s,v)=>s+Number(v.total),0);const rec=rI+rV;const pE=DB.expenses.filter(e=>e.date>=st&&e.date<=en);const exp=pE.reduce((s,v)=>s+Number(v.value),0);document.getElementById('repSold').textContent=fmtMoney(sold);document.getElementById('repReceived').textContent=fmtMoney(rec);document.getElementById('repExp').textContent=fmtMoney(exp);document.getElementById('repProfit').textContent=fmtMoney(rec-exp);const cats={};pS.forEach(s=>s.items.forEach(it=>{const p=DB.products.find(x=>x.id===it.productId);const cat=p?p.category:'Outros';cats[cat]=(cats[cat]||0)+(Number(it.price)*Number(it.qty));}));const ctx=document.getElementById('reportChart');if(ctx){const colors=['#ec4899','#f59e0b','#8b5cf6','#10b981','#3b82f6','#ef4444'];if(DB.charts.report)DB.charts.report.destroy();DB.charts.report=new Chart(ctx,{type:'bar',data:{labels:Object.keys(cats),datasets:[{label:'Vendas',data:Object.values(cats),backgroundColor:colors,borderRadius:8}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+fmtMoney(c.parsed.y)}}},scales:{x:{ticks:{color:'#9a95b0',font:{size:9}},grid:{display:false}},y:{ticks:{color:'#9a95b0',font:{size:9},callback:v=>'R$'+v},grid:{color:'rgba(154,149,176,.1)'}}}}});}}
+function renderReports(){const now=new Date();let st,en;switch(DB.reportPeriod){case'month':st=new Date(now.getFullYear(),now.getMonth(),1).toISOString().split('T')[0];en=new Date(now.getFullYear(),now.getMonth()+1,0).toISOString().split('T')[0];break;case'year':st=new Date(now.getFullYear(),0,1).toISOString().split('T')[0];en=new Date(now.getFullYear(),11,31).toISOString().split('T')[0];break;default:st='1900-01-01';en='2999-12-31';}const pS=DB.sales.filter(s=>s.date>=st&&s.date<=en);const sold=pS.reduce((s,v)=>s+Number(v.total),0);const pI=DB.installments.filter(i=>i.status==='paid'&&i.paidDate>=st&&i.paidDate<=en);const rI=pI.reduce((s,v)=>s+Number(v.paidValue||v.value),0);const rV=pS.filter(s=>s.paymentType==='vista').reduce((s,v)=>s+Number(v.total),0);const rec=rI+rV;const pE=DB.expenses.filter(e=>e.date>=st&&e.date<=en);const exp=pE.reduce((s,v)=>s+Number(v.value),0);
+  
+  document.getElementById('repSold').textContent=fmtMoney(sold);
+  document.getElementById('repReceived').textContent=fmtMoney(rec);
+  document.getElementById('repExp').textContent=fmtMoney(exp);
+  document.getElementById('repProfit').textContent=fmtMoney(rec-exp);
+  
+  const cats={};pS.forEach(s=>s.items.forEach(it=>{const p=DB.products.find(x=>x.id===it.productId);const cat=p?p.category:'Outros';cats[cat]=(cats[cat]||0)+(Number(it.price)*Number(it.qty));}));const ctx=document.getElementById('reportChart');if(ctx){const colors=['#ec4899','#f59e0b','#8b5cf6','#10b981','#3b82f6','#ef4444'];if(DB.charts.report)DB.charts.report.destroy();DB.charts.report=new Chart(ctx,{type:'bar',data:{labels:Object.keys(cats),datasets:[{label:'Vendas',data:Object.values(cats),backgroundColor:colors,borderRadius:8}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+fmtMoney(c.parsed.y)}}},scales:{x:{ticks:{color:'#9a95b0',font:{size:9}},grid:{display:false}},y:{ticks:{color:'#9a95b0',font:{size:9},callback:v=>'R$'+v},grid:{color:'rgba(154,149,176,.1)'}}}}});}}
 
 function setReportPeriod(p){DB.reportPeriod=p;renderReports();}
 

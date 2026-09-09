@@ -12,11 +12,17 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">
 
 <!-- ============================================================
-     TEMAS: CLARO E ESCURO
-     O tema é aplicado via classe no <html>
+     PLUGINS CAPACITOR - IMPORTANTES!
+     Estes arquivos são gerados automaticamente pelo Capacitor
+     quando você executa `npx cap sync android`
+     Eles NÃO existem no arquivo HTML puro, só no projeto Capacitor
      ============================================================ -->
+<script type="module" src="https://cdn.jsdelivr.net/npm/@capacitor/core@5/dist/core.min.js"></script>
+
 <style>
-  /* ===== TEMA CLARO (PADRÃO) ===== */
+  /* ============================================================
+     VARIÁVEIS DE TEMA - TEMA CLARO MODERNO
+     ============================================================ */
   :root {
     --bg: #f5f7fb;
     --bg-dark: #ffffff;
@@ -39,29 +45,6 @@
     --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.1);
   }
 
-  /* ===== TEMA ESCURO ===== */
-  html.tema-escuro {
-    --bg: #0f172a;
-    --bg-dark: #1e293b;
-    --card: #1e293b;
-    --card-hover: #334155;
-    --text: #f1f5f9;
-    --muted: #94a3b8;
-    --accent: #3b82f6;
-    --accent-soft: rgba(59, 130, 246, 0.15);
-    --accent2: #22c55e;
-    --accent2-soft: rgba(34, 197, 94, 0.15);
-    --danger: #f87171;
-    --danger-soft: rgba(248, 113, 113, 0.15);
-    --warning: #fbbf24;
-    --warning-soft: rgba(251, 191, 36, 0.15);
-    --purple: #a78bfa;
-    --purple-soft: rgba(167, 139, 250, 0.15);
-    --border: rgba(255, 255, 255, 0.08);
-    --shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
-    --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.4);
-  }
-
   * {
     margin: 0;
     padding: 0;
@@ -76,11 +59,10 @@
     min-height: 100vh;
     overflow-x: hidden;
     padding-bottom: 80px;
-    transition: background 0.3s ease, color 0.3s ease;
   }
 
   /* ============================================================
-     HEADER COM LOGO E BOTÃO DE TEMA
+     HEADER COM LOGO
      ============================================================ */
   .header {
     background: var(--bg-dark);
@@ -93,7 +75,6 @@
     z-index: 100;
     border-bottom: 1px solid var(--border);
     box-shadow: var(--shadow);
-    transition: background 0.3s ease;
   }
 
   .header-left {
@@ -169,17 +150,6 @@
     position: relative;
   }
 
-  .icon-btn.tema {
-    background: var(--purple-soft);
-    border-color: transparent;
-    color: var(--purple);
-  }
-
-  html.tema-escuro .icon-btn.tema {
-    color: #fbbf24;
-    background: rgba(251, 191, 36, 0.15);
-  }
-
   .notif-badge {
     position: absolute;
     top: -2px;
@@ -210,7 +180,6 @@
     gap: 4px;
     border: 1px solid var(--border);
     box-shadow: var(--shadow);
-    transition: background 0.3s ease;
   }
 
   .nav-tab {
@@ -275,7 +244,7 @@
   }
 
   /* ============================================================
-     CARDS DE ESTATÍSTICAS
+     CARDS DE ESTATÍSTICAS (DASHBOARD)
      ============================================================ */
   .stats-grid {
     display: grid;
@@ -291,7 +260,7 @@
     position: relative;
     overflow: hidden;
     box-shadow: var(--shadow);
-    transition: transform 0.2s, background 0.3s ease;
+    transition: transform 0.2s;
   }
 
   .stat-card:active {
@@ -346,7 +315,6 @@
     padding: 18px;
     margin-top: 14px;
     box-shadow: var(--shadow);
-    transition: background 0.3s ease;
   }
 
   .financial-header {
@@ -378,7 +346,6 @@
     background: var(--bg);
     border-radius: 12px;
     border: 1px solid var(--border);
-    transition: background 0.3s ease;
   }
 
   .financial-item .label {
@@ -404,7 +371,6 @@
     padding: 18px;
     margin-top: 14px;
     box-shadow: var(--shadow);
-    transition: background 0.3s ease;
   }
 
   .chart-header {
@@ -508,7 +474,6 @@
     align-items: center;
     gap: 10px;
     box-shadow: var(--shadow);
-    transition: background 0.3s ease;
   }
 
   .quick-stat-icon {
@@ -547,7 +512,6 @@
     padding: 18px;
     margin-top: 14px;
     box-shadow: var(--shadow);
-    transition: background 0.3s ease;
   }
 
   .top-server-item {
@@ -604,6 +568,13 @@
   /* ============================================================
      LISTA DE CLIENTES
      ============================================================ */
+  .client-list-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
   .filter-tabs {
     display: flex;
     gap: 8px;
@@ -642,7 +613,6 @@
     margin-bottom: 14px;
     gap: 12px;
     box-shadow: var(--shadow);
-    transition: background 0.3s ease;
   }
 
   .search-box i {
@@ -684,11 +654,7 @@
 
   .client-item.vencendo-hoje {
     border-left: 4px solid var(--warning);
-    background: linear-gradient(to right, rgba(245, 158, 11, 0.08), var(--card));
-  }
-
-  html.tema-escuro .client-item.vencendo-hoje {
-    background: linear-gradient(to right, rgba(245, 158, 11, 0.12), var(--card));
+    background: linear-gradient(to right, rgba(245, 158, 11, 0.05), var(--card));
   }
 
   .client-item.vencendo-amanha {
@@ -697,11 +663,7 @@
 
   .client-item.inadimplente {
     border-left: 4px solid var(--danger);
-    background: linear-gradient(to right, rgba(239, 68, 68, 0.08), var(--card));
-  }
-
-  html.tema-escuro .client-item.inadimplente {
-    background: linear-gradient(to right, rgba(239, 68, 68, 0.12), var(--card));
+    background: linear-gradient(to right, rgba(239, 68, 68, 0.05), var(--card));
   }
 
   .client-avatar {
@@ -831,7 +793,7 @@
   }
 
   /* ============================================================
-     BOTÃO FLUTUANTE
+     BOTÃO FLUTUANTE (FAB)
      ============================================================ */
   .fab {
     position: fixed;
@@ -890,7 +852,6 @@
     overflow-y: auto;
     animation: slideUp 0.3s ease;
     box-shadow: var(--shadow-lg);
-    transition: background 0.3s ease;
   }
 
   @keyframes slideUp {
@@ -926,7 +887,6 @@
     cursor: pointer;
     color: var(--muted);
     font-size: 20px;
-    transition: background 0.3s ease;
   }
 
   .modal-body {
@@ -967,7 +927,7 @@
     font-family: 'Sora', sans-serif;
     font-size: 14px;
     outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s, background 0.3s ease;
+    transition: border-color 0.2s, box-shadow 0.2s;
   }
 
   .form-input:focus, .form-select:focus, .form-textarea:focus {
@@ -1024,7 +984,6 @@
     color: var(--text);
     border: 1.5px solid var(--border);
     flex: 1;
-    transition: background 0.3s ease;
   }
 
   .btn-danger {
@@ -1087,7 +1046,6 @@
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 14px;
-    transition: background 0.3s ease;
   }
 
   .detail-info-item .label {
@@ -1149,7 +1107,6 @@
     padding: 20px;
     margin-bottom: 14px;
     box-shadow: var(--shadow);
-    transition: background 0.3s ease;
   }
 
   .settings-title {
@@ -1195,7 +1152,6 @@
     font-size: 14px;
     text-align: center;
     outline: none;
-    transition: background 0.3s ease;
   }
 
   .time-input-item input:focus {
@@ -1240,7 +1196,6 @@
     width: 110px;
     text-align: center;
     font-weight: 600;
-    transition: background 0.3s ease;
   }
 
   .logo-preview {
@@ -1319,7 +1274,6 @@
     align-items: center;
     gap: 14px;
     box-shadow: var(--shadow);
-    transition: background 0.3s ease;
   }
 
   .server-avatar {
@@ -1382,7 +1336,7 @@
   }
 
   /* ============================================================
-     TOAST
+     TOAST (MENSAGEM TEMPORÁRIA)
      ============================================================ */
   .toast {
     position: fixed;
@@ -1415,94 +1369,7 @@
   .toast.warning { border-left: 4px solid var(--warning); }
 
   /* ============================================================
-     TOGGLE DE TEMA (na página de configurações)
-     ============================================================ */
-  .tema-toggle {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px;
-    background: var(--bg);
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    margin-bottom: 14px;
-    transition: background 0.3s ease;
-  }
-
-  .tema-toggle-info {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .tema-toggle-icone {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
-    background: var(--purple-soft);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 22px;
-    color: var(--purple);
-  }
-
-  html.tema-escuro .tema-toggle-icone {
-    background: rgba(251, 191, 36, 0.15);
-    color: #fbbf24;
-  }
-
-  .tema-toggle-label {
-    font-weight: 600;
-    font-size: 14px;
-  }
-
-  .tema-toggle-desc {
-    font-size: 11px;
-    color: var(--muted);
-    margin-top: 2px;
-  }
-
-  .switch {
-    position: relative;
-    width: 52px;
-    height: 28px;
-    background: var(--border);
-    border-radius: 14px;
-    cursor: pointer;
-    transition: background 0.3s;
-  }
-
-  .switch.ativo {
-    background: var(--accent);
-  }
-
-  .switch::after {
-    content: '';
-    position: absolute;
-    top: 3px;
-    left: 3px;
-    width: 22px;
-    height: 22px;
-    background: white;
-    border-radius: 50%;
-    transition: transform 0.3s;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-  }
-
-  .switch.ativo::after {
-    transform: translateX(24px);
-  }
-
-  /* ============================================================
-     SELETORES DE ARQUIVO OCULTOS
-     ============================================================ */
-  #logoFileInput, #somFileInput, #backupFile {
-    display: none;
-  }
-
-  /* ============================================================
-     SCROLLBAR
+     SCROLLBAR PERSONALIZADA
      ============================================================ */
   ::-webkit-scrollbar {
     width: 4px;
@@ -1521,12 +1388,19 @@
   .hidden {
     display: none !important;
   }
+
+  /* ============================================================
+     SELETOR DE ARQUIVO OCULTO
+     ============================================================ */
+  #logoFileInput, #somFileInput, #backupFile {
+    display: none;
+  }
 </style>
 </head>
 <body>
 
 <!-- ============================================================
-     HEADER
+     HEADER - CABEÇALHO COM LOGO
      ============================================================ -->
 <div class="header">
   <div class="header-left">
@@ -1540,9 +1414,6 @@
     </div>
   </div>
   <div class="header-actions">
-    <button class="icon-btn tema" onclick="alternarTema()" title="Alternar Tema Claro/Escuro" id="btnTema">
-      <i class="ri-moon-line" id="iconeTema"></i>
-    </button>
     <button class="icon-btn notif" onclick="verificarVencimentosAgora()" title="Verificar vencimentos">
       <i class="ri-notification-3-line"></i>
       <span class="notif-badge hidden" id="notifBadge">0</span>
@@ -1554,7 +1425,7 @@
 </div>
 
 <!-- ============================================================
-     NAVEGAÇÃO
+     NAVEGAÇÃO POR ABAS
      ============================================================ -->
 <div class="nav-tabs">
   <div class="nav-tab active" data-page="dashboard" onclick="abrirPagina('dashboard')">
@@ -1576,11 +1447,11 @@
 </div>
 
 <!-- ============================================================
-     CONTEÚDO
+     CONTEÚDO PRINCIPAL
      ============================================================ -->
 <div class="content">
 
-  <!-- ===== DASHBOARD ===== -->
+  <!-- ===== PÁGINA DASHBOARD ===== -->
   <div class="page active" id="page-dashboard">
     <div class="section-title">Visão Geral</div>
     
@@ -1607,6 +1478,7 @@
       </div>
     </div>
 
+    <!-- VALORES A RECEBER -->
     <div class="financial-card">
       <div class="financial-header">
         <i class="ri-money-dollar-circle-line"></i>
@@ -1628,6 +1500,7 @@
       </div>
     </div>
 
+    <!-- GRÁFICO CLIENTES NOVOS POR DIA -->
     <div class="chart-card">
       <div class="chart-header">
         <div class="chart-title">
@@ -1652,6 +1525,7 @@
       <div class="bars-container" id="barsContainer"></div>
     </div>
 
+    <!-- ESTATÍSTICAS RÁPIDAS -->
     <div class="quick-stats">
       <div class="quick-stat">
         <div class="quick-stat-icon green">
@@ -1691,6 +1565,7 @@
       </div>
     </div>
 
+    <!-- TOP SERVIDORES -->
     <div class="top-servers-card">
       <div class="chart-header">
         <div class="chart-title">
@@ -1707,7 +1582,7 @@
     </div>
   </div>
 
-  <!-- ===== CLIENTES ===== -->
+  <!-- ===== PÁGINA CLIENTES ===== -->
   <div class="page" id="page-clientes">
     <div class="section-title">Gestão de Clientes</div>
     
@@ -1727,7 +1602,7 @@
     <div id="clientesList"></div>
   </div>
 
-  <!-- ===== SERVIDORES ===== -->
+  <!-- ===== PÁGINA SERVIDORES ===== -->
   <div class="page" id="page-servidores">
     <div class="section-title">Gestão de Servidores</div>
     
@@ -1739,31 +1614,11 @@
     <div id="servidoresList"></div>
   </div>
 
-  <!-- ===== CONFIGURAÇÕES ===== -->
+  <!-- ===== PÁGINA CONFIGURAÇÕES ===== -->
   <div class="page" id="page-configuracoes">
     <div class="section-title">Configurações</div>
 
-    <!-- TEMA CLARO/ESCURO -->
-    <div class="settings-section">
-      <div class="settings-title">
-        <i class="ri-palette-line"></i>
-        Aparência
-      </div>
-      <div class="tema-toggle">
-        <div class="tema-toggle-info">
-          <div class="tema-toggle-icone">
-            <i class="ri-moon-line" id="iconeTemaConfig"></i>
-          </div>
-          <div>
-            <div class="tema-toggle-label">Modo Escuro</div>
-            <div class="tema-toggle-desc" id="descTema">Use tema escuro para economizar bateria</div>
-          </div>
-        </div>
-        <div class="switch" id="switchTema" onclick="alternarTema()"></div>
-      </div>
-    </div>
-
-    <!-- LOGO -->
+    <!-- PERSONALIZAÇÃO - LOGO -->
     <div class="settings-section">
       <div class="settings-title">
         <i class="ri-image-line"></i>
@@ -1793,7 +1648,7 @@
         Notificações Nativas
       </div>
       <p style="font-size: 12px; color: var(--muted); margin-bottom: 18px; line-height: 1.5;">
-        O app agenda notificações no sistema Android. Elas aparecem <strong>mesmo com o app fechado ou tela apagada</strong>.
+        O app agendará notificações no sistema Android. Elas aparecem <strong>mesmo com o app fechado ou tela apagada</strong>.
       </p>
       <div class="time-inputs">
         <div class="time-input-item">
@@ -1828,6 +1683,7 @@
         Testar Notificação Agora
       </button>
 
+      <!-- IMPORTANTE: Botão SALVAR para configurações -->
       <button class="btn btn-primary btn-full" style="margin-top: 14px;" onclick="salvarConfiguracoes()">
         <i class="ri-save-line"></i>
         SALVAR CONFIGURAÇÕES
@@ -1843,21 +1699,23 @@
       <div class="settings-item">
         <div>
           <div class="settings-item-label">Arquivo de som personalizado</div>
-          <div class="settings-item-desc">Escolha um arquivo MP3 do celular</div>
+          <div class="settings-item-desc">Escolha um arquivo de áudio do celular</div>
         </div>
         <button class="btn btn-secondary" style="padding: 10px 16px; flex: none;" onclick="abrirSeletorSom()">
           <i class="ri-folder-music-line"></i>
           Escolher
         </button>
       </div>
-      <div id="somInfo" style="font-size: 12px; color: var(--muted); margin-top: 10px; padding: 12px; background: var(--bg); border-radius: 10px; transition: background 0.3s ease;">
-        📦 Procurando som em: <code>assets/som-vencimento.mp3</code><br>
-        ℹ️ Coloque seu arquivo MP3 na pasta <strong>assets/</strong> do pacote ZIP
+      <div id="somInfo" style="font-size: 12px; color: var(--muted); margin-top: 10px; padding: 10px; background: var(--bg); border-radius: 8px;">
+        Nenhum som personalizado selecionado. Usando som padrão do Android.
       </div>
       <input type="file" id="somFileInput" accept="audio/*" onchange="processarSom(event)">
+      <p style="font-size: 10px; color: var(--muted); margin-top: 12px; line-height: 1.4;">
+        ⚠️ <strong>Observação:</strong> Devido a restrições do Android, sons personalizados podem exigir configuração adicional no projeto nativo (res/raw). Se não funcionar, o som padrão será usado automaticamente.
+      </p>
     </div>
 
-    <!-- BACKUP -->
+    <!-- BACKUP E RESTAURAÇÃO -->
     <div class="settings-section">
       <div class="settings-title">
         <i class="ri-save-3-line"></i>
@@ -1876,7 +1734,7 @@
       <input type="file" id="backupFile" accept=".json" onchange="processarBackup(event)">
     </div>
 
-    <!-- DADOS -->
+    <!-- DADOS DO SISTEMA -->
     <div class="settings-section">
       <div class="settings-title">
         <i class="ri-database-2-line"></i>
@@ -1884,7 +1742,7 @@
       </div>
       <div class="settings-item">
         <div>
-          <div class="settings-item-label">Total de clientes</div>
+          <div class="settings-item-label">Total de clientes cadastrados</div>
         </div>
         <span id="infoTotalClientes" style="font-weight: 700; color: var(--accent);">0</span>
       </div>
@@ -1923,14 +1781,14 @@
 </div>
 
 <!-- ============================================================
-     BOTÃO FLUTUANTE
+     BOTÃO FLUTUANTE PARA ADICIONAR
      ============================================================ -->
 <button class="fab" id="fabAdd" onclick="abrirModalCliente()" title="Novo Cliente">
   <i class="ri-add-line"></i>
 </button>
 
 <!-- ============================================================
-     MODAL: FORMULÁRIO CLIENTE
+     MODAL: FORMULÁRIO DE CLIENTE
      ============================================================ -->
 <div class="modal-overlay" id="modalCliente">
   <div class="modal">
@@ -1998,7 +1856,7 @@
 </div>
 
 <!-- ============================================================
-     MODAL: DETALHES CLIENTE
+     MODAL: DETALHES DO CLIENTE
      ============================================================ -->
 <div class="modal-overlay" id="modalDetalhes">
   <div class="modal">
@@ -2016,7 +1874,7 @@
 </div>
 
 <!-- ============================================================
-     MODAL: FORMULÁRIO SERVIDOR
+     MODAL: FORMULÁRIO DE SERVIDOR
      ============================================================ -->
 <div class="modal-overlay" id="modalServidor">
   <div class="modal">
@@ -2074,7 +1932,7 @@
 </div>
 
 <!-- ============================================================
-     MODAL: LEMBRETE
+     MODAL: MENSAGEM DE LEMBRETE
      ============================================================ -->
 <div class="modal-overlay" id="modalLembrete">
   <div class="modal">
@@ -2107,7 +1965,7 @@
 </div>
 
 <!-- ============================================================
-     TOAST
+     TOAST - MENSAGEM TEMPORÁRIA (3 SEGUNDOS)
      ============================================================ -->
 <div class="toast" id="toast">
   <i id="toastIcon"></i>
@@ -2121,7 +1979,9 @@
 (function() {
   'use strict';
 
+  // ============================================================
   // DADOS GLOBAIS
+  // ============================================================
   let clientes = [];
   let servidores = [];
   let configuracoes = {
@@ -2130,47 +1990,14 @@
     horaNoite: '19:00',
     diasAntecedencia: 2,
     somNotificacao: null,
-    logoBase64: null,
-    tema: 'claro'
+    logoBase64: null
   };
   let filtroAtual = 'todos';
   let confirmCallback = null;
   let clienteLembreteAtual = null;
 
   // ============================================================
-  // TEMA CLARO / ESCURO
-  // ============================================================
-  function aplicarTema(tema) {
-    const html = document.documentElement;
-    const iconeTema = document.getElementById('iconeTema');
-    const iconeTemaConfig = document.getElementById('iconeTemaConfig');
-    const switchTema = document.getElementById('switchTema');
-    const descTema = document.getElementById('descTema');
-
-    if (tema === 'escuro') {
-      html.classList.add('tema-escuro');
-      if (iconeTema) iconeTema.className = 'ri-sun-line';
-      if (iconeTemaConfig) iconeTemaConfig.className = 'ri-sun-line';
-      if (switchTema) switchTema.classList.add('ativo');
-      if (descTema) descTema.textContent = 'Tema escuro ativado';
-    } else {
-      html.classList.remove('tema-escuro');
-      if (iconeTema) iconeTema.className = 'ri-moon-line';
-      if (iconeTemaConfig) iconeTemaConfig.className = 'ri-moon-line';
-      if (switchTema) switchTema.classList.remove('ativo');
-      if (descTema) descTema.textContent = 'Use tema escuro para economizar bateria';
-    }
-    configuracoes.tema = tema;
-  }
-
-  window.alternarTema = async function() {
-    const novoTema = configuracoes.tema === 'escuro' ? 'claro' : 'escuro';
-    aplicarTema(novoTema);
-    await salvarTodosDados();
-  };
-
-  // ============================================================
-  // PLUGINS CAPACITOR
+  // DETECTAR PLUGINS CAPACITOR
   // ============================================================
   function temCapacitor() {
     return typeof window.Capacitor !== 'undefined' && window.Capacitor.Plugins;
@@ -2184,7 +2011,7 @@
   }
 
   // ============================================================
-  // ARMAZENAMENTO
+  // ARMAZENAMENTO - Preferences (nativo) ou localStorage (fallback)
   // ============================================================
   async function salvarStorage(chave, valor) {
     const Preferences = getPlugin('Preferences');
@@ -2194,6 +2021,7 @@
       try {
         await Preferences.set({ key: chave, value: valorStr });
       } catch (e) {
+        console.error('Erro Preferences:', e);
         localStorage.setItem('topgestor_' + chave, valorStr);
       }
     } else {
@@ -2207,22 +2035,21 @@
     if (Preferences) {
       try {
         const resultado = await Preferences.get({ key: chave });
-        if (resultado.value) return JSON.parse(resultado.value);
-      } catch (e) {}
+        if (resultado.value) {
+          return JSON.parse(resultado.value);
+        }
+      } catch (e) {
+        console.error('Erro Preferences:', e);
+      }
     }
     
+    // Fallback localStorage
     const valor = localStorage.getItem('topgestor_' + chave);
     return valor ? JSON.parse(valor) : null;
   }
 
-  async function salvarTodosDados() {
-    await salvarStorage('clientes', clientes);
-    await salvarStorage('servidores', servidores);
-    await salvarStorage('configuracoes', configuracoes);
-  }
-
   // ============================================================
-  // CARREGAR DADOS
+  // CARREGAR DADOS INICIAIS
   // ============================================================
   async function carregarDados() {
     try {
@@ -2236,21 +2063,24 @@
       
       inicializar();
     } catch (e) {
+      console.error('Erro ao carregar dados:', e);
       inicializar();
     }
+  }
+
+  async function salvarTodosDados() {
+    await salvarStorage('clientes', clientes);
+    await salvarStorage('servidores', servidores);
+    await salvarStorage('configuracoes', configuracoes);
   }
 
   // ============================================================
   // INICIALIZAÇÃO
   // ============================================================
   function inicializar() {
-    // Aplicar tema salvo
-    aplicarTema(configuracoes.tema || 'claro');
-    
     atualizarStatusClientes();
     carregarConfiguracoesUI();
     carregarLogoUI();
-    verificarSomEmbutido();
     atualizarSelectServidores();
     renderizarDashboard();
     renderizarClientes();
@@ -2258,64 +2088,14 @@
     atualizarBadgeNotificacoes();
     atualizarInfoDados();
     
+    // Solicitar permissão de notificação ao iniciar
     setTimeout(() => {
       solicitarPermissaoNotificacao();
     }, 1000);
   }
 
   // ============================================================
-  // VERIFICAR SOM EMBUTIDO NO APK (assets/som-vencimento.mp3)
-  // ============================================================
-  async function verificarSomEmbutido() {
-    const somInfo = document.getElementById('somInfo');
-    
-    // Tenta carregar o som da pasta assets
-    const caminhosSom = [
-      './assets/som-vencimento.mp3',
-      '../assets/som-vencimento.mp3',
-      'assets/som-vencimento.mp3',
-      'file:///android_asset/public/assets/som-vencimento.mp3'
-    ];
-
-    let somEncontrado = false;
-    
-    for (const caminho of caminhosSom) {
-      try {
-        const audio = new Audio();
-        audio.src = caminho;
-        await new Promise((resolve, reject) => {
-          audio.addEventListener('loadeddata', () => {
-            somEncontrado = true;
-            resolve();
-          });
-          audio.addEventListener('error', reject);
-          setTimeout(reject, 2000);
-        });
-        
-        if (somEncontrado) {
-          configuracoes.somNotificacao = {
-            nome: 'som-vencimento.mp3',
-            caminho: caminho,
-            embutido: true
-          };
-          if (somInfo) {
-            somInfo.innerHTML = '✅ <strong>Som personalizado encontrado!</strong><br>📁 ' + caminho + '<br>🎵 As notificações usarão este som exclusivo';
-            somInfo.style.color = 'var(--accent2)';
-          }
-          break;
-        }
-      } catch (e) {
-        continue;
-      }
-    }
-
-    if (!somEncontrado && somInfo) {
-      somInfo.innerHTML = 'ℹ️ <strong>Som não encontrado na pasta assets/</strong><br>📦 Coloque seu arquivo como <code>assets/som-vencimento.mp3</code> no ZIP<br>⏰ Fallback: usando som de alarme do sistema (já diferente do WhatsApp)';
-    }
-  }
-
-  // ============================================================
-  // UTILITÁRIOS
+  // FUNÇÕES UTILITÁRIAS
   // ============================================================
   window.formatarMoeda = function(input) {
     let valor = input.value.replace(/\D/g, '');
@@ -2362,14 +2142,17 @@
     const hoje = new Date();
     hoje.setHours(0, 0, 0, 0);
     
+    // Extrai dia e mês do vencimento
     const dataVenc = new Date(dataVencimentoStr + 'T00:00:00');
     const diaVenc = dataVenc.getDate();
     const mesAtual = hoje.getMonth();
     const anoAtual = hoje.getFullYear();
     
+    // Cria data de vencimento para o mês atual
     let proximoVencimento = new Date(anoAtual, mesAtual, diaVenc);
     proximoVencimento.setHours(0, 0, 0, 0);
     
+    // Se já passou este mês, vai para o próximo
     if (proximoVencimento < hoje) {
       proximoVencimento = new Date(anoAtual, mesAtual + 1, diaVenc);
     }
@@ -2380,11 +2163,19 @@
 
   function atualizarStatusClientes() {
     const diasAnt = configuracoes.diasAntecedencia;
+
     clientes.forEach(function(c) {
       const dias = calcularDiasAteVencimento(c.dataVencimento);
-      if (dias < 0) c.status = 'inadimplente';
-      else if (dias <= diasAnt) c.status = 'vencendo';
-      else c.status = 'ativo';
+      if (dias > 300) {
+        // Data já passou este mês, está atrasado
+        c.status = 'inadimplente';
+      } else if (dias < 0) {
+        c.status = 'inadimplente';
+      } else if (dias <= diasAnt) {
+        c.status = 'vencendo';
+      } else {
+        c.status = 'ativo';
+      }
     });
   }
 
@@ -2394,7 +2185,7 @@
   }
 
   // ============================================================
-  // NAVEGAÇÃO
+  // NAVEGAÇÃO ENTRE PÁGINAS
   // ============================================================
   window.abrirPagina = function(pagina) {
     document.querySelectorAll('.page').forEach(function(p) {
@@ -2406,6 +2197,7 @@
       t.classList.toggle('active', t.dataset.page === pagina);
     });
 
+    // FAB só aparece em clientes e servidores
     const fab = document.getElementById('fabAdd');
     if (pagina === 'clientes') {
       fab.style.display = 'flex';
@@ -2430,16 +2222,22 @@
   // ============================================================
   function renderizarDashboard() {
     const total = clientes.length;
-    const ativos = clientes.filter(c => c.status === 'ativo').length;
-    const vencendoHoje = clientes.filter(c => calcularDiasAteVencimento(c.dataVencimento) === 0).length;
-    const inadimplentes = clientes.filter(c => c.status === 'inadimplente').length;
+    const ativos = clientes.filter(function(c) { return c.status === 'ativo'; }).length;
+    const vencendoHoje = clientes.filter(function(c) { 
+      return calcularDiasAteVencimento(c.dataVencimento) === 0; 
+    }).length;
+    const inadimplentes = clientes.filter(function(c) { return c.status === 'inadimplente'; }).length;
 
     document.getElementById('statTotal').textContent = total;
     document.getElementById('statAtivos').textContent = ativos;
     document.getElementById('statVencendoHoje').textContent = vencendoHoje;
     document.getElementById('statInadimplentes').textContent = inadimplentes;
 
-    let projecao = 0, valorHoje = 0, valorAmanha = 0;
+    // Valores
+    let projecao = 0;
+    let valorHoje = 0;
+    let valorAmanha = 0;
+
     clientes.forEach(function(c) {
       const dias = calcularDiasAteVencimento(c.dataVencimento);
       projecao += c.valor;
@@ -2451,24 +2249,31 @@
     document.getElementById('valorHoje').textContent = formatarValor(valorHoje);
     document.getElementById('valorAmanha').textContent = formatarValor(valorAmanha);
 
+    // Novos clientes
     const hoje = new Date();
     hoje.setHours(0, 0, 0, 0);
+    
     const inicioSemana = new Date(hoje);
     inicioSemana.setDate(hoje.getDate() - hoje.getDay());
 
-    const novosHoje = clientes.filter(c => {
+    const novosHoje = clientes.filter(function(c) {
       if (!c.dataCadastro) return false;
       const d = new Date(c.dataCadastro);
       d.setHours(0, 0, 0, 0);
       return d.getTime() === hoje.getTime();
     }).length;
 
-    const novosSemana = clientes.filter(c => c.dataCadastro && new Date(c.dataCadastro) >= inicioSemana).length;
-    const renovarMes = clientes.filter(c => {
+    const novosSemana = clientes.filter(function(c) {
+      if (!c.dataCadastro) return false;
+      return new Date(c.dataCadastro) >= inicioSemana;
+    }).length;
+
+    const renovarMes = clientes.filter(function(c) {
       const dias = calcularDiasAteVencimento(c.dataVencimento);
       return dias >= 0 && dias <= 30;
     }).length;
-    const recuperados = clientes.filter(c => c.recuperado).length;
+
+    const recuperados = clientes.filter(function(c) { return c.recuperado; }).length;
 
     document.getElementById('novosHoje').textContent = novosHoje;
     document.getElementById('novosSemana').textContent = novosSemana;
@@ -2493,7 +2298,7 @@
       const proximoDia = new Date(dia);
       proximoDia.setDate(dia.getDate() + 1);
 
-      const count = clientes.filter(c => {
+      const count = clientes.filter(function(c) {
         if (!c.dataCadastro) return false;
         const d = new Date(c.dataCadastro);
         return d >= dia && d < proximoDia;
@@ -2505,10 +2310,10 @@
       });
     }
 
-    const maxValor = Math.max(...dias.map(d => d.valor), 1);
-    const totalSemana = dias.reduce((s, d) => s + d.valor, 0);
+    const maxValor = Math.max(...dias.map(function(d) { return d.valor; }), 1);
+    const totalSemana = dias.reduce(function(s, d) { return s + d.valor; }, 0);
     const mediaDia = dias.length > 0 ? (totalSemana / dias.length).toFixed(1) : 0;
-    const melhorDia = Math.max(...dias.map(d => d.valor));
+    const melhorDia = Math.max(...dias.map(function(d) { return d.valor; }));
 
     document.getElementById('totalMes').textContent = totalSemana;
     document.getElementById('mediaDia').textContent = mediaDia;
@@ -2532,10 +2337,14 @@
     }
 
     const ranking = servidores.map(function(s) {
-      const clientesServidor = clientes.filter(c => c.servidorId === s.id);
-      const totalVendas = clientesServidor.reduce((sum, c) => sum + c.valor, 0);
-      return { ...s, totalClientes: clientesServidor.length, totalVendas };
-    }).sort((a, b) => b.totalVendas - a.totalVendas).slice(0, 5);
+      const clientesServidor = clientes.filter(function(c) { return c.servidorId === s.id; });
+      const totalVendas = clientesServidor.reduce(function(sum, c) { return sum + c.valor; }, 0);
+      return {
+        ...s,
+        totalClientes: clientesServidor.length,
+        totalVendas: totalVendas
+      };
+    }).sort(function(a, b) { return b.totalVendas - a.totalVendas; }).slice(0, 5);
 
     if (ranking.length === 0 || ranking[0].totalVendas === 0) {
       container.innerHTML = '<div class="empty-state" style="padding: 24px;"><i class="ri-bar-chart-line"></i><p>Sem vendas registradas ainda</p></div>';
@@ -2556,13 +2365,15 @@
   }
 
   // ============================================================
-  // CLIENTES
+  // LISTA DE CLIENTES
   // ============================================================
-  window.filtrarClientes = function() { renderizarClientes(); };
+  window.filtrarClientes = function() {
+    renderizarClientes();
+  };
 
   window.setFiltro = function(filtro) {
     filtroAtual = filtro;
-    document.querySelectorAll('.filter-tab').forEach(t => {
+    document.querySelectorAll('.filter-tab').forEach(function(t) {
       t.classList.toggle('active', t.dataset.filter === filtro);
     });
     renderizarClientes();
@@ -2574,16 +2385,30 @@
 
     let lista = clientes.slice();
 
-    if (filtroAtual === 'ativos') lista = lista.filter(c => c.status === 'ativo');
-    else if (filtroAtual === 'vencendo-hoje') lista = lista.filter(c => calcularDiasAteVencimento(c.dataVencimento) === 0);
-    else if (filtroAtual === 'vencendo-amanha') lista = lista.filter(c => calcularDiasAteVencimento(c.dataVencimento) === 1);
-    else if (filtroAtual === 'vencidos') lista = lista.filter(c => c.status === 'inadimplente');
-
-    if (busca) {
-      lista = lista.filter(c => c.nome.toLowerCase().includes(busca) || c.telefone.includes(busca));
+    // Filtros
+    if (filtroAtual === 'ativos') {
+      lista = lista.filter(function(c) { return c.status === 'ativo'; });
+    } else if (filtroAtual === 'vencendo-hoje') {
+      lista = lista.filter(function(c) { return calcularDiasAteVencimento(c.dataVencimento) === 0; });
+    } else if (filtroAtual === 'vencendo-amanha') {
+      lista = lista.filter(function(c) { return calcularDiasAteVencimento(c.dataVencimento) === 1; });
+    } else if (filtroAtual === 'vencidos') {
+      lista = lista.filter(function(c) { return c.status === 'inadimplente'; });
     }
 
-    lista.sort((a, b) => calcularDiasAteVencimento(a.dataVencimento) - calcularDiasAteVencimento(b.dataVencimento));
+    // Busca
+    if (busca) {
+      lista = lista.filter(function(c) {
+        return c.nome.toLowerCase().includes(busca) || c.telefone.includes(busca);
+      });
+    }
+
+    // Ordena: inadimplentes, vencendo hoje, vencendo amanhã, depois ativos
+    lista.sort(function(a, b) {
+      const diasA = calcularDiasAteVencimento(a.dataVencimento);
+      const diasB = calcularDiasAteVencimento(b.dataVencimento);
+      return diasA - diasB;
+    });
 
     if (lista.length === 0) {
       container.innerHTML = '<div class="empty-state"><i class="ri-user-search-line"></i><p>' + 
@@ -2593,13 +2418,16 @@
     }
 
     container.innerHTML = lista.map(function(c) {
-      const servidor = servidores.find(s => s.id === c.servidorId);
+      const servidor = servidores.find(function(s) { return s.id === c.servidorId; });
       const diasVenc = calcularDiasAteVencimento(c.dataVencimento);
       
-      let textoDias = '', classeDias = '', classeItem = '';
+      let textoDias = '';
+      let classeDias = '';
+      let classeItem = '';
       
-      if (diasVenc < 0) {
-        textoDias = Math.abs(diasVenc) + ' dias atrasado';
+      if (diasVenc < 0 || diasVenc > 300) {
+        const diasAtraso = diasVenc > 300 ? 30 - (365 - diasVenc) % 30 : Math.abs(diasVenc);
+        textoDias = Math.max(1, diasAtraso) + ' dias atrasado';
         classeDias = 'dias-atrasado';
         classeItem = 'inadimplente';
       } else if (diasVenc === 0) {
@@ -2630,23 +2458,23 @@
           '</div>' +
         '</div>' +
         '<div class="client-actions">' +
-          '<button class="action-btn view" onclick="verDetalhesCliente(\'' + c.id + '\')"><i class="ri-eye-line"></i></button>' +
-          '<button class="action-btn whatsapp" onclick="abrirWhatsApp(\'' + c.id + '\')"><i class="ri-whatsapp-line"></i></button>' +
-          '<button class="action-btn reminder" onclick="abrirLembrete(\'' + c.id + '\')"><i class="ri-alarm-line"></i></button>' +
+          '<button class="action-btn view" onclick="verDetalhesCliente(\'' + c.id + '\')" title="Ver detalhes"><i class="ri-eye-line"></i></button>' +
+          '<button class="action-btn whatsapp" onclick="abrirWhatsApp(\'' + c.id + '\')" title="WhatsApp"><i class="ri-whatsapp-line"></i></button>' +
+          '<button class="action-btn reminder" onclick="abrirLembrete(\'' + c.id + '\')" title="Lembrete"><i class="ri-alarm-line"></i></button>' +
         '</div>' +
       '</div>';
     }).join('');
   }
 
   // ============================================================
-  // MODAL CLIENTE
+  // MODAL CLIENTE - CADASTRAR/EDITAR
   // ============================================================
   window.abrirModalCliente = function(id) {
     document.getElementById('formCliente').reset();
     document.getElementById('clienteId').value = '';
     
     if (id) {
-      const c = clientes.find(x => x.id === id);
+      const c = clientes.find(function(x) { return x.id === id; });
       if (c) {
         document.getElementById('modalClienteTitle').textContent = 'Editar Cliente';
         document.getElementById('clienteId').value = c.id;
@@ -2684,17 +2512,25 @@
     }
 
     const valor = parseMoeda(valorStr);
+    let eNovo = false;
 
     if (id) {
-      const idx = clientes.findIndex(c => c.id === id);
+      const idx = clientes.findIndex(function(c) { return c.id === id; });
       if (idx !== -1) {
         clientes[idx] = { ...clientes[idx], nome, telefone, dataVencimento, valor, produto, servidorId, observacoes };
         mostrarToast('Cliente atualizado com sucesso!', 'success');
       }
     } else {
+      eNovo = true;
       clientes.push({
         id: 'cli_' + Date.now(),
-        nome, telefone, dataVencimento, valor, produto, servidorId, observacoes,
+        nome,
+        telefone,
+        dataVencimento,
+        valor,
+        produto,
+        servidorId,
+        observacoes,
         status: 'ativo',
         dataCadastro: new Date().toISOString()
       });
@@ -2703,6 +2539,8 @@
 
     atualizarStatusClientes();
     await salvarTodosDados();
+    
+    // Reagendar notificações após salvar
     await agendarNotificacoes();
     
     fecharModal('modalCliente');
@@ -2713,90 +2551,167 @@
   };
 
   // ============================================================
-  // DETALHES CLIENTE
+  // DETALHES DO CLIENTE
   // ============================================================
   window.verDetalhesCliente = function(id) {
-    const c = clientes.find(x => x.id === id);
+    const c = clientes.find(function(x) { return x.id === id; });
     if (!c) return;
 
-    const servidor = servidores.find(s => s.id === c.servidorId);
+    const servidor = servidores.find(function(s) { return s.id === c.servidorId; });
     const diasVenc = calcularDiasAteVencimento(c.dataVencimento);
     
-    let textoDias = '', corDias = '';
-    if (diasVenc < 0) { textoDias = Math.abs(diasVenc) + ' dias atrasado'; corDias = 'var(--danger)'; }
-    else if (diasVenc === 0) { textoDias = 'VENCE HOJE'; corDias = 'var(--warning)'; }
-    else if (diasVenc === 1) { textoDias = 'Vence amanhã'; corDias = 'var(--accent)'; }
-    else { textoDias = 'Vence em ' + diasVenc + ' dias'; corDias = 'var(--accent2)'; }
+    let textoDias = '';
+    let corDias = '';
+    
+    if (diasVenc < 0 || diasVenc > 300) {
+      textoDias = Math.abs(Math.min(diasVenc, 30)) + ' dias atrasado';
+      corDias = 'var(--danger)';
+    } else if (diasVenc === 0) {
+      textoDias = 'VENCE HOJE';
+      corDias = 'var(--warning)';
+    } else if (diasVenc === 1) {
+      textoDias = 'Vence amanhã';
+      corDias = 'var(--accent)';
+    } else {
+      textoDias = 'Vence em ' + diasVenc + ' dias';
+      corDias = 'var(--accent2)';
+    }
 
     const body = document.getElementById('detalhesBody');
     body.innerHTML = 
       '<div class="detail-avatar ' + getAvatarColor(c.nome) + '">' + getIniciais(c.nome) + '</div>' +
       '<div class="detail-name">' + c.nome + '</div>' +
       '<div class="detail-status">' + getStatusBadge(c.status) + '</div>' +
+      
       '<div class="detail-info-grid">' +
-        '<div class="detail-info-item"><div class="label">Valor Mensal</div><div class="value" style="color: var(--accent2);">' + formatarValor(c.valor) + '</div></div>' +
-        '<div class="detail-info-item"><div class="label">Vencimento</div><div class="value">' + formatarDataBR(c.dataVencimento) + '</div></div>' +
-        '<div class="detail-info-item"><div class="label">Situação</div><div class="value" style="font-size: 12px; color: ' + corDias + ';">' + textoDias + '</div></div>' +
-        '<div class="detail-info-item"><div class="label">Telefone</div><div class="value" style="font-size: 12px;">' + c.telefone + '</div></div>' +
+        '<div class="detail-info-item">' +
+          '<div class="label">Valor Mensal</div>' +
+          '<div class="value" style="color: var(--accent2);">' + formatarValor(c.valor) + '</div>' +
+        '</div>' +
+        '<div class="detail-info-item">' +
+          '<div class="label">Vencimento</div>' +
+          '<div class="value">' + formatarDataBR(c.dataVencimento) + '</div>' +
+        '</div>' +
+        '<div class="detail-info-item">' +
+          '<div class="label">Situação</div>' +
+          '<div class="value" style="font-size: 12px; color: ' + corDias + ';">' + textoDias + '</div>' +
+        '</div>' +
+        '<div class="detail-info-item">' +
+          '<div class="label">Telefone</div>' +
+          '<div class="value" style="font-size: 12px;">' + c.telefone + '</div>' +
+        '</div>' +
       '</div>' +
-      (c.produto ? '<div class="detail-info-item" style="margin-bottom: 16px;"><div class="label">Produto</div><div class="value">' + c.produto + '</div></div>' : '') +
-      (servidor ? '<div class="detail-info-item" style="margin-bottom: 16px;"><div class="label">Servidor</div><div class="value">👤 ' + servidor.nome + '</div></div>' : '') +
-      (c.observacoes ? '<div class="detail-info-item" style="margin-bottom: 16px;"><div class="label">Observações</div><div class="value" style="font-size: 13px; font-weight: 400; line-height: 1.5;">' + c.observacoes + '</div></div>' : '') +
+
+      (c.produto ? 
+        '<div class="detail-info-item" style="margin-bottom: 16px;">' +
+          '<div class="label">Produto / Serviço</div>' +
+          '<div class="value">' + c.produto + '</div>' +
+        '</div>' : '') +
+
+      (servidor ? 
+        '<div class="detail-info-item" style="margin-bottom: 16px;">' +
+          '<div class="label">Servidor</div>' +
+          '<div class="value">👤 ' + servidor.nome + '</div>' +
+        '</div>' : '') +
+
+      (c.observacoes ?
+        '<div class="detail-info-item" style="margin-bottom: 16px;">' +
+          '<div class="label">Observações</div>' +
+          '<div class="value" style="font-size: 13px; font-weight: 400; line-height: 1.5;">' + c.observacoes + '</div>' +
+        '</div>' : '') +
+
       '<div class="detail-actions">' +
-        '<button class="detail-action-btn whatsapp" onclick="abrirWhatsApp(\'' + c.id + '\')"><i class="ri-whatsapp-line"></i>WhatsApp</button>' +
-        '<button class="detail-action-btn reminder" onclick="fecharModal(\'modalDetalhes\');abrirLembrete(\'' + c.id + '\')"><i class="ri-alarm-line"></i>Lembrete</button>' +
-        '<button class="detail-action-btn edit" onclick="fecharModal(\'modalDetalhes\');abrirModalCliente(\'' + c.id + '\')"><i class="ri-edit-line"></i>Editar</button>' +
-        '<button class="detail-action-btn delete" onclick="fecharModal(\'modalDetalhes\');excluirCliente(\'' + c.id + '\')"><i class="ri-delete-bin-line"></i>Excluir</button>' +
+        '<button class="detail-action-btn whatsapp" onclick="abrirWhatsApp(\'' + c.id + '\')">' +
+          '<i class="ri-whatsapp-line"></i>WhatsApp' +
+        '</button>' +
+        '<button class="detail-action-btn reminder" onclick="fecharModal(\'modalDetalhes\');abrirLembrete(\'' + c.id + '\')">' +
+          '<i class="ri-alarm-line"></i>Lembrete' +
+        '</button>' +
+        '<button class="detail-action-btn edit" onclick="fecharModal(\'modalDetalhes\');abrirModalCliente(\'' + c.id + '\')">' +
+          '<i class="ri-edit-line"></i>Editar' +
+        '</button>' +
+        '<button class="detail-action-btn delete" onclick="fecharModal(\'modalDetalhes\');excluirCliente(\'' + c.id + '\')">' +
+          '<i class="ri-delete-bin-line"></i>Excluir' +
+        '</button>' +
       '</div>';
 
     abrirModal('modalDetalhes');
   };
 
+  // ============================================================
+  // EXCLUIR CLIENTE
+  // ============================================================
   window.excluirCliente = function(id) {
-    const c = clientes.find(x => x.id === id);
+    const c = clientes.find(function(x) { return x.id === id; });
     if (!c) return;
-    confirmarAcao('Excluir Cliente', 'Tem certeza que deseja excluir "' + c.nome + '"?', async function() {
-      clientes = clientes.filter(x => x.id !== id);
-      await salvarTodosDados();
-      await agendarNotificacoes();
-      renderizarClientes();
-      renderizarDashboard();
-      atualizarBadgeNotificacoes();
-      atualizarInfoDados();
-      mostrarToast('Cliente excluído!', 'success');
-    });
+
+    confirmarAcao(
+      'Excluir Cliente',
+      'Tem certeza que deseja excluir o cliente "' + c.nome + '"? Esta ação não pode ser desfeita.',
+      async function() {
+        clientes = clientes.filter(function(x) { return x.id !== id; });
+        await salvarTodosDados();
+        await agendarNotificacoes();
+        renderizarClientes();
+        renderizarDashboard();
+        atualizarBadgeNotificacoes();
+        atualizarInfoDados();
+        mostrarToast('Cliente excluído!', 'success');
+      }
+    );
   };
 
   // ============================================================
-  // WHATSAPP E LEMBRETE
+  // WHATSAPP
   // ============================================================
   window.abrirWhatsApp = function(id) {
-    const c = clientes.find(x => x.id === id);
+    const c = clientes.find(function(x) { return x.id === id; });
     if (!c) return;
+
     const telefone = formatarTelefone(c.telefone);
-    const url = 'https://wa.me/55' + telefone + '?text=' + encodeURIComponent(gerarMensagemLembrete(c));
+    const mensagem = gerarMensagemLembrete(c);
+    const url = 'https://wa.me/55' + telefone + '?text=' + encodeURIComponent(mensagem);
     window.open(url, '_blank');
   };
 
   function gerarMensagemLembrete(cliente) {
     const diasVenc = calcularDiasAteVencimento(cliente.dataVencimento);
+    let saudacao = '';
     const hora = new Date().getHours();
-    const saudacao = hora < 12 ? 'Bom dia' : hora < 18 ? 'Boa tarde' : 'Boa noite';
+    if (hora < 12) saudacao = 'Bom dia';
+    else if (hora < 18) saudacao = 'Boa tarde';
+    else saudacao = 'Boa noite';
+
     let textoVenc = '';
-    if (diasVenc < 0) textoVenc = 'sua mensalidade está atrasada';
-    else if (diasVenc === 0) textoVenc = 'sua mensalidade vence HOJE';
-    else if (diasVenc === 1) textoVenc = 'sua mensalidade vence amanhã';
-    else textoVenc = 'sua mensalidade vence em ' + diasVenc + ' dias';
+    if (diasVenc < 0 || diasVenc > 300) {
+      textoVenc = 'sua mensalidade está atrasada';
+    } else if (diasVenc === 0) {
+      textoVenc = 'sua mensalidade vence HOJE';
+    } else if (diasVenc === 1) {
+      textoVenc = 'sua mensalidade vence amanhã';
+    } else {
+      textoVenc = 'sua mensalidade vence em ' + diasVenc + ' dias';
+    }
+
     const primeiroNome = cliente.nome.split(' ')[0];
     let msg = saudacao + ' ' + primeiroNome + '! Tudo bem?\n\n';
     msg += 'Passando para lembrar que ' + textoVenc + ', no valor de ' + formatarValor(cliente.valor) + '.\n\n';
-    if (cliente.produto) msg += 'Referente ao serviço: ' + cliente.produto + '\n\n';
-    msg += 'Qualquer dúvida estou à disposição!\n\nAtenciosamente,\nEquipe';
+    
+    if (cliente.produto) {
+      msg += 'Referente ao serviço: ' + cliente.produto + '\n\n';
+    }
+    
+    msg += 'Qualquer dúvida estou à disposição!\n\n';
+    msg += 'Atenciosamente,\nEquipe';
+    
     return msg;
   }
 
+  // ============================================================
+  // LEMBRETE
+  // ============================================================
   window.abrirLembrete = function(id) {
-    const c = clientes.find(x => x.id === id);
+    const c = clientes.find(function(x) { return x.id === id; });
     if (!c) return;
     clienteLembreteAtual = c;
     document.getElementById('lembreteTexto').value = gerarMensagemLembrete(c);
@@ -2805,15 +2720,21 @@
 
   window.copiarLembrete = function() {
     const texto = document.getElementById('lembreteTexto').value;
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(texto).then(() => mostrarToast('Mensagem copiada!', 'success'));
+    
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(texto).then(function() {
+        mostrarToast('Mensagem copiada!', 'success');
+      }).catch(function() {
+        mostrarToast('Erro ao copiar', 'error');
+      });
     } else {
-      const ta = document.createElement('textarea');
-      ta.value = texto;
-      document.body.appendChild(ta);
-      ta.select();
+      // Fallback
+      const textarea = document.createElement('textarea');
+      textarea.value = texto;
+      document.body.appendChild(textarea);
+      textarea.select();
       document.execCommand('copy');
-      document.body.removeChild(ta);
+      document.body.removeChild(textarea);
       mostrarToast('Mensagem copiada!', 'success');
     }
     fecharModal('modalLembrete');
@@ -2823,20 +2744,28 @@
     if (!clienteLembreteAtual) return;
     const texto = document.getElementById('lembreteTexto').value;
     const telefone = formatarTelefone(clienteLembreteAtual.telefone);
-    window.open('https://wa.me/55' + telefone + '?text=' + encodeURIComponent(texto), '_blank');
+    const url = 'https://wa.me/55' + telefone + '?text=' + encodeURIComponent(texto);
+    window.open(url, '_blank');
     fecharModal('modalLembrete');
   };
 
   // ============================================================
   // SERVIDORES
   // ============================================================
-  window.filtrarServidores = function() { renderizarServidores(); };
+  window.filtrarServidores = function() {
+    renderizarServidores();
+  };
 
   function renderizarServidores() {
     const container = document.getElementById('servidoresList');
     const busca = document.getElementById('searchServidor').value.toLowerCase();
+
     let lista = servidores.slice();
-    if (busca) lista = lista.filter(s => s.nome.toLowerCase().includes(busca));
+    if (busca) {
+      lista = lista.filter(function(s) {
+        return s.nome.toLowerCase().includes(busca);
+      });
+    }
 
     if (lista.length === 0) {
       container.innerHTML = '<div class="empty-state"><i class="ri-team-line"></i><p>' + 
@@ -2846,17 +2775,20 @@
     }
 
     container.innerHTML = lista.map(function(s) {
-      const clientesServidor = clientes.filter(c => c.servidorId === s.id);
-      const totalVendas = clientesServidor.reduce((sum, c) => sum + c.valor, 0);
+      const clientesServidor = clientes.filter(function(c) { return c.servidorId === s.id; });
+      const totalVendas = clientesServidor.reduce(function(sum, c) { return sum + c.valor; }, 0);
+
       return '<div class="server-item">' +
         '<div class="server-avatar">' + getIniciais(s.nome) + '</div>' +
         '<div class="server-info">' +
           '<div class="server-name">' + s.nome + '</div>' +
-          '<div class="server-stats">' + clientesServidor.length + ' clientes • <span class="valor">' + formatarValor(totalVendas) + '</span></div>' +
+          '<div class="server-stats">' +
+            clientesServidor.length + ' clientes • <span class="valor">' + formatarValor(totalVendas) + '</span>' +
+          '</div>' +
         '</div>' +
         '<div class="client-actions">' +
-          '<button class="action-btn edit" onclick="abrirModalServidor(\'' + s.id + '\')"><i class="ri-edit-line"></i></button>' +
-          '<button class="action-btn delete" onclick="excluirServidor(\'' + s.id + '\')"><i class="ri-delete-bin-line"></i></button>' +
+          '<button class="action-btn edit" onclick="abrirModalServidor(\'' + s.id + '\')" title="Editar"><i class="ri-edit-line"></i></button>' +
+          '<button class="action-btn delete" onclick="excluirServidor(\'' + s.id + '\')" title="Excluir"><i class="ri-delete-bin-line"></i></button>' +
         '</div>' +
       '</div>';
     }).join('');
@@ -2865,8 +2797,9 @@
   window.abrirModalServidor = function(id) {
     document.getElementById('formServidor').reset();
     document.getElementById('servidorId').value = '';
+
     if (id) {
-      const s = servidores.find(x => x.id === id);
+      const s = servidores.find(function(x) { return x.id === id; });
       if (s) {
         document.getElementById('modalServidorTitle').textContent = 'Editar Servidor';
         document.getElementById('servidorId').value = s.id;
@@ -2876,6 +2809,7 @@
     } else {
       document.getElementById('modalServidorTitle').textContent = 'Novo Servidor';
     }
+
     abrirModal('modalServidor');
   };
 
@@ -2883,13 +2817,24 @@
     const id = document.getElementById('servidorId').value;
     const nome = document.getElementById('servidorNome').value.trim();
     const telefone = document.getElementById('servidorTelefone').value.trim();
-    if (!nome) { mostrarToast('Digite o nome do servidor', 'error'); return; }
+
+    if (!nome) {
+      mostrarToast('Digite o nome do servidor', 'error');
+      return;
+    }
 
     if (id) {
-      const idx = servidores.findIndex(s => s.id === id);
-      if (idx !== -1) { servidores[idx] = { ...servidores[idx], nome, telefone }; mostrarToast('Servidor atualizado!', 'success'); }
+      const idx = servidores.findIndex(function(s) { return s.id === id; });
+      if (idx !== -1) {
+        servidores[idx] = { ...servidores[idx], nome, telefone };
+        mostrarToast('Servidor atualizado!', 'success');
+      }
     } else {
-      servidores.push({ id: 'srv_' + Date.now(), nome, telefone });
+      servidores.push({
+        id: 'srv_' + Date.now(),
+        nome,
+        telefone
+      });
       mostrarToast('Servidor cadastrado!', 'success');
     }
 
@@ -2902,35 +2847,50 @@
   };
 
   window.excluirServidor = function(id) {
-    const s = servidores.find(x => x.id === id);
+    const s = servidores.find(function(x) { return x.id === id; });
     if (!s) return;
-    confirmarAcao('Excluir Servidor', 'Tem certeza que deseja excluir "' + s.nome + '"?', async function() {
-      servidores = servidores.filter(x => x.id !== id);
-      clientes.forEach(c => { if (c.servidorId === id) c.servidorId = ''; });
-      await salvarTodosDados();
-      atualizarSelectServidores();
-      renderizarServidores();
-      renderizarDashboard();
-      atualizarInfoDados();
-      mostrarToast('Servidor excluído!', 'success');
-    });
+
+    confirmarAcao(
+      'Excluir Servidor',
+      'Tem certeza que deseja excluir "' + s.nome + '"? Os clientes continuarão cadastrados, mas sem vínculo com este servidor.',
+      async function() {
+        servidores = servidores.filter(function(x) { return x.id !== id; });
+        clientes.forEach(function(c) {
+          if (c.servidorId === id) c.servidorId = '';
+        });
+        await salvarTodosDados();
+        atualizarSelectServidores();
+        renderizarServidores();
+        renderizarDashboard();
+        atualizarInfoDados();
+        mostrarToast('Servidor excluído!', 'success');
+      }
+    );
   };
 
   function atualizarSelectServidores() {
     const select = document.getElementById('clienteServidor');
     const valorAtual = select.value;
-    select.innerHTML = '<option value="">Nenhum</option>' + servidores.map(s => '<option value="' + s.id + '">' + s.nome + '</option>').join('');
+    select.innerHTML = '<option value="">Nenhum</option>' +
+      servidores.map(function(s) {
+        return '<option value="' + s.id + '">' + s.nome + '</option>';
+      }).join('');
     select.value = valorAtual;
   }
 
   // ============================================================
-  // CONFIGURAÇÕES UI
+  // CONFIGURAÇÕES - UI
   // ============================================================
   function carregarConfiguracoesUI() {
     document.getElementById('horaManha').value = configuracoes.horaManha;
     document.getElementById('horaTarde').value = configuracoes.horaTarde;
     document.getElementById('horaNoite').value = configuracoes.horaNoite;
     document.getElementById('diasAntecedencia').value = configuracoes.diasAntecedencia;
+    
+    if (configuracoes.somNotificacao) {
+      document.getElementById('somInfo').textContent = 'Som personalizado carregado: ' + (configuracoes.somNotificacao.nome || 'arquivo de áudio');
+      document.getElementById('somInfo').style.color = 'var(--accent2)';
+    }
   }
 
   function carregarLogoUI() {
@@ -2943,6 +2903,7 @@
       logoImg.src = configuracoes.logoBase64;
       logoImg.classList.remove('hidden');
       logoText.classList.add('hidden');
+      
       logoPreview.src = configuracoes.logoBase64;
       logoPreview.classList.remove('hidden');
       logoPlaceholder.classList.add('hidden');
@@ -2955,7 +2916,7 @@
   }
 
   // ============================================================
-  // LOGO
+  // LOGO - ESCOLHER DA GALERIA
   // ============================================================
   window.abrirSeletorLogo = function() {
     document.getElementById('logoFileInput').click();
@@ -2964,10 +2925,13 @@
   window.processarLogo = async function(event) {
     const arquivo = event.target.files[0];
     if (!arquivo) return;
+
     if (!arquivo.type.startsWith('image/')) {
       mostrarToast('Por favor, escolha uma imagem', 'error');
       return;
     }
+
+    // Converter para base64
     const leitor = new FileReader();
     leitor.onload = async function(e) {
       configuracoes.logoBase64 = e.target.result;
@@ -2980,16 +2944,20 @@
   };
 
   window.removerLogo = async function() {
-    confirmarAcao('Remover Logo', 'Tem certeza que deseja remover a logo?', async function() {
-      configuracoes.logoBase64 = null;
-      await salvarTodosDados();
-      carregarLogoUI();
-      mostrarToast('Logo removida!', 'success');
-    });
+    confirmarAcao(
+      'Remover Logo',
+      'Tem certeza que deseja remover a logo personalizada?',
+      async function() {
+        configuracoes.logoBase64 = null;
+        await salvarTodosDados();
+        carregarLogoUI();
+        mostrarToast('Logo removida!', 'success');
+      }
+    );
   };
 
   // ============================================================
-  // SOM
+  // SOM PERSONALIZADO
   // ============================================================
   window.abrirSeletorSom = function() {
     document.getElementById('somFileInput').click();
@@ -2998,18 +2966,29 @@
   window.processarSom = async function(event) {
     const arquivo = event.target.files[0];
     if (!arquivo) return;
+
     if (!arquivo.type.startsWith('audio/')) {
       mostrarToast('Por favor, escolha um arquivo de áudio', 'error');
       return;
     }
-    mostrarToast('Áudio selecionado! Para embutir permanentemente, coloque o arquivo na pasta assets/ do ZIP.', 'warning');
-    configuracoes.somNotificacao = { nome: arquivo.name, temporario: true };
-    document.getElementById('somInfo').innerHTML = '🎵 <strong>Arquivo temporário:</strong> ' + arquivo.name + '<br>📦 Para embutir no APK, coloque na pasta <code>assets/som-vencimento.mp3</code>';
+
+    // Aviso sobre limitações do Android
+    mostrarToast('Arquivo selecionado! ⚠️ Observação: som personalizado pode exigir configuração nativa.', 'warning');
+    
+    configuracoes.somNotificacao = {
+      nome: arquivo.name,
+      tipo: arquivo.type,
+      tamanho: arquivo.size
+    };
+    
+    document.getElementById('somInfo').textContent = 'Som selecionado: ' + arquivo.name + ' (pode exigir configuração nativa)';
+    document.getElementById('somInfo').style.color = 'var(--warning)';
+    
     event.target.value = '';
   };
 
   // ============================================================
-  // SALVAR CONFIGURAÇÕES
+  // SALVAR CONFIGURAÇÕES - SÓ COM BOTÃO!
   // ============================================================
   window.salvarConfiguracoes = async function() {
     configuracoes.horaManha = document.getElementById('horaManha').value;
@@ -3019,6 +2998,8 @@
     
     await salvarTodosDados();
     atualizarStatusClientes();
+    
+    // Reagendar todas as notificações com novas configurações
     await agendarNotificacoes();
     
     renderizarClientes();
@@ -3026,7 +3007,7 @@
     atualizarBadgeNotificacoes();
     atualizarInfoDados();
     
-    mostrarToast('✅ Configurações salvas! Notificações re-agendadas.', 'success');
+    mostrarToast('✅ Configurações salvas e notificações agendadas!', 'success');
   };
 
   function atualizarInfoDados() {
@@ -3035,123 +3016,205 @@
   }
 
   // ============================================================
-  // NOTIFICAÇÕES NATIVAS ANDROID
+  // NOTIFICAÇÕES NATIVAS ANDROID - LOCAL NOTIFICATIONS
   // ============================================================
+  
+  /**
+   * Solicita permissão NATIVA do Android para notificações
+   * Esta é a caixa de diálogo do sistema, não do app
+   */
   window.solicitarPermissaoNotificacao = async function() {
     const LocalNotifications = getPlugin('LocalNotifications');
+    
     if (LocalNotifications) {
       try {
+        // Solicita permissão ao sistema Android
         const permissao = await LocalNotifications.requestPermissions();
-        if (permissao.display === 'granted') {
-          await criarCanalNotificacao();
+        
+        if (permissao.display === 'granted' || permissao.display === 'granted') {
+          mostrarToast('✅ Permissão de notificações concedida!', 'success');
+          // Agenda as notificações após ter permissão
           await agendarNotificacoes();
+        } else {
+          mostrarToast('⚠️ Permissão negada. Notificações não funcionarão.', 'warning');
         }
-      } catch (e) {}
-    } else if ('Notification' in window && Notification.permission === 'default') {
-      await Notification.requestPermission();
+      } catch (e) {
+        console.error('Erro permissão:', e);
+        mostrarToast('Erro ao solicitar permissão', 'error');
+      }
+    } else {
+      // Fallback para navegador
+      if ('Notification' in window) {
+        if (Notification.permission === 'default') {
+          const permissao = await Notification.requestPermission();
+          if (permissao === 'granted') {
+            mostrarToast('✅ Permissão concedida!', 'success');
+          }
+        } else if (Notification.permission === 'granted') {
+          mostrarToast('✅ Permissão já concedida', 'success');
+        }
+      }
     }
   };
 
-  async function criarCanalNotificacao() {
-    const LocalNotifications = getPlugin('LocalNotifications');
-    if (!LocalNotifications) return;
-    try {
-      await LocalNotifications.createChannel({
-        id: 'topgestor_canal',
-        name: 'Lembretes de Cobrança',
-        description: 'Avisos de vencimento de clientes',
-        sound: configuracoes.somNotificacao && configuracoes.somNotificacao.embutido ? 'som_vencimento' : null,
-        importance: 5,
-        vibration: true,
-        lights: true
-      });
-    } catch (e) {}
-  }
-
+  /**
+   * AGENDA NOTIFICAÇÕES NO SISTEMA ANDROID
+   * Estas notificações disparam MESMO com:
+   * - App fechado
+   * - Tela apagada
+   * - App em background
+   * 
+   * Usamos LocalNotifications.schedule() que registra no AlarmManager do Android
+   */
   async function agendarNotificacoes() {
     const LocalNotifications = getPlugin('LocalNotifications');
-    if (!LocalNotifications) return;
+    
+    if (!LocalNotifications) {
+      console.log('Plugin LocalNotifications não disponível (fora do Capacitor)');
+      return;
+    }
 
     try {
+      // Cancela notificações antigas primeiro
       await LocalNotifications.cancel({ notifications: [] });
       
       const notificacoes = [];
-      let idNotif = 1;
-      const horarios = [configuracoes.horaManha, configuracoes.horaTarde, configuracoes.horaNoite];
+      let idNotificacao = 1;
       
+      // Horários configurados
+      const horarios = [
+        configuracoes.horaManha,
+        configuracoes.horaTarde,
+        configuracoes.horaNoite
+      ];
+      
+      // Para cada cliente que está para vencer ou inadimplente
       clientes.forEach(function(cliente) {
         const dias = calcularDiasAteVencimento(cliente.dataVencimento);
-        if (dias < 0 || dias <= configuracoes.diasAntecedencia) {
+        const diasAnt = configuracoes.diasAntecedencia;
+        
+        // Agenda notificação se:
+        // - Está inadimplente (dias < 0 ou > 300)
+        // - Vence hoje (dias === 0)
+        // - Vence em até X dias (dias <= diasAnt)
+        const deveNotificar = (dias < 0 || dias > 300 || dias <= diasAnt);
+        
+        if (deveNotificar) {
           const hoje = new Date();
+          
+          // Cria notificação para cada horário do dia
           horarios.forEach(function(horario) {
             const [hora, minuto] = horario.split(':').map(Number);
             const dataNotif = new Date(hoje);
             dataNotif.setHours(hora, minuto, 0, 0);
-            if (dataNotif <= hoje) dataNotif.setDate(dataNotif.getDate() + 1);
             
-            let titulo = '', texto = '';
-            if (dias < 0) { titulo = '🔴 Cliente Inadimplente'; texto = cliente.nome + ' - Pagamento atrasado!'; }
-            else if (dias === 0) { titulo = '🟡 Vence HOJE'; texto = cliente.nome + ' vence hoje! ' + formatarValor(cliente.valor); }
-            else { titulo = '⏰ Vencimento Próximo'; texto = cliente.nome + ' vence em ' + dias + ' dias. ' + formatarValor(cliente.valor); }
+            // Se o horário já passou hoje, agenda para amanhã
+            if (dataNotif <= hoje) {
+              dataNotif.setDate(dataNotif.getDate() + 1);
+            }
+            
+            // Determina título e texto
+            let titulo = '';
+            let texto = '';
+            
+            if (dias < 0 || dias > 300) {
+              titulo = '🔴 Cliente Inadimplente';
+              texto = cliente.nome + ' - Pagamento atrasado! Valor: ' + formatarValor(cliente.valor);
+            } else if (dias === 0) {
+              titulo = '🟡 Vence HOJE';
+              texto = cliente.nome + ' vence hoje! Valor: ' + formatarValor(cliente.valor);
+            } else {
+              titulo = '⏰ Vencimento Próximo';
+              texto = cliente.nome + ' vence em ' + dias + ' dias. Valor: ' + formatarValor(cliente.valor);
+            }
             
             notificacoes.push({
-              id: idNotif++,
+              id: idNotificacao++,
               title: titulo,
               body: texto,
-              schedule: { at: dataNotif, repeats: true, every: 'day' },
-              sound: configuracoes.somNotificacao && configuracoes.somNotificacao.embutido ? 'som_vencimento' : null,
+              schedule: {
+                at: dataNotif,
+                // Repete diariamente até que o cliente seja atualizado
+                repeats: true,
+                every: 'day'
+              },
+              sound: configuracoes.somNotificacao ? 'custom_sound' : null,
               smallIcon: 'ic_stat_notification',
               iconColor: '#2563eb',
-              channelId: 'topgestor_canal',
-              extra: { clienteId: cliente.id }
+              actionTypeId: 'LEMBRETE',
+              extra: {
+                clienteId: cliente.id,
+                tipo: 'vencimento'
+              }
             });
           });
         }
       });
       
+      // Agenda todas as notificações de uma vez
       if (notificacoes.length > 0) {
-        await LocalNotifications.schedule({ notifications });
+        await LocalNotifications.schedule({
+          notifications: notificacoes
+        });
+        console.log('Agendadas ' + notificacoes.length + ' notificações');
       }
       
+      // Atualiza contador na UI
       const pendentes = await LocalNotifications.getPending();
       document.getElementById('infoNotifAgendadas').textContent = pendentes.notifications.length;
       
     } catch (e) {
-      console.error('Erro agendar notificações:', e);
+      console.error('Erro ao agendar notificações:', e);
     }
   }
 
+  /**
+   * Verifica vencimentos manualmente e dispara notificação imediata
+   */
   window.verificarVencimentosAgora = async function() {
     atualizarStatusClientes();
-    const clientesVencendo = clientes.filter(c => {
+    
+    const clientesVencendo = clientes.filter(function(c) {
       const dias = calcularDiasAteVencimento(c.dataVencimento);
       return dias >= 0 && dias <= configuracoes.diasAntecedencia;
     });
-    const clientesInadimplentes = clientes.filter(c => c.status === 'inadimplente');
+
+    const clientesInadimplentes = clientes.filter(function(c) {
+      return c.status === 'inadimplente';
+    });
+
     const total = clientesVencendo.length + clientesInadimplentes.length;
 
     if (total > 0) {
-      let titulo = '', corpo = '';
+      let titulo = '';
+      let corpo = '';
+
       if (clientesInadimplentes.length > 0 && clientesVencendo.length > 0) {
         titulo = '⚠️ Aviso de Vencimentos';
-        corpo = clientesInadimplentes.length + ' inadimplente(s) • ' + clientesVencendo.length + ' vencendo';
+        corpo = clientesInadimplentes.length + ' inadimplente(s) • ' + clientesVencendo.length + ' vencendo em breve';
       } else if (clientesInadimplentes.length > 0) {
         titulo = '🔴 Clientes Inadimplentes';
-        corpo = clientesInadimplentes.length + ' cliente(s) atrasado(s)';
+        corpo = clientesInadimplentes.length + ' cliente(s) com pagamento atrasado';
       } else {
         titulo = '🟡 Vencimentos Próximos';
         corpo = clientesVencendo.length + ' cliente(s) vencendo em até ' + configuracoes.diasAntecedencia + ' dias';
       }
+
       await dispararNotificacaoImediata(titulo, corpo);
       mostrarToast(titulo + ': ' + corpo, 'info');
     } else {
-      mostrarToast('✅ Nenhum vencimento pendente', 'success');
+      mostrarToast('✅ Nenhum vencimento pendente no momento', 'success');
     }
+
     atualizarBadgeNotificacoes();
   };
 
+  /**
+   * Dispara uma notificação IMEDIATA (para testes)
+   */
   async function dispararNotificacaoImediata(titulo, corpo) {
     const LocalNotifications = getPlugin('LocalNotifications');
+    
     if (LocalNotifications) {
       try {
         await LocalNotifications.schedule({
@@ -3159,29 +3222,38 @@
             id: Math.floor(Math.random() * 2147483647),
             title: titulo,
             body: corpo,
-            schedule: { at: new Date(Date.now() + 1000) },
-            sound: configuracoes.somNotificacao && configuracoes.somNotificacao.embutido ? 'som_vencimento' : null,
+            schedule: {
+              at: new Date(Date.now() + 1000) // 1 segundo depois
+            },
+            sound: configuracoes.somNotificacao ? 'custom_sound' : null,
             smallIcon: 'ic_stat_notification',
-            iconColor: '#2563eb',
-            channelId: 'topgestor_canal'
+            iconColor: '#2563eb'
           }]
         });
-      } catch (e) {}
+      } catch (e) {
+        console.error('Erro notificação:', e);
+      }
     } else if ('Notification' in window && Notification.permission === 'granted') {
       new Notification(titulo, { body: corpo });
     }
   }
 
+  /**
+   * Botão de teste de notificação
+   */
   window.testarNotificacao = async function() {
     await dispararNotificacaoImediata(
       '🔔 TOPGESTOR - Teste',
-      'Notificação nativa funcionando! Aparece mesmo com app fechado.'
+      'Notificação nativa funcionando! Ela aparece mesmo com o app fechado.'
     );
     mostrarToast('📤 Notificação de teste enviada!', 'success');
   };
 
   function atualizarBadgeNotificacoes() {
-    const total = clientes.filter(c => c.status === 'vencendo' || c.status === 'inadimplente').length;
+    const total = clientes.filter(function(c) {
+      return c.status === 'vencendo' || c.status === 'inadimplente';
+    }).length;
+
     const badge = document.getElementById('notifBadge');
     if (total > 0) {
       badge.textContent = total > 99 ? '99+' : total;
@@ -3192,16 +3264,24 @@
   }
 
   // ============================================================
-  // BACKUP
+  // BACKUP E RESTAURAÇÃO
   // ============================================================
   window.exportarBackup = function() {
     const backup = {
       versao: '1.0.0',
       dataExportacao: new Date().toISOString(),
-      clientes, servidores,
-      configuracoes: { ...configuracoes, logoBase64: configuracoes.logoBase64 ? '[LOGO]' : null }
+      clientes: clientes,
+      servidores: servidores,
+      configuracoes: {
+        ...configuracoes,
+        logoBase64: configuracoes.logoBase64 ? '[LOGO_INCLUIDA]' : null
+      }
     };
-    if (configuracoes.logoBase64) backup.logoBase64 = configuracoes.logoBase64;
+
+    // Inclui logo completa no backup
+    if (configuracoes.logoBase64) {
+      backup.logoBase64 = configuracoes.logoBase64;
+    }
 
     const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -3210,7 +3290,7 @@
     a.download = 'topgestor_backup_' + new Date().toISOString().split('T')[0] + '.json';
     a.click();
     URL.revokeObjectURL(url);
-    mostrarToast('✅ Backup exportado!', 'success');
+    mostrarToast('✅ Backup exportado com sucesso!', 'success');
   };
 
   window.importarBackup = function() {
@@ -3220,30 +3300,39 @@
   window.processarBackup = function(event) {
     const arquivo = event.target.files[0];
     if (!arquivo) return;
+
     const leitor = new FileReader();
     leitor.onload = async function(e) {
       try {
         const backup = JSON.parse(e.target.result);
-        confirmarAcao('Restaurar Backup', 'Isso substituirá todos os dados. Continuar?', async function() {
-          if (backup.clientes) clientes = backup.clientes;
-          if (backup.servidores) servidores = backup.servidores;
-          if (backup.configuracoes) configuracoes = { ...configuracoes, ...backup.configuracoes };
-          if (backup.logoBase64) configuracoes.logoBase64 = backup.logoBase64;
-          
-          await salvarTodosDados();
-          aplicarTema(configuracoes.tema || 'claro');
-          carregarConfiguracoesUI();
-          carregarLogoUI();
-          atualizarSelectServidores();
-          atualizarStatusClientes();
-          await agendarNotificacoes();
-          renderizarDashboard();
-          renderizarClientes();
-          renderizarServidores();
-          atualizarBadgeNotificacoes();
-          atualizarInfoDados();
-          mostrarToast('✅ Backup restaurado!', 'success');
-        });
+        
+        confirmarAcao(
+          'Restaurar Backup',
+          'Isso substituirá todos os dados atuais. Deseja continuar?',
+          async function() {
+            if (backup.clientes) clientes = backup.clientes;
+            if (backup.servidores) servidores = backup.servidores;
+            if (backup.configuracoes) {
+              configuracoes = { ...configuracoes, ...backup.configuracoes };
+            }
+            if (backup.logoBase64) {
+              configuracoes.logoBase64 = backup.logoBase64;
+            }
+            
+            await salvarTodosDados();
+            carregarConfiguracoesUI();
+            carregarLogoUI();
+            atualizarSelectServidores();
+            atualizarStatusClientes();
+            await agendarNotificacoes();
+            renderizarDashboard();
+            renderizarClientes();
+            renderizarServidores();
+            atualizarBadgeNotificacoes();
+            atualizarInfoDados();
+            mostrarToast('✅ Backup restaurado com sucesso!', 'success');
+          }
+        );
       } catch (err) {
         mostrarToast('❌ Arquivo de backup inválido', 'error');
       }
@@ -3256,29 +3345,39 @@
   // LIMPAR DADOS
   // ============================================================
   window.confirmarLimparDados = function() {
-    confirmarAcao('Limpar Todos os Dados', 'TEM CERTEZA? Tudo será APAGADO!', async function() {
-      clientes = [];
-      servidores = [];
-      configuracoes.logoBase64 = null;
-      configuracoes.somNotificacao = null;
-      await salvarTodosDados();
-      
-      const LocalNotifications = getPlugin('LocalNotifications');
-      if (LocalNotifications) { try { await LocalNotifications.cancel({ notifications: [] }); } catch(e) {} }
-      
-      carregarLogoUI();
-      atualizarSelectServidores();
-      renderizarDashboard();
-      renderizarClientes();
-      renderizarServidores();
-      atualizarBadgeNotificacoes();
-      atualizarInfoDados();
-      mostrarToast('🗑️ Dados limpos!', 'success');
-    });
+    confirmarAcao(
+      'Limpar Todos os Dados',
+      'TEM CERTEZA ABSOLUTA? Todos os clientes, servidores e configurações serão APAGADOS. Esta ação não pode ser desfeita!',
+      async function() {
+        clientes = [];
+        servidores = [];
+        configuracoes.logoBase64 = null;
+        configuracoes.somNotificacao = null;
+        
+        await salvarTodosDados();
+        
+        // Cancela notificações agendadas
+        const LocalNotifications = getPlugin('LocalNotifications');
+        if (LocalNotifications) {
+          try {
+            await LocalNotifications.cancel({ notifications: [] });
+          } catch (e) {}
+        }
+        
+        carregarLogoUI();
+        atualizarSelectServidores();
+        renderizarDashboard();
+        renderizarClientes();
+        renderizarServidores();
+        atualizarBadgeNotificacoes();
+        atualizarInfoDados();
+        mostrarToast('🗑️ Todos os dados foram limpos!', 'success');
+      }
+    );
   };
 
   // ============================================================
-  // MODAIS
+  // FUNÇÕES AUXILIARES DE MODAL
   // ============================================================
   function abrirModal(id) {
     document.getElementById(id).classList.add('active');
@@ -3290,6 +3389,7 @@
     document.body.style.overflow = '';
   };
 
+  // Fechar modal ao clicar fora
   document.querySelectorAll('.modal-overlay').forEach(function(overlay) {
     overlay.addEventListener('click', function(e) {
       if (e.target === overlay) {
@@ -3299,6 +3399,9 @@
     });
   });
 
+  // ============================================================
+  // CONFIRMAR AÇÃO
+  // ============================================================
   window.confirmarAcao = function(titulo, mensagem, callback) {
     document.getElementById('confirmTitle').textContent = titulo;
     document.getElementById('confirmMessage').textContent = mensagem;
@@ -3308,35 +3411,49 @@
 
   window.executarConfirmacao = function() {
     fecharModal('modalConfirmar');
-    if (confirmCallback) { confirmCallback(); confirmCallback = null; }
+    if (confirmCallback) {
+      confirmCallback();
+      confirmCallback = null;
+    }
   };
 
   // ============================================================
-  // TOAST (3 segundos)
+  // TOAST - Mensagem que some sozinha em 3 segundos
   // ============================================================
   let toastTimer = null;
+  
   function mostrarToast(mensagem, tipo) {
     const toast = document.getElementById('toast');
     const icon = document.getElementById('toastIcon');
     const msg = document.getElementById('toastMessage');
-    if (toastTimer) clearTimeout(toastTimer);
+
+    // Limpa timer anterior
+    if (toastTimer) {
+      clearTimeout(toastTimer);
+    }
 
     toast.className = 'toast ' + (tipo || 'info');
     msg.textContent = mensagem;
+
     if (tipo === 'success') icon.className = 'ri-checkbox-circle-fill';
     else if (tipo === 'error') icon.className = 'ri-error-warning-fill';
     else if (tipo === 'warning') icon.className = 'ri-alert-line';
     else icon.className = 'ri-information-fill';
 
     toast.classList.add('show');
-    toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
+    
+    // Some automaticamente em 3 segundos
+    toastTimer = setTimeout(function() {
+      toast.classList.remove('show');
+    }, 3000);
   }
 
   // ============================================================
-  // INICIAR
+  // INICIAR APLICAÇÃO
   // ============================================================
   carregarDados();
 
+  // Reagendar notificações quando o app voltar ao foco
   document.addEventListener('visibilitychange', async function() {
     if (!document.hidden) {
       atualizarStatusClientes();

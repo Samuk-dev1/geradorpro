@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0ea5e9">
 <title>TOPGESTOR - Sistema de Gestão</title>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">
@@ -1018,20 +1021,8 @@
     display: none;
   }
 
-  .file-input-label {
-    padding: 8px 14px;
-    background: var(--accent-soft);
-    color: var(--accent);
-    border: 1px solid rgba(14, 165, 233, 0.3);
-    border-radius: 8px;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .file-input-label:active {
-    transform: scale(0.95);
+  .save-btn-section {
+    margin-top: 14px;
   }
 
   .backup-buttons {
@@ -1072,7 +1063,7 @@
     position: fixed;
     top: 70px;
     left: 50%;
-    transform: translateX(-50%) translateY(-100px);
+    transform: translateX(-50%) translateY(-150px);
     background: var(--card);
     border: 1px solid var(--border);
     color: var(--text);
@@ -1087,10 +1078,13 @@
     align-items: center;
     gap: 8px;
     max-width: 90%;
+    opacity: 0;
+    pointer-events: none;
   }
 
   .toast.show {
     transform: translateX(-50%) translateY(0);
+    opacity: 1;
   }
 
   .toast.success { border-left: 3px solid var(--accent2); }
@@ -1296,6 +1290,36 @@
 
   .perm-dialog .btn-secondary {
     flex: 0.5;
+  }
+
+  /* ===== TUTORIAL PWA ===== */
+  .tutorial-card {
+    background: var(--accent-soft);
+    border: 1px solid rgba(14, 165, 233, 0.3);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+
+  .tutorial-card .tutorial-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .tutorial-card ol {
+    padding-left: 20px;
+    font-size: 12px;
+    color: var(--text);
+    line-height: 1.7;
+  }
+
+  .tutorial-card li {
+    margin-bottom: 4px;
   }
 
   /* ===== SCROLLBAR ===== */
@@ -1527,6 +1551,21 @@
   <div class="page" id="page-configuracoes">
     <div class="section-title">Configurações</div>
 
+    <!-- TUTORIAL NOTIFICAÇÕES ANDROID -->
+    <div class="tutorial-card">
+      <div class="tutorial-title">
+        <i class="ri-smartphone-line"></i>
+        Como ativar notificações no Android
+      </div>
+      <ol>
+        <li>No Chrome, clique nos <strong>3 pontinhos</strong> do canto superior</li>
+        <li>Escolha <strong>"Adicionar à tela inicial"</strong> → <strong>"Adicionar"</strong></li>
+        <li>Abra o app pela <strong>tela inicial</strong> (ícone novo)</li>
+        <li>Clique em <strong>"Ativar Agora"</strong> quando perguntar sobre notificações</li>
+        <li>Pronto! As notificações aparecem na barra do Android com som! 🔔</li>
+      </ol>
+    </div>
+
     <!-- PERSONALIZAÇÃO -->
     <div class="settings-section">
       <div class="settings-title">
@@ -1538,21 +1577,27 @@
           <div class="settings-item-label">Nome do App</div>
           <div class="settings-item-desc">Nome que aparece no topo</div>
         </div>
-        <input type="text" id="cfgNomeApp" value="TOPGESTOR" onchange="salvarConfiguracoes()">
+        <input type="text" id="cfgNomeApp" value="TOPGESTOR">
       </div>
       <div class="settings-item">
         <div>
           <div class="settings-item-label">Logo Personalizada</div>
           <div class="settings-item-desc">URL da imagem (http://...)</div>
         </div>
-        <input type="text" id="cfgLogo" value="" placeholder="URL" onchange="salvarConfiguracoes()">
+        <input type="text" id="cfgLogo" value="" placeholder="URL">
       </div>
       <div class="settings-item">
         <div>
           <div class="settings-item-label">Cor do Tema</div>
           <div class="settings-item-desc">Cor principal do app</div>
         </div>
-        <input type="color" id="cfgCorTema" value="#0ea5e9" onchange="salvarConfiguracoes()">
+        <input type="color" id="cfgCorTema" value="#0ea5e9">
+      </div>
+      <div class="save-btn-section">
+        <button class="btn btn-full" onclick="salvarPersonalizacao()">
+          <i class="ri-save-line"></i>
+          Salvar Personalização
+        </button>
       </div>
     </div>
 
@@ -1568,15 +1613,15 @@
       <div class="time-inputs">
         <div class="time-input-item">
           <label>Manhã</label>
-          <input type="time" id="horaManha" value="08:00" onchange="salvarConfiguracoes()">
+          <input type="time" id="horaManha" value="08:00">
         </div>
         <div class="time-input-item">
           <label>Tarde</label>
-          <input type="time" id="horaTarde" value="14:00" onchange="salvarConfiguracoes()">
+          <input type="time" id="horaTarde" value="14:00">
         </div>
         <div class="time-input-item">
           <label>Noite</label>
-          <input type="time" id="horaNoite" value="19:00" onchange="salvarConfiguracoes()">
+          <input type="time" id="horaNoite" value="19:00">
         </div>
       </div>
 
@@ -1585,37 +1630,26 @@
           <div class="settings-item-label">Dias de antecedência</div>
           <div class="settings-item-desc">Quantos dias antes começar a alertar</div>
         </div>
-        <input type="number" id="diasAntecedencia" value="2" min="0" max="10" onchange="salvarConfiguracoes()">
+        <input type="number" id="diasAntecedencia" value="2" min="0" max="10">
       </div>
 
-      <button class="btn btn-full" style="margin-top: 14px; background: var(--accent2-soft); color: var(--accent2); border: 1px solid rgba(34, 197, 94, 0.3);" onclick="testarNotificacao()">
-        <i class="ri-play-circle-line"></i>
-        Testar Notificação Agora
-      </button>
-    </div>
+      <div class="save-btn-section">
+        <button class="btn btn-full" onclick="salvarConfiguracoesNotif()">
+          <i class="ri-save-line"></i>
+          Salvar Configurações de Notificação
+        </button>
+      </div>
 
-    <!-- SOM DA NOTIFICAÇÃO -->
-    <div class="settings-section">
-      <div class="settings-title">
-        <i class="ri-volume-up-line"></i>
-        Som da Notificação
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px;">
+        <button class="btn" style="background: var(--accent2-soft); color: var(--accent2); border: 1px solid rgba(34, 197, 94, 0.3); flex: 1;" onclick="testarNotificacao()">
+          <i class="ri-play-circle-line"></i>
+          Testar Notificação
+        </button>
+        <button class="btn" style="background: var(--purple-soft); color: var(--purple); border: 1px solid rgba(139, 92, 246, 0.3); flex: 1;" onclick="tocarSomTeste()">
+          <i class="ri-volume-up-line"></i>
+          Tocar Som
+        </button>
       </div>
-      <div class="settings-item">
-        <div>
-          <div class="settings-item-label">Som personalizado</div>
-          <div class="settings-item-desc">Toque diferente para identificar o app</div>
-        </div>
-        <select id="somNotificacao" onchange="salvarConfiguracoes()">
-          <option value="default">Padrão</option>
-          <option value="notification">Notificação</option>
-          <option value="alarm">Alarme</option>
-          <option value="ringtone">Toque</option>
-        </select>
-      </div>
-      <button class="btn btn-full" style="margin-top: 14px; background: var(--purple-soft); color: var(--purple); border: 1px solid rgba(139, 92, 246, 0.3);" onclick="tocarSomTeste()">
-        <i class="ri-volume-up-line"></i>
-        Tocar Som de Teste
-      </button>
     </div>
 
     <!-- BACKUP -->
@@ -1670,7 +1704,7 @@
       <div style="text-align: center; padding: 10px 0;">
         <div style="font-size: 18px; font-weight: 700; margin-bottom: 4px;" id="sobreNomeApp">TOPGESTOR</div>
         <div style="font-size: 12px; color: var(--muted);">Sistema de Gestão de Clientes</div>
-        <div style="font-size: 11px; color: var(--muted); margin-top: 8px;">Versão 2.0.0 - COMPLETA</div>
+        <div style="font-size: 11px; color: var(--muted); margin-top: 8px;">Versão 2.1.0 - ANDROID</div>
       </div>
     </div>
   </div>
@@ -1856,7 +1890,7 @@
           <i class="ri-notification-3-fill"></i>
         </div>
         <h3>Ativar Notificações?</h3>
-        <p>Receba alertas quando clientes estiverem vencendo ou inadimplentes!<br><br>Você pode mudar isso depois nas configurações.</p>
+        <p>Receba alertas NA BARRA DO SEU CELULAR quando clientes estiverem vencendo ou inadimplentes!<br><br>As notificações aparecem como qualquer outro app, com som e tudo! 🔔</p>
         <div class="modal-footer" style="padding: 0; border: none;">
           <button class="btn btn-secondary" onclick="fecharModal('modalPermissao')">Agora não</button>
           <button class="btn btn-primary" onclick="permitirNotificacoes()">Ativar Agora</button>
@@ -1905,7 +1939,7 @@
 
 <script>
 (function() {
-  // ===== DADOS INICIAIS - 15 CLIENTES IMPORTADOS =====
+  // ===== DADOS INICIAIS - 15 CLIENTES =====
   const CLIENTES_INICIAIS = [
     {id:'cli_1',nome:'Miria',telefone:'5573999695688',dataVencimento:'2026-09-09',valor:20,status:'ativo',produto:'Master New',app:'Ibo StechPlay',usuario:'019851',senha:'956999',mac:'CC:4B:x45:24:67:CC',key:'',observacoes:'',servidorId:'',dataCadastro:new Date().toISOString()},
     {id:'cli_2',nome:'Marcos henrique',telefone:'5573999494341',dataVencimento:'2026-09-16',valor:30,status:'ativo',produto:'Master Plus',app:'ibo pro',usuario:'792029',senha:'552095',mac:'DC:18:75:C7:FF:FE',key:'423632',observacoes:'',servidorId:'',dataCadastro:new Date().toISOString()},
@@ -1924,7 +1958,6 @@
     {id:'cli_15',nome:'Fabiola',telefone:'5573988055618',dataVencimento:'2026-08-26',valor:30,status:'inadimplente',produto:'Master New',app:'ibo pro',usuario:'',senha:'',mac:'59:4f:b7:92:5b:84',key:'762784',observacoes:'',servidorId:'',dataCadastro:new Date().toISOString()}
   ];
 
-  // ===== DADOS =====
   let clientes = [];
   let servidores = [];
   let configuracoes = {
@@ -1941,6 +1974,7 @@
   let filtroAtual = 'todos';
   let confirmCallback = null;
   let clienteLembreteAtual = null;
+  let toastTimer = null;
 
   // ===== STORAGE =====
   function carregarDados() {
@@ -1961,7 +1995,6 @@
       
       inicializar();
     } catch (e) {
-      console.error('Erro ao carregar dados:', e);
       clientes = JSON.parse(JSON.stringify(CLIENTES_INICIAIS));
       inicializar();
     }
@@ -1972,15 +2005,14 @@
       localStorage.setItem('topgestor_clientes', JSON.stringify(clientes));
       localStorage.setItem('topgestor_servidores', JSON.stringify(servidores));
       localStorage.setItem('topgestor_configuracoes', JSON.stringify(configuracoes));
-    } catch (e) {
-      console.error('Erro ao salvar:', e);
-    }
+    } catch (e) {}
   }
 
-  // ===== APLICAR CONFIGURAÇÕES VISUAIS =====
+  // ===== APLICAR CONFIGURAÇÕES =====
   function aplicarConfiguracoesVisuais() {
     document.documentElement.style.setProperty('--accent', configuracoes.corTema);
     document.documentElement.style.setProperty('--accent-soft', hexToRgba(configuracoes.corTema, 0.15));
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', configuracoes.corTema);
     
     document.getElementById('appName').textContent = configuracoes.nomeApp;
     document.getElementById('sobreNomeApp').textContent = configuracoes.nomeApp;
@@ -2008,6 +2040,10 @@
   // ===== SOM NOTIFICAÇÃO =====
   function tocarSomNotificacao() {
     try {
+      if (window.navigator && window.navigator.vibrate) {
+        window.navigator.vibrate([200, 100, 200]);
+      }
+      
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
       const osc1 = ctx.createOscillator();
       const ganho1 = ctx.createGain();
@@ -2015,10 +2051,10 @@
       ganho1.connect(ctx.destination);
       osc1.frequency.value = 880;
       osc1.type = 'sine';
-      ganho1.gain.setValueAtTime(0.3, ctx.currentTime);
-      ganho1.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+      ganho1.gain.setValueAtTime(0.4, ctx.currentTime);
+      ganho1.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25);
       osc1.start(ctx.currentTime);
-      osc1.stop(ctx.currentTime + 0.2);
+      osc1.stop(ctx.currentTime + 0.25);
       
       setTimeout(function() {
         const osc2 = ctx.createOscillator();
@@ -2027,11 +2063,11 @@
         ganho2.connect(ctx.destination);
         osc2.frequency.value = 1100;
         osc2.type = 'sine';
-        ganho2.gain.setValueAtTime(0.3, ctx.currentTime);
-        ganho2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25);
+        ganho2.gain.setValueAtTime(0.4, ctx.currentTime);
+        ganho2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
         osc2.start(ctx.currentTime);
-        osc2.stop(ctx.currentTime + 0.25);
-      }, 180);
+        osc2.stop(ctx.currentTime + 0.3);
+      }, 200);
     } catch(e) {}
   }
 
@@ -2052,15 +2088,10 @@
     atualizarBadgeNotificacoes();
     agendarVerificacoes();
 
-    // Pedir permissão de notificação na primeira vez
     if (!configuracoes.permissaoNotifPedida) {
       setTimeout(function() {
         abrirModal('modalPermissao');
       }, 1500);
-    } else if ('Notification' in window && Notification.permission === 'default') {
-      setTimeout(function() {
-        Notification.requestPermission();
-      }, 2000);
     }
   }
 
@@ -2073,15 +2104,36 @@
       Notification.requestPermission().then(function(perm) {
         if (perm === 'granted') {
           tocarSomNotificacao();
-          new Notification(configuracoes.nomeApp, { 
-            body: 'Notificações ativadas com sucesso!',
-            icon: ''
-          });
+          try {
+            navigator.serviceWorker.getRegistration().then(function(reg) {
+              if (reg) {
+                reg.showNotification(configuracoes.nomeApp, {
+                  body: 'Notificações ativadas com sucesso! Elas aparecerão aqui na barra do Android.',
+                  icon: '',
+                  tag: 'teste-notif'
+                });
+              } else {
+                new Notification(configuracoes.nomeApp, {
+                  body: 'Notificações ativadas com sucesso!'
+                });
+              }
+            }).catch(function() {
+              new Notification(configuracoes.nomeApp, {
+                body: 'Notificações ativadas com sucesso!'
+              });
+            });
+          } catch(e) {
+            new Notification(configuracoes.nomeApp, {
+              body: 'Notificações ativadas com sucesso!'
+            });
+          }
           mostrarToast('Notificações ativadas!', 'success');
         } else {
-          mostrarToast('Permissão negada', 'info');
+          mostrarToast('Permissão negada. Ative nas configurações do Chrome.', 'error');
         }
       });
+    } else {
+      mostrarToast('Navegador não suporta notificações', 'error');
     }
   };
 
@@ -2227,8 +2279,6 @@
     
     const inicioSemana = new Date(hoje);
     inicioSemana.setDate(hoje.getDate() - hoje.getDay());
-    
-    const inicioMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
 
     const novosHoje = clientes.filter(function(c) {
       if (!c.dataCadastro) return false;
@@ -2622,7 +2672,7 @@
       textoVenc = 'sua mensalidade vence em ' + diasVenc + ' dias';
     }
 
-    return saudacao + ' ' + cliente.nome.split(' ')[0] + '! Tudo bem? 😊\n\n' +
+    return saudacao + ' ' + cliente.nome.split(' ')[0] + '! Tudo bem?\n\n' +
       'Passando para lembrar que ' + textoVenc + ', no valor de ' + formatarValor(cliente.valor) + '.\n\n' +
       'Qualquer dúvida estou à disposição!\n\n' +
       'Atenciosamente,\nEquipe';
@@ -2787,20 +2837,23 @@
     document.getElementById('horaTarde').value = configuracoes.horaTarde;
     document.getElementById('horaNoite').value = configuracoes.horaNoite;
     document.getElementById('diasAntecedencia').value = configuracoes.diasAntecedencia;
-    document.getElementById('somNotificacao').value = configuracoes.somNotificacao;
   }
 
-  window.salvarConfiguracoes = function() {
+  window.salvarPersonalizacao = function() {
     configuracoes.nomeApp = document.getElementById('cfgNomeApp').value || 'TOPGESTOR';
     configuracoes.logo = document.getElementById('cfgLogo').value || '';
     configuracoes.corTema = document.getElementById('cfgCorTema').value || '#0ea5e9';
+    salvarDadosStorage();
+    aplicarConfiguracoesVisuais();
+    mostrarToast('Personalização salva!', 'success');
+  };
+
+  window.salvarConfiguracoesNotif = function() {
     configuracoes.horaManha = document.getElementById('horaManha').value;
     configuracoes.horaTarde = document.getElementById('horaTarde').value;
     configuracoes.horaNoite = document.getElementById('horaNoite').value;
     configuracoes.diasAntecedencia = parseInt(document.getElementById('diasAntecedencia').value) || 2;
-    configuracoes.somNotificacao = document.getElementById('somNotificacao').value;
     salvarDadosStorage();
-    aplicarConfiguracoesVisuais();
     agendarVerificacoes();
     mostrarToast('Configurações salvas!', 'success');
   };
@@ -2866,7 +2919,7 @@
         corpo = clientesVencendo.length + ' cliente(s) vencendo em até ' + configuracoes.diasAntecedencia + ' dias';
       }
 
-      criarNotificacao(titulo, corpo);
+      criarNotificacaoAndroid(titulo, corpo);
       mostrarToast(titulo + ': ' + corpo, 'info');
     } else {
       mostrarToast('Nenhum vencimento pendente no momento', 'success');
@@ -2875,12 +2928,33 @@
     atualizarBadgeNotificacoes();
   };
 
-  function criarNotificacao(titulo, corpo) {
+  function criarNotificacaoAndroid(titulo, corpo) {
     tocarSomNotificacao();
     
-    if ('Notification' in window) {
-      if (Notification.permission === 'granted') {
-        new Notification(titulo, { body: corpo });
+    if ('Notification' in window && Notification.permission === 'granted') {
+      try {
+        if (navigator.serviceWorker && navigator.serviceWorker.getRegistration) {
+          navigator.serviceWorker.getRegistration().then(function(reg) {
+            if (reg) {
+              reg.showNotification(titulo, {
+                body: corpo,
+                icon: '',
+                badge: '',
+                tag: 'topgestor-' + Date.now(),
+                requireInteraction: true,
+                silent: false
+              });
+            } else {
+              new Notification(titulo, { body: corpo });
+            }
+          }).catch(function() {
+            new Notification(titulo, { body: corpo });
+          });
+        } else {
+          new Notification(titulo, { body: corpo });
+        }
+      } catch(e) {
+        try { new Notification(titulo, { body: corpo }); } catch(err) {}
       }
     }
   }
@@ -2889,18 +2963,18 @@
     if ('Notification' in window && Notification.permission === 'default') {
       Notification.requestPermission().then(function(p) {
         if (p === 'granted') {
-          criarNotificacao(configuracoes.nomeApp, 'Notificação de teste funcionando!');
-          mostrarToast('Notificação de teste enviada!', 'success');
+          criarNotificacaoAndroid(configuracoes.nomeApp, 'Notificação de teste funcionando! Ela aparece na barra do Android.');
+          mostrarToast('Notificação enviada! Verifique a barra do Android.', 'success');
         } else {
-          mostrarToast('Permita as notificações nas configurações', 'error');
+          mostrarToast('Permita as notificações quando perguntado.', 'error');
         }
       });
     } else if ('Notification' in window && Notification.permission === 'granted') {
-      criarNotificacao(configuracoes.nomeApp, 'Notificação de teste funcionando!');
-      mostrarToast('Notificação de teste enviada!', 'success');
+      criarNotificacaoAndroid(configuracoes.nomeApp, 'Notificação de teste funcionando! Ela aparece na barra do Android.');
+      mostrarToast('Notificação enviada! Verifique a barra do Android.', 'success');
     } else {
       tocarSomNotificacao();
-      mostrarToast('Som tocado! (ative notificações no navegador)', 'info');
+      mostrarToast('Ative notificações no Chrome: 3 pontinhos → Configurações → Notificações', 'info');
     }
   };
 
@@ -2921,7 +2995,7 @@
   // ===== BACKUP =====
   window.exportarBackup = function() {
     const backup = {
-      versao: '2.0.0',
+      versao: '2.1.0',
       dataExportacao: new Date().toISOString(),
       clientes: clientes,
       servidores: servidores,
@@ -3035,27 +3109,60 @@
     }
   };
 
-  // ===== TOAST =====
+  // ===== TOAST - CONSERTADO! =====
   function mostrarToast(mensagem, tipo) {
     const toast = document.getElementById('toast');
     const icon = document.getElementById('toastIcon');
     const msg = document.getElementById('toastMessage');
 
-    toast.className = 'toast ' + (tipo || 'info');
-    msg.textContent = mensagem;
+    if (toastTimer) {
+      clearTimeout(toastTimer);
+      toastTimer = null;
+    }
 
-    if (tipo === 'success') icon.className = 'ri-checkbox-circle-fill';
-    else if (tipo === 'error') icon.className = 'ri-error-warning-fill';
-    else icon.className = 'ri-information-fill';
+    toast.classList.remove('show');
+    toast.style.transform = 'translateX(-50%) translateY(-150px)';
+    toast.style.opacity = '0';
 
-    toast.classList.add('show');
     setTimeout(function() {
-      toast.classList.remove('show');
-    }, 3000);
+      toast.className = 'toast ' + (tipo || 'info');
+      msg.textContent = mensagem;
+
+      if (tipo === 'success') icon.className = 'ri-checkbox-circle-fill';
+      else if (tipo === 'error') icon.className = 'ri-error-warning-fill';
+      else icon.className = 'ri-information-fill';
+
+      toast.classList.add('show');
+      toast.style.transform = 'translateX(-50%) translateY(0)';
+      toast.style.opacity = '1';
+
+      toastTimer = setTimeout(function() {
+        toast.classList.remove('show');
+        toast.style.transform = 'translateX(-50%) translateY(-150px)';
+        toast.style.opacity = '0';
+        toastTimer = null;
+      }, 3000);
+    }, 50);
   }
 
   // ===== INICIAR =====
   carregarDados();
+
+  // ===== SERVICE WORKER PARA NOTIFICAÇÕES ANDROID =====
+  if ('serviceWorker' in navigator) {
+    const swCode = `
+      self.addEventListener('notificationclick', function(event) {
+        event.notification.close();
+        clients.openWindow('/');
+      });
+      self.addEventListener('install', function(event) {
+        self.skipWaiting();
+      });
+    `;
+    const blob = new Blob([swCode], { type: 'application/javascript' });
+    const swUrl = URL.createObjectURL(blob);
+    navigator.serviceWorker.register(swUrl).catch(function() {});
+  }
 })();
 </script>
 

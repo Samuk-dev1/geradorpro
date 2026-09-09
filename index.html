@@ -2,197 +2,2025 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GestorClientes Pro</title>
-<script src="https://cdn.tailwindcss.com"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>TOPGESTOR - Sistema de Gestão</title>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script>
-(function(){
-  var s=document.createElement('style');
-  s.textContent=':root{'+
-    '--bg:#202024;'+
-    '--card:#2a2a2f;'+
-    '--text:#e8e5df;'+
-    '--muted:#9a978f;'+
-    '--accent:#c47046;'+
-    '--accent-soft:rgba(196,112,70,.14);'+
-    '--accent2:#7ba8b8;'+
-    '--accent2-soft:rgba(123,168,184,.14);'+
-    '--border:rgba(232,229,223,.12)'+
-  '}'+
-  '*{font-family:"Sora",sans-serif;box-sizing:border-box}'+
-  'body{background:var(--bg);color:var(--text);margin:0;min-height:100vh}'+
-  '.card{background:var(--card);border:1px solid var(--border);border-radius:12px}'+
-  '.btn-primary{background:var(--accent);color:var(--bg);font-weight:600;padding:10px 20px;border-radius:8px;border:none;cursor:pointer;transition:all .2s}'+
-  '.btn-primary:hover{opacity:.9;transform:translateY(-1px)}'+
-  '.btn-secondary{background:var(--card);color:var(--text);border:1px solid var(--border);padding:10px 20px;border-radius:8px;cursor:pointer;transition:all .2s}'+
-  '.btn-secondary:hover{border-color:var(--accent)}'+
-  '.btn-ghost{background:transparent;color:var(--muted);border:none;padding:8px 12px;border-radius:6px;cursor:pointer;transition:all .2s}'+
-  '.btn-ghost:hover{background:var(--accent-soft);color:var(--accent)}'+
-  '.input{background:var(--bg);border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:8px;width:100%;outline:none;transition:border-color .2s}'+
-  '.input:focus{border-color:var(--accent)}'+
-  '.input::placeholder{color:var(--muted)}'+
-  '.label{font-size:12px;color:var(--muted);margin-bottom:4px;display:block;font-weight:500}'+
-  '.tab-btn{padding:12px 20px;color:var(--muted);border:none;background:transparent;cursor:pointer;font-weight:500;border-bottom:2px solid transparent;transition:all .2s;font-size:14px}'+
-  '.tab-btn.active{color:var(--text);border-bottom-color:var(--accent);background:var(--accent-soft)}'+
-  '.tab-btn:hover:not(.active){color:var(--text)}'+
-  '.status-pill{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}'+
-  '.status-ativo{background:rgba(13,150,105,.15);color:#34d399;border:1px solid rgba(13,150,105,.3)}'+
-  '.status-pendente{background:rgba(234,88,12,.15);color:#fb923c;border:1px solid rgba(234,88,12,.3)}'+
-  '.status-atrasado{background:rgba(220,38,38,.15);color:#f87171;border:1px solid rgba(220,38,38,.3)}'+
-  '.cliente-card{transition:all .25s;cursor:pointer}'+
-  '.cliente-card:hover{transform:translateY(-2px);border-color:var(--accent)}'+
-  '.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:100;padding:16px}'+
-  '.modal-content{background:var(--card);border:1px solid var(--border);border-radius:16px;max-width:600px;width:100%;max-height:90vh;overflow-y:auto}'+
-  '.nav-item{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:8px;color:var(--muted);cursor:pointer;transition:all .2s;font-size:14px}'+
-  '.nav-item:hover{background:var(--accent-soft);color:var(--text)}'+
-  '.nav-item.active{background:var(--accent-soft);color:var(--accent);border-left:3px solid var(--accent)}'+
-  '.stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;transition:all .2s}'+
-  '.stat-card:hover{border-color:var(--accent)}'+
-  '.gradient-text{background:linear-gradient(100deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}'+
-  '@keyframes slideIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}'+
-  '.animate-slide{animation:slideIn .3s ease-out}'+
-  '.scrollbar-thin::-webkit-scrollbar{width:6px}'+
-  '.scrollbar-thin::-webkit-scrollbar-track{background:transparent}'+
-  '.scrollbar-thin::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}'+
-  '.scrollbar-thin::-webkit-scrollbar-thumb:hover{background:var(--muted)}'+
-  'select.input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'12\' height=\'12\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%239a978f\' stroke-width=\'2\'%3E%3Cpath d=\'M6 9l6 6 6-6\'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px}'+
-  'hr{border:none;border-top:1px solid var(--border);margin:16px 0}'+
-  '.toast{position:fixed;top:20px;right:20px;background:var(--card);border:1px solid var(--accent);color:var(--text);padding:14px 20px;border-radius:10px;z-index:1000;animation:slideIn .3s ease-out;box-shadow:0 10px 40px rgba(0,0,0,.4)}';
-  document.head.appendChild(s);
-})();
-</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">
+<style>
+  :root {
+    --bg: #1a1d2e;
+    --bg-dark: #141625;
+    --card: #22263d;
+    --card-hover: #2a2f4a;
+    --text: #e8ecf4;
+    --muted: #8b9ab8;
+    --accent: #0ea5e9;
+    --accent-soft: rgba(14, 165, 233, 0.15);
+    --accent2: #22c55e;
+    --accent2-soft: rgba(34, 197, 94, 0.15);
+    --danger: #ef4444;
+    --danger-soft: rgba(239, 68, 68, 0.15);
+    --warning: #f59e0b;
+    --warning-soft: rgba(245, 158, 11, 0.15);
+    --purple: #8b5cf6;
+    --purple-soft: rgba(139, 92, 246, 0.15);
+    --border: rgba(139, 154, 184, 0.12);
+    --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    font-family: 'Sora', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ===== HEADER ===== */
+  .header {
+    background: var(--bg-dark);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo {
+    width: 38px;
+    height: 38px;
+    background: linear-gradient(135deg, var(--accent), #0284c7);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 18px;
+    color: white;
+    overflow: hidden;
+  }
+
+  .logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .app-name {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .icon-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text);
+    font-size: 18px;
+  }
+
+  .icon-btn:hover, .icon-btn:active {
+    background: var(--card-hover);
+    transform: scale(0.95);
+  }
+
+  .icon-btn.whatsapp {
+    background: #25d366;
+    border-color: #25d366;
+    color: white;
+  }
+
+  .icon-btn.notif {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+    position: relative;
+  }
+
+  .notif-badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    background: var(--danger);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    padding: 0 4px;
+  }
+
+  /* ===== NAV TABS ===== */
+  .nav-tabs {
+    display: flex;
+    background: var(--bg-dark);
+    padding: 4px;
+    margin: 12px;
+    border-radius: 12px;
+    gap: 4px;
+    border: 1px solid var(--border);
+  }
+
+  .nav-tab {
+    flex: 1;
+    padding: 10px 8px;
+    text-align: center;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .nav-tab i {
+    font-size: 18px;
+  }
+
+  .nav-tab.active {
+    background: var(--accent);
+    color: white;
+  }
+
+  .nav-tab:not(.active):hover {
+    background: var(--card);
+    color: var(--text);
+  }
+
+  /* ===== CONTENT ===== */
+  .content {
+    padding: 0 12px 100px;
+  }
+
+  .page {
+    display: none;
+  }
+
+  .page.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ===== SECTION TITLE ===== */
+  .section-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--muted);
+    margin: 16px 4px 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* ===== STATS CARDS ===== */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+  }
+
+  .stat-card.blue::before { background: var(--accent); }
+  .stat-card.cyan::before { background: #06b6d4; }
+  .stat-card.red::before { background: var(--danger); }
+  .stat-card.green::before { background: var(--accent2); }
+  .stat-card.purple::before { background: var(--purple); }
+  .stat-card.orange::before { background: var(--warning); }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+
+  .stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .stat-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 28px;
+    opacity: 0.15;
+  }
+
+  /* ===== FINANCIAL CARD ===== */
+  .financial-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    margin-top: 12px;
+  }
+
+  .financial-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .financial-header i {
+    font-size: 20px;
+    color: var(--accent2);
+  }
+
+  .financial-header span {
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .financial-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
+  .financial-item {
+    text-align: center;
+    padding: 10px 6px;
+    background: var(--bg);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+
+  .financial-item .label {
+    font-size: 10px;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  .financial-item .value {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent2);
+  }
+
+  /* ===== NEW CLIENTS CHART ===== */
+  .chart-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    margin-top: 12px;
+  }
+
+  .chart-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+
+  .chart-title {
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .chart-title i {
+    color: var(--purple);
+  }
+
+  .chart-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .chart-stat {
+    padding: 10px;
+    border-radius: 10px;
+    text-align: center;
+  }
+
+  .chart-stat.green { background: var(--accent2-soft); border: 1px solid rgba(34, 197, 94, 0.3); }
+  .chart-stat.blue { background: var(--accent-soft); border: 1px solid rgba(14, 165, 233, 0.3); }
+  .chart-stat.purple { background: var(--purple-soft); border: 1px solid rgba(139, 92, 246, 0.3); }
+
+  .chart-stat .label {
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  .chart-stat .value {
+    font-size: 16px;
+    font-weight: 700;
+    margin-top: 2px;
+  }
+
+  .bars-container {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    height: 120px;
+    gap: 4px;
+    padding: 0 4px;
+  }
+
+  .bar-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    justify-content: flex-end;
+  }
+
+  .bar {
+    width: 100%;
+    max-width: 22px;
+    background: linear-gradient(to top, var(--accent), var(--purple));
+    border-radius: 4px 4px 0 0;
+    transition: height 0.5s ease;
+    min-height: 4px;
+  }
+
+  .bar-label {
+    font-size: 9px;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+
+  /* ===== CLIENT LIST ===== */
+  .client-list-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  .filter-tabs {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .filter-tab {
+    padding: 6px 12px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+
+  .filter-tab.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+  }
+
+  .search-box {
+    display: flex;
+    align-items: center;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 14px;
+    margin-bottom: 12px;
+    gap: 10px;
+  }
+
+  .search-box i {
+    color: var(--muted);
+    font-size: 18px;
+  }
+
+  .search-box input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: 'Sora', sans-serif;
+    font-size: 14px;
+  }
+
+  .search-box input::placeholder {
+    color: var(--muted);
+  }
+
+  .client-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.2s;
+  }
+
+  .client-item:active {
+    background: var(--card-hover);
+    transform: scale(0.99);
+  }
+
+  .client-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 16px;
+    color: white;
+    flex-shrink: 0;
+  }
+
+  .client-avatar.blue { background: linear-gradient(135deg, #0ea5e9, #0284c7); }
+  .client-avatar.green { background: linear-gradient(135deg, #22c55e, #16a34a); }
+  .client-avatar.red { background: linear-gradient(135deg, #ef4444, #dc2626); }
+  .client-avatar.orange { background: linear-gradient(135deg, #f59e0b, #d97706); }
+  .client-avatar.purple { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+  .client-avatar.cyan { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+
+  .client-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .client-name {
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .client-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+    font-size: 11px;
+    color: var(--muted);
+    flex-wrap: wrap;
+  }
+
+  .client-meta .valor {
+    color: var(--accent2);
+    font-weight: 600;
+  }
+
+  .client-meta .mac-info {
+    font-family: monospace;
+    font-size: 10px;
+    background: var(--bg);
+    padding: 1px 6px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+  }
+
+  .status-badge {
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 600;
+  }
+
+  .status-badge.ativo { background: var(--accent2-soft); color: var(--accent2); }
+  .status-badge.vencendo { background: var(--warning-soft); color: var(--warning); }
+  .status-badge.inadimplente { background: var(--danger-soft); color: var(--danger); }
+
+  .client-actions {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .action-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 16px;
+    border: none;
+  }
+
+  .action-btn:active {
+    transform: scale(0.9);
+  }
+
+  .action-btn.view {
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+
+  .action-btn.whatsapp {
+    background: rgba(37, 211, 102, 0.15);
+    color: #25d366;
+  }
+
+  .action-btn.reminder {
+    background: var(--warning-soft);
+    color: var(--warning);
+  }
+
+  .action-btn.edit {
+    background: var(--purple-soft);
+    color: var(--purple);
+  }
+
+  .action-btn.delete {
+    background: var(--danger-soft);
+    color: var(--danger);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted);
+  }
+
+  .empty-state i {
+    font-size: 48px;
+    margin-bottom: 12px;
+    opacity: 0.5;
+  }
+
+  .empty-state p {
+    font-size: 13px;
+  }
+
+  /* ===== FAB BUTTON ===== */
+  .fab {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), #0284c7);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(14, 165, 233, 0.4);
+    z-index: 50;
+    transition: all 0.2s;
+    border: none;
+  }
+
+  .fab:active {
+    transform: scale(0.92);
+  }
+
+  /* ===== MODAL ===== */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+
+  .modal-overlay.active {
+    display: flex;
+    animation: fadeIn 0.2s ease;
+  }
+
+  .modal {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    width: 100%;
+    max-width: 420px;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: slideUp 0.3s ease;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .modal-header {
+    padding: 18px 18px 14px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .modal-title {
+    font-size: 16px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .modal-close {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 18px;
+  }
+
+  .modal-body {
+    padding: 18px;
+  }
+
+  .modal-footer {
+    padding: 14px 18px 18px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 10px;
+  }
+
+  /* ===== FORM ===== */
+  .form-group {
+    margin-bottom: 14px;
+  }
+
+  .form-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .form-input, .form-select {
+    width: 100%;
+    padding: 12px 14px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'Sora', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .form-input:focus, .form-select:focus {
+    border-color: var(--accent);
+  }
+
+  .form-input::placeholder {
+    color: var(--muted);
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .form-row-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+  }
+
+  /* ===== BUTTONS ===== */
+  .btn {
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-family: 'Sora', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .btn:active {
+    transform: scale(0.97);
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+    flex: 1;
+  }
+
+  .btn-secondary {
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    flex: 1;
+  }
+
+  .btn-danger {
+    background: var(--danger);
+    color: white;
+  }
+
+  .btn-success {
+    background: var(--accent2);
+    color: white;
+  }
+
+  .btn-full {
+    width: 100%;
+  }
+
+  /* ===== CLIENT DETAILS ===== */
+  .detail-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 28px;
+    color: white;
+    margin: 0 auto 14px;
+  }
+
+  .detail-name {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .detail-status {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .detail-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .detail-info-item {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+  }
+
+  .detail-info-item .label {
+    font-size: 10px;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  .detail-info-item .value {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .detail-info-item .value.mac {
+    font-family: monospace;
+    font-size: 12px;
+  }
+
+  .detail-actions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .detail-action-btn {
+    padding: 14px;
+    border-radius: 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    font-family: 'Sora', sans-serif;
+    color: white;
+    font-weight: 600;
+    font-size: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .detail-action-btn i {
+    font-size: 22px;
+  }
+
+  .detail-action-btn.whatsapp { background: #25d366; }
+  .detail-action-btn.reminder { background: var(--warning); }
+  .detail-action-btn.edit { background: var(--purple); }
+  .detail-action-btn.delete { background: var(--danger); }
+
+  .detail-action-btn:active {
+    transform: scale(0.95);
+  }
+
+  /* ===== SETTINGS ===== */
+  .settings-section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+
+  .settings-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .settings-title i {
+    color: var(--accent);
+  }
+
+  .time-inputs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
+  .time-input-item {
+    text-align: center;
+  }
+
+  .time-input-item label {
+    display: block;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .time-input-item input {
+    width: 100%;
+    padding: 10px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'Sora', sans-serif;
+    font-size: 14px;
+    text-align: center;
+    outline: none;
+  }
+
+  .time-input-item input:focus {
+    border-color: var(--accent);
+  }
+
+  .settings-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    gap: 12px;
+  }
+
+  .settings-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .settings-item-label {
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .settings-item-desc {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .settings-item input[type="number"],
+  .settings-item input[type="text"],
+  .settings-item input[type="color"],
+  .settings-item select {
+    padding: 8px 12px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'Sora', sans-serif;
+    font-size: 13px;
+    outline: none;
+    min-width: 100px;
+    text-align: center;
+  }
+
+  .settings-item input[type="color"] {
+    padding: 4px;
+    height: 40px;
+    cursor: pointer;
+  }
+
+  .settings-item input[type="file"] {
+    display: none;
+  }
+
+  .file-input-label {
+    padding: 8px 14px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border: 1px solid rgba(14, 165, 233, 0.3);
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .file-input-label:active {
+    transform: scale(0.95);
+  }
+
+  .backup-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .backup-btn {
+    padding: 14px;
+    border-radius: 12px;
+    text-align: center;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    border: none;
+    font-family: 'Sora', sans-serif;
+    color: white;
+  }
+
+  .backup-btn i {
+    font-size: 22px;
+  }
+
+  .backup-btn.export { background: var(--accent); }
+  .backup-btn.import { background: var(--accent2); }
+
+  .backup-btn:active {
+    transform: scale(0.97);
+  }
+
+  /* ===== TOAST ===== */
+  .toast {
+    position: fixed;
+    top: 70px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-100px);
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 500;
+    z-index: 300;
+    transition: transform 0.3s ease;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 90%;
+  }
+
+  .toast.show {
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .toast.success { border-left: 3px solid var(--accent2); }
+  .toast.error { border-left: 3px solid var(--danger); }
+  .toast.info { border-left: 3px solid var(--accent); }
+
+  /* ===== SERVERS PAGE ===== */
+  .server-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .server-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--purple), #7c3aed);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+  }
+
+  .server-info {
+    flex: 1;
+  }
+
+  .server-name {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .server-stats {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .server-stats .valor {
+    color: var(--accent2);
+    font-weight: 600;
+  }
+
+  /* ===== TOP SERVERS DASHBOARD ===== */
+  .top-servers-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    margin-top: 12px;
+  }
+
+  .top-server-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .top-server-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .rank {
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .rank.gold { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: white; }
+  .rank.silver { background: linear-gradient(135deg, #9ca3af, #6b7280); color: white; }
+  .rank.bronze { background: linear-gradient(135deg, #d97706, #b45309); color: white; }
+  .rank.normal { background: var(--bg); color: var(--muted); }
+
+  .top-server-info {
+    flex: 1;
+  }
+
+  .top-server-name {
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .top-server-sales {
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .top-server-value {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent2);
+  }
+
+  /* ===== QUICK STATS DASHBOARD ===== */
+  .quick-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .quick-stat {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .quick-stat-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+
+  .quick-stat-icon.green { background: var(--accent2-soft); color: var(--accent2); }
+  .quick-stat-icon.orange { background: var(--warning-soft); color: var(--warning); }
+  .quick-stat-icon.red { background: var(--danger-soft); color: var(--danger); }
+  .quick-stat-icon.blue { background: var(--accent-soft); color: var(--accent); }
+
+  .quick-stat-info .label {
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  .quick-stat-info .value {
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  /* ===== CONFIRM DIALOG ===== */
+  .confirm-dialog {
+    text-align: center;
+  }
+
+  .confirm-dialog i {
+    font-size: 48px;
+    color: var(--danger);
+    margin-bottom: 12px;
+  }
+
+  .confirm-dialog h3 {
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+
+  .confirm-dialog p {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  /* ===== PERMISSÃO NOTIFICAÇÃO MODAL ===== */
+  .perm-dialog {
+    text-align: center;
+    padding: 10px 0;
+  }
+
+  .perm-dialog .perm-icon {
+    font-size: 56px;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+
+  .perm-dialog h3 {
+    font-size: 17px;
+    margin-bottom: 10px;
+  }
+
+  .perm-dialog p {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+
+  .perm-dialog .btn-primary {
+    background: var(--accent);
+  }
+
+  .perm-dialog .btn-secondary {
+    flex: 0.5;
+  }
+
+  /* ===== SCROLLBAR ===== */
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 2px;
+  }
+
+  /* ===== HIDDEN ===== */
+  .hidden {
+    display: none !important;
+  }
+</style>
 </head>
 <body>
 
-<div id="app"></div>
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <div class="logo" id="appLogo">TG</div>
+    <div class="app-name" id="appName">TOPGESTOR</div>
+  </div>
+  <div class="header-actions">
+    <button class="icon-btn notif" onclick="verificarVencimentosAgora()" title="Verificar vencimentos">
+      <i class="ri-notification-3-line"></i>
+      <span class="notif-badge hidden" id="notifBadge">0</span>
+    </button>
+    <button class="icon-btn" onclick="abrirPagina('configuracoes')" title="Configurações">
+      <i class="ri-settings-3-line"></i>
+    </button>
+  </div>
+</div>
+
+<!-- NAV TABS -->
+<div class="nav-tabs">
+  <div class="nav-tab active" data-page="dashboard" onclick="abrirPagina('dashboard')">
+    <i class="ri-dashboard-line"></i>
+    Dashboard
+  </div>
+  <div class="nav-tab" data-page="clientes" onclick="abrirPagina('clientes')">
+    <i class="ri-user-3-line"></i>
+    Clientes
+  </div>
+  <div class="nav-tab" data-page="servidores" onclick="abrirPagina('servidores')">
+    <i class="ri-team-line"></i>
+    Servidores
+  </div>
+  <div class="nav-tab" data-page="configuracoes" onclick="abrirPagina('configuracoes')">
+    <i class="ri-settings-4-line"></i>
+    Ajustes
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <!-- ===== DASHBOARD PAGE ===== -->
+  <div class="page active" id="page-dashboard">
+    <div class="section-title">Visão Geral</div>
+    
+    <div class="stats-grid">
+      <div class="stat-card blue">
+        <div class="stat-label">Total de Clientes</div>
+        <div class="stat-value" id="statTotal">0</div>
+        <i class="ri-user-3-line stat-icon"></i>
+      </div>
+      <div class="stat-card cyan">
+        <div class="stat-label">Clientes Ativos</div>
+        <div class="stat-value" id="statAtivos">0</div>
+        <i class="ri-user-check-line stat-icon"></i>
+      </div>
+      <div class="stat-card orange">
+        <div class="stat-label">Vencendo Hoje</div>
+        <div class="stat-value" id="statVencendoHoje">0</div>
+        <i class="ri-alarm-warning-line stat-icon"></i>
+      </div>
+      <div class="stat-card red">
+        <div class="stat-label">Inadimplentes</div>
+        <div class="stat-value" id="statInadimplentes">0</div>
+        <i class="ri-user-unfollow-line stat-icon"></i>
+      </div>
+    </div>
+
+    <!-- VALORES A RECEBER -->
+    <div class="financial-card">
+      <div class="financial-header">
+        <i class="ri-money-dollar-circle-line"></i>
+        <span>Valores a Receber</span>
+      </div>
+      <div class="financial-grid">
+        <div class="financial-item">
+          <div class="label">Projeção Mensal</div>
+          <div class="value" id="projecaoMensal">R$ 0,00</div>
+        </div>
+        <div class="financial-item">
+          <div class="label">Hoje</div>
+          <div class="value" id="valorHoje">R$ 0,00</div>
+        </div>
+        <div class="financial-item">
+          <div class="label">Amanhã</div>
+          <div class="value" id="valorAmanha">R$ 0,00</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLIENTES NOVOS POR DIA -->
+    <div class="chart-card">
+      <div class="chart-header">
+        <div class="chart-title">
+          <i class="ri-bar-chart-box-line"></i>
+          Clientes Novos Por Dia
+        </div>
+      </div>
+      <div class="chart-stats">
+        <div class="chart-stat green">
+          <div class="label">Total - Mês Atual</div>
+          <div class="value" id="totalMes">0</div>
+        </div>
+        <div class="chart-stat blue">
+          <div class="label">Média por Dia</div>
+          <div class="value" id="mediaDia">0</div>
+        </div>
+        <div class="chart-stat purple">
+          <div class="label">Melhor Dia</div>
+          <div class="value" id="melhorDia">0</div>
+        </div>
+      </div>
+      <div class="bars-container" id="barsContainer"></div>
+    </div>
+
+    <!-- QUICK STATS -->
+    <div class="quick-stats">
+      <div class="quick-stat">
+        <div class="quick-stat-icon green">
+          <i class="ri-user-add-line"></i>
+        </div>
+        <div class="quick-stat-info">
+          <div class="label">Novos Hoje</div>
+          <div class="value" id="novosHoje">0</div>
+        </div>
+      </div>
+      <div class="quick-stat">
+        <div class="quick-stat-icon blue">
+          <i class="ri-user-add-line"></i>
+        </div>
+        <div class="quick-stat-info">
+          <div class="label">Novos Semana</div>
+          <div class="value" id="novosSemana">0</div>
+        </div>
+      </div>
+      <div class="quick-stat">
+        <div class="quick-stat-icon orange">
+          <i class="ri-refresh-line"></i>
+        </div>
+        <div class="quick-stat-info">
+          <div class="label">Renovar Mês</div>
+          <div class="value" id="renovarMes">0</div>
+        </div>
+      </div>
+      <div class="quick-stat">
+        <div class="quick-stat-icon red">
+          <i class="ri-user-heart-line"></i>
+        </div>
+        <div class="quick-stat-info">
+          <div class="label">Recuperados</div>
+          <div class="value" id="recuperados">0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOP SERVIDORES -->
+    <div class="top-servers-card">
+      <div class="chart-header">
+        <div class="chart-title">
+          <i class="ri-trophy-line" style="color: var(--warning);"></i>
+          Top Servidores
+        </div>
+      </div>
+      <div id="topServidoresList">
+        <div class="empty-state" style="padding: 20px;">
+          <i class="ri-team-line"></i>
+          <p>Nenhum servidor cadastrado</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== CLIENTES PAGE ===== -->
+  <div class="page" id="page-clientes">
+    <div class="section-title">Gestão de Clientes</div>
+    
+    <div class="search-box">
+      <i class="ri-search-line"></i>
+      <input type="text" id="searchInput" placeholder="Buscar nome, telefone, MAC..." oninput="filtrarClientes()">
+    </div>
+
+    <div class="filter-tabs" id="filterTabs">
+      <div class="filter-tab active" data-filter="todos" onclick="setFiltro('todos')">Todos</div>
+      <div class="filter-tab" data-filter="ativos" onclick="setFiltro('ativos')">Ativos</div>
+      <div class="filter-tab" data-filter="vencendo" onclick="setFiltro('vencendo')">Vencendo</div>
+      <div class="filter-tab" data-filter="inadimplentes" onclick="setFiltro('inadimplentes')">Inadimplentes</div>
+    </div>
+
+    <div id="clientesList"></div>
+  </div>
+
+  <!-- ===== SERVIDORES PAGE ===== -->
+  <div class="page" id="page-servidores">
+    <div class="section-title">Gestão de Servidores</div>
+    
+    <div class="search-box">
+      <i class="ri-search-line"></i>
+      <input type="text" id="searchServidor" placeholder="Buscar servidor..." oninput="filtrarServidores()">
+    </div>
+
+    <div id="servidoresList"></div>
+  </div>
+
+  <!-- ===== CONFIGURACOES PAGE ===== -->
+  <div class="page" id="page-configuracoes">
+    <div class="section-title">Configurações</div>
+
+    <!-- PERSONALIZAÇÃO -->
+    <div class="settings-section">
+      <div class="settings-title">
+        <i class="ri-palette-line"></i>
+        Personalização
+      </div>
+      <div class="settings-item">
+        <div>
+          <div class="settings-item-label">Nome do App</div>
+          <div class="settings-item-desc">Nome que aparece no topo</div>
+        </div>
+        <input type="text" id="cfgNomeApp" value="TOPGESTOR" onchange="salvarConfiguracoes()">
+      </div>
+      <div class="settings-item">
+        <div>
+          <div class="settings-item-label">Logo Personalizada</div>
+          <div class="settings-item-desc">URL da imagem (http://...)</div>
+        </div>
+        <input type="text" id="cfgLogo" value="" placeholder="URL" onchange="salvarConfiguracoes()">
+      </div>
+      <div class="settings-item">
+        <div>
+          <div class="settings-item-label">Cor do Tema</div>
+          <div class="settings-item-desc">Cor principal do app</div>
+        </div>
+        <input type="color" id="cfgCorTema" value="#0ea5e9" onchange="salvarConfiguracoes()">
+      </div>
+    </div>
+
+    <!-- NOTIFICAÇÕES -->
+    <div class="settings-section">
+      <div class="settings-title">
+        <i class="ri-notification-3-line"></i>
+        Horários das Notificações
+      </div>
+      <p style="font-size: 11px; color: var(--muted); margin-bottom: 14px;">
+        O app verificará clientes vencendo nestes horários e mostrará notificações
+      </p>
+      <div class="time-inputs">
+        <div class="time-input-item">
+          <label>Manhã</label>
+          <input type="time" id="horaManha" value="08:00" onchange="salvarConfiguracoes()">
+        </div>
+        <div class="time-input-item">
+          <label>Tarde</label>
+          <input type="time" id="horaTarde" value="14:00" onchange="salvarConfiguracoes()">
+        </div>
+        <div class="time-input-item">
+          <label>Noite</label>
+          <input type="time" id="horaNoite" value="19:00" onchange="salvarConfiguracoes()">
+        </div>
+      </div>
+
+      <div class="settings-item" style="margin-top: 14px;">
+        <div>
+          <div class="settings-item-label">Dias de antecedência</div>
+          <div class="settings-item-desc">Quantos dias antes começar a alertar</div>
+        </div>
+        <input type="number" id="diasAntecedencia" value="2" min="0" max="10" onchange="salvarConfiguracoes()">
+      </div>
+
+      <button class="btn btn-full" style="margin-top: 14px; background: var(--accent2-soft); color: var(--accent2); border: 1px solid rgba(34, 197, 94, 0.3);" onclick="testarNotificacao()">
+        <i class="ri-play-circle-line"></i>
+        Testar Notificação Agora
+      </button>
+    </div>
+
+    <!-- SOM DA NOTIFICAÇÃO -->
+    <div class="settings-section">
+      <div class="settings-title">
+        <i class="ri-volume-up-line"></i>
+        Som da Notificação
+      </div>
+      <div class="settings-item">
+        <div>
+          <div class="settings-item-label">Som personalizado</div>
+          <div class="settings-item-desc">Toque diferente para identificar o app</div>
+        </div>
+        <select id="somNotificacao" onchange="salvarConfiguracoes()">
+          <option value="default">Padrão</option>
+          <option value="notification">Notificação</option>
+          <option value="alarm">Alarme</option>
+          <option value="ringtone">Toque</option>
+        </select>
+      </div>
+      <button class="btn btn-full" style="margin-top: 14px; background: var(--purple-soft); color: var(--purple); border: 1px solid rgba(139, 92, 246, 0.3);" onclick="tocarSomTeste()">
+        <i class="ri-volume-up-line"></i>
+        Tocar Som de Teste
+      </button>
+    </div>
+
+    <!-- BACKUP -->
+    <div class="settings-section">
+      <div class="settings-title">
+        <i class="ri-save-3-line"></i>
+        Backup e Restauração
+      </div>
+      <div class="backup-buttons">
+        <button class="backup-btn export" onclick="exportarBackup()">
+          <i class="ri-download-line"></i>
+          Exportar Backup
+        </button>
+        <button class="backup-btn import" onclick="importarBackup()">
+          <i class="ri-upload-line"></i>
+          Restaurar Backup
+        </button>
+      </div>
+      <input type="file" id="backupFile" accept=".json" style="display: none;" onchange="processarBackup(event)">
+    </div>
+
+    <!-- DADOS -->
+    <div class="settings-section">
+      <div class="settings-title">
+        <i class="ri-database-2-line"></i>
+        Dados do Sistema
+      </div>
+      <div class="settings-item">
+        <div>
+          <div class="settings-item-label">Total de clientes cadastrados</div>
+        </div>
+        <span id="infoTotalClientes" style="font-weight: 600; color: var(--accent);">0</span>
+      </div>
+      <div class="settings-item">
+        <div>
+          <div class="settings-item-label">Total de servidores</div>
+        </div>
+        <span id="infoTotalServidores" style="font-weight: 600; color: var(--purple);">0</span>
+      </div>
+      <button class="btn btn-full" style="margin-top: 14px; background: var(--danger-soft); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3);" onclick="confirmarLimparDados()">
+        <i class="ri-delete-bin-line"></i>
+        Limpar Todos os Dados
+      </button>
+    </div>
+
+    <!-- SOBRE -->
+    <div class="settings-section">
+      <div class="settings-title">
+        <i class="ri-information-line"></i>
+        Sobre
+      </div>
+      <div style="text-align: center; padding: 10px 0;">
+        <div style="font-size: 18px; font-weight: 700; margin-bottom: 4px;" id="sobreNomeApp">TOPGESTOR</div>
+        <div style="font-size: 12px; color: var(--muted);">Sistema de Gestão de Clientes</div>
+        <div style="font-size: 11px; color: var(--muted); margin-top: 8px;">Versão 2.0.0 - COMPLETA</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FAB ADD CLIENT -->
+<button class="fab" id="fabAdd" onclick="abrirModalCliente()" title="Novo Cliente">
+  <i class="ri-add-line"></i>
+</button>
+
+<!-- ===== MODAL CLIENTE FORM ===== -->
+<div class="modal-overlay" id="modalCliente">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">
+        <i class="ri-user-add-line" style="color: var(--accent);"></i>
+        <span id="modalClienteTitle">Novo Cliente</span>
+      </div>
+      <button class="modal-close" onclick="fecharModal('modalCliente')">
+        <i class="ri-close-line"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form id="formCliente">
+        <input type="hidden" id="clienteId">
+        
+        <div class="form-group">
+          <label class="form-label">Nome do Cliente *</label>
+          <input type="text" class="form-input" id="clienteNome" placeholder="Ex: João Silva" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Telefone / WhatsApp *</label>
+          <input type="tel" class="form-input" id="clienteTelefone" placeholder="Ex: (31) 99999-9999" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Data de Vencimento *</label>
+            <input type="date" class="form-input" id="clienteVencimento" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Valor (R$) *</label>
+            <input type="text" class="form-input" id="clienteValor" placeholder="0,00" required oninput="formatarMoeda(this)">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Status</label>
+            <select class="form-select" id="clienteStatus">
+              <option value="ativo">Ativo</option>
+              <option value="vencendo">Vencendo</option>
+              <option value="inadimplente">Inadimplente</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Servidor</label>
+            <select class="form-select" id="clienteServidor">
+              <option value="">Nenhum</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row-3">
+          <div class="form-group">
+            <label class="form-label">Usuário</label>
+            <input type="text" class="form-input" id="clienteUsuario" placeholder="Login">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Senha</label>
+            <input type="text" class="form-input" id="clienteSenha" placeholder="Senha">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Key</label>
+            <input type="text" class="form-input" id="clienteKey" placeholder="Chave">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Produto</label>
+            <input type="text" class="form-input" id="clienteProduto" placeholder="Master New">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Aplicativo</label>
+            <input type="text" class="form-input" id="clienteApp" placeholder="Ibo StechPlay">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">MAC Address</label>
+          <input type="text" class="form-input" id="clienteMAC" placeholder="AA:BB:CC:DD:EE:FF" style="font-family: monospace; text-transform: uppercase;">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Observações</label>
+          <input type="text" class="form-input" id="clienteObs" placeholder="Anotações gerais...">
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="fecharModal('modalCliente')">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarCliente()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL CLIENTE DETALHES ===== -->
+<div class="modal-overlay" id="modalDetalhes">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">
+        <i class="ri-user-3-line" style="color: var(--accent);"></i>
+        Detalhes do Cliente
+      </div>
+      <button class="modal-close" onclick="fecharModal('modalDetalhes')">
+        <i class="ri-close-line"></i>
+      </button>
+    </div>
+    <div class="modal-body" id="detalhesBody"></div>
+  </div>
+</div>
+
+<!-- ===== MODAL SERVIDOR FORM ===== -->
+<div class="modal-overlay" id="modalServidor">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">
+        <i class="ri-team-line" style="color: var(--purple);"></i>
+        <span id="modalServidorTitle">Novo Servidor</span>
+      </div>
+      <button class="modal-close" onclick="fecharModal('modalServidor')">
+        <i class="ri-close-line"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form id="formServidor">
+        <input type="hidden" id="servidorId">
+        
+        <div class="form-group">
+          <label class="form-label">Nome do Servidor *</label>
+          <input type="text" class="form-input" id="servidorNome" placeholder="Ex: Maria" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Telefone / WhatsApp</label>
+          <input type="tel" class="form-input" id="servidorTelefone" placeholder="Ex: (31) 99999-9999">
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="fecharModal('modalServidor')">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarServidor()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL CONFIRMAR ===== -->
+<div class="modal-overlay" id="modalConfirmar">
+  <div class="modal">
+    <div class="modal-body">
+      <div class="confirm-dialog">
+        <i class="ri-error-warning-line" id="confirmIcon"></i>
+        <h3 id="confirmTitle">Confirmação</h3>
+        <p id="confirmMessage">Tem certeza que deseja continuar?</p>
+        <div class="modal-footer" style="padding: 0; border: none; margin-top: 20px;">
+          <button class="btn btn-secondary" onclick="fecharModal('modalConfirmar')">Cancelar</button>
+          <button class="btn btn-danger" id="confirmBtn" onclick="executarConfirmacao()">Confirmar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL PERMISSÃO NOTIFICAÇÃO ===== -->
+<div class="modal-overlay" id="modalPermissao">
+  <div class="modal">
+    <div class="modal-body">
+      <div class="perm-dialog">
+        <div class="perm-icon">
+          <i class="ri-notification-3-fill"></i>
+        </div>
+        <h3>Ativar Notificações?</h3>
+        <p>Receba alertas quando clientes estiverem vencendo ou inadimplentes!<br><br>Você pode mudar isso depois nas configurações.</p>
+        <div class="modal-footer" style="padding: 0; border: none;">
+          <button class="btn btn-secondary" onclick="fecharModal('modalPermissao')">Agora não</button>
+          <button class="btn btn-primary" onclick="permitirNotificacoes()">Ativar Agora</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL LEMBRETE ===== -->
+<div class="modal-overlay" id="modalLembrete">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">
+        <i class="ri-message-2-line" style="color: var(--warning);"></i>
+        Mensagem de Lembrete
+      </div>
+      <button class="modal-close" onclick="fecharModal('modalLembrete')">
+        <i class="ri-close-line"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Edite a mensagem:</label>
+        <textarea class="form-input" id="lembreteTexto" rows="5" style="resize: none; font-family: 'Sora', sans-serif;"></textarea>
+      </div>
+      <div class="modal-footer" style="padding: 0; border: none; margin-top: 16px;">
+        <button class="btn btn-secondary" onclick="copiarLembrete()" style="flex: 1;">
+          <i class="ri-file-copy-line"></i>
+          Copiar
+        </button>
+        <button class="btn btn-success" onclick="enviarWhatsAppLembrete()" style="flex: 1; background: #25d366;">
+          <i class="ri-whatsapp-line"></i>
+          WhatsApp
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <i id="toastIcon"></i>
+  <span id="toastMessage"></span>
+</div>
 
 <script>
-(function(){
-  // ============================================
-  // DADOS INICIAIS - 15 CLIENTES IMPORTADOS
-  // ============================================
+(function() {
+  // ===== DADOS INICIAIS - 15 CLIENTES IMPORTADOS =====
   const CLIENTES_INICIAIS = [
-    {id:1,nome:"Miria",whatsapp:"5573999695688",email:"",data_vencimento:"2026-09-09",usuario:"019851",senha:"956999",produto:"Master New",plano:"20 Reais",app:"Ibo StechPlay",mac:"CC:4B:x45:24:67:CC",key:"",observacao:"",status:"ativo"},
-    {id:2,nome:"Marcos henrique",whatsapp:"5573999494341",email:"",data_vencimento:"2026-09-16",usuario:"792029",senha:"552095",produto:"Master Plus",plano:"30 Reais",app:"ibo pro",mac:"DC:18:75:C7:FF:FE",key:"423632",observacao:"",status:"ativo"},
-    {id:3,nome:"Junior pastor",whatsapp:"5573999493036",email:"",data_vencimento:"2026-10-08",usuario:"108217",senha:"880727",produto:"Master Plus",plano:"20 Reais",app:"Ibo StechPlay",mac:"82:32:FF:85:C7:62",key:"",observacao:"",status:"ativo"},
-    {id:4,nome:"Andressa Costa",whatsapp:"5573998021461",email:"",data_vencimento:"2026-09-05",usuario:"477865",senha:"302154",produto:"Master New",plano:"50 Reais",app:"ibo pro",mac:"74:e7:72:d9:89:6e",key:"207640",observacao:"",status:"ativo"},
-    {id:5,nome:"Leilson Rodrigues",whatsapp:"5573999230470",email:"",data_vencimento:"2026-09-02",usuario:"923552",senha:"144044",produto:"Master New",plano:"30 Reais",app:"Ibo StechPlay",mac:"D1:90:59:37:D5:65",key:"",observacao:"",status:"ativo"},
-    {id:6,nome:"Rikelme",whatsapp:"5573999880428",email:"",data_vencimento:"2025-11-30",usuario:"",senha:"",produto:"P2vip",plano:"30 Reais",app:"ibo pro",mac:"22:68:23:d4:50:94",key:"476080",observacao:"",status:"ativo"},
-    {id:7,nome:"Rodrigo",whatsapp:"5522981383236",email:"",data_vencimento:"2026-09-05",usuario:"",senha:"",produto:"Revendedor",plano:"60 Reais",app:"",mac:"",key:"",observacao:"",status:"ativo"},
-    {id:8,nome:"Lavinia",whatsapp:"5573988148631",email:"",data_vencimento:"2026-09-13",usuario:"318384",senha:"",produto:"Master New",plano:"25 Reais",app:"Ibo StechPlay",mac:"",key:"",observacao:"",status:"ativo"},
-    {id:9,nome:"Edenilson",whatsapp:"5573998302565",email:"",data_vencimento:"2026-09-07",usuario:"67731261",senha:"",produto:"Master New",plano:"60 Reais",app:"",mac:"B8:ca:7f:33:36:a6",key:"",observacao:"",status:"ativo"},
-    {id:10,nome:"Jonathan",whatsapp:"5573999147888",email:"",data_vencimento:"2026-08-25",usuario:"Jhonatanplay4",senha:"",produto:"Revendedor",plano:"60 Reais",app:"",mac:"",key:"",observacao:"",status:"ativo"},
-    {id:11,nome:"Davi",whatsapp:"5579996809736",email:"",data_vencimento:"2026-09-08",usuario:"",senha:"",produto:"Revendedor",plano:"60 Reais",app:"",mac:"",key:"",observacao:"",status:"ativo"},
-    {id:12,nome:"João Moreira",whatsapp:"5573991334205",email:"",data_vencimento:"2026-09-14",usuario:"",senha:"",produto:"Master New",plano:"45 Reais",app:"",mac:"",key:"",observacao:"",status:"ativo"},
-    {id:13,nome:"Bento",whatsapp:"5561994534276",email:"",data_vencimento:"2026-09-08",usuario:"",senha:"",produto:"Revendedor",plano:"100 Reais",app:"",mac:"",key:"",observacao:"",status:"ativo"},
-    {id:14,nome:"Leonardo cardoso",whatsapp:"5573999888933",email:"",data_vencimento:"2026-09-08",usuario:"",senha:"",produto:"Master New",plano:"30 Reais",app:"Ibo play",mac:"f3:5d:51:97:76:2f",key:"718948",observacao:"",status:"ativo"},
-    {id:15,nome:"Fabiola",whatsapp:"5573988055618",email:"",data_vencimento:"2026-08-26",usuario:"",senha:"",produto:"Master New",plano:"30 Reais",app:"ibo pro",mac:"59:4f:b7:92:5b:84",key:"762784",observacao:"",status:"ativo"}
+    {id:'cli_1',nome:'Miria',telefone:'5573999695688',dataVencimento:'2026-09-09',valor:20,status:'ativo',produto:'Master New',app:'Ibo StechPlay',usuario:'019851',senha:'956999',mac:'CC:4B:x45:24:67:CC',key:'',observacoes:'',servidorId:'',dataCadastro:new Date().toISOString()},
+    {id:'cli_2',nome:'Marcos henrique',telefone:'5573999494341',dataVencimento:'2026-09-16',valor:30,status:'ativo',produto:'Master Plus',app:'ibo pro',usuario:'792029',senha:'552095',mac:'DC:18:75:C7:FF:FE',key:'423632',observacoes:'',servidorId:'',dataCadastro:new Date().toISOString()},
+    {id:'cli_3',nome:'Junior pastor',telefone:'5573999493036',dataVencimento:'2026-10-08',valor:20,status:'ativo',produto:'Master Plus',app:'Ibo StechPlay',usuario:'108217',senha:'880727',mac:'82:32:FF:85:C7:62',key:'',observacoes:'',servidorId:'',dataCadastro:new Date().toISOString()},
+    {id:'cli_4',nome:'Andressa Costa',telefone:'5573998021461',dataVencimento:'2026-09-05',valor:50,status:'ativo',produto:'Master New',app:'ibo pro',usuario:'477865',senha:'302154',mac:'74:e7:72:d9:89:6e',key:'207640',observacoes:'',servidorId:'',dataCadastro:new Date().toISOString()},
+    {id:'cli_5',nome:'Leilson Rodrigues',telefone:'5573999230470',dataVencimento:'2026-09-02',valor:30,status:'ativo',produto:'Master New',app:'Ibo StechPlay',usuario:'923552',senha:'144044',mac:'D1:90:59:37:D5:65',key:'',observacoes:'',servidorId:'',dataCadastro:new Date().toISOString()},
+    {id:'cli_6',nome:'Rikelme',telefone:'5573999880428',dataVencimento:'2025-11-30',valor:30,status:'inadimplente',produto:'P2vip',app:'ibo pro',usuario:'',senha:'',mac:'22:68:23:d4:50:94',key:'476080',observacoes:'',servidorId:'',dataCadastro:new Date().toISOString()},
+    {id:'cli_7',nome:'Rodrigo',telefone:'5522981383236',dataVencimento:'2026-09-05',valor:60,status:'ativo',produto:'Revendedor',app:'',usuario:'',senha:'',mac:'',key:'',observacoes:'',servidorId:'',dataCadastro:new Date().toISOString()},
+    {id:'cli_8',nome:'Lavinia',telefone:'5573988148631',dataVencimento:'2026-09-13',valor:25,status:'ativo',produto:'Master New',app:'Ibo StechPlay',usuario:'318384',senha:'',mac:'',key:'',observacoes:'',servidorId:'',dataCadastro:new Date().toISOString()},
+    {id:'cli_9',nome:'Edenilson',telefone:'5573998302565',dataVencimento:'2026-09-07',valor:60,status:'ativo',produto:'Master New',app:'',usuario:'67731261',senha:'',mac:'B8:ca:7f:33:36:a6',key:'',observacoes:'',servidorId:'',dataCadastro:new Date().toISOString()},
+    {id:'cli_10',nome:'Jonathan',telefone:'5573999147888',dataVencimento:'2026-08-25',valor:60,status:'inadimplente',produto:'Revendedor',app:'',usuario:'Jhonatanplay4',senha:'',mac:'',key:'',observacoes:'',servidorId:'',dataCadastro:new Date().toISOString()},
+    {id:'cli_11',nome:'Davi',telefone:'5579996809736',dataVencimento:'2026-09-08',valor:60,status:'ativo',produto:'Revendedor',app:'',usuario:'',senha:'',mac:'',key:'',observacoes:'',servidorId:'',dataCadastro:new Date().toISOString()},
+    {id:'cli_12',nome:'João Moreira',telefone:'5573991334205',dataVencimento:'2026-09-14',valor:45,status:'ativo',produto:'Master New',app:'',usuario:'',senha:'',mac:'',key:'',observacoes:'',servidorId:'',dataCadastro:new Date().toISOString()},
+    {id:'cli_13',nome:'Bento',telefone:'5561994534276',dataVencimento:'2026-09-08',valor:100,status:'ativo',produto:'Revendedor',app:'',usuario:'',senha:'',mac:'',key:'',observacoes:'',servidorId:'',dataCadastro:new Date().toISOString()},
+    {id:'cli_14',nome:'Leonardo cardoso',telefone:'5573999888933',dataVencimento:'2026-09-08',valor:30,status:'ativo',produto:'Master New',app:'Ibo play',usuario:'',senha:'',mac:'f3:5d:51:97:76:2f',key:'718948',observacoes:'',servidorId:'',dataCadastro:new Date().toISOString()},
+    {id:'cli_15',nome:'Fabiola',telefone:'5573988055618',dataVencimento:'2026-08-26',valor:30,status:'inadimplente',produto:'Master New',app:'ibo pro',usuario:'',senha:'',mac:'59:4f:b7:92:5b:84',key:'762784',observacoes:'',servidorId:'',dataCadastro:new Date().toISOString()}
   ];
 
-  const CONFIG_PADRAO = {
-    nomeApp: "GestorClientes Pro",
-    logo: "",
-    notificacoesAtivadas: false,
-    somNotificacao: "padrao",
-    diasAvisoVencimento: 3,
-    corTema: "#c47046"
+  // ===== DADOS =====
+  let clientes = [];
+  let servidores = [];
+  let configuracoes = {
+    nomeApp: 'TOPGESTOR',
+    logo: '',
+    corTema: '#0ea5e9',
+    horaManha: '08:00',
+    horaTarde: '14:00',
+    horaNoite: '19:00',
+    diasAntecedencia: 2,
+    somNotificacao: 'default',
+    permissaoNotifPedida: false
   };
+  let filtroAtual = 'todos';
+  let confirmCallback = null;
+  let clienteLembreteAtual = null;
 
-  // ============================================
-  // ESTADO GLOBAL
-  // ============================================
-  let state = {
-    tela: 'login',
-    aba: 'dashboard',
-    clientes: [],
-    config: {...CONFIG_PADRAO},
-    busca: '',
-    filtroStatus: 'todos',
-    clienteSelecionado: null,
-    modalAberto: null,
-    usuarioLogado: false
-  };
-
-  // ============================================
-  // LOCALSTORAGE - 100% OFFLINE
-  // ============================================
+  // ===== STORAGE =====
   function carregarDados() {
     try {
-      const clientes = localStorage.getItem('gc_clientes');
-      const config = localStorage.getItem('gc_config');
-      const logado = localStorage.getItem('gc_logado');
+      const c = localStorage.getItem('topgestor_clientes');
+      const s = localStorage.getItem('topgestor_servidores');
+      const cfg = localStorage.getItem('topgestor_configuracoes');
       
-      if (clientes) {
-        state.clientes = JSON.parse(clientes);
+      if (c) {
+        clientes = JSON.parse(c);
       } else {
-        state.clientes = [...CLIENTES_INICIAIS];
-        salvarClientes();
+        clientes = JSON.parse(JSON.stringify(CLIENTES_INICIAIS));
+        salvarDadosStorage();
       }
       
-      if (config) {
-        state.config = {...CONFIG_PADRAO, ...JSON.parse(config)};
-      } else {
-        salvarConfig();
-      }
+      if (s) servidores = JSON.parse(s);
+      if (cfg) configuracoes = {...configuracoes, ...JSON.parse(cfg)};
       
-      if (logado === 'true') {
-        state.usuarioLogado = true;
-        state.tela = 'principal';
-      }
-    } catch(e) {
-      state.clientes = [...CLIENTES_INICIAIS];
+      inicializar();
+    } catch (e) {
+      console.error('Erro ao carregar dados:', e);
+      clientes = JSON.parse(JSON.stringify(CLIENTES_INICIAIS));
+      inicializar();
     }
   }
 
-  function salvarClientes() {
-    localStorage.setItem('gc_clientes', JSON.stringify(state.clientes));
+  function salvarDadosStorage() {
+    try {
+      localStorage.setItem('topgestor_clientes', JSON.stringify(clientes));
+      localStorage.setItem('topgestor_servidores', JSON.stringify(servidores));
+      localStorage.setItem('topgestor_configuracoes', JSON.stringify(configuracoes));
+    } catch (e) {
+      console.error('Erro ao salvar:', e);
+    }
   }
 
-  function salvarConfig() {
-    localStorage.setItem('gc_config', JSON.stringify(state.config));
+  // ===== APLICAR CONFIGURAÇÕES VISUAIS =====
+  function aplicarConfiguracoesVisuais() {
+    document.documentElement.style.setProperty('--accent', configuracoes.corTema);
+    document.documentElement.style.setProperty('--accent-soft', hexToRgba(configuracoes.corTema, 0.15));
+    
+    document.getElementById('appName').textContent = configuracoes.nomeApp;
+    document.getElementById('sobreNomeApp').textContent = configuracoes.nomeApp;
+    document.title = configuracoes.nomeApp + ' - Sistema de Gestão';
+    
+    const logoEl = document.getElementById('appLogo');
+    if (configuracoes.logo) {
+      logoEl.innerHTML = '<img src="' + configuracoes.logo + '" alt="Logo" onerror="this.parentElement.innerHTML=\'' + configuracoes.nomeApp.charAt(0).toUpperCase() + '\'">';
+    } else {
+      logoEl.textContent = configuracoes.nomeApp.charAt(0).toUpperCase();
+    }
+
+    document.getElementById('cfgNomeApp').value = configuracoes.nomeApp;
+    document.getElementById('cfgLogo').value = configuracoes.logo;
+    document.getElementById('cfgCorTema').value = configuracoes.corTema;
   }
 
-  // ============================================
-  // NOTIFICAÇÕES
-  // ============================================
-  async function pedirPermissaoNotificacoes() {
-    if (!('Notification' in window)) {
-      mostrarToast('Navegador não suporta notificações');
-      return false;
-    }
-    if (Notification.permission === 'granted') {
-      state.config.notificacoesAtivadas = true;
-      salvarConfig();
-      return true;
-    }
-    if (Notification.permission !== 'denied') {
-      const permissao = await Notification.requestPermission();
-      if (permissao === 'granted') {
-        state.config.notificacoesAtivadas = true;
-        salvarConfig();
-        mostrarToast('Notificações ativadas!');
-        return true;
-      }
-    }
-    return false;
+  function hexToRgba(hex, alpha) {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
   }
 
+  // ===== SOM NOTIFICAÇÃO =====
   function tocarSomNotificacao() {
     try {
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      const osc = ctx.createOscillator();
-      const ganho = ctx.createGain();
-      osc.connect(ganho);
-      ganho.connect(ctx.destination);
-      osc.frequency.value = 880;
-      osc.type = 'sine';
-      ganho.gain.setValueAtTime(0.3, ctx.currentTime);
-      ganho.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
-      osc.start(ctx.currentTime);
-      osc.stop(ctx.currentTime + 0.3);
+      const osc1 = ctx.createOscillator();
+      const ganho1 = ctx.createGain();
+      osc1.connect(ganho1);
+      ganho1.connect(ctx.destination);
+      osc1.frequency.value = 880;
+      osc1.type = 'sine';
+      ganho1.gain.setValueAtTime(0.3, ctx.currentTime);
+      ganho1.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+      osc1.start(ctx.currentTime);
+      osc1.stop(ctx.currentTime + 0.2);
       
-      setTimeout(() => {
+      setTimeout(function() {
         const osc2 = ctx.createOscillator();
         const ganho2 = ctx.createGain();
         osc2.connect(ganho2);
@@ -200,870 +2028,1034 @@
         osc2.frequency.value = 1100;
         osc2.type = 'sine';
         ganho2.gain.setValueAtTime(0.3, ctx.currentTime);
-        ganho2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+        ganho2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25);
         osc2.start(ctx.currentTime);
-        osc2.stop(ctx.currentTime + 0.2);
-      }, 150);
+        osc2.stop(ctx.currentTime + 0.25);
+      }, 180);
     } catch(e) {}
   }
 
-  function enviarNotificacao(titulo, corpo) {
-    if (state.config.notificacoesAtivadas && Notification.permission === 'granted') {
-      new Notification(titulo, {
-        body: corpo,
-        icon: state.config.logo || '',
-        badge: ''
-      });
-      tocarSomNotificacao();
+  window.tocarSomTeste = function() {
+    tocarSomNotificacao();
+    mostrarToast('Som tocando!', 'success');
+  };
+
+  // ===== INICIALIZAÇÃO =====
+  function inicializar() {
+    aplicarConfiguracoesVisuais();
+    atualizarStatusClientes();
+    carregarConfiguracoesUI();
+    atualizarSelectServidores();
+    renderizarDashboard();
+    renderizarClientes();
+    renderizarServidores();
+    atualizarBadgeNotificacoes();
+    agendarVerificacoes();
+
+    // Pedir permissão de notificação na primeira vez
+    if (!configuracoes.permissaoNotifPedida) {
+      setTimeout(function() {
+        abrirModal('modalPermissao');
+      }, 1500);
+    } else if ('Notification' in window && Notification.permission === 'default') {
+      setTimeout(function() {
+        Notification.requestPermission();
+      }, 2000);
     }
   }
 
-  function testarNotificacao() {
-    pedirPermissaoNotificacoes().then(ok => {
-      if (ok) {
-        enviarNotificacao(state.config.nomeApp, 'Notificação funcionando perfeitamente!');
-        mostrarToast('Notificação de teste enviada!');
-      } else {
-        mostrarToast('Ative as notificações nas configurações');
-      }
-    });
+  window.permitirNotificacoes = function() {
+    configuracoes.permissaoNotifPedida = true;
+    salvarDadosStorage();
+    fecharModal('modalPermissao');
+    
+    if ('Notification' in window) {
+      Notification.requestPermission().then(function(perm) {
+        if (perm === 'granted') {
+          tocarSomNotificacao();
+          new Notification(configuracoes.nomeApp, { 
+            body: 'Notificações ativadas com sucesso!',
+            icon: ''
+          });
+          mostrarToast('Notificações ativadas!', 'success');
+        } else {
+          mostrarToast('Permissão negada', 'info');
+        }
+      });
+    }
+  };
+
+  // ===== UTILITÁRIOS =====
+  function formatarMoeda(input) {
+    let valor = input.value.replace(/\D/g, '');
+    valor = (parseInt(valor) / 100).toFixed(2) + '';
+    valor = valor.replace('.', ',');
+    valor = valor.replace(/(\d)(\d{3})(\d{3}),/g, '$1.$2.$3,');
+    valor = valor.replace(/(\d)(\d{3}),/g, '$1.$2,');
+    input.value = valor;
   }
 
-  // ============================================
-  // UTILITÁRIOS
-  // ============================================
-  function mostrarToast(msg) {
-    const toast = document.createElement('div');
-    toast.className = 'toast';
-    toast.textContent = msg;
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 3000);
+  function parseMoeda(valor) {
+    return parseFloat(valor.replace(/\./g, '').replace(',', '.'));
   }
 
-  function formatarData(dataStr) {
-    if (!dataStr) return '-';
-    const d = new Date(dataStr + 'T00:00:00');
+  function formatarValor(valor) {
+    return 'R$ ' + valor.toFixed(2).replace('.', ',').replace(/(\d)(\d{3})(\d{3}),/g, '$1.$2.$3,').replace(/(\d)(\d{3}),/g, '$1.$2,');
+  }
+
+  function formatarTelefone(telefone) {
+    return telefone.replace(/\D/g, '');
+  }
+
+  function formatarDataBR(data) {
+    const d = new Date(data + 'T00:00:00');
     return d.toLocaleDateString('pt-BR');
   }
 
-  function calcularStatus(cliente) {
-    if (!cliente.data_vencimento) return 'pendente';
+  function getIniciais(nome) {
+    const palavras = nome.trim().split(' ');
+    if (palavras.length === 1) return palavras[0].substring(0, 2).toUpperCase();
+    return (palavras[0][0] + palavras[palavras.length - 1][0]).toUpperCase();
+  }
+
+  const avatarColors = ['blue', 'green', 'red', 'orange', 'purple', 'cyan'];
+  function getAvatarColor(nome) {
+    let hash = 0;
+    for (let i = 0; i < nome.length; i++) {
+      hash = nome.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return avatarColors[Math.abs(hash) % avatarColors.length];
+  }
+
+  function calcularDiasAteVencimento(dataVencimento) {
     const hoje = new Date();
-    hoje.setHours(0,0,0,0);
-    const venc = new Date(cliente.data_vencimento + 'T00:00:00');
-    const diff = Math.ceil((venc - hoje) / (1000 * 60 * 60 * 24));
-    if (diff < 0) return 'atrasado';
-    if (diff <= state.config.diasAvisoVencimento) return 'pendente';
-    return 'ativo';
-  }
-
-  function getStatusTexto(status) {
-    return {ativo:'Em Dia', pendente:'Próximo Venc.', atrasado:'Atrasado'}[status];
-  }
-
-  function extrairValor(plano) {
-    const match = String(plano).match(/(\d+)/);
-    return match ? parseInt(match[1]) : 0;
-  }
-
-  function formatarWhatsapp(num) {
-    const n = String(num).replace(/\D/g, '');
-    if (n.length >= 13) return `+${n.slice(0,2)} (${n.slice(2,4)}) ${n.slice(4,9)}-${n.slice(9)}`;
-    if (n.length >= 11) return `(${n.slice(0,2)}) ${n.slice(2,7)}-${n.slice(7)}`;
-    return num;
-  }
-
-  function abrirWhatsapp(num) {
-    const n = String(num).replace(/\D/g, '');
-    window.open(`https://wa.me/${n}`, '_blank');
-  }
-
-  // ============================================
-  // ESTATÍSTICAS
-  // ============================================
-  function calcularEstatisticas() {
-    const total = state.clientes.length;
-    let ativos = 0, pendentes = 0, atrasados = 0, receitaTotal = 0;
+    hoje.setHours(0, 0, 0, 0);
+    const vencimento = new Date(dataVencimento + 'T00:00:00');
     
-    state.clientes.forEach(c => {
-      const status = calcularStatus(c);
-      if (status === 'ativo') ativos++;
-      else if (status === 'pendente') pendentes++;
-      else atrasados++;
-      receitaTotal += extrairValor(c.plano);
+    while (vencimento < hoje && vencimento.getDate() !== hoje.getDate()) {
+      vencimento.setMonth(vencimento.getMonth() + 1);
+    }
+    
+    const diff = Math.ceil((vencimento - hoje) / (1000 * 60 * 60 * 24));
+    return diff;
+  }
+
+  function atualizarStatusClientes() {
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+    const diasAnt = configuracoes.diasAntecedencia;
+
+    clientes.forEach(function(c) {
+      const dias = calcularDiasAteVencimento(c.dataVencimento);
+      if (dias < 0) {
+        c.status = 'inadimplente';
+      } else if (dias <= diasAnt) {
+        c.status = 'vencendo';
+      } else {
+        c.status = 'ativo';
+      }
     });
-    
-    return {total, ativos, pendentes, atrasados, receitaTotal};
+    salvarDadosStorage();
   }
 
-  // ============================================
-  // CRUD CLIENTES
-  // ============================================
-  function salvarCliente(cliente) {
-    if (cliente.id) {
-      const idx = state.clientes.findIndex(c => c.id === cliente.id);
-      if (idx >= 0) state.clientes[idx] = cliente;
+  function getStatusBadge(status) {
+    const nomes = { ativo: 'Ativo', vencendo: 'Vencendo', inadimplente: 'Inadimplente' };
+    return '<span class="status-badge ' + status + '">' + nomes[status] + '</span>';
+  }
+
+  // ===== NAVEGAÇÃO =====
+  window.abrirPagina = function(pagina) {
+    document.querySelectorAll('.page').forEach(function(p) {
+      p.classList.remove('active');
+    });
+    document.getElementById('page-' + pagina).classList.add('active');
+    
+    document.querySelectorAll('.nav-tab').forEach(function(t) {
+      t.classList.toggle('active', t.dataset.page === pagina);
+    });
+
+    const fab = document.getElementById('fabAdd');
+    if (pagina === 'clientes') {
+      fab.style.display = 'flex';
+      fab.onclick = function() { abrirModalCliente(); };
+      fab.innerHTML = '<i class="ri-add-line"></i>';
+    } else if (pagina === 'servidores') {
+      fab.style.display = 'flex';
+      fab.onclick = function() { abrirModalServidor(); };
+      fab.innerHTML = '<i class="ri-add-line"></i>';
     } else {
-      cliente.id = Date.now();
-      state.clientes.push(cliente);
+      fab.style.display = 'none';
     }
-    salvarClientes();
-    render();
-    mostrarToast('Cliente salvo com sucesso!');
+
+    if (pagina === 'dashboard') renderizarDashboard();
+    if (pagina === 'clientes') renderizarClientes();
+    if (pagina === 'servidores') renderizarServidores();
+    if (pagina === 'configuracoes') atualizarInfoDados();
+  };
+
+  // ===== DASHBOARD =====
+  function renderizarDashboard() {
+    const total = clientes.length;
+    const ativos = clientes.filter(function(c) { return c.status === 'ativo'; }).length;
+    const vencendoHoje = clientes.filter(function(c) { 
+      return calcularDiasAteVencimento(c.dataVencimento) === 0; 
+    }).length;
+    const inadimplentes = clientes.filter(function(c) { return c.status === 'inadimplente'; }).length;
+
+    document.getElementById('statTotal').textContent = total;
+    document.getElementById('statAtivos').textContent = ativos;
+    document.getElementById('statVencendoHoje').textContent = vencendoHoje;
+    document.getElementById('statInadimplentes').textContent = inadimplentes;
+
+    let projecao = 0;
+    let valorHoje = 0;
+    let valorAmanha = 0;
+
+    clientes.forEach(function(c) {
+      const dias = calcularDiasAteVencimento(c.dataVencimento);
+      projecao += c.valor;
+      if (dias === 0) valorHoje += c.valor;
+      if (dias === 1) valorAmanha += c.valor;
+    });
+
+    document.getElementById('projecaoMensal').textContent = formatarValor(projecao);
+    document.getElementById('valorHoje').textContent = formatarValor(valorHoje);
+    document.getElementById('valorAmanha').textContent = formatarValor(valorAmanha);
+
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+    
+    const inicioSemana = new Date(hoje);
+    inicioSemana.setDate(hoje.getDate() - hoje.getDay());
+    
+    const inicioMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+
+    const novosHoje = clientes.filter(function(c) {
+      if (!c.dataCadastro) return false;
+      const d = new Date(c.dataCadastro);
+      d.setHours(0, 0, 0, 0);
+      return d.getTime() === hoje.getTime();
+    }).length;
+
+    const novosSemana = clientes.filter(function(c) {
+      if (!c.dataCadastro) return false;
+      return new Date(c.dataCadastro) >= inicioSemana;
+    }).length;
+
+    const renovarMes = clientes.filter(function(c) {
+      const dias = calcularDiasAteVencimento(c.dataVencimento);
+      return dias >= 0 && dias <= 30;
+    }).length;
+
+    const recuperados = clientes.filter(function(c) { return c.recuperado; }).length;
+
+    document.getElementById('novosHoje').textContent = novosHoje;
+    document.getElementById('novosSemana').textContent = novosSemana;
+    document.getElementById('renovarMes').textContent = renovarMes;
+    document.getElementById('recuperados').textContent = recuperados;
+
+    renderizarGraficoBarras();
+    renderizarTopServidores();
   }
 
-  function excluirCliente(id) {
-    if (confirm('Tem certeza que deseja excluir este cliente?')) {
-      state.clientes = state.clientes.filter(c => c.id !== id);
-      salvarClientes();
-      render();
-      mostrarToast('Cliente excluído!');
+  function renderizarGraficoBarras() {
+    const container = document.getElementById('barsContainer');
+    container.innerHTML = '';
+    
+    const dias = [];
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+
+    for (let i = 6; i >= 0; i--) {
+      const dia = new Date(hoje);
+      dia.setDate(hoje.getDate() - i);
+      const proximoDia = new Date(dia);
+      proximoDia.setDate(dia.getDate() + 1);
+
+      const count = clientes.filter(function(c) {
+        if (!c.dataCadastro) return false;
+        const d = new Date(c.dataCadastro);
+        return d >= dia && d < proximoDia;
+      }).length;
+
+      dias.push({
+        label: dia.toLocaleDateString('pt-BR', { weekday: 'short' }).substring(0, 3).replace('.', ''),
+        valor: count
+      });
+    }
+
+    const maxValor = Math.max(...dias.map(function(d) { return d.valor; }), 1);
+    const totalMes = dias.reduce(function(s, d) { return s + d.valor; }, 0);
+    const mediaDia = dias.length > 0 ? (totalMes / dias.length).toFixed(1) : 0;
+    const melhorDia = Math.max(...dias.map(function(d) { return d.valor; }));
+
+    document.getElementById('totalMes').textContent = totalMes;
+    document.getElementById('mediaDia').textContent = mediaDia;
+    document.getElementById('melhorDia').textContent = melhorDia;
+
+    dias.forEach(function(dia) {
+      const altura = maxValor > 0 ? (dia.valor / maxValor * 100) : 5;
+      const wrapper = document.createElement('div');
+      wrapper.className = 'bar-wrapper';
+      wrapper.innerHTML = '<div class="bar" style="height: ' + altura + '%"></div><div class="bar-label">' + dia.label + '</div>';
+      container.appendChild(wrapper);
+    });
+  }
+
+  function renderizarTopServidores() {
+    const container = document.getElementById('topServidoresList');
+    
+    if (servidores.length === 0) {
+      container.innerHTML = '<div class="empty-state" style="padding: 20px;"><i class="ri-team-line"></i><p>Nenhum servidor cadastrado</p></div>';
+      return;
+    }
+
+    const ranking = servidores.map(function(s) {
+      const clientesServidor = clientes.filter(function(c) { return c.servidorId === s.id; });
+      const totalVendas = clientesServidor.reduce(function(sum, c) { return sum + c.valor; }, 0);
+      return {
+        ...s,
+        totalClientes: clientesServidor.length,
+        totalVendas: totalVendas
+      };
+    }).sort(function(a, b) { return b.totalVendas - a.totalVendas; }).slice(0, 5);
+
+    if (ranking.length === 0 || ranking[0].totalVendas === 0) {
+      container.innerHTML = '<div class="empty-state" style="padding: 20px;"><i class="ri-bar-chart-line"></i><p>Sem vendas registradas ainda</p></div>';
+      return;
+    }
+
+    const ranks = ['gold', 'silver', 'bronze', 'normal', 'normal'];
+    container.innerHTML = ranking.map(function(s, i) {
+      return '<div class="top-server-item">' +
+        '<div class="rank ' + ranks[i] + '">' + (i + 1) + '</div>' +
+        '<div class="top-server-info">' +
+          '<div class="top-server-name">' + s.nome + '</div>' +
+          '<div class="top-server-sales">' + s.totalClientes + ' clientes</div>' +
+        '</div>' +
+        '<div class="top-server-value">' + formatarValor(s.totalVendas) + '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  // ===== CLIENTES =====
+  window.filtrarClientes = function() {
+    renderizarClientes();
+  };
+
+  window.setFiltro = function(filtro) {
+    filtroAtual = filtro;
+    document.querySelectorAll('.filter-tab').forEach(function(t) {
+      t.classList.toggle('active', t.dataset.filter === filtro);
+    });
+    renderizarClientes();
+  };
+
+  function renderizarClientes() {
+    const container = document.getElementById('clientesList');
+    const busca = document.getElementById('searchInput').value.toLowerCase();
+
+    let lista = clientes.slice();
+
+    if (filtroAtual === 'ativos') {
+      lista = lista.filter(function(c) { return c.status === 'ativo'; });
+    } else if (filtroAtual === 'vencendo') {
+      lista = lista.filter(function(c) { return c.status === 'vencendo'; });
+    } else if (filtroAtual === 'inadimplentes') {
+      lista = lista.filter(function(c) { return c.status === 'inadimplente'; });
+    }
+
+    if (busca) {
+      lista = lista.filter(function(c) {
+        return c.nome.toLowerCase().includes(busca) || 
+               c.telefone.includes(busca) ||
+               (c.mac && c.mac.toLowerCase().includes(busca)) ||
+               (c.usuario && c.usuario.toLowerCase().includes(busca));
+      });
+    }
+
+    const ordem = { inadimplente: 0, vencendo: 1, ativo: 2 };
+    lista.sort(function(a, b) {
+      if (ordem[a.status] !== ordem[b.status]) return ordem[a.status] - ordem[b.status];
+      return a.nome.localeCompare(b.nome);
+    });
+
+    if (lista.length === 0) {
+      container.innerHTML = '<div class="empty-state"><i class="ri-user-search-line"></i><p>' + 
+        (clientes.length === 0 ? 'Nenhum cliente cadastrado. Clique no + para adicionar.' : 'Nenhum cliente encontrado.') + 
+        '</p></div>';
+      return;
+    }
+
+    container.innerHTML = lista.map(function(c) {
+      const servidor = servidores.find(function(s) { return s.id === c.servidorId; });
+      const diasVenc = calcularDiasAteVencimento(c.dataVencimento);
+      let textoDias = '';
+      if (diasVenc < 0) textoDias = Math.abs(diasVenc) + ' dias atrasado';
+      else if (diasVenc === 0) textoDias = 'Vence hoje';
+      else textoDias = 'Vence em ' + diasVenc + ' dias';
+
+      return '<div class="client-item">' +
+        '<div class="client-avatar ' + getAvatarColor(c.nome) + '">' + getIniciais(c.nome) + '</div>' +
+        '<div class="client-info">' +
+          '<div class="client-name">' + c.nome + '</div>' +
+          '<div class="client-meta">' +
+            '<span class="valor">' + formatarValor(c.valor) + '</span>' +
+            '<span>•</span>' +
+            '<span>' + textoDias + '</span>' +
+          '</div>' +
+          '<div class="client-meta" style="margin-top: 2px;">' +
+            getStatusBadge(c.status) +
+            (c.mac ? '<span class="mac-info"><i class="ri-hdmi-line" style="font-size: 9px;"></i> ' + c.mac.substring(0, 11) + '...</span>' : '') +
+            (servidor ? '<span style="margin-left: 6px;">👤 ' + servidor.nome + '</span>' : '') +
+          '</div>' +
+        '</div>' +
+        '<div class="client-actions">' +
+          '<button class="action-btn view" onclick="verDetalhesCliente(\'' + c.id + '\')" title="Ver detalhes"><i class="ri-eye-line"></i></button>' +
+          '<button class="action-btn whatsapp" onclick="abrirWhatsApp(\'' + c.id + '\')" title="WhatsApp"><i class="ri-whatsapp-line"></i></button>' +
+          '<button class="action-btn reminder" onclick="abrirLembrete(\'' + c.id + '\')" title="Lembrete"><i class="ri-alarm-line"></i></button>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  // ===== MODAL CLIENTE =====
+  window.abrirModalCliente = function(id) {
+    document.getElementById('formCliente').reset();
+    document.getElementById('clienteId').value = '';
+    
+    if (id) {
+      const c = clientes.find(function(x) { return x.id === id; });
+      if (c) {
+        document.getElementById('modalClienteTitle').textContent = 'Editar Cliente';
+        document.getElementById('clienteId').value = c.id;
+        document.getElementById('clienteNome').value = c.nome;
+        document.getElementById('clienteTelefone').value = c.telefone;
+        document.getElementById('clienteVencimento').value = c.dataVencimento;
+        document.getElementById('clienteValor').value = c.valor.toFixed(2).replace('.', ',');
+        document.getElementById('clienteStatus').value = c.status;
+        document.getElementById('clienteServidor').value = c.servidorId || '';
+        document.getElementById('clienteUsuario').value = c.usuario || '';
+        document.getElementById('clienteSenha').value = c.senha || '';
+        document.getElementById('clienteKey').value = c.key || '';
+        document.getElementById('clienteProduto').value = c.produto || '';
+        document.getElementById('clienteApp').value = c.app || '';
+        document.getElementById('clienteMAC').value = c.mac || '';
+        document.getElementById('clienteObs').value = c.observacoes || '';
+      }
+    } else {
+      document.getElementById('modalClienteTitle').textContent = 'Novo Cliente';
+      const hoje = new Date();
+      hoje.setDate(hoje.getDate() + 30);
+      document.getElementById('clienteVencimento').value = hoje.toISOString().split('T')[0];
+    }
+    
+    abrirModal('modalCliente');
+  };
+
+  window.salvarCliente = function() {
+    const id = document.getElementById('clienteId').value;
+    const nome = document.getElementById('clienteNome').value.trim();
+    const telefone = document.getElementById('clienteTelefone').value.trim();
+    const dataVencimento = document.getElementById('clienteVencimento').value;
+    const valorStr = document.getElementById('clienteValor').value;
+    const status = document.getElementById('clienteStatus').value;
+    const servidorId = document.getElementById('clienteServidor').value;
+    const usuario = document.getElementById('clienteUsuario').value.trim();
+    const senha = document.getElementById('clienteSenha').value.trim();
+    const key = document.getElementById('clienteKey').value.trim();
+    const produto = document.getElementById('clienteProduto').value.trim();
+    const app = document.getElementById('clienteApp').value.trim();
+    const mac = document.getElementById('clienteMAC').value.trim();
+    const observacoes = document.getElementById('clienteObs').value.trim();
+
+    if (!nome || !telefone || !dataVencimento || !valorStr) {
+      mostrarToast('Preencha todos os campos obrigatórios', 'error');
+      return;
+    }
+
+    const valor = parseMoeda(valorStr);
+
+    if (id) {
+      const idx = clientes.findIndex(function(c) { return c.id === id; });
+      if (idx !== -1) {
+        clientes[idx] = { ...clientes[idx], nome, telefone, dataVencimento, valor, status, servidorId, usuario, senha, key, produto, app, mac, observacoes };
+        mostrarToast('Cliente atualizado com sucesso!', 'success');
+      }
+    } else {
+      clientes.push({
+        id: 'cli_' + Date.now(),
+        nome, telefone, dataVencimento, valor, status, servidorId,
+        usuario, senha, key, produto, app, mac, observacoes,
+        dataCadastro: new Date().toISOString()
+      });
+      mostrarToast('Cliente cadastrado com sucesso!', 'success');
+    }
+
+    salvarDadosStorage();
+    atualizarStatusClientes();
+    fecharModal('modalCliente');
+    renderizarClientes();
+    renderizarDashboard();
+    atualizarBadgeNotificacoes();
+  };
+
+  // ===== DETALHES CLIENTE =====
+  window.verDetalhesCliente = function(id) {
+    const c = clientes.find(function(x) { return x.id === id; });
+    if (!c) return;
+
+    const servidor = servidores.find(function(s) { return s.id === c.servidorId; });
+    const diasVenc = calcularDiasAteVencimento(c.dataVencimento);
+    let textoDias = '';
+    if (diasVenc < 0) textoDias = Math.abs(diasVenc) + ' dias atrasado';
+    else if (diasVenc === 0) textoDias = 'Vence HOJE';
+    else textoDias = 'Vence em ' + diasVenc + ' dias';
+
+    const body = document.getElementById('detalhesBody');
+    body.innerHTML = 
+      '<div class="detail-avatar ' + getAvatarColor(c.nome) + '">' + getIniciais(c.nome) + '</div>' +
+      '<div class="detail-name">' + c.nome + '</div>' +
+      '<div class="detail-status">' + getStatusBadge(c.status) + '</div>' +
+      
+      '<div class="detail-info-grid">' +
+        '<div class="detail-info-item">' +
+          '<div class="label">Valor Mensal</div>' +
+          '<div class="value" style="color: var(--accent2);">' + formatarValor(c.valor) + '</div>' +
+        '</div>' +
+        '<div class="detail-info-item">' +
+          '<div class="label">Vencimento</div>' +
+          '<div class="value">' + formatarDataBR(c.dataVencimento) + '</div>' +
+        '</div>' +
+        '<div class="detail-info-item">' +
+          '<div class="label">Situação</div>' +
+          '<div class="value" style="font-size: 12px; color: ' + (diasVenc < 0 ? 'var(--danger)' : diasVenc <= 2 ? 'var(--warning)' : 'var(--accent2)') + ';">' + textoDias + '</div>' +
+        '</div>' +
+        '<div class="detail-info-item">' +
+          '<div class="label">Telefone</div>' +
+          '<div class="value" style="font-size: 12px;">' + c.telefone + '</div>' +
+        '</div>' +
+        (c.usuario ? '<div class="detail-info-item"><div class="label">Usuário</div><div class="value" style="font-size: 12px;">' + c.usuario + '</div></div>' : '') +
+        (c.senha ? '<div class="detail-info-item"><div class="label">Senha</div><div class="value" style="font-size: 12px;">' + c.senha + '</div></div>' : '') +
+        (c.produto ? '<div class="detail-info-item"><div class="label">Produto</div><div class="value" style="font-size: 12px;">' + c.produto + '</div></div>' : '') +
+        (c.app ? '<div class="detail-info-item"><div class="label">Aplicativo</div><div class="value" style="font-size: 12px;">' + c.app + '</div></div>' : '') +
+        (c.mac ? '<div class="detail-info-item"><div class="label">MAC Address</div><div class="value mac">' + c.mac + '</div></div>' : '') +
+        (c.key ? '<div class="detail-info-item"><div class="label">Key</div><div class="value" style="font-size: 12px;">' + c.key + '</div></div>' : '') +
+      '</div>' +
+
+      (servidor ? 
+        '<div class="detail-info-item" style="margin-bottom: 20px;">' +
+          '<div class="label">Servidor</div>' +
+          '<div class="value">👤 ' + servidor.nome + '</div>' +
+        '</div>' : '') +
+
+      (c.observacoes ?
+        '<div class="detail-info-item" style="margin-bottom: 20px;">' +
+          '<div class="label">Observações</div>' +
+          '<div class="value" style="font-size: 13px; font-weight: 400;">' + c.observacoes + '</div>' +
+        '</div>' : '') +
+
+      '<div class="detail-actions">' +
+        '<button class="detail-action-btn whatsapp" onclick="abrirWhatsApp(\'' + c.id + '\')">' +
+          '<i class="ri-whatsapp-line"></i>WhatsApp' +
+        '</button>' +
+        '<button class="detail-action-btn reminder" onclick="fecharModal(\'modalDetalhes\');abrirLembrete(\'' + c.id + '\')">' +
+          '<i class="ri-alarm-line"></i>Lembrete' +
+        '</button>' +
+        '<button class="detail-action-btn edit" onclick="fecharModal(\'modalDetalhes\');abrirModalCliente(\'' + c.id + '\')">' +
+          '<i class="ri-edit-line"></i>Editar' +
+        '</button>' +
+        '<button class="detail-action-btn delete" onclick="fecharModal(\'modalDetalhes\');excluirCliente(\'' + c.id + '\')">' +
+          '<i class="ri-delete-bin-line"></i>Excluir' +
+        '</button>' +
+      '</div>';
+
+    abrirModal('modalDetalhes');
+  };
+
+  // ===== EXCLUIR CLIENTE =====
+  window.excluirCliente = function(id) {
+    const c = clientes.find(function(x) { return x.id === id; });
+    if (!c) return;
+
+    confirmarAcao(
+      'Excluir Cliente',
+      'Tem certeza que deseja excluir o cliente "' + c.nome + '"? Esta ação não pode ser desfeita.',
+      function() {
+        clientes = clientes.filter(function(x) { return x.id !== id; });
+        salvarDadosStorage();
+        renderizarClientes();
+        renderizarDashboard();
+        atualizarBadgeNotificacoes();
+        mostrarToast('Cliente excluído!', 'success');
+      }
+    );
+  };
+
+  // ===== WHATSAPP =====
+  window.abrirWhatsApp = function(id) {
+    const c = clientes.find(function(x) { return x.id === id; });
+    if (!c) return;
+
+    const telefone = formatarTelefone(c.telefone);
+    const mensagem = gerarMensagemLembrete(c);
+    const url = 'https://wa.me/55' + telefone + '?text=' + encodeURIComponent(mensagem);
+    window.open(url, '_blank');
+  };
+
+  function gerarMensagemLembrete(cliente) {
+    const diasVenc = calcularDiasAteVencimento(cliente.dataVencimento);
+    let saudacao = '';
+    const hora = new Date().getHours();
+    if (hora < 12) saudacao = 'Bom dia';
+    else if (hora < 18) saudacao = 'Boa tarde';
+    else saudacao = 'Boa noite';
+
+    let textoVenc = '';
+    if (diasVenc < 0) {
+      textoVenc = 'sua mensalidade está ' + Math.abs(diasVenc) + ' dias atrasada';
+    } else if (diasVenc === 0) {
+      textoVenc = 'sua mensalidade vence HOJE';
+    } else if (diasVenc === 1) {
+      textoVenc = 'sua mensalidade vence amanhã';
+    } else {
+      textoVenc = 'sua mensalidade vence em ' + diasVenc + ' dias';
+    }
+
+    return saudacao + ' ' + cliente.nome.split(' ')[0] + '! Tudo bem? 😊\n\n' +
+      'Passando para lembrar que ' + textoVenc + ', no valor de ' + formatarValor(cliente.valor) + '.\n\n' +
+      'Qualquer dúvida estou à disposição!\n\n' +
+      'Atenciosamente,\nEquipe';
+  }
+
+  // ===== LEMBRETE =====
+  window.abrirLembrete = function(id) {
+    const c = clientes.find(function(x) { return x.id === id; });
+    if (!c) return;
+    clienteLembreteAtual = c;
+    document.getElementById('lembreteTexto').value = gerarMensagemLembrete(c);
+    abrirModal('modalLembrete');
+  };
+
+  window.copiarLembrete = function() {
+    const texto = document.getElementById('lembreteTexto').value;
+    navigator.clipboard.writeText(texto).then(function() {
+      mostrarToast('Mensagem copiada!', 'success');
+    }).catch(function() {
+      mostrarToast('Erro ao copiar', 'error');
+    });
+    fecharModal('modalLembrete');
+  };
+
+  window.enviarWhatsAppLembrete = function() {
+    if (!clienteLembreteAtual) return;
+    const texto = document.getElementById('lembreteTexto').value;
+    const telefone = formatarTelefone(clienteLembreteAtual.telefone);
+    const url = 'https://wa.me/55' + telefone + '?text=' + encodeURIComponent(texto);
+    window.open(url, '_blank');
+    fecharModal('modalLembrete');
+  };
+
+  // ===== SERVIDORES =====
+  window.filtrarServidores = function() {
+    renderizarServidores();
+  };
+
+  function renderizarServidores() {
+    const container = document.getElementById('servidoresList');
+    const busca = document.getElementById('searchServidor').value.toLowerCase();
+
+    let lista = servidores.slice();
+    if (busca) {
+      lista = lista.filter(function(s) {
+        return s.nome.toLowerCase().includes(busca);
+      });
+    }
+
+    if (lista.length === 0) {
+      container.innerHTML = '<div class="empty-state"><i class="ri-team-line"></i><p>' + 
+        (servidores.length === 0 ? 'Nenhum servidor cadastrado. Clique no + para adicionar.' : 'Nenhum servidor encontrado.') + 
+        '</p></div>';
+      return;
+    }
+
+    container.innerHTML = lista.map(function(s) {
+      const clientesServidor = clientes.filter(function(c) { return c.servidorId === s.id; });
+      const totalVendas = clientesServidor.reduce(function(sum, c) { return sum + c.valor; }, 0);
+
+      return '<div class="server-item">' +
+        '<div class="server-avatar">' + getIniciais(s.nome) + '</div>' +
+        '<div class="server-info">' +
+          '<div class="server-name">' + s.nome + '</div>' +
+          '<div class="server-stats">' +
+            clientesServidor.length + ' clientes • <span class="valor">' + formatarValor(totalVendas) + '</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="client-actions">' +
+          '<button class="action-btn edit" onclick="abrirModalServidor(\'' + s.id + '\')" title="Editar"><i class="ri-edit-line"></i></button>' +
+          '<button class="action-btn delete" onclick="excluirServidor(\'' + s.id + '\')" title="Excluir"><i class="ri-delete-bin-line"></i></button>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  window.abrirModalServidor = function(id) {
+    document.getElementById('formServidor').reset();
+    document.getElementById('servidorId').value = '';
+
+    if (id) {
+      const s = servidores.find(function(x) { return x.id === id; });
+      if (s) {
+        document.getElementById('modalServidorTitle').textContent = 'Editar Servidor';
+        document.getElementById('servidorId').value = s.id;
+        document.getElementById('servidorNome').value = s.nome;
+        document.getElementById('servidorTelefone').value = s.telefone || '';
+      }
+    } else {
+      document.getElementById('modalServidorTitle').textContent = 'Novo Servidor';
+    }
+
+    abrirModal('modalServidor');
+  };
+
+  window.salvarServidor = function() {
+    const id = document.getElementById('servidorId').value;
+    const nome = document.getElementById('servidorNome').value.trim();
+    const telefone = document.getElementById('servidorTelefone').value.trim();
+
+    if (!nome) {
+      mostrarToast('Digite o nome do servidor', 'error');
+      return;
+    }
+
+    if (id) {
+      const idx = servidores.findIndex(function(s) { return s.id === id; });
+      if (idx !== -1) {
+        servidores[idx] = { ...servidores[idx], nome, telefone };
+        mostrarToast('Servidor atualizado!', 'success');
+      }
+    } else {
+      servidores.push({
+        id: 'srv_' + Date.now(),
+        nome,
+        telefone
+      });
+      mostrarToast('Servidor cadastrado!', 'success');
+    }
+
+    salvarDadosStorage();
+    atualizarSelectServidores();
+    fecharModal('modalServidor');
+    renderizarServidores();
+    renderizarDashboard();
+  };
+
+  window.excluirServidor = function(id) {
+    const s = servidores.find(function(x) { return x.id === id; });
+    if (!s) return;
+
+    confirmarAcao(
+      'Excluir Servidor',
+      'Tem certeza que deseja excluir "' + s.nome + '"? Os clientes continuarão cadastrados, mas sem vínculo com este servidor.',
+      function() {
+        servidores = servidores.filter(function(x) { return x.id !== id; });
+        clientes.forEach(function(c) {
+          if (c.servidorId === id) c.servidorId = '';
+        });
+        salvarDadosStorage();
+        atualizarSelectServidores();
+        renderizarServidores();
+        renderizarDashboard();
+        mostrarToast('Servidor excluído!', 'success');
+      }
+    );
+  };
+
+  function atualizarSelectServidores() {
+    const select = document.getElementById('clienteServidor');
+    const valorAtual = select.value;
+    select.innerHTML = '<option value="">Nenhum</option>' +
+      servidores.map(function(s) {
+        return '<option value="' + s.id + '">' + s.nome + '</option>';
+      }).join('');
+    select.value = valorAtual;
+  }
+
+  // ===== CONFIGURAÇÕES =====
+  function carregarConfiguracoesUI() {
+    document.getElementById('horaManha').value = configuracoes.horaManha;
+    document.getElementById('horaTarde').value = configuracoes.horaTarde;
+    document.getElementById('horaNoite').value = configuracoes.horaNoite;
+    document.getElementById('diasAntecedencia').value = configuracoes.diasAntecedencia;
+    document.getElementById('somNotificacao').value = configuracoes.somNotificacao;
+  }
+
+  window.salvarConfiguracoes = function() {
+    configuracoes.nomeApp = document.getElementById('cfgNomeApp').value || 'TOPGESTOR';
+    configuracoes.logo = document.getElementById('cfgLogo').value || '';
+    configuracoes.corTema = document.getElementById('cfgCorTema').value || '#0ea5e9';
+    configuracoes.horaManha = document.getElementById('horaManha').value;
+    configuracoes.horaTarde = document.getElementById('horaTarde').value;
+    configuracoes.horaNoite = document.getElementById('horaNoite').value;
+    configuracoes.diasAntecedencia = parseInt(document.getElementById('diasAntecedencia').value) || 2;
+    configuracoes.somNotificacao = document.getElementById('somNotificacao').value;
+    salvarDadosStorage();
+    aplicarConfiguracoesVisuais();
+    agendarVerificacoes();
+    mostrarToast('Configurações salvas!', 'success');
+  };
+
+  function atualizarInfoDados() {
+    document.getElementById('infoTotalClientes').textContent = clientes.length;
+    document.getElementById('infoTotalServidores').textContent = servidores.length;
+  }
+
+  // ===== NOTIFICAÇÕES =====
+  let timersNotificacao = [];
+
+  function agendarVerificacoes() {
+    timersNotificacao.forEach(function(t) { clearTimeout(t); });
+    timersNotificacao = [];
+
+    const horarios = [configuracoes.horaManha, configuracoes.horaTarde, configuracoes.horaNoite];
+    const agora = new Date();
+
+    horarios.forEach(function(horario) {
+      const [h, m] = horario.split(':').map(Number);
+      const proxima = new Date();
+      proxima.setHours(h, m, 0, 0);
+
+      if (proxima <= agora) {
+        proxima.setDate(proxima.getDate() + 1);
+      }
+
+      const delay = proxima - agora;
+      const timer = setTimeout(function() {
+        verificarVencimentosAgora();
+        agendarVerificacoes();
+      }, delay);
+      timersNotificacao.push(timer);
+    });
+  }
+
+  window.verificarVencimentosAgora = function() {
+    atualizarStatusClientes();
+    const clientesVencendo = clientes.filter(function(c) {
+      const dias = calcularDiasAteVencimento(c.dataVencimento);
+      return dias >= 0 && dias <= configuracoes.diasAntecedencia;
+    });
+
+    const clientesInadimplentes = clientes.filter(function(c) {
+      return c.status === 'inadimplente';
+    });
+
+    const total = clientesVencendo.length + clientesInadimplentes.length;
+
+    if (total > 0) {
+      let titulo = '';
+      let corpo = '';
+
+      if (clientesInadimplentes.length > 0 && clientesVencendo.length > 0) {
+        titulo = 'Aviso de Vencimentos';
+        corpo = clientesInadimplentes.length + ' inadimplente(s) • ' + clientesVencendo.length + ' vencendo em breve';
+      } else if (clientesInadimplentes.length > 0) {
+        titulo = 'Clientes Inadimplentes';
+        corpo = clientesInadimplentes.length + ' cliente(s) com pagamento atrasado';
+      } else {
+        titulo = 'Vencimentos Próximos';
+        corpo = clientesVencendo.length + ' cliente(s) vencendo em até ' + configuracoes.diasAntecedencia + ' dias';
+      }
+
+      criarNotificacao(titulo, corpo);
+      mostrarToast(titulo + ': ' + corpo, 'info');
+    } else {
+      mostrarToast('Nenhum vencimento pendente no momento', 'success');
+    }
+
+    atualizarBadgeNotificacoes();
+  };
+
+  function criarNotificacao(titulo, corpo) {
+    tocarSomNotificacao();
+    
+    if ('Notification' in window) {
+      if (Notification.permission === 'granted') {
+        new Notification(titulo, { body: corpo });
+      }
     }
   }
 
-  function getClientesFiltrados() {
-    let lista = [...state.clientes];
-    
-    if (state.busca) {
-      const b = state.busca.toLowerCase();
-      lista = lista.filter(c => 
-        c.nome.toLowerCase().includes(b) ||
-        c.whatsapp.includes(b) ||
-        c.usuario.toLowerCase().includes(b) ||
-        c.mac.toLowerCase().includes(b) ||
-        c.produto.toLowerCase().includes(b)
-      );
+  window.testarNotificacao = function() {
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission().then(function(p) {
+        if (p === 'granted') {
+          criarNotificacao(configuracoes.nomeApp, 'Notificação de teste funcionando!');
+          mostrarToast('Notificação de teste enviada!', 'success');
+        } else {
+          mostrarToast('Permita as notificações nas configurações', 'error');
+        }
+      });
+    } else if ('Notification' in window && Notification.permission === 'granted') {
+      criarNotificacao(configuracoes.nomeApp, 'Notificação de teste funcionando!');
+      mostrarToast('Notificação de teste enviada!', 'success');
+    } else {
+      tocarSomNotificacao();
+      mostrarToast('Som tocado! (ative notificações no navegador)', 'info');
     }
-    
-    if (state.filtroStatus !== 'todos') {
-      lista = lista.filter(c => calcularStatus(c) === state.filtroStatus);
+  };
+
+  function atualizarBadgeNotificacoes() {
+    const total = clientes.filter(function(c) {
+      return c.status === 'vencendo' || c.status === 'inadimplente';
+    }).length;
+
+    const badge = document.getElementById('notifBadge');
+    if (total > 0) {
+      badge.textContent = total > 99 ? '99+' : total;
+      badge.classList.remove('hidden');
+    } else {
+      badge.classList.add('hidden');
     }
-    
-    return lista.sort((a, b) => a.nome.localeCompare(b.nome));
   }
 
-  // ============================================
-  // EXPORTAÇÃO / IMPORTAÇÃO
-  // ============================================
-  function exportarDados() {
-    const dados = {
-      clientes: state.clientes,
-      config: state.config,
-      exportadoEm: new Date().toISOString()
+  // ===== BACKUP =====
+  window.exportarBackup = function() {
+    const backup = {
+      versao: '2.0.0',
+      dataExportacao: new Date().toISOString(),
+      clientes: clientes,
+      servidores: servidores,
+      configuracoes: configuracoes
     };
-    const blob = new Blob([JSON.stringify(dados, null, 2)], {type: 'application/json'});
+
+    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `backup_gestorclientes_${new Date().toISOString().slice(0,10)}.json`;
+    a.download = 'topgestor_backup_' + new Date().toISOString().split('T')[0] + '.json';
     a.click();
     URL.revokeObjectURL(url);
-    mostrarToast('Backup exportado!');
-  }
+    mostrarToast('Backup exportado com sucesso!', 'success');
+  };
 
-  function importarDados(arquivo) {
-    const reader = new FileReader();
-    reader.onload = (e) => {
+  window.importarBackup = function() {
+    document.getElementById('backupFile').click();
+  };
+
+  window.processarBackup = function(event) {
+    const arquivo = event.target.files[0];
+    if (!arquivo) return;
+
+    const leitor = new FileReader();
+    leitor.onload = function(e) {
       try {
-        const dados = JSON.parse(e.target.result);
-        if (dados.clientes && Array.isArray(dados.clientes)) {
-          if (confirm(`Importar ${dados.clientes.length} clientes? Isso substituirá os dados atuais.`)) {
-            state.clientes = dados.clientes;
-            if (dados.config) state.config = {...CONFIG_PADRAO, ...dados.config};
-            salvarClientes();
-            salvarConfig();
-            render();
-            mostrarToast('Dados importados com sucesso!');
+        const backup = JSON.parse(e.target.result);
+        
+        confirmarAcao(
+          'Restaurar Backup',
+          'Isso substituirá todos os dados atuais. Deseja continuar?',
+          function() {
+            if (backup.clientes) clientes = backup.clientes;
+            if (backup.servidores) servidores = backup.servidores;
+            if (backup.configuracoes) configuracoes = {...configuracoes, ...backup.configuracoes};
+            
+            salvarDadosStorage();
+            aplicarConfiguracoesVisuais();
+            carregarConfiguracoesUI();
+            atualizarSelectServidores();
+            atualizarStatusClientes();
+            renderizarDashboard();
+            renderizarClientes();
+            renderizarServidores();
+            atualizarBadgeNotificacoes();
+            mostrarToast('Backup restaurado com sucesso!', 'success');
           }
-        }
-      } catch(err) {
-        mostrarToast('Arquivo inválido!');
+        );
+      } catch (err) {
+        mostrarToast('Arquivo de backup inválido', 'error');
       }
     };
-    reader.readAsText(arquivo);
-  }
-
-  // ============================================
-  // RENDER - ICONES SVG
-  // ============================================
-  const icon = {
-    dashboard: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>`,
-    users: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
-    settings: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,
-    bell: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>`,
-    plus: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`,
-    search: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`,
-    edit: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`,
-    trash: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>`,
-    whatsapp: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>`,
-    logout: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>`,
-    save: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>`,
-    download: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`,
-    upload: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>`,
-    mac: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h.01M10 12h.01M14 12h.01M18 12h.01"/></svg>`,
-    calendar: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
-    money: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`
+    leitor.readAsText(arquivo);
+    event.target.value = '';
   };
 
-  // ============================================
-  // RENDER - LOGIN
-  // ============================================
-  function renderLogin() {
-    return `
-    <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(1200px 600px at 80% -10%, rgba(196,112,70,.15), transparent 60%), var(--bg)">
-      <div class="card" style="width:100%;max-width:400px;padding:40px">
-        <div style="text-align:center;margin-bottom:32px">
-          <div style="width:70px;height:70px;border-radius:18px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;color:var(--accent)">
-            ${icon.users.replace('width="20"','width="36"').replace('height="20"','height="36"')}
-          </div>
-          <h1 style="font-size:24px;font-weight:700;margin:0 0 6px" class="gradient-text">${state.config.nomeApp}</h1>
-          <p style="color:var(--muted);font-size:14px;margin:0">Entre para acessar o painel</p>
-        </div>
-        
-        <form id="loginForm" style="display:flex;flex-direction:column;gap:16px">
-          <div>
-            <label class="label">Usuário</label>
-            <input type="text" class="input" id="loginUser" placeholder="admin" required>
-          </div>
-          <div>
-            <label class="label">Senha</label>
-            <input type="password" class="input" id="loginPass" placeholder="admin123" required>
-          </div>
-          <button type="submit" class="btn-primary" style="width:100%;padding:14px;font-size:15px">Entrar</button>
-        </form>
-        
-        <p style="text-align:center;color:var(--muted);font-size:12px;margin-top:20px">
-          Padrão: admin / admin123
-        </p>
-      </div>
-    </div>`;
-  }
-
-  // ============================================
-  // RENDER - DASHBOARD
-  // ============================================
-  function renderDashboard() {
-    const stats = calcularEstatisticas();
-    
-    return `
-    <div class="animate-slide">
-      <div style="margin-bottom:24px">
-        <h2 style="font-size:22px;font-weight:700;margin:0 0 4px">Dashboard</h2>
-        <p style="color:var(--muted);font-size:14px;margin:0">Visão geral dos seus clientes</p>
-      </div>
-      
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px">
-        <div class="stat-card">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-            <span style="color:var(--muted);font-size:13px">Total de Clientes</span>
-            <span style="color:var(--accent2)">${icon.users}</span>
-          </div>
-          <div style="font-size:32px;font-weight:700">${stats.total}</div>
-        </div>
-        <div class="stat-card">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-            <span style="color:var(--muted);font-size:13px">Em Dia</span>
-            <span style="color:#34d399">●</span>
-          </div>
-          <div style="font-size:32px;font-weight:700;color:#34d399">${stats.ativos}</div>
-        </div>
-        <div class="stat-card">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-            <span style="color:var(--muted);font-size:13px">Próximo Venc.</span>
-            <span style="color:#fb923c">●</span>
-          </div>
-          <div style="font-size:32px;font-weight:700;color:#fb923c">${stats.pendentes}</div>
-        </div>
-        <div class="stat-card">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-            <span style="color:var(--muted);font-size:13px">Atrasados</span>
-            <span style="color:#f87171">●</span>
-          </div>
-          <div style="font-size:32px;font-weight:700;color:#f87171">${stats.atrasados}</div>
-        </div>
-        <div class="stat-card" style="grid-column:span 1">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-            <span style="color:var(--muted);font-size:13px">Receita Total (mensal)</span>
-            <span style="color:var(--accent)">${icon.money.replace('width="14"','width="20"').replace('height="14"','height="20"')}</span>
-          </div>
-          <div style="font-size:32px;font-weight:700;color:var(--accent)">R$ ${stats.receitaTotal.toFixed(2).replace('.',',')}</div>
-        </div>
-      </div>
-      
-      <div class="card" style="padding:20px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-          <h3 style="font-size:16px;font-weight:600;margin:0">Ações Rápidas</h3>
-        </div>
-        <div style="display:flex;flex-wrap:wrap;gap:12px">
-          <button class="btn-primary" onclick="app.novoCliente()" style="display:flex;align-items:center;gap:8px">
-            ${icon.plus} Novo Cliente
-          </button>
-          <button class="btn-secondary" onclick="app.testarNotificacao()" style="display:flex;align-items:center;gap:8px">
-            ${icon.bell} Testar Notificação
-          </button>
-          <button class="btn-secondary" onclick="app.irParaAba('clientes')" style="display:flex;align-items:center;gap:8px">
-            ${icon.users} Ver Todos Clientes
-          </button>
-        </div>
-      </div>
-      
-      <div style="margin-top:24px">
-        <h3 style="font-size:16px;font-weight:600;margin:0 0 16px">Próximos Vencimentos</h3>
-        <div class="card" style="overflow:hidden">
-          <div style="overflow-x:auto">
-            <table style="width:100%;border-collapse:collapse">
-              <thead>
-                <tr style="border-bottom:1px solid var(--border)">
-                  <th style="text-align:left;padding:14px 16px;font-size:12px;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:.05em">Cliente</th>
-                  <th style="text-align:left;padding:14px 16px;font-size:12px;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:.05em">Vencimento</th>
-                  <th style="text-align:left;padding:14px 16px;font-size:12px;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:.05em">Plano</th>
-                  <th style="text-align:left;padding:14px 16px;font-size:12px;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:.05em">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${getClientesFiltrados().sort((a,b) => new Date(a.data_vencimento) - new Date(b.data_vencimento)).slice(0,6).map(c => {
-                  const status = calcularStatus(c);
-                  return `
-                  <tr style="border-bottom:1px solid var(--border);cursor:pointer" onclick="app.verCliente(${c.id})">
-                    <td style="padding:14px 16px">
-                      <div style="font-weight:500">${c.nome}</div>
-                      <div style="font-size:12px;color:var(--muted)">${c.produto}</div>
-                    </td>
-                    <td style="padding:14px 16px;font-size:14px">${formatarData(c.data_vencimento)}</td>
-                    <td style="padding:14px 16px;font-size:14px">${c.plano}</td>
-                    <td style="padding:14px 16px"><span class="status-pill status-${status}">${getStatusTexto(status)}</span></td>
-                  </tr>`;
-                }).join('')}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>`;
-  }
-
-  // ============================================
-  // RENDER - CLIENTES
-  // ============================================
-  function renderClientes() {
-    const clientes = getClientesFiltrados();
-    
-    return `
-    <div class="animate-slide">
-      <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;margin-bottom:24px">
-        <div>
-          <h2 style="font-size:22px;font-weight:700;margin:0 0 4px">Clientes</h2>
-          <p style="color:var(--muted);font-size:14px;margin:0">${clientes.length} cliente(s) encontrado(s)</p>
-        </div>
-        <button class="btn-primary" onclick="app.novoCliente()" style="display:flex;align-items:center;gap:8px">
-          ${icon.plus} Novo Cliente
-        </button>
-      </div>
-      
-      <div class="card" style="padding:16px;margin-bottom:20px">
-        <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center">
-          <div style="flex:1;min-width:200px;position:relative">
-            <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted)">${icon.search}</span>
-            <input type="text" class="input" placeholder="Buscar nome, WhatsApp, MAC, usuário..." 
-              value="${state.busca}" oninput="app.setBusca(this.value)"
-              style="padding-left:40px">
-          </div>
-          <select class="input" onchange="app.setFiltro(this.value)" style="width:auto;min-width:160px">
-            <option value="todos" ${state.filtroStatus==='todos'?'selected':''}>Todos Status</option>
-            <option value="ativo" ${state.filtroStatus==='ativo'?'selected':''}>Em Dia</option>
-            <option value="pendente" ${state.filtroStatus==='pendente'?'selected':''}>Próximo Venc.</option>
-            <option value="atrasado" ${state.filtroStatus==='atrasado'?'selected':''}>Atrasados</option>
-          </select>
-        </div>
-      </div>
-      
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px">
-        ${clientes.map(c => {
-          const status = calcularStatus(c);
-          return `
-          <div class="card cliente-card" style="padding:20px" onclick="app.verCliente(${c.id})">
-            <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px">
-              <div>
-                <h3 style="font-size:16px;font-weight:600;margin:0 0 4px">${c.nome}</h3>
-                <span class="status-pill status-${status}">${getStatusTexto(status)}</span>
-              </div>
-              <div style="width:44px;height:44px;border-radius:12px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;color:var(--accent);font-weight:700;font-size:16px">
-                ${c.nome.charAt(0).toUpperCase()}
-              </div>
-            </div>
-            
-            <div style="display:flex;flex-direction:column;gap:8px;font-size:13px">
-              <div style="display:flex;align-items:center;gap:8px;color:var(--muted)">
-                ${icon.whatsapp} <span style="color:var(--text)">${formatarWhatsapp(c.whatsapp)}</span>
-              </div>
-              ${c.mac ? `<div style="display:flex;align-items:center;gap:8px;color:var(--muted)">${icon.mac} <span style="color:var(--text);font-family:monospace;font-size:12px">${c.mac}</span></div>` : ''}
-              <div style="display:flex;align-items:center;gap:8px;color:var(--muted)">
-                ${icon.calendar} <span style="color:var(--text)">${formatarData(c.data_vencimento)}</span>
-              </div>
-              <div style="display:flex;align-items:center;gap:8px;color:var(--muted)">
-                ${icon.money} <span style="color:var(--text)">${c.plano}</span>
-              </div>
-            </div>
-            
-            <hr>
-            
-            <div style="display:flex;gap:8px" onclick="event.stopPropagation()">
-              <button class="btn-ghost" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px" onclick="app.abrirWhatsapp('${c.whatsapp}')">
-                ${icon.whatsapp} WhatsApp
-              </button>
-              <button class="btn-ghost" style="color:var(--accent2)" onclick="app.editarCliente(${c.id})">${icon.edit}</button>
-              <button class="btn-ghost" style="color:#f87171" onclick="app.excluirCliente(${c.id})">${icon.trash}</button>
-            </div>
-          </div>`;
-        }).join('')}
-      </div>
-      
-      ${clientes.length === 0 ? `
-        <div class="card" style="padding:60px;text-align:center">
-          <div style="color:var(--muted);font-size:14px">Nenhum cliente encontrado</div>
-        </div>` : ''}
-    </div>`;
-  }
-
-  // ============================================
-  // RENDER - CONFIGURAÇÕES
-  // ============================================
-  function renderConfiguracoes() {
-    return `
-    <div class="animate-slide">
-      <div style="margin-bottom:24px">
-        <h2 style="font-size:22px;font-weight:700;margin:0 0 4px">Configurações</h2>
-        <p style="color:var(--muted);font-size:14px;margin:0">Personalize seu aplicativo</p>
-      </div>
-      
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(350px,1fr));gap:20px">
-        <div class="card" style="padding:24px">
-          <h3 style="font-size:16px;font-weight:600;margin:0 0 20px;display:flex;align-items:center;gap:10px">
-            <span style="color:var(--accent)">${icon.settings}</span> Aparência
-          </h3>
-          
-          <div style="display:flex;flex-direction:column;gap:16px">
-            <div>
-              <label class="label">Nome do Aplicativo</label>
-              <input type="text" class="input" id="cfgNome" value="${state.config.nomeApp}">
-            </div>
-            <div>
-              <label class="label">URL da Logo (opcional)</label>
-              <input type="text" class="input" id="cfgLogo" value="${state.config.logo}" placeholder="https://...">
-            </div>
-            <div>
-              <label class="label">Cor do Tema</label>
-              <div style="display:flex;gap:8px;align-items:center">
-                <input type="color" id="cfgCor" value="${state.config.corTema}" style="width:50px;height:40px;border-radius:8px;border:1px solid var(--border);background:var(--bg);cursor:pointer">
-                <span style="color:var(--muted);font-size:13px">${state.config.corTema}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div class="card" style="padding:24px">
-          <h3 style="font-size:16px;font-weight:600;margin:0 0 20px;display:flex;align-items:center;gap:10px">
-            <span style="color:var(--accent)">${icon.bell}</span> Notificações
-          </h3>
-          
-          <div style="display:flex;flex-direction:column;gap:16px">
-            <div class="card" style="padding:16px;background:var(--bg)">
-              <div style="display:flex;align-items:center;justify-content:space-between">
-                <div>
-                  <div style="font-weight:500;font-size:14px">Permitir Notificações</div>
-                  <div style="font-size:12px;color:var(--muted)">Status: ${state.config.notificacoesAtivadas ? '<span style="color:#34d399">Ativado</span>' : '<span style="color:#f87171">Desativado</span>'}</div>
-                </div>
-                <button class="btn-secondary" onclick="app.pedirPermissaoNotificacoes()">Ativar</button>
-              </div>
-            </div>
-            
-            <button class="btn-secondary" onclick="app.testarNotificacao()" style="display:flex;align-items:center;justify-content:center;gap:8px">
-              ${icon.bell} Testar Notificação
-            </button>
-            
-            <div>
-              <label class="label">Dias de antecedência para aviso</label>
-              <input type="number" class="input" id="cfgDias" value="${state.config.diasAvisoVencimento}" min="1" max="30">
-            </div>
-          </div>
-        </div>
-        
-        <div class="card" style="padding:24px;grid-column:span 1">
-          <h3 style="font-size:16px;font-weight:600;margin:0 0 20px;display:flex;align-items:center;gap:10px">
-            <span style="color:var(--accent)">${icon.save}</span> Backup de Dados
-          </h3>
-          
-          <div style="display:flex;flex-direction:column;gap:12px">
-            <button class="btn-secondary" onclick="app.exportarDados()" style="display:flex;align-items:center;justify-content:center;gap:8px">
-              ${icon.download} Exportar Backup (JSON)
-            </button>
-            
-            <label class="btn-secondary" style="display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer">
-              ${icon.upload} Importar Backup
-              <input type="file" accept=".json" style="display:none" onchange="app.importarDados(this.files[0])">
-            </label>
-          </div>
-        </div>
-      </div>
-      
-      <div style="margin-top:24px">
-        <button class="btn-primary" onclick="app.salvarConfig()" style="display:flex;align-items:center;gap:8px">
-          ${icon.save} Salvar Configurações
-        </button>
-      </div>
-    </div>`;
-  }
-
-  // ============================================
-  // RENDER - MODAL CLIENTE
-  // ============================================
-  function renderModalCliente() {
-    if (!state.modalAberto) return '';
-    const c = state.modalAberto === 'novo' ? {
-      id:null,nome:'',whatsapp:'',email:'',data_vencimento:'',usuario:'',senha:'',
-      produto:'',plano:'',app:'',mac:'',key:'',observacao:'',status:'ativo'
-    } : state.clientes.find(x => x.id === state.modalAberto) || {};
-    
-    const isEdit = !!c.id;
-    
-    return `
-    <div class="modal-bg" onclick="if(event.target===this)app.fecharModal()">
-      <div class="modal-content animate-slide" style="padding:28px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">
-          <h3 style="font-size:18px;font-weight:700;margin:0">${isEdit ? 'Editar Cliente' : 'Novo Cliente'}</h3>
-          <button class="btn-ghost" onclick="app.fecharModal()" style="font-size:20px;padding:4px 10px">✕</button>
-        </div>
-        
-        <form id="formCliente" style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
-          <div style="grid-column:span 2">
-            <label class="label">Nome Completo *</label>
-            <input type="text" class="input" name="nome" value="${c.nome}" required>
-          </div>
-          <div>
-            <label class="label">WhatsApp *</label>
-            <input type="text" class="input" name="whatsapp" value="${c.whatsapp}" required placeholder="5573999999999">
-          </div>
-          <div>
-            <label class="label">E-mail</label>
-            <input type="email" class="input" name="email" value="${c.email}">
-          </div>
-          <div>
-            <label class="label">Data de Vencimento *</label>
-            <input type="date" class="input" name="data_vencimento" value="${c.data_vencimento}" required>
-          </div>
-          <div>
-            <label class="label">Plano / Valor</label>
-            <input type="text" class="input" name="plano" value="${c.plano}" placeholder="30 Reais">
-          </div>
-          <div>
-            <label class="label">Produto</label>
-            <input type="text" class="input" name="produto" value="${c.produto}" placeholder="Master New">
-          </div>
-          <div>
-            <label class="label">Aplicativo</label>
-            <input type="text" class="input" name="app" value="${c.app}" placeholder="Ibo StechPlay">
-          </div>
-          <div>
-            <label class="label">Usuário</label>
-            <input type="text" class="input" name="usuario" value="${c.usuario}">
-          </div>
-          <div>
-            <label class="label">Senha</label>
-            <input type="text" class="input" name="senha" value="${c.senha}">
-          </div>
-          <div>
-            <label class="label">MAC Address</label>
-            <input type="text" class="input" name="mac" value="${c.mac}" placeholder="AA:BB:CC:DD:EE:FF" style="font-family:monospace;text-transform:uppercase">
-          </div>
-          <div>
-            <label class="label">Key / Chave</label>
-            <input type="text" class="input" name="key" value="${c.key}">
-          </div>
-          <div style="grid-column:span 2">
-            <label class="label">Observação</label>
-            <textarea class="input" name="observacao" rows="2" style="resize:vertical">${c.observacao}</textarea>
-          </div>
-          
-          <div style="grid-column:span 2;display:flex;gap:12px;justify-content:flex-end;margin-top:10px">
-            <button type="button" class="btn-secondary" onclick="app.fecharModal()">Cancelar</button>
-            <button type="submit" class="btn-primary">${isEdit ? 'Salvar Alterações' : 'Cadastrar Cliente'}</button>
-          </div>
-        </form>
-      </div>
-    </div>`;
-  }
-
-  // ============================================
-  // RENDER - VER DETALHES CLIENTE
-  // ============================================
-  function renderVerCliente() {
-    if (!state.clienteSelecionado) return '';
-    const c = state.clientes.find(x => x.id === state.clienteSelecionado);
-    if (!c) return '';
-    const status = calcularStatus(c);
-    
-    return `
-    <div class="modal-bg" onclick="if(event.target===this)app.fecharVerCliente()">
-      <div class="modal-content animate-slide" style="padding:28px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">
-          <div style="display:flex;align-items:center;gap:16px">
-            <div style="width:56px;height:56px;border-radius:16px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;color:var(--accent);font-weight:700;font-size:24px">
-              ${c.nome.charAt(0).toUpperCase()}
-            </div>
-            <div>
-              <h3 style="font-size:18px;font-weight:700;margin:0 0 4px">${c.nome}</h3>
-              <span class="status-pill status-${status}">${getStatusTexto(status)}</span>
-            </div>
-          </div>
-          <button class="btn-ghost" onclick="app.fecharVerCliente()" style="font-size:20px;padding:4px 10px">✕</button>
-        </div>
-        
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-          <div class="card" style="padding:16px;background:var(--bg)">
-            <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">WhatsApp</div>
-            <div style="font-weight:500">${formatarWhatsapp(c.whatsapp)}</div>
-          </div>
-          <div class="card" style="padding:16px;background:var(--bg)">
-            <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Vencimento</div>
-            <div style="font-weight:500">${formatarData(c.data_vencimento)}</div>
-          </div>
-          <div class="card" style="padding:16px;background:var(--bg)">
-            <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Produto</div>
-            <div style="font-weight:500">${c.produto || '-'}</div>
-          </div>
-          <div class="card" style="padding:16px;background:var(--bg)">
-            <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Plano</div>
-            <div style="font-weight:500">${c.plano || '-'}</div>
-          </div>
-          <div class="card" style="padding:16px;background:var(--bg)">
-            <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Usuário</div>
-            <div style="font-weight:500">${c.usuario || '-'}</div>
-          </div>
-          <div class="card" style="padding:16px;background:var(--bg)">
-            <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Senha</div>
-            <div style="font-weight:500">${c.senha || '-'}</div>
-          </div>
-          <div class="card" style="padding:16px;background:var(--bg)">
-            <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Aplicativo</div>
-            <div style="font-weight:500">${c.app || '-'}</div>
-          </div>
-          <div class="card" style="padding:16px;background:var(--bg)">
-            <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">MAC Address</div>
-            <div style="font-weight:500;font-family:monospace;font-size:13px">${c.mac || '-'}</div>
-          </div>
-          <div class="card" style="padding:16px;background:var(--bg)">
-            <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Key</div>
-            <div style="font-weight:500">${c.key || '-'}</div>
-          </div>
-          <div class="card" style="padding:16px;background:var(--bg)">
-            <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">E-mail</div>
-            <div style="font-weight:500">${c.email || '-'}</div>
-          </div>
-          ${c.observacao ? `<div class="card" style="padding:16px;background:var(--bg);grid-column:span 2">
-            <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Observação</div>
-            <div style="font-weight:500">${c.observacao}</div>
-          </div>` : ''}
-        </div>
-        
-        <hr>
-        
-        <div style="display:flex;flex-wrap:wrap;gap:10px">
-          <button class="btn-primary" style="display:flex;align-items:center;gap:8px;flex:1" onclick="app.abrirWhatsapp('${c.whatsapp}')">
-            ${icon.whatsapp} Abrir WhatsApp
-          </button>
-          <button class="btn-secondary" style="display:flex;align-items:center;gap:8px" onclick="app.editarCliente(${c.id});app.fecharVerCliente()">
-            ${icon.edit} Editar
-          </button>
-          <button class="btn-secondary" style="color:#f87171;border-color:rgba(248,113,113,.3)" onclick="app.excluirCliente(${c.id});app.fecharVerCliente()">
-            ${icon.trash} Excluir
-          </button>
-        </div>
-      </div>
-    </div>`;
-  }
-
-  // ============================================
-  // RENDER - PRINCIPAL
-  // ============================================
-  function renderPrincipal() {
-    let conteudo = '';
-    if (state.aba === 'dashboard') conteudo = renderDashboard();
-    else if (state.aba === 'clientes') conteudo = renderClientes();
-    else if (state.aba === 'configuracoes') conteudo = renderConfiguracoes();
-    
-    return `
-    <div style="display:flex;min-height:100vh">
-      <div style="width:240px;background:var(--card);border-right:1px solid var(--border);padding:20px 0;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto" class="scrollbar-thin">
-        <div style="padding:0 16px 24px;border-bottom:1px solid var(--border);margin-bottom:16px">
-          <div style="display:flex;align-items:center;gap:12px">
-            ${state.config.logo ? 
-              `<img src="${state.config.logo}" style="width:40px;height:40px;border-radius:10px;object-fit:cover" onerror="this.style.display='none'">` :
-              `<div style="width:40px;height:40px;border-radius:10px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;color:var(--accent);font-weight:700">${state.config.nomeApp.charAt(0)}</div>`
-            }
-            <div>
-              <div style="font-weight:700;font-size:14px;line-height:1.2">${state.config.nomeApp}</div>
-              <div style="font-size:11px;color:var(--muted)">Painel Admin</div>
-            </div>
-          </div>
-        </div>
-        
-        <nav style="padding:0 8px;flex:1">
-          <div class="nav-item ${state.aba==='dashboard'?'active':''}" onclick="app.irParaAba('dashboard')">
-            ${icon.dashboard} Dashboard
-          </div>
-          <div class="nav-item ${state.aba==='clientes'?'active':''}" onclick="app.irParaAba('clientes')">
-            ${icon.users} Clientes
-            <span style="margin-left:auto;background:var(--accent-soft);color:var(--accent);font-size:11px;padding:2px 8px;border-radius:10px">${state.clientes.length}</span>
-          </div>
-          <div class="nav-item ${state.aba==='configuracoes'?'active':''}" onclick="app.irParaAba('configuracoes')">
-            ${icon.settings} Configurações
-          </div>
-        </nav>
-        
-        <div style="padding:8px;border-top:1px solid var(--border);margin-top:16px">
-          <div class="nav-item" onclick="app.logout()" style="color:#f87171">
-            ${icon.logout} Sair
-          </div>
-        </div>
-      </div>
-      
-      <div style="flex:1;padding:28px;overflow-y:auto;min-width:0" class="scrollbar-thin">
-        ${conteudo}
-      </div>
-    </div>
-    
-    ${renderModalCliente()}
-    ${renderVerCliente()}`;
-  }
-
-  // ============================================
-  // RENDER PRINCIPAL
-  // ============================================
-  function render() {
-    const app = document.getElementById('app');
-    if (state.tela === 'login') {
-      app.innerHTML = renderLogin();
-      setupLoginForm();
-    } else {
-      app.innerHTML = renderPrincipal();
-      setupFormCliente();
-    }
-    document.title = state.config.nomeApp;
-  }
-
-  // ============================================
-  // EVENT HANDLERS
-  // ============================================
-  function setupLoginForm() {
-    const form = document.getElementById('loginForm');
-    if (form) {
-      form.onsubmit = (e) => {
-        e.preventDefault();
-        const user = document.getElementById('loginUser').value;
-        const pass = document.getElementById('loginPass').value;
-        if (user === 'admin' && pass === 'admin123') {
-          state.usuarioLogado = true;
-          state.tela = 'principal';
-          localStorage.setItem('gc_logado', 'true');
-          pedirPermissaoNotificacoes();
-          render();
-        } else {
-          mostrarToast('Usuário ou senha incorretos!');
-        }
-      };
-    }
-  }
-
-  function setupFormCliente() {
-    const form = document.getElementById('formCliente');
-    if (form) {
-      form.onsubmit = (e) => {
-        e.preventDefault();
-        const formData = new FormData(form);
-        const cliente = {};
-        formData.forEach((v, k) => cliente[k] = v);
-        
-        if (state.modalAberto !== 'novo') {
-          cliente.id = state.modalAberto;
-        }
-        
-        salvarCliente(cliente);
-        state.modalAberto = null;
-      };
-    }
-  }
-
-  // ============================================
-  // API PÚBLICA
-  // ============================================
-  window.app = {
-    irParaAba: (aba) => { state.aba = aba; render(); },
-    setBusca: (v) => { state.busca = v; render(); },
-    setFiltro: (v) => { state.filtroStatus = v; render(); },
-    novoCliente: () => { state.modalAberto = 'novo'; render(); },
-    editarCliente: (id) => { state.modalAberto = id; render(); },
-    excluirCliente: (id) => excluirCliente(id),
-    verCliente: (id) => { state.clienteSelecionado = id; render(); },
-    fecharVerCliente: () => { state.clienteSelecionado = null; render(); },
-    fecharModal: () => { state.modalAberto = null; render(); },
-    abrirWhatsapp: (num) => abrirWhatsapp(num),
-    testarNotificacao: () => testarNotificacao(),
-    pedirPermissaoNotificacoes: () => pedirPermissaoNotificacoes().then(render),
-    salvarConfig: () => {
-      const nome = document.getElementById('cfgNome')?.value || state.config.nomeApp;
-      const logo = document.getElementById('cfgLogo')?.value || '';
-      const cor = document.getElementById('cfgCor')?.value || state.config.corTema;
-      const dias = parseInt(document.getElementById('cfgDias')?.value) || 3;
-      
-      state.config.nomeApp = nome;
-      state.config.logo = logo;
-      state.config.corTema = cor;
-      state.config.diasAvisoVencimento = dias;
-      salvarConfig();
-      
-      document.documentElement.style.setProperty('--accent', cor);
-      document.documentElement.style.setProperty('--accent-soft', cor + '22');
-      
-      render();
-      mostrarToast('Configurações salvas!');
-    },
-    exportarDados: () => exportarDados(),
-    importarDados: (arq) => importarDados(arq),
-    logout: () => {
-      localStorage.removeItem('gc_logado');
-      state.usuarioLogado = false;
-      state.tela = 'login';
-      render();
-    }
+  // ===== LIMPAR DADOS =====
+  window.confirmarLimparDados = function() {
+    confirmarAcao(
+      'Limpar Todos os Dados',
+      'Tem CERTEZA ABSOLUTA? Todos os clientes, servidores e configurações serão APAGADOS. Esta ação não pode ser desfeita!',
+      function() {
+        clientes = [];
+        servidores = [];
+        salvarDadosStorage();
+        atualizarSelectServidores();
+        renderizarDashboard();
+        renderizarClientes();
+        renderizarServidores();
+        atualizarBadgeNotificacoes();
+        atualizarInfoDados();
+        mostrarToast('Todos os dados foram limpos!', 'success');
+      }
+    );
   };
 
-  // ============================================
-  // INICIALIZAÇÃO
-  // ============================================
-  carregarDados();
-  render();
-  
-  // Verificar vencimentos periodicamente
-  setInterval(() => {
-    if (!state.usuarioLogado) return;
-    state.clientes.forEach(c => {
-      const status = calcularStatus(c);
-      if (status === 'pendente' || status === 'atrasado') {
-        const hoje = new Date().toDateString();
-        const chave = `notif_${c.id}_${hoje}_${status}`;
-        if (!localStorage.getItem(chave)) {
-          localStorage.setItem(chave, '1');
-          if (state.config.notificacoesAtivadas) {
-            enviarNotificacao(
-              status === 'atrasado' ? 'PAGAMENTO ATRASADO!' : 'Vencimento Próximo',
-              `${c.nome} - ${status === 'atrasado' ? 'Cliente com pagamento atrasado!' : 'Vence em breve!'}\nPlano: ${c.plano}`
-            );
-          }
-        }
+  // ===== MODAL UTILS =====
+  function abrirModal(id) {
+    document.getElementById(id).classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  window.fecharModal = function(id) {
+    document.getElementById(id).classList.remove('active');
+    document.body.style.overflow = '';
+  };
+
+  document.querySelectorAll('.modal-overlay').forEach(function(overlay) {
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) {
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
       }
     });
-  }, 60000);
+  });
 
+  // ===== CONFIRMAR AÇÃO =====
+  window.confirmarAcao = function(titulo, mensagem, callback) {
+    document.getElementById('confirmTitle').textContent = titulo;
+    document.getElementById('confirmMessage').textContent = mensagem;
+    confirmCallback = callback;
+    abrirModal('modalConfirmar');
+  };
+
+  window.executarConfirmacao = function() {
+    fecharModal('modalConfirmar');
+    if (confirmCallback) {
+      confirmCallback();
+      confirmCallback = null;
+    }
+  };
+
+  // ===== TOAST =====
+  function mostrarToast(mensagem, tipo) {
+    const toast = document.getElementById('toast');
+    const icon = document.getElementById('toastIcon');
+    const msg = document.getElementById('toastMessage');
+
+    toast.className = 'toast ' + (tipo || 'info');
+    msg.textContent = mensagem;
+
+    if (tipo === 'success') icon.className = 'ri-checkbox-circle-fill';
+    else if (tipo === 'error') icon.className = 'ri-error-warning-fill';
+    else icon.className = 'ri-information-fill';
+
+    toast.classList.add('show');
+    setTimeout(function() {
+      toast.classList.remove('show');
+    }, 3000);
+  }
+
+  // ===== INICIAR =====
+  carregarDados();
 })();
 </script>
 

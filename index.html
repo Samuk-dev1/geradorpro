@@ -3,32 +3,46 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#0ea5e9">
-<title>TOPGESTOR - Sistema de Gestão</title>
+<title>TOPGESTOR - Gestor de Cobranças IPTV</title>
+
+<!-- FONTE GOOGLE -->
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- ÍCONES REMIX -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">
+
+<!-- ============================================================
+     PLUGINS CAPACITOR - IMPORTANTES!
+     Estes arquivos são gerados automaticamente pelo Capacitor
+     quando você executa `npx cap sync android`
+     Eles NÃO existem no arquivo HTML puro, só no projeto Capacitor
+     ============================================================ -->
+<script type="module" src="https://cdn.jsdelivr.net/npm/@capacitor/core@5/dist/core.min.js"></script>
+
 <style>
+  /* ============================================================
+     VARIÁVEIS DE TEMA - TEMA CLARO MODERNO
+     ============================================================ */
   :root {
-    --bg: #1a1d2e;
-    --bg-dark: #141625;
-    --card: #22263d;
-    --card-hover: #2a2f4a;
-    --text: #e8ecf4;
-    --muted: #8b9ab8;
-    --accent: #0ea5e9;
-    --accent-soft: rgba(14, 165, 233, 0.15);
-    --accent2: #22c55e;
-    --accent2-soft: rgba(34, 197, 94, 0.15);
+    --bg: #f5f7fb;
+    --bg-dark: #ffffff;
+    --card: #ffffff;
+    --card-hover: #f0f4ff;
+    --text: #1a202c;
+    --muted: #64748b;
+    --accent: #2563eb;
+    --accent-soft: rgba(37, 99, 235, 0.1);
+    --accent2: #10b981;
+    --accent2-soft: rgba(16, 185, 129, 0.1);
     --danger: #ef4444;
-    --danger-soft: rgba(239, 68, 68, 0.15);
+    --danger-soft: rgba(239, 68, 68, 0.1);
     --warning: #f59e0b;
-    --warning-soft: rgba(245, 158, 11, 0.15);
+    --warning-soft: rgba(245, 158, 11, 0.1);
     --purple: #8b5cf6;
-    --purple-soft: rgba(139, 92, 246, 0.15);
-    --border: rgba(139, 154, 184, 0.12);
-    --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    --purple-soft: rgba(139, 92, 246, 0.1);
+    --border: rgba(0, 0, 0, 0.08);
+    --shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.1);
   }
 
   * {
@@ -44,12 +58,15 @@
     color: var(--text);
     min-height: 100vh;
     overflow-x: hidden;
+    padding-bottom: 80px;
   }
 
-  /* ===== HEADER ===== */
+  /* ============================================================
+     HEADER COM LOGO
+     ============================================================ */
   .header {
     background: var(--bg-dark);
-    padding: 12px 16px;
+    padding: 14px 16px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -57,6 +74,7 @@
     top: 0;
     z-index: 100;
     border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow);
   }
 
   .header-left {
@@ -66,10 +84,10 @@
   }
 
   .logo {
-    width: 38px;
-    height: 38px;
-    background: linear-gradient(135deg, var(--accent), #0284c7);
-    border-radius: 10px;
+    width: 42px;
+    height: 42px;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -77,6 +95,8 @@
     font-size: 18px;
     color: white;
     overflow: hidden;
+    cursor: pointer;
+    object-fit: cover;
   }
 
   .logo img {
@@ -86,9 +106,15 @@
   }
 
   .app-name {
-    font-size: 16px;
+    font-size: 17px;
     font-weight: 700;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.3px;
+  }
+
+  .app-subtitle {
+    font-size: 10px;
+    color: var(--muted);
+    font-weight: 500;
   }
 
   .header-actions {
@@ -98,10 +124,10 @@
   }
 
   .icon-btn {
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
-    background: var(--card);
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: var(--bg);
     border: 1px solid var(--border);
     display: flex;
     align-items: center;
@@ -109,18 +135,12 @@
     cursor: pointer;
     transition: all 0.2s;
     color: var(--text);
-    font-size: 18px;
+    font-size: 20px;
   }
 
   .icon-btn:hover, .icon-btn:active {
     background: var(--card-hover);
     transform: scale(0.95);
-  }
-
-  .icon-btn.whatsapp {
-    background: #25d366;
-    border-color: #25d366;
-    color: white;
   }
 
   .icon-btn.notif {
@@ -148,25 +168,28 @@
     padding: 0 4px;
   }
 
-  /* ===== NAV TABS ===== */
+  /* ============================================================
+     NAVEGAÇÃO POR ABAS
+     ============================================================ */
   .nav-tabs {
     display: flex;
     background: var(--bg-dark);
-    padding: 4px;
-    margin: 12px;
-    border-radius: 12px;
+    padding: 6px;
+    margin: 14px;
+    border-radius: 14px;
     gap: 4px;
     border: 1px solid var(--border);
+    box-shadow: var(--shadow);
   }
 
   .nav-tab {
     flex: 1;
-    padding: 10px 8px;
+    padding: 12px 8px;
     text-align: center;
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
     font-size: 12px;
-    font-weight: 500;
+    font-weight: 600;
     color: var(--muted);
     transition: all 0.2s;
     display: flex;
@@ -176,22 +199,25 @@
   }
 
   .nav-tab i {
-    font-size: 18px;
+    font-size: 20px;
   }
 
   .nav-tab.active {
     background: var(--accent);
     color: white;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
   }
 
   .nav-tab:not(.active):hover {
-    background: var(--card);
+    background: var(--bg);
     color: var(--text);
   }
 
-  /* ===== CONTENT ===== */
+  /* ============================================================
+     CONTEÚDO PRINCIPAL
+     ============================================================ */
   .content {
-    padding: 0 12px 100px;
+    padding: 0 14px 100px;
   }
 
   .page {
@@ -208,30 +234,37 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
-  /* ===== SECTION TITLE ===== */
   .section-title {
-    font-size: 14px;
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 700;
     color: var(--muted);
-    margin: 16px 4px 10px;
+    margin: 18px 4px 12px;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.8px;
   }
 
-  /* ===== STATS CARDS ===== */
+  /* ============================================================
+     CARDS DE ESTATÍSTICAS (DASHBOARD)
+     ============================================================ */
   .stats-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    gap: 12px;
   }
 
   .stat-card {
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 14px;
+    border-radius: 16px;
+    padding: 16px;
     position: relative;
     overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: transform 0.2s;
+  }
+
+  .stat-card:active {
+    transform: scale(0.98);
   }
 
   .stat-card::before {
@@ -254,48 +287,51 @@
     font-size: 11px;
     color: var(--muted);
     margin-bottom: 6px;
-    font-weight: 500;
+    font-weight: 600;
   }
 
   .stat-value {
-    font-size: 24px;
+    font-size: 26px;
     font-weight: 700;
     color: var(--text);
   }
 
   .stat-icon {
     position: absolute;
-    right: 12px;
+    right: 14px;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 28px;
-    opacity: 0.15;
+    font-size: 32px;
+    opacity: 0.12;
   }
 
-  /* ===== FINANCIAL CARD ===== */
+  /* ============================================================
+     CARD FINANCEIRO
+     ============================================================ */
   .financial-card {
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 16px;
-    margin-top: 12px;
+    border-radius: 16px;
+    padding: 18px;
+    margin-top: 14px;
+    box-shadow: var(--shadow);
   }
 
   .financial-header {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 14px;
+    gap: 10px;
+    margin-bottom: 16px;
   }
 
   .financial-header i {
-    font-size: 20px;
+    font-size: 22px;
     color: var(--accent2);
   }
 
   .financial-header span {
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 14px;
+    font-weight: 700;
   }
 
   .financial-grid {
@@ -306,9 +342,9 @@
 
   .financial-item {
     text-align: center;
-    padding: 10px 6px;
+    padding: 12px 6px;
     background: var(--bg);
-    border-radius: 10px;
+    border-radius: 12px;
     border: 1px solid var(--border);
   }
 
@@ -316,6 +352,7 @@
     font-size: 10px;
     color: var(--muted);
     margin-bottom: 4px;
+    font-weight: 600;
   }
 
   .financial-item .value {
@@ -324,25 +361,28 @@
     color: var(--accent2);
   }
 
-  /* ===== NEW CLIENTS CHART ===== */
+  /* ============================================================
+     GRÁFICO DE BARRAS
+     ============================================================ */
   .chart-card {
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 16px;
-    margin-top: 12px;
+    border-radius: 16px;
+    padding: 18px;
+    margin-top: 14px;
+    box-shadow: var(--shadow);
   }
 
   .chart-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 14px;
+    margin-bottom: 16px;
   }
 
   .chart-title {
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 14px;
+    font-weight: 700;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -356,26 +396,27 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 8px;
-    margin-bottom: 14px;
+    margin-bottom: 16px;
   }
 
   .chart-stat {
-    padding: 10px;
-    border-radius: 10px;
+    padding: 12px 8px;
+    border-radius: 12px;
     text-align: center;
   }
 
-  .chart-stat.green { background: var(--accent2-soft); border: 1px solid rgba(34, 197, 94, 0.3); }
-  .chart-stat.blue { background: var(--accent-soft); border: 1px solid rgba(14, 165, 233, 0.3); }
-  .chart-stat.purple { background: var(--purple-soft); border: 1px solid rgba(139, 92, 246, 0.3); }
+  .chart-stat.green { background: var(--accent2-soft); border: 1px solid rgba(16, 185, 129, 0.25); }
+  .chart-stat.blue { background: var(--accent-soft); border: 1px solid rgba(37, 99, 235, 0.25); }
+  .chart-stat.purple { background: var(--purple-soft); border: 1px solid rgba(139, 92, 246, 0.25); }
 
   .chart-stat .label {
     font-size: 10px;
     color: var(--muted);
+    font-weight: 600;
   }
 
   .chart-stat .value {
-    font-size: 16px;
+    font-size: 17px;
     font-weight: 700;
     margin-top: 2px;
   }
@@ -384,8 +425,8 @@
     display: flex;
     align-items: flex-end;
     justify-content: space-around;
-    height: 120px;
-    gap: 4px;
+    height: 130px;
+    gap: 6px;
     padding: 0 4px;
   }
 
@@ -400,45 +441,160 @@
 
   .bar {
     width: 100%;
-    max-width: 22px;
+    max-width: 24px;
     background: linear-gradient(to top, var(--accent), var(--purple));
-    border-radius: 4px 4px 0 0;
+    border-radius: 6px 6px 0 0;
     transition: height 0.5s ease;
     min-height: 4px;
   }
 
   .bar-label {
-    font-size: 9px;
+    font-size: 10px;
     color: var(--muted);
     margin-top: 6px;
+    font-weight: 600;
   }
 
-  /* ===== CLIENT LIST ===== */
+  /* ============================================================
+     ESTATÍSTICAS RÁPIDAS
+     ============================================================ */
+  .quick-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  .quick-stat {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: var(--shadow);
+  }
+
+  .quick-stat-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+
+  .quick-stat-icon.green { background: var(--accent2-soft); color: var(--accent2); }
+  .quick-stat-icon.orange { background: var(--warning-soft); color: var(--warning); }
+  .quick-stat-icon.red { background: var(--danger-soft); color: var(--danger); }
+  .quick-stat-icon.blue { background: var(--accent-soft); color: var(--accent); }
+
+  .quick-stat-info .label {
+    font-size: 10px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  .quick-stat-info .value {
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  /* ============================================================
+     TOP SERVIDORES
+     ============================================================ */
+  .top-servers-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 18px;
+    margin-top: 14px;
+    box-shadow: var(--shadow);
+  }
+
+  .top-server-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .top-server-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .rank {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .rank.gold { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: white; }
+  .rank.silver { background: linear-gradient(135deg, #9ca3af, #6b7280); color: white; }
+  .rank.bronze { background: linear-gradient(135deg, #d97706, #b45309); color: white; }
+  .rank.normal { background: var(--bg); color: var(--muted); }
+
+  .top-server-info {
+    flex: 1;
+  }
+
+  .top-server-name {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .top-server-sales {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .top-server-value {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent2);
+  }
+
+  /* ============================================================
+     LISTA DE CLIENTES
+     ============================================================ */
   .client-list-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
   }
 
   .filter-tabs {
     display: flex;
-    gap: 6px;
+    gap: 8px;
     overflow-x: auto;
-    padding-bottom: 4px;
+    padding-bottom: 6px;
+    margin-bottom: 12px;
   }
 
   .filter-tab {
-    padding: 6px 12px;
+    padding: 8px 16px;
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 500;
+    border-radius: 24px;
+    font-size: 12px;
+    font-weight: 600;
     color: var(--muted);
     cursor: pointer;
     white-space: nowrap;
     transition: all 0.2s;
+    box-shadow: var(--shadow);
   }
 
   .filter-tab.active {
@@ -452,15 +608,16 @@
     align-items: center;
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 10px 14px;
-    margin-bottom: 12px;
-    gap: 10px;
+    border-radius: 14px;
+    padding: 12px 16px;
+    margin-bottom: 14px;
+    gap: 12px;
+    box-shadow: var(--shadow);
   }
 
   .search-box i {
     color: var(--muted);
-    font-size: 18px;
+    font-size: 20px;
   }
 
   .search-box input {
@@ -480,13 +637,14 @@
   .client-item {
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 12px;
-    margin-bottom: 8px;
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 10px;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
     transition: all 0.2s;
+    box-shadow: var(--shadow);
   }
 
   .client-item:active {
@@ -494,21 +652,35 @@
     transform: scale(0.99);
   }
 
+  .client-item.vencendo-hoje {
+    border-left: 4px solid var(--warning);
+    background: linear-gradient(to right, rgba(245, 158, 11, 0.05), var(--card));
+  }
+
+  .client-item.vencendo-amanha {
+    border-left: 4px solid var(--accent);
+  }
+
+  .client-item.inadimplente {
+    border-left: 4px solid var(--danger);
+    background: linear-gradient(to right, rgba(239, 68, 68, 0.05), var(--card));
+  }
+
   .client-avatar {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 700;
-    font-size: 16px;
+    font-size: 17px;
     color: white;
     flex-shrink: 0;
   }
 
-  .client-avatar.blue { background: linear-gradient(135deg, #0ea5e9, #0284c7); }
-  .client-avatar.green { background: linear-gradient(135deg, #22c55e, #16a34a); }
+  .client-avatar.blue { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
+  .client-avatar.green { background: linear-gradient(135deg, #10b981, #059669); }
   .client-avatar.red { background: linear-gradient(135deg, #ef4444, #dc2626); }
   .client-avatar.orange { background: linear-gradient(135deg, #f59e0b, #d97706); }
   .client-avatar.purple { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
@@ -520,7 +692,7 @@
   }
 
   .client-name {
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 600;
     white-space: nowrap;
     overflow: hidden;
@@ -532,30 +704,42 @@
     align-items: center;
     gap: 8px;
     margin-top: 4px;
-    font-size: 11px;
+    font-size: 12px;
     color: var(--muted);
     flex-wrap: wrap;
   }
 
   .client-meta .valor {
     color: var(--accent2);
-    font-weight: 600;
+    font-weight: 700;
   }
 
-  .client-meta .mac-info {
-    font-family: monospace;
-    font-size: 10px;
-    background: var(--bg);
-    padding: 1px 6px;
-    border-radius: 4px;
-    border: 1px solid var(--border);
+  .client-meta .dias-hoje {
+    color: var(--warning);
+    font-weight: 700;
+    animation: pulse 1.5s infinite;
+  }
+
+  .client-meta .dias-amanha {
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .client-meta .dias-atrasado {
+    color: var(--danger);
+    font-weight: 700;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
   }
 
   .status-badge {
-    padding: 2px 8px;
-    border-radius: 10px;
+    padding: 3px 10px;
+    border-radius: 12px;
     font-size: 10px;
-    font-weight: 600;
+    font-weight: 700;
   }
 
   .status-badge.ativo { background: var(--accent2-soft); color: var(--accent2); }
@@ -569,15 +753,15 @@
   }
 
   .action-btn {
-    width: 34px;
-    height: 34px;
-    border-radius: 8px;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.2s;
-    font-size: 16px;
+    font-size: 17px;
     border: none;
   }
 
@@ -585,63 +769,47 @@
     transform: scale(0.9);
   }
 
-  .action-btn.view {
-    background: var(--accent-soft);
-    color: var(--accent);
-  }
-
-  .action-btn.whatsapp {
-    background: rgba(37, 211, 102, 0.15);
-    color: #25d366;
-  }
-
-  .action-btn.reminder {
-    background: var(--warning-soft);
-    color: var(--warning);
-  }
-
-  .action-btn.edit {
-    background: var(--purple-soft);
-    color: var(--purple);
-  }
-
-  .action-btn.delete {
-    background: var(--danger-soft);
-    color: var(--danger);
-  }
+  .action-btn.view { background: var(--accent-soft); color: var(--accent); }
+  .action-btn.whatsapp { background: rgba(37, 211, 102, 0.15); color: #25d366; }
+  .action-btn.reminder { background: var(--warning-soft); color: var(--warning); }
+  .action-btn.edit { background: var(--purple-soft); color: var(--purple); }
+  .action-btn.delete { background: var(--danger-soft); color: var(--danger); }
 
   .empty-state {
     text-align: center;
-    padding: 40px 20px;
+    padding: 50px 20px;
     color: var(--muted);
   }
 
   .empty-state i {
-    font-size: 48px;
-    margin-bottom: 12px;
-    opacity: 0.5;
+    font-size: 56px;
+    margin-bottom: 16px;
+    opacity: 0.4;
   }
 
   .empty-state p {
-    font-size: 13px;
+    font-size: 14px;
+    font-weight: 500;
   }
 
-  /* ===== FAB BUTTON ===== */
+  /* ============================================================
+     BOTÃO FLUTUANTE (FAB)
+     ============================================================ */
   .fab {
     position: fixed;
     bottom: 24px;
     right: 24px;
-    width: 56px;
-    height: 56px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--accent), #0284c7);
+    background: linear-gradient(135deg, var(--accent), #1d4ed8);
     color: white;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 24px;
+    font-size: 28px;
     cursor: pointer;
-    box-shadow: 0 4px 20px rgba(14, 165, 233, 0.4);
+    box-shadow: 0 6px 24px rgba(37, 99, 235, 0.4);
     z-index: 50;
     transition: all 0.2s;
     border: none;
@@ -651,14 +819,16 @@
     transform: scale(0.92);
   }
 
-  /* ===== MODAL ===== */
+  /* ============================================================
+     MODAIS
+     ============================================================ */
   .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(4px);
     z-index: 200;
     display: none;
@@ -675,12 +845,13 @@
   .modal {
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: 18px;
+    border-radius: 20px;
     width: 100%;
-    max-width: 420px;
+    max-width: 440px;
     max-height: 90vh;
     overflow-y: auto;
     animation: slideUp 0.3s ease;
+    box-shadow: var(--shadow-lg);
   }
 
   @keyframes slideUp {
@@ -689,7 +860,7 @@
   }
 
   .modal-header {
-    padding: 18px 18px 14px;
+    padding: 20px 20px 16px;
     border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
@@ -697,7 +868,7 @@
   }
 
   .modal-title {
-    font-size: 16px;
+    font-size: 17px;
     font-weight: 700;
     display: flex;
     align-items: center;
@@ -705,9 +876,9 @@
   }
 
   .modal-close {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
     background: var(--bg);
     border: 1px solid var(--border);
     display: flex;
@@ -715,73 +886,79 @@
     justify-content: center;
     cursor: pointer;
     color: var(--muted);
-    font-size: 18px;
+    font-size: 20px;
   }
 
   .modal-body {
-    padding: 18px;
+    padding: 20px;
   }
 
   .modal-footer {
-    padding: 14px 18px 18px;
+    padding: 16px 20px 20px;
     border-top: 1px solid var(--border);
     display: flex;
     gap: 10px;
   }
 
-  /* ===== FORM ===== */
+  /* ============================================================
+     FORMULÁRIOS
+     ============================================================ */
   .form-group {
-    margin-bottom: 14px;
+    margin-bottom: 16px;
   }
 
   .form-label {
     display: block;
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 700;
     color: var(--muted);
-    margin-bottom: 6px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
 
-  .form-input, .form-select {
+  .form-input, .form-select, .form-textarea {
     width: 100%;
-    padding: 12px 14px;
+    padding: 14px 16px;
     background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 10px;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
     color: var(--text);
     font-family: 'Sora', sans-serif;
     font-size: 14px;
     outline: none;
-    transition: border-color 0.2s;
+    transition: border-color 0.2s, box-shadow 0.2s;
   }
 
-  .form-input:focus, .form-select:focus {
+  .form-input:focus, .form-select:focus, .form-textarea:focus {
     border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
   }
 
-  .form-input::placeholder {
+  .form-input::placeholder, .form-textarea::placeholder {
     color: var(--muted);
+  }
+
+  .form-textarea {
+    resize: vertical;
+    min-height: 100px;
   }
 
   .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    gap: 12px;
   }
 
-  .form-row-3 {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 10px;
-  }
-
-  /* ===== BUTTONS ===== */
+  /* ============================================================
+     BOTÕES
+     ============================================================ */
   .btn {
-    padding: 12px 20px;
-    border-radius: 10px;
+    padding: 14px 22px;
+    border-radius: 12px;
     font-family: 'Sora', sans-serif;
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
     border: none;
     transition: all 0.2s;
@@ -799,12 +976,13 @@
     background: var(--accent);
     color: white;
     flex: 1;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
   }
 
   .btn-secondary {
     background: var(--bg);
     color: var(--text);
-    border: 1px solid var(--border);
+    border: 1.5px solid var(--border);
     flex: 1;
   }
 
@@ -822,78 +1000,83 @@
     width: 100%;
   }
 
-  /* ===== CLIENT DETAILS ===== */
+  .btn-whatsapp {
+    background: #25d366;
+    color: white;
+    flex: 1;
+  }
+
+  /* ============================================================
+     DETALHES DO CLIENTE
+     ============================================================ */
   .detail-avatar {
-    width: 72px;
-    height: 72px;
-    border-radius: 18px;
+    width: 80px;
+    height: 80px;
+    border-radius: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 700;
-    font-size: 28px;
+    font-size: 32px;
     color: white;
-    margin: 0 auto 14px;
+    margin: 0 auto 16px;
   }
 
   .detail-name {
     text-align: center;
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 700;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
   }
 
   .detail-status {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
   }
 
   .detail-info-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    gap: 12px;
     margin-bottom: 20px;
   }
 
   .detail-info-item {
     background: var(--bg);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 12px;
+    border-radius: 12px;
+    padding: 14px;
   }
 
   .detail-info-item .label {
     font-size: 10px;
     color: var(--muted);
     margin-bottom: 4px;
+    font-weight: 700;
+    text-transform: uppercase;
   }
 
   .detail-info-item .value {
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 600;
-  }
-
-  .detail-info-item .value.mac {
-    font-family: monospace;
-    font-size: 12px;
   }
 
   .detail-actions {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    gap: 12px;
   }
 
   .detail-action-btn {
-    padding: 14px;
-    border-radius: 12px;
+    padding: 16px 12px;
+    border-radius: 14px;
     text-align: center;
     cursor: pointer;
     transition: all 0.2s;
     border: none;
     font-family: 'Sora', sans-serif;
     color: white;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 12px;
     display: flex;
     flex-direction: column;
@@ -902,7 +1085,7 @@
   }
 
   .detail-action-btn i {
-    font-size: 22px;
+    font-size: 24px;
   }
 
   .detail-action-btn.whatsapp { background: #25d366; }
@@ -914,19 +1097,22 @@
     transform: scale(0.95);
   }
 
-  /* ===== SETTINGS ===== */
+  /* ============================================================
+     CONFIGURAÇÕES
+     ============================================================ */
   .settings-section {
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 16px;
-    margin-bottom: 12px;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow);
   }
 
   .settings-title {
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 14px;
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 18px;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -934,12 +1120,13 @@
 
   .settings-title i {
     color: var(--accent);
+    font-size: 22px;
   }
 
   .time-inputs {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
+    gap: 12px;
   }
 
   .time-input-item {
@@ -950,15 +1137,16 @@
     display: block;
     font-size: 11px;
     color: var(--muted);
-    margin-bottom: 6px;
+    margin-bottom: 8px;
+    font-weight: 600;
   }
 
   .time-input-item input {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 10px;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
     color: var(--text);
     font-family: 'Sora', sans-serif;
     font-size: 14px;
@@ -974,7 +1162,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 0;
+    padding: 14px 0;
     border-bottom: 1px solid var(--border);
     gap: 12px;
   }
@@ -985,58 +1173,72 @@
   }
 
   .settings-item-label {
-    font-size: 13px;
-    font-weight: 500;
+    font-size: 14px;
+    font-weight: 600;
   }
 
   .settings-item-desc {
     font-size: 11px;
     color: var(--muted);
-    margin-top: 2px;
+    margin-top: 3px;
   }
 
   .settings-item input[type="number"],
-  .settings-item input[type="text"],
-  .settings-item input[type="color"],
   .settings-item select {
-    padding: 8px 12px;
+    padding: 10px 14px;
     background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
     color: var(--text);
     font-family: 'Sora', sans-serif;
     font-size: 13px;
     outline: none;
-    min-width: 100px;
+    width: 110px;
     text-align: center;
+    font-weight: 600;
   }
 
-  .settings-item input[type="color"] {
-    padding: 4px;
-    height: 40px;
+  .logo-preview {
+    width: 80px;
+    height: 80px;
+    border-radius: 16px;
+    background: var(--bg);
+    border: 2px dashed var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
     cursor: pointer;
+    transition: all 0.2s;
   }
 
-  .settings-item input[type="file"] {
-    display: none;
+  .logo-preview:hover {
+    border-color: var(--accent);
   }
 
-  .save-btn-section {
-    margin-top: 14px;
+  .logo-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .logo-preview i {
+    font-size: 32px;
+    color: var(--muted);
   }
 
   .backup-buttons {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    gap: 12px;
   }
 
   .backup-btn {
-    padding: 14px;
-    border-radius: 12px;
+    padding: 16px 12px;
+    border-radius: 14px;
     text-align: center;
     cursor: pointer;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 12px;
     display: flex;
     flex-direction: column;
@@ -1045,10 +1247,11 @@
     border: none;
     font-family: 'Sora', sans-serif;
     color: white;
+    transition: all 0.2s;
   }
 
   .backup-btn i {
-    font-size: 22px;
+    font-size: 24px;
   }
 
   .backup-btn.export { background: var(--accent); }
@@ -1058,54 +1261,24 @@
     transform: scale(0.97);
   }
 
-  /* ===== TOAST ===== */
-  .toast {
-    position: fixed;
-    top: 70px;
-    left: 50%;
-    transform: translateX(-50%) translateY(-150px);
-    background: var(--card);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 12px 20px;
-    border-radius: 12px;
-    font-size: 13px;
-    font-weight: 500;
-    z-index: 300;
-    transition: transform 0.3s ease;
-    box-shadow: var(--shadow);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    max-width: 90%;
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  .toast.show {
-    transform: translateX(-50%) translateY(0);
-    opacity: 1;
-  }
-
-  .toast.success { border-left: 3px solid var(--accent2); }
-  .toast.error { border-left: 3px solid var(--danger); }
-  .toast.info { border-left: 3px solid var(--accent); }
-
-  /* ===== SERVERS PAGE ===== */
+  /* ============================================================
+     LISTA DE SERVIDORES
+     ============================================================ */
   .server-item {
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: 12px;
+    border-radius: 14px;
     padding: 14px;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
+    box-shadow: var(--shadow);
   }
 
   .server-avatar {
-    width: 44px;
-    height: 44px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
     background: linear-gradient(135deg, var(--purple), #7c3aed);
     display: flex;
@@ -1114,6 +1287,7 @@
     font-weight: 700;
     color: white;
     flex-shrink: 0;
+    font-size: 17px;
   }
 
   .server-info {
@@ -1121,208 +1295,82 @@
   }
 
   .server-name {
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 600;
   }
 
   .server-stats {
-    font-size: 11px;
+    font-size: 12px;
     color: var(--muted);
     margin-top: 4px;
   }
 
   .server-stats .valor {
     color: var(--accent2);
-    font-weight: 600;
-  }
-
-  /* ===== TOP SERVERS DASHBOARD ===== */
-  .top-servers-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 16px;
-    margin-top: 12px;
-  }
-
-  .top-server-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .top-server-item:last-child {
-    border-bottom: none;
-    padding-bottom: 0;
-  }
-
-  .rank {
-    width: 24px;
-    height: 24px;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11px;
-    font-weight: 700;
-    flex-shrink: 0;
-  }
-
-  .rank.gold { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: white; }
-  .rank.silver { background: linear-gradient(135deg, #9ca3af, #6b7280); color: white; }
-  .rank.bronze { background: linear-gradient(135deg, #d97706, #b45309); color: white; }
-  .rank.normal { background: var(--bg); color: var(--muted); }
-
-  .top-server-info {
-    flex: 1;
-  }
-
-  .top-server-name {
-    font-size: 13px;
-    font-weight: 600;
-  }
-
-  .top-server-sales {
-    font-size: 11px;
-    color: var(--muted);
-  }
-
-  .top-server-value {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--accent2);
-  }
-
-  /* ===== QUICK STATS DASHBOARD ===== */
-  .quick-stats {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-    margin-top: 12px;
-  }
-
-  .quick-stat {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 10px 12px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .quick-stat-icon {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-  }
-
-  .quick-stat-icon.green { background: var(--accent2-soft); color: var(--accent2); }
-  .quick-stat-icon.orange { background: var(--warning-soft); color: var(--warning); }
-  .quick-stat-icon.red { background: var(--danger-soft); color: var(--danger); }
-  .quick-stat-icon.blue { background: var(--accent-soft); color: var(--accent); }
-
-  .quick-stat-info .label {
-    font-size: 10px;
-    color: var(--muted);
-  }
-
-  .quick-stat-info .value {
-    font-size: 14px;
     font-weight: 700;
   }
 
-  /* ===== CONFIRM DIALOG ===== */
+  /* ============================================================
+     DIÁLOGO DE CONFIRMAÇÃO
+     ============================================================ */
   .confirm-dialog {
     text-align: center;
   }
 
   .confirm-dialog i {
-    font-size: 48px;
-    color: var(--danger);
-    margin-bottom: 12px;
-  }
-
-  .confirm-dialog h3 {
-    font-size: 16px;
-    margin-bottom: 8px;
-  }
-
-  .confirm-dialog p {
-    font-size: 13px;
-    color: var(--muted);
-    margin-bottom: 20px;
-  }
-
-  /* ===== PERMISSÃO NOTIFICAÇÃO MODAL ===== */
-  .perm-dialog {
-    text-align: center;
-    padding: 10px 0;
-  }
-
-  .perm-dialog .perm-icon {
     font-size: 56px;
-    color: var(--accent);
+    color: var(--danger);
     margin-bottom: 16px;
   }
 
-  .perm-dialog h3 {
-    font-size: 17px;
+  .confirm-dialog h3 {
+    font-size: 18px;
     margin-bottom: 10px;
   }
 
-  .perm-dialog p {
-    font-size: 13px;
+  .confirm-dialog p {
+    font-size: 14px;
     color: var(--muted);
     margin-bottom: 24px;
     line-height: 1.5;
   }
 
-  .perm-dialog .btn-primary {
-    background: var(--accent);
-  }
-
-  .perm-dialog .btn-secondary {
-    flex: 0.5;
-  }
-
-  /* ===== TUTORIAL PWA ===== */
-  .tutorial-card {
-    background: var(--accent-soft);
-    border: 1px solid rgba(14, 165, 233, 0.3);
+  /* ============================================================
+     TOAST (MENSAGEM TEMPORÁRIA)
+     ============================================================ */
+  .toast {
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-120px);
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 14px 22px;
     border-radius: 14px;
-    padding: 16px;
-    margin-bottom: 12px;
-  }
-
-  .tutorial-card .tutorial-title {
     font-size: 14px;
     font-weight: 600;
-    color: var(--accent);
-    margin-bottom: 10px;
+    z-index: 300;
+    transition: transform 0.3s ease;
+    box-shadow: var(--shadow-lg);
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
+    max-width: 90%;
   }
 
-  .tutorial-card ol {
-    padding-left: 20px;
-    font-size: 12px;
-    color: var(--text);
-    line-height: 1.7;
+  .toast.show {
+    transform: translateX(-50%) translateY(0);
   }
 
-  .tutorial-card li {
-    margin-bottom: 4px;
-  }
+  .toast.success { border-left: 4px solid var(--accent2); }
+  .toast.error { border-left: 4px solid var(--danger); }
+  .toast.info { border-left: 4px solid var(--accent); }
+  .toast.warning { border-left: 4px solid var(--warning); }
 
-  /* ===== SCROLLBAR ===== */
+  /* ============================================================
+     SCROLLBAR PERSONALIZADA
+     ============================================================ */
   ::-webkit-scrollbar {
     width: 4px;
     height: 4px;
@@ -1337,19 +1385,33 @@
     border-radius: 2px;
   }
 
-  /* ===== HIDDEN ===== */
   .hidden {
     display: none !important;
+  }
+
+  /* ============================================================
+     SELETOR DE ARQUIVO OCULTO
+     ============================================================ */
+  #logoFileInput, #somFileInput, #backupFile {
+    display: none;
   }
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
+<!-- ============================================================
+     HEADER - CABEÇALHO COM LOGO
+     ============================================================ -->
 <div class="header">
   <div class="header-left">
-    <div class="logo" id="appLogo">TG</div>
-    <div class="app-name" id="appName">TOPGESTOR</div>
+    <div class="logo" id="logoContainer" onclick="abrirSeletorLogo()" title="Clique para alterar a logo">
+      <span id="logoText">TG</span>
+      <img id="logoImage" class="hidden" alt="Logo">
+    </div>
+    <div>
+      <div class="app-name">TOPGESTOR</div>
+      <div class="app-subtitle">Gestor de Cobranças IPTV</div>
+    </div>
   </div>
   <div class="header-actions">
     <button class="icon-btn notif" onclick="verificarVencimentosAgora()" title="Verificar vencimentos">
@@ -1362,7 +1424,9 @@
   </div>
 </div>
 
-<!-- NAV TABS -->
+<!-- ============================================================
+     NAVEGAÇÃO POR ABAS
+     ============================================================ -->
 <div class="nav-tabs">
   <div class="nav-tab active" data-page="dashboard" onclick="abrirPagina('dashboard')">
     <i class="ri-dashboard-line"></i>
@@ -1382,10 +1446,12 @@
   </div>
 </div>
 
-<!-- CONTENT -->
+<!-- ============================================================
+     CONTEÚDO PRINCIPAL
+     ============================================================ -->
 <div class="content">
 
-  <!-- ===== DASHBOARD PAGE ===== -->
+  <!-- ===== PÁGINA DASHBOARD ===== -->
   <div class="page active" id="page-dashboard">
     <div class="section-title">Visão Geral</div>
     
@@ -1434,7 +1500,7 @@
       </div>
     </div>
 
-    <!-- CLIENTES NOVOS POR DIA -->
+    <!-- GRÁFICO CLIENTES NOVOS POR DIA -->
     <div class="chart-card">
       <div class="chart-header">
         <div class="chart-title">
@@ -1444,7 +1510,7 @@
       </div>
       <div class="chart-stats">
         <div class="chart-stat green">
-          <div class="label">Total - Mês Atual</div>
+          <div class="label">Total - Semana</div>
           <div class="value" id="totalMes">0</div>
         </div>
         <div class="chart-stat blue">
@@ -1459,7 +1525,7 @@
       <div class="bars-container" id="barsContainer"></div>
     </div>
 
-    <!-- QUICK STATS -->
+    <!-- ESTATÍSTICAS RÁPIDAS -->
     <div class="quick-stats">
       <div class="quick-stat">
         <div class="quick-stat-icon green">
@@ -1508,7 +1574,7 @@
         </div>
       </div>
       <div id="topServidoresList">
-        <div class="empty-state" style="padding: 20px;">
+        <div class="empty-state" style="padding: 24px;">
           <i class="ri-team-line"></i>
           <p>Nenhum servidor cadastrado</p>
         </div>
@@ -1516,26 +1582,27 @@
     </div>
   </div>
 
-  <!-- ===== CLIENTES PAGE ===== -->
+  <!-- ===== PÁGINA CLIENTES ===== -->
   <div class="page" id="page-clientes">
     <div class="section-title">Gestão de Clientes</div>
     
     <div class="search-box">
       <i class="ri-search-line"></i>
-      <input type="text" id="searchInput" placeholder="Buscar nome, telefone, MAC..." oninput="filtrarClientes()">
+      <input type="text" id="searchInput" placeholder="Buscar cliente por nome ou telefone..." oninput="filtrarClientes()">
     </div>
 
     <div class="filter-tabs" id="filterTabs">
       <div class="filter-tab active" data-filter="todos" onclick="setFiltro('todos')">Todos</div>
       <div class="filter-tab" data-filter="ativos" onclick="setFiltro('ativos')">Ativos</div>
-      <div class="filter-tab" data-filter="vencendo" onclick="setFiltro('vencendo')">Vencendo</div>
-      <div class="filter-tab" data-filter="inadimplentes" onclick="setFiltro('inadimplentes')">Inadimplentes</div>
+      <div class="filter-tab" data-filter="vencendo-hoje" onclick="setFiltro('vencendo-hoje')">Vence Hoje</div>
+      <div class="filter-tab" data-filter="vencendo-amanha" onclick="setFiltro('vencendo-amanha')">Vence Amanhã</div>
+      <div class="filter-tab" data-filter="vencidos" onclick="setFiltro('vencidos')">Vencidos</div>
     </div>
 
     <div id="clientesList"></div>
   </div>
 
-  <!-- ===== SERVIDORES PAGE ===== -->
+  <!-- ===== PÁGINA SERVIDORES ===== -->
   <div class="page" id="page-servidores">
     <div class="section-title">Gestão de Servidores</div>
     
@@ -1547,68 +1614,41 @@
     <div id="servidoresList"></div>
   </div>
 
-  <!-- ===== CONFIGURACOES PAGE ===== -->
+  <!-- ===== PÁGINA CONFIGURAÇÕES ===== -->
   <div class="page" id="page-configuracoes">
     <div class="section-title">Configurações</div>
 
-    <!-- TUTORIAL NOTIFICAÇÕES ANDROID -->
-    <div class="tutorial-card">
-      <div class="tutorial-title">
-        <i class="ri-smartphone-line"></i>
-        Como ativar notificações no Android
-      </div>
-      <ol>
-        <li>No Chrome, clique nos <strong>3 pontinhos</strong> do canto superior</li>
-        <li>Escolha <strong>"Adicionar à tela inicial"</strong> → <strong>"Adicionar"</strong></li>
-        <li>Abra o app pela <strong>tela inicial</strong> (ícone novo)</li>
-        <li>Clique em <strong>"Ativar Agora"</strong> quando perguntar sobre notificações</li>
-        <li>Pronto! As notificações aparecem na barra do Android com som! 🔔</li>
-      </ol>
-    </div>
-
-    <!-- PERSONALIZAÇÃO -->
+    <!-- PERSONALIZAÇÃO - LOGO -->
     <div class="settings-section">
       <div class="settings-title">
-        <i class="ri-palette-line"></i>
+        <i class="ri-image-line"></i>
         Personalização
       </div>
       <div class="settings-item">
         <div>
-          <div class="settings-item-label">Nome do App</div>
-          <div class="settings-item-desc">Nome que aparece no topo</div>
+          <div class="settings-item-label">Logo do Aplicativo</div>
+          <div class="settings-item-desc">Escolha uma imagem da galeria</div>
         </div>
-        <input type="text" id="cfgNomeApp" value="TOPGESTOR">
-      </div>
-      <div class="settings-item">
-        <div>
-          <div class="settings-item-label">Logo Personalizada</div>
-          <div class="settings-item-desc">URL da imagem (http://...)</div>
+        <div class="logo-preview" onclick="abrirSeletorLogo()">
+          <span id="logoPlaceholder"><i class="ri-image-add-line"></i></span>
+          <img id="logoPreviewImg" class="hidden" alt="Logo preview">
         </div>
-        <input type="text" id="cfgLogo" value="" placeholder="URL">
       </div>
-      <div class="settings-item">
-        <div>
-          <div class="settings-item-label">Cor do Tema</div>
-          <div class="settings-item-desc">Cor principal do app</div>
-        </div>
-        <input type="color" id="cfgCorTema" value="#0ea5e9">
-      </div>
-      <div class="save-btn-section">
-        <button class="btn btn-full" onclick="salvarPersonalizacao()">
-          <i class="ri-save-line"></i>
-          Salvar Personalização
-        </button>
-      </div>
+      <input type="file" id="logoFileInput" accept="image/*" onchange="processarLogo(event)">
+      <button class="btn btn-full" style="margin-top: 14px; background: var(--danger-soft); color: var(--danger); border: 1.5px solid rgba(239, 68, 68, 0.3);" onclick="removerLogo()">
+        <i class="ri-delete-bin-line"></i>
+        Remover Logo
+      </button>
     </div>
 
     <!-- NOTIFICAÇÕES -->
     <div class="settings-section">
       <div class="settings-title">
         <i class="ri-notification-3-line"></i>
-        Horários das Notificações
+        Notificações Nativas
       </div>
-      <p style="font-size: 11px; color: var(--muted); margin-bottom: 14px;">
-        O app verificará clientes vencendo nestes horários e mostrará notificações
+      <p style="font-size: 12px; color: var(--muted); margin-bottom: 18px; line-height: 1.5;">
+        O app agendará notificações no sistema Android. Elas aparecem <strong>mesmo com o app fechado ou tela apagada</strong>.
       </p>
       <div class="time-inputs">
         <div class="time-input-item">
@@ -1625,7 +1665,7 @@
         </div>
       </div>
 
-      <div class="settings-item" style="margin-top: 14px;">
+      <div class="settings-item" style="margin-top: 18px;">
         <div>
           <div class="settings-item-label">Dias de antecedência</div>
           <div class="settings-item-desc">Quantos dias antes começar a alertar</div>
@@ -1633,26 +1673,49 @@
         <input type="number" id="diasAntecedencia" value="2" min="0" max="10">
       </div>
 
-      <div class="save-btn-section">
-        <button class="btn btn-full" onclick="salvarConfiguracoesNotif()">
-          <i class="ri-save-line"></i>
-          Salvar Configurações de Notificação
-        </button>
-      </div>
+      <button class="btn btn-full" style="margin-top: 14px; background: var(--accent-soft); color: var(--accent); border: 1.5px solid rgba(37, 99, 235, 0.3);" onclick="solicitarPermissaoNotificacao()">
+        <i class="ri-shield-check-line"></i>
+        Permitir Notificações
+      </button>
 
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px;">
-        <button class="btn" style="background: var(--accent2-soft); color: var(--accent2); border: 1px solid rgba(34, 197, 94, 0.3); flex: 1;" onclick="testarNotificacao()">
-          <i class="ri-play-circle-line"></i>
-          Testar Notificação
-        </button>
-        <button class="btn" style="background: var(--purple-soft); color: var(--purple); border: 1px solid rgba(139, 92, 246, 0.3); flex: 1;" onclick="tocarSomTeste()">
-          <i class="ri-volume-up-line"></i>
-          Tocar Som
-        </button>
-      </div>
+      <button class="btn btn-full" style="margin-top: 10px; background: var(--accent2-soft); color: var(--accent2); border: 1.5px solid rgba(16, 185, 129, 0.3);" onclick="testarNotificacao()">
+        <i class="ri-play-circle-line"></i>
+        Testar Notificação Agora
+      </button>
+
+      <!-- IMPORTANTE: Botão SALVAR para configurações -->
+      <button class="btn btn-primary btn-full" style="margin-top: 14px;" onclick="salvarConfiguracoes()">
+        <i class="ri-save-line"></i>
+        SALVAR CONFIGURAÇÕES
+      </button>
     </div>
 
-    <!-- BACKUP -->
+    <!-- SOM DA NOTIFICAÇÃO -->
+    <div class="settings-section">
+      <div class="settings-title">
+        <i class="ri-volume-up-line"></i>
+        Som da Notificação
+      </div>
+      <div class="settings-item">
+        <div>
+          <div class="settings-item-label">Arquivo de som personalizado</div>
+          <div class="settings-item-desc">Escolha um arquivo de áudio do celular</div>
+        </div>
+        <button class="btn btn-secondary" style="padding: 10px 16px; flex: none;" onclick="abrirSeletorSom()">
+          <i class="ri-folder-music-line"></i>
+          Escolher
+        </button>
+      </div>
+      <div id="somInfo" style="font-size: 12px; color: var(--muted); margin-top: 10px; padding: 10px; background: var(--bg); border-radius: 8px;">
+        Nenhum som personalizado selecionado. Usando som padrão do Android.
+      </div>
+      <input type="file" id="somFileInput" accept="audio/*" onchange="processarSom(event)">
+      <p style="font-size: 10px; color: var(--muted); margin-top: 12px; line-height: 1.4;">
+        ⚠️ <strong>Observação:</strong> Devido a restrições do Android, sons personalizados podem exigir configuração adicional no projeto nativo (res/raw). Se não funcionar, o som padrão será usado automaticamente.
+      </p>
+    </div>
+
+    <!-- BACKUP E RESTAURAÇÃO -->
     <div class="settings-section">
       <div class="settings-title">
         <i class="ri-save-3-line"></i>
@@ -1668,10 +1731,10 @@
           Restaurar Backup
         </button>
       </div>
-      <input type="file" id="backupFile" accept=".json" style="display: none;" onchange="processarBackup(event)">
+      <input type="file" id="backupFile" accept=".json" onchange="processarBackup(event)">
     </div>
 
-    <!-- DADOS -->
+    <!-- DADOS DO SISTEMA -->
     <div class="settings-section">
       <div class="settings-title">
         <i class="ri-database-2-line"></i>
@@ -1681,15 +1744,21 @@
         <div>
           <div class="settings-item-label">Total de clientes cadastrados</div>
         </div>
-        <span id="infoTotalClientes" style="font-weight: 600; color: var(--accent);">0</span>
+        <span id="infoTotalClientes" style="font-weight: 700; color: var(--accent);">0</span>
       </div>
       <div class="settings-item">
         <div>
           <div class="settings-item-label">Total de servidores</div>
         </div>
-        <span id="infoTotalServidores" style="font-weight: 600; color: var(--purple);">0</span>
+        <span id="infoTotalServidores" style="font-weight: 700; color: var(--purple);">0</span>
       </div>
-      <button class="btn btn-full" style="margin-top: 14px; background: var(--danger-soft); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3);" onclick="confirmarLimparDados()">
+      <div class="settings-item">
+        <div>
+          <div class="settings-item-label">Notificações agendadas</div>
+        </div>
+        <span id="infoNotifAgendadas" style="font-weight: 700; color: var(--accent2);">0</span>
+      </div>
+      <button class="btn btn-full" style="margin-top: 14px; background: var(--danger-soft); color: var(--danger); border: 1.5px solid rgba(239, 68, 68, 0.3);" onclick="confirmarLimparDados()">
         <i class="ri-delete-bin-line"></i>
         Limpar Todos os Dados
       </button>
@@ -1701,22 +1770,26 @@
         <i class="ri-information-line"></i>
         Sobre
       </div>
-      <div style="text-align: center; padding: 10px 0;">
-        <div style="font-size: 18px; font-weight: 700; margin-bottom: 4px;" id="sobreNomeApp">TOPGESTOR</div>
-        <div style="font-size: 12px; color: var(--muted);">Sistema de Gestão de Clientes</div>
-        <div style="font-size: 11px; color: var(--muted); margin-top: 8px;">Versão 2.1.0 - ANDROID</div>
+      <div style="text-align: center; padding: 14px 0;">
+        <div style="font-size: 20px; font-weight: 700; margin-bottom: 6px;">TOPGESTOR</div>
+        <div style="font-size: 13px; color: var(--muted);">Gestor de Cobranças IPTV</div>
+        <div style="font-size: 11px; color: var(--muted); margin-top: 10px;">Versão 1.0.0 • Capacitor Android</div>
       </div>
     </div>
   </div>
 
 </div>
 
-<!-- FAB ADD CLIENT -->
+<!-- ============================================================
+     BOTÃO FLUTUANTE PARA ADICIONAR
+     ============================================================ -->
 <button class="fab" id="fabAdd" onclick="abrirModalCliente()" title="Novo Cliente">
   <i class="ri-add-line"></i>
 </button>
 
-<!-- ===== MODAL CLIENTE FORM ===== -->
+<!-- ============================================================
+     MODAL: FORMULÁRIO DE CLIENTE
+     ============================================================ -->
 <div class="modal-overlay" id="modalCliente">
   <div class="modal">
     <div class="modal-header">
@@ -1734,33 +1807,29 @@
         
         <div class="form-group">
           <label class="form-label">Nome do Cliente *</label>
-          <input type="text" class="form-input" id="clienteNome" placeholder="Ex: João Silva" required>
+          <input type="text" class="form-input" id="clienteNome" placeholder="Ex: João Silva">
         </div>
 
         <div class="form-group">
           <label class="form-label">Telefone / WhatsApp *</label>
-          <input type="tel" class="form-input" id="clienteTelefone" placeholder="Ex: (31) 99999-9999" required>
+          <input type="tel" class="form-input" id="clienteTelefone" placeholder="Ex: (31) 99999-9999">
         </div>
 
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Data de Vencimento *</label>
-            <input type="date" class="form-input" id="clienteVencimento" required>
+            <input type="date" class="form-input" id="clienteVencimento">
           </div>
           <div class="form-group">
             <label class="form-label">Valor (R$) *</label>
-            <input type="text" class="form-input" id="clienteValor" placeholder="0,00" required oninput="formatarMoeda(this)">
+            <input type="text" class="form-input" id="clienteValor" placeholder="0,00" oninput="formatarMoeda(this)">
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Status</label>
-            <select class="form-select" id="clienteStatus">
-              <option value="ativo">Ativo</option>
-              <option value="vencendo">Vencendo</option>
-              <option value="inadimplente">Inadimplente</option>
-            </select>
+            <label class="form-label">Produto / Serviço</label>
+            <input type="text" class="form-input" id="clienteProduto" placeholder="Ex: IPTV Premium">
           </div>
           <div class="form-group">
             <label class="form-label">Servidor</label>
@@ -1770,51 +1839,25 @@
           </div>
         </div>
 
-        <div class="form-row-3">
-          <div class="form-group">
-            <label class="form-label">Usuário</label>
-            <input type="text" class="form-input" id="clienteUsuario" placeholder="Login">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Senha</label>
-            <input type="text" class="form-input" id="clienteSenha" placeholder="Senha">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Key</label>
-            <input type="text" class="form-input" id="clienteKey" placeholder="Chave">
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Produto</label>
-            <input type="text" class="form-input" id="clienteProduto" placeholder="Master New">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Aplicativo</label>
-            <input type="text" class="form-input" id="clienteApp" placeholder="Ibo StechPlay">
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">MAC Address</label>
-          <input type="text" class="form-input" id="clienteMAC" placeholder="AA:BB:CC:DD:EE:FF" style="font-family: monospace; text-transform: uppercase;">
-        </div>
-
         <div class="form-group">
           <label class="form-label">Observações</label>
-          <input type="text" class="form-input" id="clienteObs" placeholder="Anotações gerais...">
+          <textarea class="form-textarea" id="clienteObs" placeholder="Anotações gerais, login, senha, etc..."></textarea>
         </div>
       </form>
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="fecharModal('modalCliente')">Cancelar</button>
-      <button class="btn btn-primary" onclick="salvarCliente()">Salvar</button>
+      <button class="btn btn-primary" onclick="salvarCliente()">
+        <i class="ri-save-line"></i>
+        SALVAR
+      </button>
     </div>
   </div>
 </div>
 
-<!-- ===== MODAL CLIENTE DETALHES ===== -->
+<!-- ============================================================
+     MODAL: DETALHES DO CLIENTE
+     ============================================================ -->
 <div class="modal-overlay" id="modalDetalhes">
   <div class="modal">
     <div class="modal-header">
@@ -1830,7 +1873,9 @@
   </div>
 </div>
 
-<!-- ===== MODAL SERVIDOR FORM ===== -->
+<!-- ============================================================
+     MODAL: FORMULÁRIO DE SERVIDOR
+     ============================================================ -->
 <div class="modal-overlay" id="modalServidor">
   <div class="modal">
     <div class="modal-header">
@@ -1848,7 +1893,7 @@
         
         <div class="form-group">
           <label class="form-label">Nome do Servidor *</label>
-          <input type="text" class="form-input" id="servidorNome" placeholder="Ex: Maria" required>
+          <input type="text" class="form-input" id="servidorNome" placeholder="Ex: Maria">
         </div>
 
         <div class="form-group">
@@ -1859,12 +1904,17 @@
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="fecharModal('modalServidor')">Cancelar</button>
-      <button class="btn btn-primary" onclick="salvarServidor()">Salvar</button>
+      <button class="btn btn-primary" onclick="salvarServidor()">
+        <i class="ri-save-line"></i>
+        SALVAR
+      </button>
     </div>
   </div>
 </div>
 
-<!-- ===== MODAL CONFIRMAR ===== -->
+<!-- ============================================================
+     MODAL: CONFIRMAR AÇÃO
+     ============================================================ -->
 <div class="modal-overlay" id="modalConfirmar">
   <div class="modal">
     <div class="modal-body">
@@ -1872,7 +1922,7 @@
         <i class="ri-error-warning-line" id="confirmIcon"></i>
         <h3 id="confirmTitle">Confirmação</h3>
         <p id="confirmMessage">Tem certeza que deseja continuar?</p>
-        <div class="modal-footer" style="padding: 0; border: none; margin-top: 20px;">
+        <div class="modal-footer" style="padding: 0; border: none; margin-top: 24px;">
           <button class="btn btn-secondary" onclick="fecharModal('modalConfirmar')">Cancelar</button>
           <button class="btn btn-danger" id="confirmBtn" onclick="executarConfirmacao()">Confirmar</button>
         </div>
@@ -1881,26 +1931,9 @@
   </div>
 </div>
 
-<!-- ===== MODAL PERMISSÃO NOTIFICAÇÃO ===== -->
-<div class="modal-overlay" id="modalPermissao">
-  <div class="modal">
-    <div class="modal-body">
-      <div class="perm-dialog">
-        <div class="perm-icon">
-          <i class="ri-notification-3-fill"></i>
-        </div>
-        <h3>Ativar Notificações?</h3>
-        <p>Receba alertas NA BARRA DO SEU CELULAR quando clientes estiverem vencendo ou inadimplentes!<br><br>As notificações aparecem como qualquer outro app, com som e tudo! 🔔</p>
-        <div class="modal-footer" style="padding: 0; border: none;">
-          <button class="btn btn-secondary" onclick="fecharModal('modalPermissao')">Agora não</button>
-          <button class="btn btn-primary" onclick="permitirNotificacoes()">Ativar Agora</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ===== MODAL LEMBRETE ===== -->
+<!-- ============================================================
+     MODAL: MENSAGEM DE LEMBRETE
+     ============================================================ -->
 <div class="modal-overlay" id="modalLembrete">
   <div class="modal">
     <div class="modal-header">
@@ -1914,15 +1947,15 @@
     </div>
     <div class="modal-body">
       <div class="form-group">
-        <label class="form-label">Edite a mensagem:</label>
-        <textarea class="form-input" id="lembreteTexto" rows="5" style="resize: none; font-family: 'Sora', sans-serif;"></textarea>
+        <label class="form-label">Edite a mensagem antes de enviar:</label>
+        <textarea class="form-textarea" id="lembreteTexto" rows="6"></textarea>
       </div>
       <div class="modal-footer" style="padding: 0; border: none; margin-top: 16px;">
         <button class="btn btn-secondary" onclick="copiarLembrete()" style="flex: 1;">
           <i class="ri-file-copy-line"></i>
           Copiar
         </button>
-        <button class="btn btn-success" onclick="enviarWhatsAppLembrete()" style="flex: 1; background: #25d366;">
+        <button class="btn btn-whatsapp" onclick="enviarWhatsAppLembrete()" style="flex: 1;">
           <i class="ri-whatsapp-line"></i>
           WhatsApp
         </button>
@@ -1931,221 +1964,147 @@
   </div>
 </div>
 
-<!-- TOAST -->
+<!-- ============================================================
+     TOAST - MENSAGEM TEMPORÁRIA (3 SEGUNDOS)
+     ============================================================ -->
 <div class="toast" id="toast">
   <i id="toastIcon"></i>
   <span id="toastMessage"></span>
 </div>
 
+<!-- ============================================================
+     JAVASCRIPT PRINCIPAL
+     ============================================================ -->
 <script>
 (function() {
-  // ===== DADOS INICIAIS - 15 CLIENTES =====
-  const CLIENTES_INICIAIS = [
-    {id:'cli_1',nome:'Miria',telefone:'5573999695688',dataVencimento:'2026-09-09',valor:20,status:'ativo',produto:'Master New',app:'Ibo StechPlay',usuario:'019851',senha:'956999',mac:'CC:4B:x45:24:67:CC',key:'',observacoes:'',servidorId:'',dataCadastro:new Date().toISOString()},
-    {id:'cli_2',nome:'Marcos henrique',telefone:'5573999494341',dataVencimento:'2026-09-16',valor:30,status:'ativo',produto:'Master Plus',app:'ibo pro',usuario:'792029',senha:'552095',mac:'DC:18:75:C7:FF:FE',key:'423632',observacoes:'',servidorId:'',dataCadastro:new Date().toISOString()},
-    {id:'cli_3',nome:'Junior pastor',telefone:'5573999493036',dataVencimento:'2026-10-08',valor:20,status:'ativo',produto:'Master Plus',app:'Ibo StechPlay',usuario:'108217',senha:'880727',mac:'82:32:FF:85:C7:62',key:'',observacoes:'',servidorId:'',dataCadastro:new Date().toISOString()},
-    {id:'cli_4',nome:'Andressa Costa',telefone:'5573998021461',dataVencimento:'2026-09-05',valor:50,status:'ativo',produto:'Master New',app:'ibo pro',usuario:'477865',senha:'302154',mac:'74:e7:72:d9:89:6e',key:'207640',observacoes:'',servidorId:'',dataCadastro:new Date().toISOString()},
-    {id:'cli_5',nome:'Leilson Rodrigues',telefone:'5573999230470',dataVencimento:'2026-09-02',valor:30,status:'ativo',produto:'Master New',app:'Ibo StechPlay',usuario:'923552',senha:'144044',mac:'D1:90:59:37:D5:65',key:'',observacoes:'',servidorId:'',dataCadastro:new Date().toISOString()},
-    {id:'cli_6',nome:'Rikelme',telefone:'5573999880428',dataVencimento:'2025-11-30',valor:30,status:'inadimplente',produto:'P2vip',app:'ibo pro',usuario:'',senha:'',mac:'22:68:23:d4:50:94',key:'476080',observacoes:'',servidorId:'',dataCadastro:new Date().toISOString()},
-    {id:'cli_7',nome:'Rodrigo',telefone:'5522981383236',dataVencimento:'2026-09-05',valor:60,status:'ativo',produto:'Revendedor',app:'',usuario:'',senha:'',mac:'',key:'',observacoes:'',servidorId:'',dataCadastro:new Date().toISOString()},
-    {id:'cli_8',nome:'Lavinia',telefone:'5573988148631',dataVencimento:'2026-09-13',valor:25,status:'ativo',produto:'Master New',app:'Ibo StechPlay',usuario:'318384',senha:'',mac:'',key:'',observacoes:'',servidorId:'',dataCadastro:new Date().toISOString()},
-    {id:'cli_9',nome:'Edenilson',telefone:'5573998302565',dataVencimento:'2026-09-07',valor:60,status:'ativo',produto:'Master New',app:'',usuario:'67731261',senha:'',mac:'B8:ca:7f:33:36:a6',key:'',observacoes:'',servidorId:'',dataCadastro:new Date().toISOString()},
-    {id:'cli_10',nome:'Jonathan',telefone:'5573999147888',dataVencimento:'2026-08-25',valor:60,status:'inadimplente',produto:'Revendedor',app:'',usuario:'Jhonatanplay4',senha:'',mac:'',key:'',observacoes:'',servidorId:'',dataCadastro:new Date().toISOString()},
-    {id:'cli_11',nome:'Davi',telefone:'5579996809736',dataVencimento:'2026-09-08',valor:60,status:'ativo',produto:'Revendedor',app:'',usuario:'',senha:'',mac:'',key:'',observacoes:'',servidorId:'',dataCadastro:new Date().toISOString()},
-    {id:'cli_12',nome:'João Moreira',telefone:'5573991334205',dataVencimento:'2026-09-14',valor:45,status:'ativo',produto:'Master New',app:'',usuario:'',senha:'',mac:'',key:'',observacoes:'',servidorId:'',dataCadastro:new Date().toISOString()},
-    {id:'cli_13',nome:'Bento',telefone:'5561994534276',dataVencimento:'2026-09-08',valor:100,status:'ativo',produto:'Revendedor',app:'',usuario:'',senha:'',mac:'',key:'',observacoes:'',servidorId:'',dataCadastro:new Date().toISOString()},
-    {id:'cli_14',nome:'Leonardo cardoso',telefone:'5573999888933',dataVencimento:'2026-09-08',valor:30,status:'ativo',produto:'Master New',app:'Ibo play',usuario:'',senha:'',mac:'f3:5d:51:97:76:2f',key:'718948',observacoes:'',servidorId:'',dataCadastro:new Date().toISOString()},
-    {id:'cli_15',nome:'Fabiola',telefone:'5573988055618',dataVencimento:'2026-08-26',valor:30,status:'inadimplente',produto:'Master New',app:'ibo pro',usuario:'',senha:'',mac:'59:4f:b7:92:5b:84',key:'762784',observacoes:'',servidorId:'',dataCadastro:new Date().toISOString()}
-  ];
+  'use strict';
 
+  // ============================================================
+  // DADOS GLOBAIS
+  // ============================================================
   let clientes = [];
   let servidores = [];
   let configuracoes = {
-    nomeApp: 'TOPGESTOR',
-    logo: '',
-    corTema: '#0ea5e9',
     horaManha: '08:00',
     horaTarde: '14:00',
     horaNoite: '19:00',
     diasAntecedencia: 2,
-    somNotificacao: 'default',
-    permissaoNotifPedida: false
+    somNotificacao: null,
+    logoBase64: null
   };
   let filtroAtual = 'todos';
   let confirmCallback = null;
   let clienteLembreteAtual = null;
-  let toastTimer = null;
 
-  // ===== STORAGE =====
-  function carregarDados() {
-    try {
-      const c = localStorage.getItem('topgestor_clientes');
-      const s = localStorage.getItem('topgestor_servidores');
-      const cfg = localStorage.getItem('topgestor_configuracoes');
-      
-      if (c) {
-        clientes = JSON.parse(c);
-      } else {
-        clientes = JSON.parse(JSON.stringify(CLIENTES_INICIAIS));
-        salvarDadosStorage();
+  // ============================================================
+  // DETECTAR PLUGINS CAPACITOR
+  // ============================================================
+  function temCapacitor() {
+    return typeof window.Capacitor !== 'undefined' && window.Capacitor.Plugins;
+  }
+
+  function getPlugin(nome) {
+    if (temCapacitor() && window.Capacitor.Plugins[nome]) {
+      return window.Capacitor.Plugins[nome];
+    }
+    return null;
+  }
+
+  // ============================================================
+  // ARMAZENAMENTO - Preferences (nativo) ou localStorage (fallback)
+  // ============================================================
+  async function salvarStorage(chave, valor) {
+    const Preferences = getPlugin('Preferences');
+    const valorStr = JSON.stringify(valor);
+    
+    if (Preferences) {
+      try {
+        await Preferences.set({ key: chave, value: valorStr });
+      } catch (e) {
+        console.error('Erro Preferences:', e);
+        localStorage.setItem('topgestor_' + chave, valorStr);
       }
+    } else {
+      localStorage.setItem('topgestor_' + chave, valorStr);
+    }
+  }
+
+  async function carregarStorage(chave) {
+    const Preferences = getPlugin('Preferences');
+    
+    if (Preferences) {
+      try {
+        const resultado = await Preferences.get({ key: chave });
+        if (resultado.value) {
+          return JSON.parse(resultado.value);
+        }
+      } catch (e) {
+        console.error('Erro Preferences:', e);
+      }
+    }
+    
+    // Fallback localStorage
+    const valor = localStorage.getItem('topgestor_' + chave);
+    return valor ? JSON.parse(valor) : null;
+  }
+
+  // ============================================================
+  // CARREGAR DADOS INICIAIS
+  // ============================================================
+  async function carregarDados() {
+    try {
+      const c = await carregarStorage('clientes');
+      const s = await carregarStorage('servidores');
+      const cfg = await carregarStorage('configuracoes');
       
-      if (s) servidores = JSON.parse(s);
-      if (cfg) configuracoes = {...configuracoes, ...JSON.parse(cfg)};
+      if (c) clientes = c;
+      if (s) servidores = s;
+      if (cfg) configuracoes = { ...configuracoes, ...cfg };
       
       inicializar();
     } catch (e) {
-      clientes = JSON.parse(JSON.stringify(CLIENTES_INICIAIS));
+      console.error('Erro ao carregar dados:', e);
       inicializar();
     }
   }
 
-  function salvarDadosStorage() {
-    try {
-      localStorage.setItem('topgestor_clientes', JSON.stringify(clientes));
-      localStorage.setItem('topgestor_servidores', JSON.stringify(servidores));
-      localStorage.setItem('topgestor_configuracoes', JSON.stringify(configuracoes));
-    } catch (e) {}
+  async function salvarTodosDados() {
+    await salvarStorage('clientes', clientes);
+    await salvarStorage('servidores', servidores);
+    await salvarStorage('configuracoes', configuracoes);
   }
 
-  // ===== APLICAR CONFIGURAÇÕES =====
-  function aplicarConfiguracoesVisuais() {
-    document.documentElement.style.setProperty('--accent', configuracoes.corTema);
-    document.documentElement.style.setProperty('--accent-soft', hexToRgba(configuracoes.corTema, 0.15));
-    document.querySelector('meta[name="theme-color"]').setAttribute('content', configuracoes.corTema);
-    
-    document.getElementById('appName').textContent = configuracoes.nomeApp;
-    document.getElementById('sobreNomeApp').textContent = configuracoes.nomeApp;
-    document.title = configuracoes.nomeApp + ' - Sistema de Gestão';
-    
-    const logoEl = document.getElementById('appLogo');
-    if (configuracoes.logo) {
-      logoEl.innerHTML = '<img src="' + configuracoes.logo + '" alt="Logo" onerror="this.parentElement.innerHTML=\'' + configuracoes.nomeApp.charAt(0).toUpperCase() + '\'">';
-    } else {
-      logoEl.textContent = configuracoes.nomeApp.charAt(0).toUpperCase();
-    }
-
-    document.getElementById('cfgNomeApp').value = configuracoes.nomeApp;
-    document.getElementById('cfgLogo').value = configuracoes.logo;
-    document.getElementById('cfgCorTema').value = configuracoes.corTema;
-  }
-
-  function hexToRgba(hex, alpha) {
-    const r = parseInt(hex.slice(1, 3), 16);
-    const g = parseInt(hex.slice(3, 5), 16);
-    const b = parseInt(hex.slice(5, 7), 16);
-    return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
-  }
-
-  // ===== SOM NOTIFICAÇÃO =====
-  function tocarSomNotificacao() {
-    try {
-      if (window.navigator && window.navigator.vibrate) {
-        window.navigator.vibrate([200, 100, 200]);
-      }
-      
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      const osc1 = ctx.createOscillator();
-      const ganho1 = ctx.createGain();
-      osc1.connect(ganho1);
-      ganho1.connect(ctx.destination);
-      osc1.frequency.value = 880;
-      osc1.type = 'sine';
-      ganho1.gain.setValueAtTime(0.4, ctx.currentTime);
-      ganho1.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25);
-      osc1.start(ctx.currentTime);
-      osc1.stop(ctx.currentTime + 0.25);
-      
-      setTimeout(function() {
-        const osc2 = ctx.createOscillator();
-        const ganho2 = ctx.createGain();
-        osc2.connect(ganho2);
-        ganho2.connect(ctx.destination);
-        osc2.frequency.value = 1100;
-        osc2.type = 'sine';
-        ganho2.gain.setValueAtTime(0.4, ctx.currentTime);
-        ganho2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
-        osc2.start(ctx.currentTime);
-        osc2.stop(ctx.currentTime + 0.3);
-      }, 200);
-    } catch(e) {}
-  }
-
-  window.tocarSomTeste = function() {
-    tocarSomNotificacao();
-    mostrarToast('Som tocando!', 'success');
-  };
-
-  // ===== INICIALIZAÇÃO =====
+  // ============================================================
+  // INICIALIZAÇÃO
+  // ============================================================
   function inicializar() {
-    aplicarConfiguracoesVisuais();
     atualizarStatusClientes();
     carregarConfiguracoesUI();
+    carregarLogoUI();
     atualizarSelectServidores();
     renderizarDashboard();
     renderizarClientes();
     renderizarServidores();
     atualizarBadgeNotificacoes();
-    agendarVerificacoes();
-
-    if (!configuracoes.permissaoNotifPedida) {
-      setTimeout(function() {
-        abrirModal('modalPermissao');
-      }, 1500);
-    }
+    atualizarInfoDados();
+    
+    // Solicitar permissão de notificação ao iniciar
+    setTimeout(() => {
+      solicitarPermissaoNotificacao();
+    }, 1000);
   }
 
-  window.permitirNotificacoes = function() {
-    configuracoes.permissaoNotifPedida = true;
-    salvarDadosStorage();
-    fecharModal('modalPermissao');
-    
-    if ('Notification' in window) {
-      Notification.requestPermission().then(function(perm) {
-        if (perm === 'granted') {
-          tocarSomNotificacao();
-          try {
-            navigator.serviceWorker.getRegistration().then(function(reg) {
-              if (reg) {
-                reg.showNotification(configuracoes.nomeApp, {
-                  body: 'Notificações ativadas com sucesso! Elas aparecerão aqui na barra do Android.',
-                  icon: '',
-                  tag: 'teste-notif'
-                });
-              } else {
-                new Notification(configuracoes.nomeApp, {
-                  body: 'Notificações ativadas com sucesso!'
-                });
-              }
-            }).catch(function() {
-              new Notification(configuracoes.nomeApp, {
-                body: 'Notificações ativadas com sucesso!'
-              });
-            });
-          } catch(e) {
-            new Notification(configuracoes.nomeApp, {
-              body: 'Notificações ativadas com sucesso!'
-            });
-          }
-          mostrarToast('Notificações ativadas!', 'success');
-        } else {
-          mostrarToast('Permissão negada. Ative nas configurações do Chrome.', 'error');
-        }
-      });
-    } else {
-      mostrarToast('Navegador não suporta notificações', 'error');
-    }
-  };
-
-  // ===== UTILITÁRIOS =====
-  function formatarMoeda(input) {
+  // ============================================================
+  // FUNÇÕES UTILITÁRIAS
+  // ============================================================
+  window.formatarMoeda = function(input) {
     let valor = input.value.replace(/\D/g, '');
     valor = (parseInt(valor) / 100).toFixed(2) + '';
     valor = valor.replace('.', ',');
     valor = valor.replace(/(\d)(\d{3})(\d{3}),/g, '$1.$2.$3,');
     valor = valor.replace(/(\d)(\d{3}),/g, '$1.$2,');
     input.value = valor;
-  }
+  };
 
   function parseMoeda(valor) {
     return parseFloat(valor.replace(/\./g, '').replace(',', '.'));
@@ -2179,27 +2138,38 @@
     return avatarColors[Math.abs(hash) % avatarColors.length];
   }
 
-  function calcularDiasAteVencimento(dataVencimento) {
+  function calcularDiasAteVencimento(dataVencimentoStr) {
     const hoje = new Date();
     hoje.setHours(0, 0, 0, 0);
-    const vencimento = new Date(dataVencimento + 'T00:00:00');
     
-    while (vencimento < hoje && vencimento.getDate() !== hoje.getDate()) {
-      vencimento.setMonth(vencimento.getMonth() + 1);
+    // Extrai dia e mês do vencimento
+    const dataVenc = new Date(dataVencimentoStr + 'T00:00:00');
+    const diaVenc = dataVenc.getDate();
+    const mesAtual = hoje.getMonth();
+    const anoAtual = hoje.getFullYear();
+    
+    // Cria data de vencimento para o mês atual
+    let proximoVencimento = new Date(anoAtual, mesAtual, diaVenc);
+    proximoVencimento.setHours(0, 0, 0, 0);
+    
+    // Se já passou este mês, vai para o próximo
+    if (proximoVencimento < hoje) {
+      proximoVencimento = new Date(anoAtual, mesAtual + 1, diaVenc);
     }
     
-    const diff = Math.ceil((vencimento - hoje) / (1000 * 60 * 60 * 24));
+    const diff = Math.ceil((proximoVencimento - hoje) / (1000 * 60 * 60 * 24));
     return diff;
   }
 
   function atualizarStatusClientes() {
-    const hoje = new Date();
-    hoje.setHours(0, 0, 0, 0);
     const diasAnt = configuracoes.diasAntecedencia;
 
     clientes.forEach(function(c) {
       const dias = calcularDiasAteVencimento(c.dataVencimento);
-      if (dias < 0) {
+      if (dias > 300) {
+        // Data já passou este mês, está atrasado
+        c.status = 'inadimplente';
+      } else if (dias < 0) {
         c.status = 'inadimplente';
       } else if (dias <= diasAnt) {
         c.status = 'vencendo';
@@ -2207,7 +2177,6 @@
         c.status = 'ativo';
       }
     });
-    salvarDadosStorage();
   }
 
   function getStatusBadge(status) {
@@ -2215,7 +2184,9 @@
     return '<span class="status-badge ' + status + '">' + nomes[status] + '</span>';
   }
 
-  // ===== NAVEGAÇÃO =====
+  // ============================================================
+  // NAVEGAÇÃO ENTRE PÁGINAS
+  // ============================================================
   window.abrirPagina = function(pagina) {
     document.querySelectorAll('.page').forEach(function(p) {
       p.classList.remove('active');
@@ -2226,6 +2197,7 @@
       t.classList.toggle('active', t.dataset.page === pagina);
     });
 
+    // FAB só aparece em clientes e servidores
     const fab = document.getElementById('fabAdd');
     if (pagina === 'clientes') {
       fab.style.display = 'flex';
@@ -2245,7 +2217,9 @@
     if (pagina === 'configuracoes') atualizarInfoDados();
   };
 
-  // ===== DASHBOARD =====
+  // ============================================================
+  // DASHBOARD
+  // ============================================================
   function renderizarDashboard() {
     const total = clientes.length;
     const ativos = clientes.filter(function(c) { return c.status === 'ativo'; }).length;
@@ -2259,6 +2233,7 @@
     document.getElementById('statVencendoHoje').textContent = vencendoHoje;
     document.getElementById('statInadimplentes').textContent = inadimplentes;
 
+    // Valores
     let projecao = 0;
     let valorHoje = 0;
     let valorAmanha = 0;
@@ -2274,6 +2249,7 @@
     document.getElementById('valorHoje').textContent = formatarValor(valorHoje);
     document.getElementById('valorAmanha').textContent = formatarValor(valorAmanha);
 
+    // Novos clientes
     const hoje = new Date();
     hoje.setHours(0, 0, 0, 0);
     
@@ -2335,11 +2311,11 @@
     }
 
     const maxValor = Math.max(...dias.map(function(d) { return d.valor; }), 1);
-    const totalMes = dias.reduce(function(s, d) { return s + d.valor; }, 0);
-    const mediaDia = dias.length > 0 ? (totalMes / dias.length).toFixed(1) : 0;
+    const totalSemana = dias.reduce(function(s, d) { return s + d.valor; }, 0);
+    const mediaDia = dias.length > 0 ? (totalSemana / dias.length).toFixed(1) : 0;
     const melhorDia = Math.max(...dias.map(function(d) { return d.valor; }));
 
-    document.getElementById('totalMes').textContent = totalMes;
+    document.getElementById('totalMes').textContent = totalSemana;
     document.getElementById('mediaDia').textContent = mediaDia;
     document.getElementById('melhorDia').textContent = melhorDia;
 
@@ -2356,7 +2332,7 @@
     const container = document.getElementById('topServidoresList');
     
     if (servidores.length === 0) {
-      container.innerHTML = '<div class="empty-state" style="padding: 20px;"><i class="ri-team-line"></i><p>Nenhum servidor cadastrado</p></div>';
+      container.innerHTML = '<div class="empty-state" style="padding: 24px;"><i class="ri-team-line"></i><p>Nenhum servidor cadastrado</p></div>';
       return;
     }
 
@@ -2371,7 +2347,7 @@
     }).sort(function(a, b) { return b.totalVendas - a.totalVendas; }).slice(0, 5);
 
     if (ranking.length === 0 || ranking[0].totalVendas === 0) {
-      container.innerHTML = '<div class="empty-state" style="padding: 20px;"><i class="ri-bar-chart-line"></i><p>Sem vendas registradas ainda</p></div>';
+      container.innerHTML = '<div class="empty-state" style="padding: 24px;"><i class="ri-bar-chart-line"></i><p>Sem vendas registradas ainda</p></div>';
       return;
     }
 
@@ -2388,7 +2364,9 @@
     }).join('');
   }
 
-  // ===== CLIENTES =====
+  // ============================================================
+  // LISTA DE CLIENTES
+  // ============================================================
   window.filtrarClientes = function() {
     renderizarClientes();
   };
@@ -2407,27 +2385,29 @@
 
     let lista = clientes.slice();
 
+    // Filtros
     if (filtroAtual === 'ativos') {
       lista = lista.filter(function(c) { return c.status === 'ativo'; });
-    } else if (filtroAtual === 'vencendo') {
-      lista = lista.filter(function(c) { return c.status === 'vencendo'; });
-    } else if (filtroAtual === 'inadimplentes') {
+    } else if (filtroAtual === 'vencendo-hoje') {
+      lista = lista.filter(function(c) { return calcularDiasAteVencimento(c.dataVencimento) === 0; });
+    } else if (filtroAtual === 'vencendo-amanha') {
+      lista = lista.filter(function(c) { return calcularDiasAteVencimento(c.dataVencimento) === 1; });
+    } else if (filtroAtual === 'vencidos') {
       lista = lista.filter(function(c) { return c.status === 'inadimplente'; });
     }
 
+    // Busca
     if (busca) {
       lista = lista.filter(function(c) {
-        return c.nome.toLowerCase().includes(busca) || 
-               c.telefone.includes(busca) ||
-               (c.mac && c.mac.toLowerCase().includes(busca)) ||
-               (c.usuario && c.usuario.toLowerCase().includes(busca));
+        return c.nome.toLowerCase().includes(busca) || c.telefone.includes(busca);
       });
     }
 
-    const ordem = { inadimplente: 0, vencendo: 1, ativo: 2 };
+    // Ordena: inadimplentes, vencendo hoje, vencendo amanhã, depois ativos
     lista.sort(function(a, b) {
-      if (ordem[a.status] !== ordem[b.status]) return ordem[a.status] - ordem[b.status];
-      return a.nome.localeCompare(b.nome);
+      const diasA = calcularDiasAteVencimento(a.dataVencimento);
+      const diasB = calcularDiasAteVencimento(b.dataVencimento);
+      return diasA - diasB;
     });
 
     if (lista.length === 0) {
@@ -2440,23 +2420,40 @@
     container.innerHTML = lista.map(function(c) {
       const servidor = servidores.find(function(s) { return s.id === c.servidorId; });
       const diasVenc = calcularDiasAteVencimento(c.dataVencimento);
+      
       let textoDias = '';
-      if (diasVenc < 0) textoDias = Math.abs(diasVenc) + ' dias atrasado';
-      else if (diasVenc === 0) textoDias = 'Vence hoje';
-      else textoDias = 'Vence em ' + diasVenc + ' dias';
+      let classeDias = '';
+      let classeItem = '';
+      
+      if (diasVenc < 0 || diasVenc > 300) {
+        const diasAtraso = diasVenc > 300 ? 30 - (365 - diasVenc) % 30 : Math.abs(diasVenc);
+        textoDias = Math.max(1, diasAtraso) + ' dias atrasado';
+        classeDias = 'dias-atrasado';
+        classeItem = 'inadimplente';
+      } else if (diasVenc === 0) {
+        textoDias = 'VENCE HOJE';
+        classeDias = 'dias-hoje';
+        classeItem = 'vencendo-hoje';
+      } else if (diasVenc === 1) {
+        textoDias = 'Vence amanhã';
+        classeDias = 'dias-amanha';
+        classeItem = 'vencendo-amanha';
+      } else {
+        textoDias = 'Vence em ' + diasVenc + ' dias';
+      }
 
-      return '<div class="client-item">' +
+      return '<div class="client-item ' + classeItem + '">' +
         '<div class="client-avatar ' + getAvatarColor(c.nome) + '">' + getIniciais(c.nome) + '</div>' +
         '<div class="client-info">' +
           '<div class="client-name">' + c.nome + '</div>' +
           '<div class="client-meta">' +
             '<span class="valor">' + formatarValor(c.valor) + '</span>' +
             '<span>•</span>' +
-            '<span>' + textoDias + '</span>' +
+            '<span class="' + classeDias + '">' + textoDias + '</span>' +
           '</div>' +
-          '<div class="client-meta" style="margin-top: 2px;">' +
+          '<div class="client-meta" style="margin-top: 3px;">' +
             getStatusBadge(c.status) +
-            (c.mac ? '<span class="mac-info"><i class="ri-hdmi-line" style="font-size: 9px;"></i> ' + c.mac.substring(0, 11) + '...</span>' : '') +
+            (c.produto ? '<span style="margin-left: 6px;">📦 ' + c.produto + '</span>' : '') +
             (servidor ? '<span style="margin-left: 6px;">👤 ' + servidor.nome + '</span>' : '') +
           '</div>' +
         '</div>' +
@@ -2469,7 +2466,9 @@
     }).join('');
   }
 
-  // ===== MODAL CLIENTE =====
+  // ============================================================
+  // MODAL CLIENTE - CADASTRAR/EDITAR
+  // ============================================================
   window.abrirModalCliente = function(id) {
     document.getElementById('formCliente').reset();
     document.getElementById('clienteId').value = '';
@@ -2483,14 +2482,8 @@
         document.getElementById('clienteTelefone').value = c.telefone;
         document.getElementById('clienteVencimento').value = c.dataVencimento;
         document.getElementById('clienteValor').value = c.valor.toFixed(2).replace('.', ',');
-        document.getElementById('clienteStatus').value = c.status;
-        document.getElementById('clienteServidor').value = c.servidorId || '';
-        document.getElementById('clienteUsuario').value = c.usuario || '';
-        document.getElementById('clienteSenha').value = c.senha || '';
-        document.getElementById('clienteKey').value = c.key || '';
         document.getElementById('clienteProduto').value = c.produto || '';
-        document.getElementById('clienteApp').value = c.app || '';
-        document.getElementById('clienteMAC').value = c.mac || '';
+        document.getElementById('clienteServidor').value = c.servidorId || '';
         document.getElementById('clienteObs').value = c.observacoes || '';
       }
     } else {
@@ -2503,64 +2496,86 @@
     abrirModal('modalCliente');
   };
 
-  window.salvarCliente = function() {
+  window.salvarCliente = async function() {
     const id = document.getElementById('clienteId').value;
     const nome = document.getElementById('clienteNome').value.trim();
     const telefone = document.getElementById('clienteTelefone').value.trim();
     const dataVencimento = document.getElementById('clienteVencimento').value;
     const valorStr = document.getElementById('clienteValor').value;
-    const status = document.getElementById('clienteStatus').value;
-    const servidorId = document.getElementById('clienteServidor').value;
-    const usuario = document.getElementById('clienteUsuario').value.trim();
-    const senha = document.getElementById('clienteSenha').value.trim();
-    const key = document.getElementById('clienteKey').value.trim();
     const produto = document.getElementById('clienteProduto').value.trim();
-    const app = document.getElementById('clienteApp').value.trim();
-    const mac = document.getElementById('clienteMAC').value.trim();
+    const servidorId = document.getElementById('clienteServidor').value;
     const observacoes = document.getElementById('clienteObs').value.trim();
 
     if (!nome || !telefone || !dataVencimento || !valorStr) {
-      mostrarToast('Preencha todos os campos obrigatórios', 'error');
+      mostrarToast('Preencha todos os campos obrigatórios (*)', 'error');
       return;
     }
 
     const valor = parseMoeda(valorStr);
+    let eNovo = false;
 
     if (id) {
       const idx = clientes.findIndex(function(c) { return c.id === id; });
       if (idx !== -1) {
-        clientes[idx] = { ...clientes[idx], nome, telefone, dataVencimento, valor, status, servidorId, usuario, senha, key, produto, app, mac, observacoes };
+        clientes[idx] = { ...clientes[idx], nome, telefone, dataVencimento, valor, produto, servidorId, observacoes };
         mostrarToast('Cliente atualizado com sucesso!', 'success');
       }
     } else {
+      eNovo = true;
       clientes.push({
         id: 'cli_' + Date.now(),
-        nome, telefone, dataVencimento, valor, status, servidorId,
-        usuario, senha, key, produto, app, mac, observacoes,
+        nome,
+        telefone,
+        dataVencimento,
+        valor,
+        produto,
+        servidorId,
+        observacoes,
+        status: 'ativo',
         dataCadastro: new Date().toISOString()
       });
       mostrarToast('Cliente cadastrado com sucesso!', 'success');
     }
 
-    salvarDadosStorage();
     atualizarStatusClientes();
+    await salvarTodosDados();
+    
+    // Reagendar notificações após salvar
+    await agendarNotificacoes();
+    
     fecharModal('modalCliente');
     renderizarClientes();
     renderizarDashboard();
     atualizarBadgeNotificacoes();
+    atualizarInfoDados();
   };
 
-  // ===== DETALHES CLIENTE =====
+  // ============================================================
+  // DETALHES DO CLIENTE
+  // ============================================================
   window.verDetalhesCliente = function(id) {
     const c = clientes.find(function(x) { return x.id === id; });
     if (!c) return;
 
     const servidor = servidores.find(function(s) { return s.id === c.servidorId; });
     const diasVenc = calcularDiasAteVencimento(c.dataVencimento);
+    
     let textoDias = '';
-    if (diasVenc < 0) textoDias = Math.abs(diasVenc) + ' dias atrasado';
-    else if (diasVenc === 0) textoDias = 'Vence HOJE';
-    else textoDias = 'Vence em ' + diasVenc + ' dias';
+    let corDias = '';
+    
+    if (diasVenc < 0 || diasVenc > 300) {
+      textoDias = Math.abs(Math.min(diasVenc, 30)) + ' dias atrasado';
+      corDias = 'var(--danger)';
+    } else if (diasVenc === 0) {
+      textoDias = 'VENCE HOJE';
+      corDias = 'var(--warning)';
+    } else if (diasVenc === 1) {
+      textoDias = 'Vence amanhã';
+      corDias = 'var(--accent)';
+    } else {
+      textoDias = 'Vence em ' + diasVenc + ' dias';
+      corDias = 'var(--accent2)';
+    }
 
     const body = document.getElementById('detalhesBody');
     body.innerHTML = 
@@ -2579,30 +2594,30 @@
         '</div>' +
         '<div class="detail-info-item">' +
           '<div class="label">Situação</div>' +
-          '<div class="value" style="font-size: 12px; color: ' + (diasVenc < 0 ? 'var(--danger)' : diasVenc <= 2 ? 'var(--warning)' : 'var(--accent2)') + ';">' + textoDias + '</div>' +
+          '<div class="value" style="font-size: 12px; color: ' + corDias + ';">' + textoDias + '</div>' +
         '</div>' +
         '<div class="detail-info-item">' +
           '<div class="label">Telefone</div>' +
           '<div class="value" style="font-size: 12px;">' + c.telefone + '</div>' +
         '</div>' +
-        (c.usuario ? '<div class="detail-info-item"><div class="label">Usuário</div><div class="value" style="font-size: 12px;">' + c.usuario + '</div></div>' : '') +
-        (c.senha ? '<div class="detail-info-item"><div class="label">Senha</div><div class="value" style="font-size: 12px;">' + c.senha + '</div></div>' : '') +
-        (c.produto ? '<div class="detail-info-item"><div class="label">Produto</div><div class="value" style="font-size: 12px;">' + c.produto + '</div></div>' : '') +
-        (c.app ? '<div class="detail-info-item"><div class="label">Aplicativo</div><div class="value" style="font-size: 12px;">' + c.app + '</div></div>' : '') +
-        (c.mac ? '<div class="detail-info-item"><div class="label">MAC Address</div><div class="value mac">' + c.mac + '</div></div>' : '') +
-        (c.key ? '<div class="detail-info-item"><div class="label">Key</div><div class="value" style="font-size: 12px;">' + c.key + '</div></div>' : '') +
       '</div>' +
 
+      (c.produto ? 
+        '<div class="detail-info-item" style="margin-bottom: 16px;">' +
+          '<div class="label">Produto / Serviço</div>' +
+          '<div class="value">' + c.produto + '</div>' +
+        '</div>' : '') +
+
       (servidor ? 
-        '<div class="detail-info-item" style="margin-bottom: 20px;">' +
+        '<div class="detail-info-item" style="margin-bottom: 16px;">' +
           '<div class="label">Servidor</div>' +
           '<div class="value">👤 ' + servidor.nome + '</div>' +
         '</div>' : '') +
 
       (c.observacoes ?
-        '<div class="detail-info-item" style="margin-bottom: 20px;">' +
+        '<div class="detail-info-item" style="margin-bottom: 16px;">' +
           '<div class="label">Observações</div>' +
-          '<div class="value" style="font-size: 13px; font-weight: 400;">' + c.observacoes + '</div>' +
+          '<div class="value" style="font-size: 13px; font-weight: 400; line-height: 1.5;">' + c.observacoes + '</div>' +
         '</div>' : '') +
 
       '<div class="detail-actions">' +
@@ -2623,7 +2638,9 @@
     abrirModal('modalDetalhes');
   };
 
-  // ===== EXCLUIR CLIENTE =====
+  // ============================================================
+  // EXCLUIR CLIENTE
+  // ============================================================
   window.excluirCliente = function(id) {
     const c = clientes.find(function(x) { return x.id === id; });
     if (!c) return;
@@ -2631,18 +2648,22 @@
     confirmarAcao(
       'Excluir Cliente',
       'Tem certeza que deseja excluir o cliente "' + c.nome + '"? Esta ação não pode ser desfeita.',
-      function() {
+      async function() {
         clientes = clientes.filter(function(x) { return x.id !== id; });
-        salvarDadosStorage();
+        await salvarTodosDados();
+        await agendarNotificacoes();
         renderizarClientes();
         renderizarDashboard();
         atualizarBadgeNotificacoes();
+        atualizarInfoDados();
         mostrarToast('Cliente excluído!', 'success');
       }
     );
   };
 
-  // ===== WHATSAPP =====
+  // ============================================================
+  // WHATSAPP
+  // ============================================================
   window.abrirWhatsApp = function(id) {
     const c = clientes.find(function(x) { return x.id === id; });
     if (!c) return;
@@ -2662,8 +2683,8 @@
     else saudacao = 'Boa noite';
 
     let textoVenc = '';
-    if (diasVenc < 0) {
-      textoVenc = 'sua mensalidade está ' + Math.abs(diasVenc) + ' dias atrasada';
+    if (diasVenc < 0 || diasVenc > 300) {
+      textoVenc = 'sua mensalidade está atrasada';
     } else if (diasVenc === 0) {
       textoVenc = 'sua mensalidade vence HOJE';
     } else if (diasVenc === 1) {
@@ -2672,13 +2693,23 @@
       textoVenc = 'sua mensalidade vence em ' + diasVenc + ' dias';
     }
 
-    return saudacao + ' ' + cliente.nome.split(' ')[0] + '! Tudo bem?\n\n' +
-      'Passando para lembrar que ' + textoVenc + ', no valor de ' + formatarValor(cliente.valor) + '.\n\n' +
-      'Qualquer dúvida estou à disposição!\n\n' +
-      'Atenciosamente,\nEquipe';
+    const primeiroNome = cliente.nome.split(' ')[0];
+    let msg = saudacao + ' ' + primeiroNome + '! Tudo bem?\n\n';
+    msg += 'Passando para lembrar que ' + textoVenc + ', no valor de ' + formatarValor(cliente.valor) + '.\n\n';
+    
+    if (cliente.produto) {
+      msg += 'Referente ao serviço: ' + cliente.produto + '\n\n';
+    }
+    
+    msg += 'Qualquer dúvida estou à disposição!\n\n';
+    msg += 'Atenciosamente,\nEquipe';
+    
+    return msg;
   }
 
-  // ===== LEMBRETE =====
+  // ============================================================
+  // LEMBRETE
+  // ============================================================
   window.abrirLembrete = function(id) {
     const c = clientes.find(function(x) { return x.id === id; });
     if (!c) return;
@@ -2689,11 +2720,23 @@
 
   window.copiarLembrete = function() {
     const texto = document.getElementById('lembreteTexto').value;
-    navigator.clipboard.writeText(texto).then(function() {
+    
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(texto).then(function() {
+        mostrarToast('Mensagem copiada!', 'success');
+      }).catch(function() {
+        mostrarToast('Erro ao copiar', 'error');
+      });
+    } else {
+      // Fallback
+      const textarea = document.createElement('textarea');
+      textarea.value = texto;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
       mostrarToast('Mensagem copiada!', 'success');
-    }).catch(function() {
-      mostrarToast('Erro ao copiar', 'error');
-    });
+    }
     fecharModal('modalLembrete');
   };
 
@@ -2706,7 +2749,9 @@
     fecharModal('modalLembrete');
   };
 
-  // ===== SERVIDORES =====
+  // ============================================================
+  // SERVIDORES
+  // ============================================================
   window.filtrarServidores = function() {
     renderizarServidores();
   };
@@ -2768,7 +2813,7 @@
     abrirModal('modalServidor');
   };
 
-  window.salvarServidor = function() {
+  window.salvarServidor = async function() {
     const id = document.getElementById('servidorId').value;
     const nome = document.getElementById('servidorNome').value.trim();
     const telefone = document.getElementById('servidorTelefone').value.trim();
@@ -2793,11 +2838,12 @@
       mostrarToast('Servidor cadastrado!', 'success');
     }
 
-    salvarDadosStorage();
+    await salvarTodosDados();
     atualizarSelectServidores();
     fecharModal('modalServidor');
     renderizarServidores();
     renderizarDashboard();
+    atualizarInfoDados();
   };
 
   window.excluirServidor = function(id) {
@@ -2807,15 +2853,16 @@
     confirmarAcao(
       'Excluir Servidor',
       'Tem certeza que deseja excluir "' + s.nome + '"? Os clientes continuarão cadastrados, mas sem vínculo com este servidor.',
-      function() {
+      async function() {
         servidores = servidores.filter(function(x) { return x.id !== id; });
         clientes.forEach(function(c) {
           if (c.servidorId === id) c.servidorId = '';
         });
-        salvarDadosStorage();
+        await salvarTodosDados();
         atualizarSelectServidores();
         renderizarServidores();
         renderizarDashboard();
+        atualizarInfoDados();
         mostrarToast('Servidor excluído!', 'success');
       }
     );
@@ -2831,31 +2878,136 @@
     select.value = valorAtual;
   }
 
-  // ===== CONFIGURAÇÕES =====
+  // ============================================================
+  // CONFIGURAÇÕES - UI
+  // ============================================================
   function carregarConfiguracoesUI() {
     document.getElementById('horaManha').value = configuracoes.horaManha;
     document.getElementById('horaTarde').value = configuracoes.horaTarde;
     document.getElementById('horaNoite').value = configuracoes.horaNoite;
     document.getElementById('diasAntecedencia').value = configuracoes.diasAntecedencia;
+    
+    if (configuracoes.somNotificacao) {
+      document.getElementById('somInfo').textContent = 'Som personalizado carregado: ' + (configuracoes.somNotificacao.nome || 'arquivo de áudio');
+      document.getElementById('somInfo').style.color = 'var(--accent2)';
+    }
   }
 
-  window.salvarPersonalizacao = function() {
-    configuracoes.nomeApp = document.getElementById('cfgNomeApp').value || 'TOPGESTOR';
-    configuracoes.logo = document.getElementById('cfgLogo').value || '';
-    configuracoes.corTema = document.getElementById('cfgCorTema').value || '#0ea5e9';
-    salvarDadosStorage();
-    aplicarConfiguracoesVisuais();
-    mostrarToast('Personalização salva!', 'success');
+  function carregarLogoUI() {
+    const logoImg = document.getElementById('logoImage');
+    const logoText = document.getElementById('logoText');
+    const logoPreview = document.getElementById('logoPreviewImg');
+    const logoPlaceholder = document.getElementById('logoPlaceholder');
+    
+    if (configuracoes.logoBase64) {
+      logoImg.src = configuracoes.logoBase64;
+      logoImg.classList.remove('hidden');
+      logoText.classList.add('hidden');
+      
+      logoPreview.src = configuracoes.logoBase64;
+      logoPreview.classList.remove('hidden');
+      logoPlaceholder.classList.add('hidden');
+    } else {
+      logoImg.classList.add('hidden');
+      logoText.classList.remove('hidden');
+      logoPreview.classList.add('hidden');
+      logoPlaceholder.classList.remove('hidden');
+    }
+  }
+
+  // ============================================================
+  // LOGO - ESCOLHER DA GALERIA
+  // ============================================================
+  window.abrirSeletorLogo = function() {
+    document.getElementById('logoFileInput').click();
   };
 
-  window.salvarConfiguracoesNotif = function() {
+  window.processarLogo = async function(event) {
+    const arquivo = event.target.files[0];
+    if (!arquivo) return;
+
+    if (!arquivo.type.startsWith('image/')) {
+      mostrarToast('Por favor, escolha uma imagem', 'error');
+      return;
+    }
+
+    // Converter para base64
+    const leitor = new FileReader();
+    leitor.onload = async function(e) {
+      configuracoes.logoBase64 = e.target.result;
+      await salvarTodosDados();
+      carregarLogoUI();
+      mostrarToast('Logo atualizada com sucesso!', 'success');
+    };
+    leitor.readAsDataURL(arquivo);
+    event.target.value = '';
+  };
+
+  window.removerLogo = async function() {
+    confirmarAcao(
+      'Remover Logo',
+      'Tem certeza que deseja remover a logo personalizada?',
+      async function() {
+        configuracoes.logoBase64 = null;
+        await salvarTodosDados();
+        carregarLogoUI();
+        mostrarToast('Logo removida!', 'success');
+      }
+    );
+  };
+
+  // ============================================================
+  // SOM PERSONALIZADO
+  // ============================================================
+  window.abrirSeletorSom = function() {
+    document.getElementById('somFileInput').click();
+  };
+
+  window.processarSom = async function(event) {
+    const arquivo = event.target.files[0];
+    if (!arquivo) return;
+
+    if (!arquivo.type.startsWith('audio/')) {
+      mostrarToast('Por favor, escolha um arquivo de áudio', 'error');
+      return;
+    }
+
+    // Aviso sobre limitações do Android
+    mostrarToast('Arquivo selecionado! ⚠️ Observação: som personalizado pode exigir configuração nativa.', 'warning');
+    
+    configuracoes.somNotificacao = {
+      nome: arquivo.name,
+      tipo: arquivo.type,
+      tamanho: arquivo.size
+    };
+    
+    document.getElementById('somInfo').textContent = 'Som selecionado: ' + arquivo.name + ' (pode exigir configuração nativa)';
+    document.getElementById('somInfo').style.color = 'var(--warning)';
+    
+    event.target.value = '';
+  };
+
+  // ============================================================
+  // SALVAR CONFIGURAÇÕES - SÓ COM BOTÃO!
+  // ============================================================
+  window.salvarConfiguracoes = async function() {
     configuracoes.horaManha = document.getElementById('horaManha').value;
     configuracoes.horaTarde = document.getElementById('horaTarde').value;
     configuracoes.horaNoite = document.getElementById('horaNoite').value;
     configuracoes.diasAntecedencia = parseInt(document.getElementById('diasAntecedencia').value) || 2;
-    salvarDadosStorage();
-    agendarVerificacoes();
-    mostrarToast('Configurações salvas!', 'success');
+    
+    await salvarTodosDados();
+    atualizarStatusClientes();
+    
+    // Reagendar todas as notificações com novas configurações
+    await agendarNotificacoes();
+    
+    renderizarClientes();
+    renderizarDashboard();
+    atualizarBadgeNotificacoes();
+    atualizarInfoDados();
+    
+    mostrarToast('✅ Configurações salvas e notificações agendadas!', 'success');
   };
 
   function atualizarInfoDados() {
@@ -2863,36 +3015,165 @@
     document.getElementById('infoTotalServidores').textContent = servidores.length;
   }
 
-  // ===== NOTIFICAÇÕES =====
-  let timersNotificacao = [];
-
-  function agendarVerificacoes() {
-    timersNotificacao.forEach(function(t) { clearTimeout(t); });
-    timersNotificacao = [];
-
-    const horarios = [configuracoes.horaManha, configuracoes.horaTarde, configuracoes.horaNoite];
-    const agora = new Date();
-
-    horarios.forEach(function(horario) {
-      const [h, m] = horario.split(':').map(Number);
-      const proxima = new Date();
-      proxima.setHours(h, m, 0, 0);
-
-      if (proxima <= agora) {
-        proxima.setDate(proxima.getDate() + 1);
+  // ============================================================
+  // NOTIFICAÇÕES NATIVAS ANDROID - LOCAL NOTIFICATIONS
+  // ============================================================
+  
+  /**
+   * Solicita permissão NATIVA do Android para notificações
+   * Esta é a caixa de diálogo do sistema, não do app
+   */
+  window.solicitarPermissaoNotificacao = async function() {
+    const LocalNotifications = getPlugin('LocalNotifications');
+    
+    if (LocalNotifications) {
+      try {
+        // Solicita permissão ao sistema Android
+        const permissao = await LocalNotifications.requestPermissions();
+        
+        if (permissao.display === 'granted' || permissao.display === 'granted') {
+          mostrarToast('✅ Permissão de notificações concedida!', 'success');
+          // Agenda as notificações após ter permissão
+          await agendarNotificacoes();
+        } else {
+          mostrarToast('⚠️ Permissão negada. Notificações não funcionarão.', 'warning');
+        }
+      } catch (e) {
+        console.error('Erro permissão:', e);
+        mostrarToast('Erro ao solicitar permissão', 'error');
       }
+    } else {
+      // Fallback para navegador
+      if ('Notification' in window) {
+        if (Notification.permission === 'default') {
+          const permissao = await Notification.requestPermission();
+          if (permissao === 'granted') {
+            mostrarToast('✅ Permissão concedida!', 'success');
+          }
+        } else if (Notification.permission === 'granted') {
+          mostrarToast('✅ Permissão já concedida', 'success');
+        }
+      }
+    }
+  };
 
-      const delay = proxima - agora;
-      const timer = setTimeout(function() {
-        verificarVencimentosAgora();
-        agendarVerificacoes();
-      }, delay);
-      timersNotificacao.push(timer);
-    });
+  /**
+   * AGENDA NOTIFICAÇÕES NO SISTEMA ANDROID
+   * Estas notificações disparam MESMO com:
+   * - App fechado
+   * - Tela apagada
+   * - App em background
+   * 
+   * Usamos LocalNotifications.schedule() que registra no AlarmManager do Android
+   */
+  async function agendarNotificacoes() {
+    const LocalNotifications = getPlugin('LocalNotifications');
+    
+    if (!LocalNotifications) {
+      console.log('Plugin LocalNotifications não disponível (fora do Capacitor)');
+      return;
+    }
+
+    try {
+      // Cancela notificações antigas primeiro
+      await LocalNotifications.cancel({ notifications: [] });
+      
+      const notificacoes = [];
+      let idNotificacao = 1;
+      
+      // Horários configurados
+      const horarios = [
+        configuracoes.horaManha,
+        configuracoes.horaTarde,
+        configuracoes.horaNoite
+      ];
+      
+      // Para cada cliente que está para vencer ou inadimplente
+      clientes.forEach(function(cliente) {
+        const dias = calcularDiasAteVencimento(cliente.dataVencimento);
+        const diasAnt = configuracoes.diasAntecedencia;
+        
+        // Agenda notificação se:
+        // - Está inadimplente (dias < 0 ou > 300)
+        // - Vence hoje (dias === 0)
+        // - Vence em até X dias (dias <= diasAnt)
+        const deveNotificar = (dias < 0 || dias > 300 || dias <= diasAnt);
+        
+        if (deveNotificar) {
+          const hoje = new Date();
+          
+          // Cria notificação para cada horário do dia
+          horarios.forEach(function(horario) {
+            const [hora, minuto] = horario.split(':').map(Number);
+            const dataNotif = new Date(hoje);
+            dataNotif.setHours(hora, minuto, 0, 0);
+            
+            // Se o horário já passou hoje, agenda para amanhã
+            if (dataNotif <= hoje) {
+              dataNotif.setDate(dataNotif.getDate() + 1);
+            }
+            
+            // Determina título e texto
+            let titulo = '';
+            let texto = '';
+            
+            if (dias < 0 || dias > 300) {
+              titulo = '🔴 Cliente Inadimplente';
+              texto = cliente.nome + ' - Pagamento atrasado! Valor: ' + formatarValor(cliente.valor);
+            } else if (dias === 0) {
+              titulo = '🟡 Vence HOJE';
+              texto = cliente.nome + ' vence hoje! Valor: ' + formatarValor(cliente.valor);
+            } else {
+              titulo = '⏰ Vencimento Próximo';
+              texto = cliente.nome + ' vence em ' + dias + ' dias. Valor: ' + formatarValor(cliente.valor);
+            }
+            
+            notificacoes.push({
+              id: idNotificacao++,
+              title: titulo,
+              body: texto,
+              schedule: {
+                at: dataNotif,
+                // Repete diariamente até que o cliente seja atualizado
+                repeats: true,
+                every: 'day'
+              },
+              sound: configuracoes.somNotificacao ? 'custom_sound' : null,
+              smallIcon: 'ic_stat_notification',
+              iconColor: '#2563eb',
+              actionTypeId: 'LEMBRETE',
+              extra: {
+                clienteId: cliente.id,
+                tipo: 'vencimento'
+              }
+            });
+          });
+        }
+      });
+      
+      // Agenda todas as notificações de uma vez
+      if (notificacoes.length > 0) {
+        await LocalNotifications.schedule({
+          notifications: notificacoes
+        });
+        console.log('Agendadas ' + notificacoes.length + ' notificações');
+      }
+      
+      // Atualiza contador na UI
+      const pendentes = await LocalNotifications.getPending();
+      document.getElementById('infoNotifAgendadas').textContent = pendentes.notifications.length;
+      
+    } catch (e) {
+      console.error('Erro ao agendar notificações:', e);
+    }
   }
 
-  window.verificarVencimentosAgora = function() {
+  /**
+   * Verifica vencimentos manualmente e dispara notificação imediata
+   */
+  window.verificarVencimentosAgora = async function() {
     atualizarStatusClientes();
+    
     const clientesVencendo = clientes.filter(function(c) {
       const dias = calcularDiasAteVencimento(c.dataVencimento);
       return dias >= 0 && dias <= configuracoes.diasAntecedencia;
@@ -2909,73 +3190,63 @@
       let corpo = '';
 
       if (clientesInadimplentes.length > 0 && clientesVencendo.length > 0) {
-        titulo = 'Aviso de Vencimentos';
+        titulo = '⚠️ Aviso de Vencimentos';
         corpo = clientesInadimplentes.length + ' inadimplente(s) • ' + clientesVencendo.length + ' vencendo em breve';
       } else if (clientesInadimplentes.length > 0) {
-        titulo = 'Clientes Inadimplentes';
+        titulo = '🔴 Clientes Inadimplentes';
         corpo = clientesInadimplentes.length + ' cliente(s) com pagamento atrasado';
       } else {
-        titulo = 'Vencimentos Próximos';
+        titulo = '🟡 Vencimentos Próximos';
         corpo = clientesVencendo.length + ' cliente(s) vencendo em até ' + configuracoes.diasAntecedencia + ' dias';
       }
 
-      criarNotificacaoAndroid(titulo, corpo);
+      await dispararNotificacaoImediata(titulo, corpo);
       mostrarToast(titulo + ': ' + corpo, 'info');
     } else {
-      mostrarToast('Nenhum vencimento pendente no momento', 'success');
+      mostrarToast('✅ Nenhum vencimento pendente no momento', 'success');
     }
 
     atualizarBadgeNotificacoes();
   };
 
-  function criarNotificacaoAndroid(titulo, corpo) {
-    tocarSomNotificacao();
+  /**
+   * Dispara uma notificação IMEDIATA (para testes)
+   */
+  async function dispararNotificacaoImediata(titulo, corpo) {
+    const LocalNotifications = getPlugin('LocalNotifications');
     
-    if ('Notification' in window && Notification.permission === 'granted') {
+    if (LocalNotifications) {
       try {
-        if (navigator.serviceWorker && navigator.serviceWorker.getRegistration) {
-          navigator.serviceWorker.getRegistration().then(function(reg) {
-            if (reg) {
-              reg.showNotification(titulo, {
-                body: corpo,
-                icon: '',
-                badge: '',
-                tag: 'topgestor-' + Date.now(),
-                requireInteraction: true,
-                silent: false
-              });
-            } else {
-              new Notification(titulo, { body: corpo });
-            }
-          }).catch(function() {
-            new Notification(titulo, { body: corpo });
-          });
-        } else {
-          new Notification(titulo, { body: corpo });
-        }
-      } catch(e) {
-        try { new Notification(titulo, { body: corpo }); } catch(err) {}
+        await LocalNotifications.schedule({
+          notifications: [{
+            id: Math.floor(Math.random() * 2147483647),
+            title: titulo,
+            body: corpo,
+            schedule: {
+              at: new Date(Date.now() + 1000) // 1 segundo depois
+            },
+            sound: configuracoes.somNotificacao ? 'custom_sound' : null,
+            smallIcon: 'ic_stat_notification',
+            iconColor: '#2563eb'
+          }]
+        });
+      } catch (e) {
+        console.error('Erro notificação:', e);
       }
+    } else if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification(titulo, { body: corpo });
     }
   }
 
-  window.testarNotificacao = function() {
-    if ('Notification' in window && Notification.permission === 'default') {
-      Notification.requestPermission().then(function(p) {
-        if (p === 'granted') {
-          criarNotificacaoAndroid(configuracoes.nomeApp, 'Notificação de teste funcionando! Ela aparece na barra do Android.');
-          mostrarToast('Notificação enviada! Verifique a barra do Android.', 'success');
-        } else {
-          mostrarToast('Permita as notificações quando perguntado.', 'error');
-        }
-      });
-    } else if ('Notification' in window && Notification.permission === 'granted') {
-      criarNotificacaoAndroid(configuracoes.nomeApp, 'Notificação de teste funcionando! Ela aparece na barra do Android.');
-      mostrarToast('Notificação enviada! Verifique a barra do Android.', 'success');
-    } else {
-      tocarSomNotificacao();
-      mostrarToast('Ative notificações no Chrome: 3 pontinhos → Configurações → Notificações', 'info');
-    }
+  /**
+   * Botão de teste de notificação
+   */
+  window.testarNotificacao = async function() {
+    await dispararNotificacaoImediata(
+      '🔔 TOPGESTOR - Teste',
+      'Notificação nativa funcionando! Ela aparece mesmo com o app fechado.'
+    );
+    mostrarToast('📤 Notificação de teste enviada!', 'success');
   };
 
   function atualizarBadgeNotificacoes() {
@@ -2992,15 +3263,25 @@
     }
   }
 
-  // ===== BACKUP =====
+  // ============================================================
+  // BACKUP E RESTAURAÇÃO
+  // ============================================================
   window.exportarBackup = function() {
     const backup = {
-      versao: '2.1.0',
+      versao: '1.0.0',
       dataExportacao: new Date().toISOString(),
       clientes: clientes,
       servidores: servidores,
-      configuracoes: configuracoes
+      configuracoes: {
+        ...configuracoes,
+        logoBase64: configuracoes.logoBase64 ? '[LOGO_INCLUIDA]' : null
+      }
     };
+
+    // Inclui logo completa no backup
+    if (configuracoes.logoBase64) {
+      backup.logoBase64 = configuracoes.logoBase64;
+    }
 
     const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -3009,7 +3290,7 @@
     a.download = 'topgestor_backup_' + new Date().toISOString().split('T')[0] + '.json';
     a.click();
     URL.revokeObjectURL(url);
-    mostrarToast('Backup exportado com sucesso!', 'success');
+    mostrarToast('✅ Backup exportado com sucesso!', 'success');
   };
 
   window.importarBackup = function() {
@@ -3021,59 +3302,83 @@
     if (!arquivo) return;
 
     const leitor = new FileReader();
-    leitor.onload = function(e) {
+    leitor.onload = async function(e) {
       try {
         const backup = JSON.parse(e.target.result);
         
         confirmarAcao(
           'Restaurar Backup',
           'Isso substituirá todos os dados atuais. Deseja continuar?',
-          function() {
+          async function() {
             if (backup.clientes) clientes = backup.clientes;
             if (backup.servidores) servidores = backup.servidores;
-            if (backup.configuracoes) configuracoes = {...configuracoes, ...backup.configuracoes};
+            if (backup.configuracoes) {
+              configuracoes = { ...configuracoes, ...backup.configuracoes };
+            }
+            if (backup.logoBase64) {
+              configuracoes.logoBase64 = backup.logoBase64;
+            }
             
-            salvarDadosStorage();
-            aplicarConfiguracoesVisuais();
+            await salvarTodosDados();
             carregarConfiguracoesUI();
+            carregarLogoUI();
             atualizarSelectServidores();
             atualizarStatusClientes();
+            await agendarNotificacoes();
             renderizarDashboard();
             renderizarClientes();
             renderizarServidores();
             atualizarBadgeNotificacoes();
-            mostrarToast('Backup restaurado com sucesso!', 'success');
+            atualizarInfoDados();
+            mostrarToast('✅ Backup restaurado com sucesso!', 'success');
           }
         );
       } catch (err) {
-        mostrarToast('Arquivo de backup inválido', 'error');
+        mostrarToast('❌ Arquivo de backup inválido', 'error');
       }
     };
     leitor.readAsText(arquivo);
     event.target.value = '';
   };
 
-  // ===== LIMPAR DADOS =====
+  // ============================================================
+  // LIMPAR DADOS
+  // ============================================================
   window.confirmarLimparDados = function() {
     confirmarAcao(
       'Limpar Todos os Dados',
-      'Tem CERTEZA ABSOLUTA? Todos os clientes, servidores e configurações serão APAGADOS. Esta ação não pode ser desfeita!',
-      function() {
+      'TEM CERTEZA ABSOLUTA? Todos os clientes, servidores e configurações serão APAGADOS. Esta ação não pode ser desfeita!',
+      async function() {
         clientes = [];
         servidores = [];
-        salvarDadosStorage();
+        configuracoes.logoBase64 = null;
+        configuracoes.somNotificacao = null;
+        
+        await salvarTodosDados();
+        
+        // Cancela notificações agendadas
+        const LocalNotifications = getPlugin('LocalNotifications');
+        if (LocalNotifications) {
+          try {
+            await LocalNotifications.cancel({ notifications: [] });
+          } catch (e) {}
+        }
+        
+        carregarLogoUI();
         atualizarSelectServidores();
         renderizarDashboard();
         renderizarClientes();
         renderizarServidores();
         atualizarBadgeNotificacoes();
         atualizarInfoDados();
-        mostrarToast('Todos os dados foram limpos!', 'success');
+        mostrarToast('🗑️ Todos os dados foram limpos!', 'success');
       }
     );
   };
 
-  // ===== MODAL UTILS =====
+  // ============================================================
+  // FUNÇÕES AUXILIARES DE MODAL
+  // ============================================================
   function abrirModal(id) {
     document.getElementById(id).classList.add('active');
     document.body.style.overflow = 'hidden';
@@ -3084,6 +3389,7 @@
     document.body.style.overflow = '';
   };
 
+  // Fechar modal ao clicar fora
   document.querySelectorAll('.modal-overlay').forEach(function(overlay) {
     overlay.addEventListener('click', function(e) {
       if (e.target === overlay) {
@@ -3093,7 +3399,9 @@
     });
   });
 
-  // ===== CONFIRMAR AÇÃO =====
+  // ============================================================
+  // CONFIRMAR AÇÃO
+  // ============================================================
   window.confirmarAcao = function(titulo, mensagem, callback) {
     document.getElementById('confirmTitle').textContent = titulo;
     document.getElementById('confirmMessage').textContent = mensagem;
@@ -3109,60 +3417,51 @@
     }
   };
 
-  // ===== TOAST - CONSERTADO! =====
+  // ============================================================
+  // TOAST - Mensagem que some sozinha em 3 segundos
+  // ============================================================
+  let toastTimer = null;
+  
   function mostrarToast(mensagem, tipo) {
     const toast = document.getElementById('toast');
     const icon = document.getElementById('toastIcon');
     const msg = document.getElementById('toastMessage');
 
+    // Limpa timer anterior
     if (toastTimer) {
       clearTimeout(toastTimer);
-      toastTimer = null;
     }
 
-    toast.classList.remove('show');
-    toast.style.transform = 'translateX(-50%) translateY(-150px)';
-    toast.style.opacity = '0';
+    toast.className = 'toast ' + (tipo || 'info');
+    msg.textContent = mensagem;
 
-    setTimeout(function() {
-      toast.className = 'toast ' + (tipo || 'info');
-      msg.textContent = mensagem;
+    if (tipo === 'success') icon.className = 'ri-checkbox-circle-fill';
+    else if (tipo === 'error') icon.className = 'ri-error-warning-fill';
+    else if (tipo === 'warning') icon.className = 'ri-alert-line';
+    else icon.className = 'ri-information-fill';
 
-      if (tipo === 'success') icon.className = 'ri-checkbox-circle-fill';
-      else if (tipo === 'error') icon.className = 'ri-error-warning-fill';
-      else icon.className = 'ri-information-fill';
-
-      toast.classList.add('show');
-      toast.style.transform = 'translateX(-50%) translateY(0)';
-      toast.style.opacity = '1';
-
-      toastTimer = setTimeout(function() {
-        toast.classList.remove('show');
-        toast.style.transform = 'translateX(-50%) translateY(-150px)';
-        toast.style.opacity = '0';
-        toastTimer = null;
-      }, 3000);
-    }, 50);
+    toast.classList.add('show');
+    
+    // Some automaticamente em 3 segundos
+    toastTimer = setTimeout(function() {
+      toast.classList.remove('show');
+    }, 3000);
   }
 
-  // ===== INICIAR =====
+  // ============================================================
+  // INICIAR APLICAÇÃO
+  // ============================================================
   carregarDados();
 
-  // ===== SERVICE WORKER PARA NOTIFICAÇÕES ANDROID =====
-  if ('serviceWorker' in navigator) {
-    const swCode = `
-      self.addEventListener('notificationclick', function(event) {
-        event.notification.close();
-        clients.openWindow('/');
-      });
-      self.addEventListener('install', function(event) {
-        self.skipWaiting();
-      });
-    `;
-    const blob = new Blob([swCode], { type: 'application/javascript' });
-    const swUrl = URL.createObjectURL(blob);
-    navigator.serviceWorker.register(swUrl).catch(function() {});
-  }
+  // Reagendar notificações quando o app voltar ao foco
+  document.addEventListener('visibilitychange', async function() {
+    if (!document.hidden) {
+      atualizarStatusClientes();
+      renderizarClientes();
+      atualizarBadgeNotificacoes();
+    }
+  });
+
 })();
 </script>
 

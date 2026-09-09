@@ -181,32 +181,11 @@ jobs:
           echo "⚙️ Configurando Capacitor para usar som: $SOM_USADO"
           
           # Cria ou atualiza capacitor.config.json
-          cat > capacitor.config.json << 'CAPACITOR_EOF'
-          {
-            "appId": "com.gestoriptv.APP_ID_PLACEHOLDER",
-            "appName": "APP_NAME_PLACEHOLDER",
-            "webDir": "www",
-            "plugins": {
-              "LocalNotifications": {
-                "smallIcon": "ic_stat_icon_config_sample",
-                "iconColor": "#00A8E1",
-                "sound": "SOM_PLACEHOLDER",
-                "importance": "high",
-                "priority": "high",
-                "vibrate": true,
-                "ongoing": false,
-                "autoCancel": true
-              }
-            }
-          }
-          CAPACITOR_EOF
-          
-          # Substitui placeholders
-          sed -i "s/APP_ID_PLACEHOLDER/$APP_ID/" capacitor.config.json
-          sed -i "s/APP_NAME_PLACEHOLDER/$APP_NAME/" capacitor.config.json
-          sed -i "s/SOM_PLACEHOLDER/$SOM_USADO/" capacitor.config.json
+          # Usando printf ao invés de heredoc para evitar problema de indentação
+          printf '{\n  "appId": "com.gestoriptv.%s",\n  "appName": "%s",\n  "webDir": "www",\n  "plugins": {\n    "LocalNotifications": {\n      "smallIcon": "ic_stat_icon_config_sample",\n      "iconColor": "#00A8E1",\n      "sound": "%s",\n      "importance": "high",\n      "priority": "high",\n      "vibrate": true,\n      "ongoing": false,\n      "autoCancel": true\n    }\n  }\n}\n' "$APP_ID" "$APP_NAME" "$SOM_USADO" > capacitor.config.json
           
           echo "✅ capacitor.config.json configurado!"
+          cat capacitor.config.json
         else
           echo "ℹ️ Nenhum som personalizado encontrado — usando som padrão do sistema"
         fi

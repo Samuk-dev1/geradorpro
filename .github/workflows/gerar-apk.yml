@@ -10,6 +10,18 @@ on:
         description: 'Usuário enviou logo?'
         required: false
         default: 'nao'
+      enviou_som:
+        description: 'Usuário enviou som de notificação?'
+        required: false
+        default: 'nao'
+      nome_arquivo_som:
+        description: 'Nome do arquivo de som (ex: notificacao.ogg)'
+        required: false
+        default: ''
+      enviou_zip:
+        description: 'Usuário enviou projeto ZIP completo?'
+        required: false
+        default: 'nao'
 
 jobs:
   build:
@@ -31,17 +43,47 @@ jobs:
 
     - name: Preparar Ambiente e Gerar APK
       run: |
+        # ==========================================
+        # 📦 OPÇÃO 1: Se usuário enviou ZIP do projeto
+        # ==========================================
+        ENVIOU_ZIP="${{ github.event.inputs.enviou_zip }}"
+        
+        if [ "$ENVIOU_ZIP" = "sim" ]; then
+          echo "📦 Usuário enviou ZIP do projeto..."
+          
+          # Procura por arquivos .zip na raiz
+          ZIP_FILE=$(find . -maxdepth 1 -name "*.zip" | head -1)
+          
+          if [ -n "$ZIP_FILE" ]; then
+            echo "✅ ZIP encontrado: $ZIP_FILE"
+            
+            # Extrai para pasta temporária
+            mkdir -p projeto_zip
+            unzip -q "$ZIP_FILE" -d projeto_zip
+            
+            # Copia tudo do ZIP para a raiz
+            cp -r projeto_zip/* ./ 2>/dev/null || true
+            cp -r projeto_zip/.* ./ 2>/dev/null || true
+            
+            echo "✅ ZIP extraído com sucesso!"
+          else
+            echo "⚠️ Nenhum arquivo ZIP encontrado na raiz!"
+          fi
+        fi
+
+        # ==========================================
+        # 📦 Inicializa projeto npm
+        # ==========================================
         npm init -y
         
-        # ✅ Notificações + Arquivos/Backup + GPS
+        # Deixando apenas o core, android, cli e o plugin de notificações
         npm install @capacitor/core@5 @capacitor/android@5 @capacitor/cli@5 \
-          @capacitor/local-notifications@5 \
-          @capacitor/filesystem@5 \
-          @capacitor/geolocation@5
+          @capacitor/local-notifications@5
 
         # Cria pasta www e copia o arquivo único index.html
         mkdir -p www
         
+        # ✅ SEU ARQUIVO ÚNICO É COPIADO AQUI
         if [ -f index.html ]; then
           cp index.html www/index.html
           echo "✅ Arquivo index.html copiado com sucesso!"
@@ -68,9 +110,6 @@ jobs:
         # Inicializa Capacitor
         npx cap init "$APP_NAME" com.gestoriptv.$APP_ID --web-dir www
         npx cap add android
-
-        # 🌐 LIBERA CONEXÕES HTTP (SEM HTTPS) NO CAPACITOR DE FORMA SEGURA VIA NODE
-        node -e "const fs = require('fs'); const cfg = JSON.parse(fs.readFileSync('capacitor.config.json')); cfg.server = { cleartext: true }; fs.writeFileSync('capacitor.config.json', JSON.stringify(cfg, null, 2));"
 
         # Aplica nome personalizado no Android
         STRINGS_FILE="android/app/src/main/res/values/strings.xml"
@@ -103,13 +142,80 @@ jobs:
           find android/app/src/main/res/ -name "ic_launcher_round.xml" -delete
         fi
 
-        # 🔑 TODAS AS PERMISSÕES
+        # ==========================================
+        # 🔊 CONFIGURAR SOM DE NOTIFICAÇÃO
+        # ==========================================
+        ENVIOU_SOM="${{ github.event.inputs.enviou_som }}"
+        NOME_SOM="${{ github.event.inputs.nome_arquivo_som }}"
+        
+        # Cria pasta res/raw do Android (onde ficam os sons)
+        mkdir -p android/app/src/main/res/raw
+        
+        SOM_USADO=""
+        
+        # Prioridade 1: Se usuário enviou som separado
+        if [ "$ENVIOU_SOM" = "sim" ] && [ -n "$NOME_SOM" ] && [ -f "$NOME_SOM" ]; then
+          echo "🔊 Som personalizado encontrado: $NOME_SOM"
+          
+          # Copia para res/raw com nome padrão (notificacao.extensao)
+          EXTENSAO="${NOME_SOM##*.}"
+          cp "$NOME_SOM" "android/app/src/main/res/raw/notificacao.$EXTENSAO"
+          SOM_USADO="notificacao.$EXTENSAO"
+          echo "✅ Som copiado para: android/app/src/main/res/raw/notificacao.$EXTENSAO"
+        
+        # Prioridade 2: Se tem som dentro do projeto (assets ou já no res/raw)
+        elif [ -d "assets" ]; then
+          # Procura arquivos de som na pasta assets
+          SOM_ASSETS=$(find assets -type f \( -name "*.mp3" -o -name "*.ogg" -o -name "*.wav" \) | head -1)
+          if [ -n "$SOM_ASSETS" ]; then
+            echo "🔊 Som encontrado na pasta assets: $SOM_ASSETS"
+            EXTENSAO="${SOM_ASSETS##*.}"
+            cp "$SOM_ASSETS" "android/app/src/main/res/raw/notificacao.$EXTENSAO"
+            SOM_USADO="notificacao.$EXTENSAO"
+            echo "✅ Som copiado de assets para res/raw"
+          fi
+        fi
+        
+        # Se encontrou algum som, configura o Capacitor
+        if [ -n "$SOM_USADO" ]; then
+          echo "⚙️ Configurando Capacitor para usar som: $SOM_USADO"
+          
+          # Cria ou atualiza capacitor.config.json
+          cat > capacitor.config.json << 'CAPACITOR_EOF'
+          {
+            "appId": "com.gestoriptv.APP_ID_PLACEHOLDER",
+            "appName": "APP_NAME_PLACEHOLDER",
+            "webDir": "www",
+            "plugins": {
+              "LocalNotifications": {
+                "smallIcon": "ic_stat_icon_config_sample",
+                "iconColor": "#00A8E1",
+                "sound": "SOM_PLACEHOLDER",
+                "importance": "high",
+                "priority": "high",
+                "vibrate": true,
+                "ongoing": false,
+                "autoCancel": true
+              }
+            }
+          }
+          CAPACITOR_EOF
+          
+          # Substitui placeholders
+          sed -i "s/APP_ID_PLACEHOLDER/$APP_ID/" capacitor.config.json
+          sed -i "s/APP_NAME_PLACEHOLDER/$APP_NAME/" capacitor.config.json
+          sed -i "s/SOM_PLACEHOLDER/$SOM_USADO/" capacitor.config.json
+          
+          echo "✅ capacitor.config.json configurado!"
+        else
+          echo "ℹ️ Nenhum som personalizado encontrado — usando som padrão do sistema"
+        fi
+
+        # ==========================================
+        # 🔑 PERMISSÕES NO ANDROIDMANIFEST
+        # ==========================================
         MANIFEST_FILE="android/app/src/main/AndroidManifest.xml"
         if [ -f "$MANIFEST_FILE" ]; then
-          # 🌐 Liberar tráfego HTTP para a Evolution API (Adicionado aqui para resolver o bloqueio)
-          sed -i 's/<application/<application android:usesCleartextTraffic="true"/g' "$MANIFEST_FILE"
-
-          # Notificações
           sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />' "$MANIFEST_FILE"
           sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />' "$MANIFEST_FILE"
           sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />' "$MANIFEST_FILE"
@@ -117,16 +223,6 @@ jobs:
           sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.INTERNET" />' "$MANIFEST_FILE"
           sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.WAKE_LOCK" />' "$MANIFEST_FILE"
           sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />' "$MANIFEST_FILE"
-          
-          # 📂 Backup / Arquivos
-          sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />' "$MANIFEST_FILE"
-          sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />' "$MANIFEST_FILE"
-          sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />' "$MANIFEST_FILE"
-          
-          # 📍 GPS / Localização
-          sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />' "$MANIFEST_FILE"
-          sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />' "$MANIFEST_FILE"
-          sed -i '/<manifest/ a \    <uses-feature android:name="android.hardware.location.gps" android:required="false" />' "$MANIFEST_FILE"
         fi
 
         # Sincroniza tudo

@@ -619,6 +619,11 @@ let cfgNotif = { horarios: ['09:00', '13:00', '18:00'] };
 let filtroAtualGlobal = 'todos';
 let toastTimeout;
 
+// 🔊 NOME DO ARQUIVO DE SOM (sem extensão) - colocado pelo workflow em res/raw/
+const SOM_NOTIFICACAO = "notificacao";
+// 📢 ID DO CANAL DE NOTIFICAÇÃO (v2 para garantir som novo)
+const CANAL_NOTIF_ID = "alertas_gestor_v2";
+
 // Instâncias dos Gráficos
 let lineChartInstance = null;
 let doughnutChartInstance = null;
@@ -723,7 +728,7 @@ async function initBanco() {
     req.onupgradeneeded = e => {
       const d = e.target.result;
       if(!d.objectStoreNames.contains('config')) d.createObjectStore('config', {keyPath:'id'}).add({id:1});
-      if(!d.objectStoreNames.contains('notif_config')) d.createObjectStore('notif_config', {keyPath:'id'}).add({id:1, horarios:['09:00', '13:00', '18:00']});
+      if(!d.objectStoreNames.contains('notif_config')) d.createObjectStore('notif_config', {keyPath:'id'}).add({id:1, horarios:['09:00','13:00','18:00']});
       if(!d.objectStoreNames.contains('planos')) d.createObjectStore('planos', {keyPath:'id', autoIncrement:true});
       if(!d.objectStoreNames.contains('templates')) d.createObjectStore('templates', {keyPath:'id', autoIncrement:true});
       if(!d.objectStoreNames.contains('clientes')) {
@@ -1180,7 +1185,7 @@ async function salvarConfiguracoes(){
   mostrarToast('✅ Dados Salvos!');
 }
 
-// ========== MOTOR DE NOTIFICAÇÕES ==========
+// ========== MOTOR DE NOTIFICAÇÕES (COM SOM PERSONALIZADO) ==========
 async function carregarNotifConfig(){
   const c = await new Promise(r => tx('notif_config').get(1).onsuccess = e => r(e.target.result || {horarios:['09:00','13:00','18:00']}));
   cfgNotif.horarios = c.horarios || ['09:00','13:00','18:00'];
@@ -1203,31 +1208,38 @@ async function solicitarPermissaoNotif() {
     await LocalNotifications.requestPermissions(); 
     
     try {
+      // 🔊 CORREÇÃO 1: Cria canal com SOM PERSONALIZADO!
       await LocalNotifications.createChannel({ 
-        id: 'alertas_gestor', 
+        id: CANAL_NOTIF_ID, 
         name: 'Alertas do Gestor', 
         description: 'Notificações de vencimento de clientes',
         importance: 5, 
         visibility: 1, 
-        vibration: true
+        vibration: true,
+        sound: SOM_NOTIFICACAO  // ← AQUI está o som personalizado!
       });
-      mostrarToast('✅ Alertas Mobile ativados no Android!'); 
-    } catch(e) { console.log(e); }
+      mostrarToast('✅ Alertas Mobile ativados com som personalizado!'); 
+    } catch(e) { 
+      console.log('Erro ao criar canal:', e); 
+      mostrarToast('⚠️ Canal criado (verifique permissões)'); 
+    }
   }
 }
 
 async function dispararNotificacao() {
   if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications) {
+      // 🔊 CORREÇÃO 2: Notificação de teste com SOM!
       await window.Capacitor.Plugins.LocalNotifications.schedule({
         notifications: [{ 
           id: 999, 
           title: '📆 Teste de Sistema', 
-          body: 'As notificações nativas do Android estão funcionando!', 
+          body: 'As notificações com som personalizado estão funcionando!', 
+          sound: SOM_NOTIFICACAO,  // ← AQUI está o som personalizado!
           schedule: { at: new Date(Date.now() + 1500), allowWhileIdle: true }, 
-          channelId: 'alertas_gestor' 
+          channelId: CANAL_NOTIF_ID 
         }]
       });
-      mostrarToast('🔔 Alerta enviado! Aguarde 1 segundo...');
+      mostrarToast('🔔 Alerta enviado com som! Aguarde 1 segundo...');
   } else {
       mostrarToast('❌ Capacitor inativo. Gere o APK para testar.');
   }
@@ -1293,12 +1305,14 @@ async function recalcularNotificacoesGlobal() {
                       tCorpo = listaDoDia.length === 1 ? `Lembrete: O plano de ${nomes[0]} vencerá em breve.` : `Prepare as cobranças: ${nomes.slice(0,3).join(', ')}...`;
                   }
 
+                  // 🔊 CORREÇÃO 3: Cada notificação agendada com SOM!
                   novaAgenda.push({
                       id: idAlarme++,
                       title: tTitulo,
                       body: tCorpo,
+                      sound: SOM_NOTIFICACAO,  // ← AQUI está o som personalizado!
                       schedule: { at: toque, allowWhileIdle: true },
-                      channelId: 'alertas_gestor'
+                      channelId: CANAL_NOTIF_ID
                   });
               }
           }

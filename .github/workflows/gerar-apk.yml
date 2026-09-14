@@ -26,6 +26,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    
+    # ⚠️ PERMISSÃO NECESSÁRIA PARA O BOT PODER APAGAR OS ARQUIVOS ⚠️
+    permissions:
+      contents: write
+
     steps:
     - name: Baixar código do projeto
       uses: actions/checkout@v4
@@ -51,7 +56,7 @@ jobs:
         if [ "$ENVIOU_ZIP" = "sim" ]; then
           echo "📦 Usuário enviou ZIP do projeto..."
           
-          # Procura por arquivos .zip na raiz
+          # Procura por arquivos .zip na raiz (independente do nome)
           ZIP_FILE=$(find . -maxdepth 1 -name "*.zip" | head -1)
           
           if [ -n "$ZIP_FILE" ]; then
@@ -181,7 +186,6 @@ jobs:
           echo "⚙️ Configurando Capacitor para usar som: $SOM_USADO"
           
           # Cria ou atualiza capacitor.config.json
-          # Usando printf ao invés de heredoc para evitar problema de indentação
           printf '{\n  "appId": "com.gestoriptv.%s",\n  "appName": "%s",\n  "webDir": "www",\n  "plugins": {\n    "LocalNotifications": {\n      "smallIcon": "ic_stat_icon_config_sample",\n      "iconColor": "#00A8E1",\n      "sound": "%s",\n      "importance": "high",\n      "priority": "high",\n      "vibrate": true,\n      "ongoing": false,\n      "autoCancel": true\n    }\n  }\n}\n' "$APP_ID" "$APP_NAME" "$SOM_USADO" > capacitor.config.json
           
           echo "✅ capacitor.config.json configurado!"
@@ -212,9 +216,34 @@ jobs:
         cd android
         ./gradlew assembleDebug
 
-    - name: Disponibilizar APK
+    - name: Disponibilizar APK (Apaga em 2 dias)
       uses: actions/upload-artifact@v4
       with:
         name: ${{ github.event.inputs.app_name || 'GestorIPTV' }}-APK
         path: android/app/build/outputs/apk/debug/app-debug.apk
-        retention-days: 7
+        retention-days: 2 # ⏳ Reduzido para 2 dias conforme seu pedido
+
+    # =================================================================
+    # 🧹 ETAPA FINAL: FAXINA AUTOMÁTICA DO GITHUB (Limpa zip, logo, som)
+    # =================================================================
+    - name: 🧹 Limpar arquivos temporários do repositório
+      if: always() # Garante que vai limpar mesmo se a compilação der erro
+      run: |
+        # Configura o Robô do GitHub para fazer a alteração
+        git config --global user.name "GitHub-Actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        
+        echo "🗑️ Apagando zips, imagens, audios e html temporários..."
+        
+        # Apaga arquivos indesejados (o asterisco pega QUALQUER NOME)
+        rm -f *.zip
+        rm -f logo.png
+        rm -f *.mp3 *.ogg *.wav
+        rm -f index.html
+        
+        # Prepara a limpeza para salvar no GitHub
+        git add -A
+        
+        # Verifica se tem algo para limpar. Se tiver, ele apaga do repositório.
+        git diff --staged --quiet || git commit -m "🧹 Faxina automática: removendo zip e arquivos temporários [skip ci]"
+        git push || echo "✅ O repositório já está limpo!"

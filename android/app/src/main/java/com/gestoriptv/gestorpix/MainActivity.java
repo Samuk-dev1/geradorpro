@@ -1,4 +1,4 @@
-package com.gestoriptv.gestoriptv;
+package com.gestoriptv.gestorpix;
 
 import com.getcapacitor.BridgeActivity;
 

@@ -387,7 +387,7 @@
 
       <div class="panel-box">
         <div class="panel-header"><h3><i class="fas fa-cloud-download-alt" style="color:var(--success)"></i> Backup</h3></div>
-        <button class="btn-gradient" style="margin-bottom:12px;" onclick="exportarBackup()"><i class="fas fa-upload"></i> Salvar Backup</button>
+        <button class="btn-gradient" style="margin-bottom:12px;" onclick="exportarBackup()"><i class="fas fa-upload"></i> Salvar Backup (Download)</button>
         <label style="font-size:13px; color:var(--text-muted); display:block; margin-bottom:8px;">Restaurar Dados:</label>
         <input type="file" id="arquivo-backup" accept=".json" onchange="importarBackup(event)" style="margin-bottom: 16px;">
         
@@ -615,7 +615,7 @@ window.onload = async () => {
   await renderizarPlanosSelect();
   await renderizarPlanos();
   await renderizarClientes();
-  solicitarPermissaoNotif(); // Chama a permissão logo na abertura
+  solicitarPermissaoNotif(); // Voltou para a forma garantida
 };
 
 function navegarPara(telaId, el) {
@@ -1339,27 +1339,24 @@ async function salvarNotifConfig(){
 }
 
 async function solicitarPermissaoNotif() {
-  // Prioridade total para o Capacitor no Android
+  if ('Notification' in window) { 
+    await Notification.requestPermission(); 
+  }
+  
+  // Revertido para o método antigo que funcionava na sua versão do Capacitor
   if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications) { 
     try {
       const LocalNotifications = window.Capacitor.Plugins.LocalNotifications;
-      let permStatus = await LocalNotifications.checkPermissions();
-      if (permStatus.display !== 'granted') {
-         await LocalNotifications.requestPermissions(); 
-      }
+      await LocalNotifications.requestPermissions(); 
       await LocalNotifications.createChannel({ 
         id: 'alertas_gestor', 
         name: 'Alertas do Gestor', 
-        description: 'Notificações de vencimento',
+        description: 'Notificações de vencimento de clientes',
         importance: 5, 
         visibility: 1, 
         vibration: true
       });
-      console.log("Notificações nativas ativadas.");
-    } catch(e) { console.error("Erro ao pedir permissão nativa:", e); }
-  } else if ('Notification' in window) { 
-    // Fallback Web
-    await Notification.requestPermission(); 
+    } catch(e) { console.log(e); }
   }
 }
 
@@ -1457,45 +1454,54 @@ async function recalcularNotificacoesGlobal() {
   }
 }
 
-// ========== BACKUP ==========
+// ========== BACKUP (DIRETO NA PASTA DOWNLOADS) ==========
 async function exportarBackup(){
   const dados = { config: cfgEmpresa, notif: cfgNotif, clientes: await getAll('clientes'), planos: await getAll('planos'), templates: await getAll('templates') };
   const str = JSON.stringify(dados, null, 2);
   const name = `Backup_IPTV_${new Date().toISOString().slice(0,10)}.json`;
   
-  // MODO NATIVO ANDROID: Salva em CACHE e abre a janela do sistema para o usuário ESCOLHER onde salvar
   if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Filesystem) {
     try {
       const Filesystem = window.Capacitor.Plugins.Filesystem;
-      const Share = window.Capacitor.Plugins.Share;
       
-      // O Android 11+ bloqueia salvar direto na pasta DOCUMENTS sem permissão especial.
-      // Salvar no CACHE e depois compartilhar é 100% garantido de funcionar.
-      const result = await Filesystem.writeFile({
-        path: name,
+      // Pede a permissão de armazenamento primeiro
+      if (Filesystem.requestPermissions) {
+         try { await Filesystem.requestPermissions(); } catch(e){}
+      }
+      
+      // Força a escrita no armazenamento externo dentro da pasta "Download"
+      await Filesystem.writeFile({
+        path: 'Download/' + name,
         data: str,
-        directory: 'CACHE',
+        directory: 'EXTERNAL_STORAGE', 
         encoding: 'utf8'
       });
       
-      if (Share) {
-        await Share.share({
-          title: 'Salvar Backup IPTV',
-          text: 'Selecione "Salvar no dispositivo", "Google Drive" ou mande no WhatsApp.',
-          url: result.uri,
-          dialogTitle: 'Escolha onde salvar o backup'
-        });
-        return;
-      }
+      mostrarToast('✅ Backup salvo DIRETO na pasta Download!');
+      return;
     } catch(e) {
-      console.error("Erro no Filesystem/Share nativo:", e);
+      console.error("Erro nativo:", e);
+      // Fallback seguro caso o Android 11+ bloqueie a raiz externa
+      try {
+          const Filesystem = window.Capacitor.Plugins.Filesystem;
+          await Filesystem.writeFile({
+            path: name,
+            data: str,
+            directory: 'DOCUMENTS',
+            encoding: 'utf8'
+          });
+          mostrarToast('✅ Backup salvo na pasta Documentos!');
+          return;
+      } catch(err) {
+          mostrarToast('❌ O Android bloqueou a gravação. Verifique as permissões.');
+      }
     }
   }
 
   // FALLBACK NAVEGADOR
   const b = new Blob([str], {type:'application/json'});
   const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = name; a.click();
-  mostrarToast('✅ Backup baixado (Verifique a pasta Downloads)!');
+  mostrarToast('✅ Backup baixado!');
 }
 
 async function importarBackup(e){

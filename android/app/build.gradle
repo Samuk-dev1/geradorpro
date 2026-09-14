@@ -1,10 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace "com.gestoriptv.gestoriptv"
+    namespace "com.gestoriptv.gestorpix"
     compileSdk rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.gestoriptv.gestoriptv"
+        applicationId "com.gestoriptv.gestorpix"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

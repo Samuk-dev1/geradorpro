@@ -10,9 +10,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@capacitor/android": "^5.7.8",
-    "@capacitor/cli": "^5.7.8",
-    "@capacitor/core": "^5.7.8",
-    "@capacitor/local-notifications": "^5.0.8"
+    "@capacitor/android": "^6.2.2",
+    "@capacitor/cli": "^6.2.2",
+    "@capacitor/core": "^6.2.2",
+    "@capacitor/local-notifications": "^6.1.3"
   }
 }

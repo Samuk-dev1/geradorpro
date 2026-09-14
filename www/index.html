@@ -1,1306 +1,1472 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Cláudia Collection — Premium Finance</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Estrada Infinita 3D — Realista</title>
 <style>
-:root {
-  --bg-main: linear-gradient(180deg, #fdf8f5 0%, #f5ece6 50%, #f0e4dc 100%);
-  --header-bg: linear-gradient(135deg, #d4a373 0%, #bc8a5f 25%, #a97142 55%, #8b5e3c 85%, #6b4423 100%);
-  --header-glow: rgba(169, 113, 66, 0.4);
-  --card-bg: #ffffff;
-  --text-main: #4a3b32;
-  --text-muted: #8c7a6b;
-  --border-color: #eaddd3;
-  --input-bg: #fdf5f0;
-  --bottom-nav-bg: rgba(255, 255, 255, 0.98);
-  --nav-btn-active: #a97142;
-  --modal-bg: #ffffff;
-  --modal-overlay: rgba(74, 59, 50, 0.5);
-}
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{width:100%;height:100%;overflow:hidden;background:#05070c;
+    font-family:'Segoe UI',system-ui,-apple-system,Roboto,Arial,sans-serif;color:#eaf4ff}
+  #app{position:fixed;inset:0}
+  canvas{display:block;width:100%;height:100%}
 
-.dark-mode {
-  --bg-main: linear-gradient(180deg, #2a1f1a 0%, #201713 50%, #1a120f 100%);
-  --header-bg: linear-gradient(135deg, #3d2c23 0%, #2e2019 25%, #241711 55%, #35251c 85%, #1f140e 100%);
-  --header-glow: rgba(0, 0, 0, 0.5);
-  --card-bg: #2b221d;
-  --text-main: #f0e6de;
-  --text-muted: #a3968d;
-  --border-color: #403229;
-  --input-bg: #201713;
-  --bottom-nav-bg: rgba(30, 22, 17, 0.98);
-  --nav-btn-active: #d4a373;
-  --modal-bg: #2b221d;
-  --modal-overlay: rgba(0, 0, 0, 0.8);
-}
+  #hud{position:absolute;inset:0;pointer-events:none;user-select:none}
 
-* { margin:0; padding:0; box-sizing:border-box; }
-html, body {
-  background: var(--bg-main);
-  color: var(--text-main);
-  font-family:'Poppins', sans-serif;
-  overflow-x:hidden;
-  -webkit-font-smoothing: antialiased;
-  min-height:100vh;
-  transition: background 0.4s ease, color 0.4s ease;
-}
-h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
+  #stats{position:absolute;top:16px;left:16px;display:flex;gap:10px}
+  .stat{
+    background:linear-gradient(160deg,rgba(12,20,34,.78),rgba(6,10,18,.85));
+    border:1px solid rgba(90,190,255,.28);
+    border-radius:12px;padding:8px 14px;min-width:96px;
+    box-shadow:0 6px 22px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.06);
+    backdrop-filter:blur(6px);
+  }
+  .stat .k{display:block;font-size:9px;letter-spacing:2px;color:#6fb4e6;font-weight:700}
+  .stat .v{display:block;font-size:20px;font-weight:800;color:#fff;
+    text-shadow:0 0 14px rgba(80,200,255,.55);font-variant-numeric:tabular-nums}
 
-@keyframes orbFloat { 0%,100% { transform: translate(0,0); } 50% { transform: translate(30px,-20px); } }
-@keyframes spinRing { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-@keyframes logoPulse { 0%,100% { transform: scale(1); filter: drop-shadow(0 0 20px #d4a373) drop-shadow(0 0 40px #8b5e3c); } 50% { transform: scale(1.08); filter: drop-shadow(0 0 30px #d4a373) drop-shadow(0 0 60px #a97142); } }
-@keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-@keyframes loadBar { 0% { width: 0%; } 100% { width: 100%; } }
-@keyframes headerGlow { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
-@keyframes floatOrb { 0%,100% { transform: translate(0,0); } 50% { transform: translate(15px,-15px); } }
-@keyframes floatBtn { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
-@keyframes floatCard { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
-@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-@keyframes fadeIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
-@keyframes particleFloat { 0% { transform: translateY(0) translateX(0) rotate(0deg); opacity:0; } 10% { opacity:1; } 90% { opacity:1; } 100% { transform: translateY(-600px) translateX(40px) rotate(360deg); opacity:0; } }
-@keyframes toastIn { from { opacity:0; transform: translateY(-15px); } to { opacity:1; transform: translateY(0); } }
+  #speedo{position:absolute;left:18px;bottom:18px;width:132px;height:132px}
+  #speedo .bg{
+    position:absolute;inset:0;border-radius:50%;
+    background:radial-gradient(circle at 50% 42%,rgba(18,30,48,.92),rgba(4,7,13,.96));
+    border:2px solid rgba(90,190,255,.25);
+    box-shadow:0 0 34px rgba(0,140,255,.22), inset 0 0 26px rgba(0,0,0,.75);
+  }
+  #speedo .ring{
+    position:absolute;inset:7px;border-radius:50%;
+    -webkit-mask:radial-gradient(circle,transparent 66%,#000 68%);
+            mask:radial-gradient(circle,transparent 66%,#000 68%);
+  }
+  #speedo .needle{
+    position:absolute;left:50%;top:50%;width:4px;height:44px;
+    background:linear-gradient(to top,#ff2d55,#ff9f0a);
+    border-radius:3px;transform-origin:50% 100%;
+    transform:translate(-50%,-100%) rotate(-120deg);
+    box-shadow:0 0 12px rgba(255,60,80,.85);
+    transition:transform .06s linear;
+  }
+  #speedo .hub{
+    position:absolute;left:50%;top:50%;width:16px;height:16px;border-radius:50%;
+    transform:translate(-50%,-50%);
+    background:radial-gradient(circle at 35% 35%,#dfefff,#4a6f96);
+    box-shadow:0 0 10px rgba(0,0,0,.8);
+  }
+  #speedo .num{
+    position:absolute;left:0;right:0;bottom:24px;text-align:center;
+  }
+  #speedo .num span{font-size:26px;font-weight:800;color:#fff;
+    text-shadow:0 0 16px rgba(80,200,255,.7);font-variant-numeric:tabular-nums}
+  #speedo .num small{display:block;font-size:9px;letter-spacing:2px;color:#6fb4e6;font-weight:700}
 
-.app-wrapper {
-  max-width: 480px;
-  margin: 0 auto;
-  min-height: 100vh;
-  position: relative;
-  background: var(--bg-main);
-  padding-bottom: 90px;
-  overflow: hidden;
-  transition: background 0.4s ease;
-}
+  #hint{
+    position:absolute;left:50%;bottom:26px;transform:translateX(-50%);
+    font-size:12px;letter-spacing:1px;color:#9ec8e8;
+    background:rgba(6,12,22,.6);padding:8px 18px;border-radius:20px;
+    border:1px solid rgba(90,190,255,.2);white-space:nowrap;
+    animation:fadeHint 10s ease forwards;
+  }
+  @keyframes fadeHint{0%,72%{opacity:1}100%{opacity:0}}
 
-/* SPLASH */
-#splashScreen {
-  position:fixed; inset:0; z-index:9999;
-  background:linear-gradient(135deg,#2a1f1a 0%,#3d2c23 30%,#2a1f1a 60%,#4a3528 100%);
-  display:flex; align-items:center; justify-content:center; flex-direction:column;
-  overflow:hidden;
-  transition: opacity 0.6s ease, transform 0.6s ease;
-}
-
-/* HEADER */
-.app-header {
-  background: var(--header-bg);
-  background-size:200% 200%;
-  animation:headerGlow 6s ease infinite;
-  padding:20px 20px 50px;
-  border-radius:0 0 36px 36px;
-  color:white;
-  position:relative;
-  overflow:hidden;
-  box-shadow:0 10px 50px var(--header-glow);
-  transition: background 0.4s ease, box-shadow 0.4s ease;
-}
-
-.page { display:none; animation: fadeIn .4s ease; }
-.page.active { display:block; }
-
-.kpi-card {
-  background: var(--card-bg);
-  border-radius:20px;
-  padding:16px;
-  border:1px solid var(--border-color);
-  box-shadow:0 8px 30px rgba(0,0,0,0.04);
-  transition:all .4s;
-  animation:floatCard 6s ease-in-out infinite;
-}
-.kpi-card:hover { transform:translateY(-6px) scale(1.02); box-shadow:0 15px 40px rgba(0,0,0,0.08); }
-
-.list-card {
-  background: var(--card-bg);
-  border-radius:20px;
-  box-shadow:0 8px 30px rgba(0,0,0,0.04);
-  overflow:hidden;
-  border:1px solid var(--border-color);
-  margin-bottom:12px;
-  transition: background 0.4s ease, border-color 0.4s ease;
-}
-
-.list-item {
-  display:flex; align-items:center; gap:12px;
-  padding:14px;
-  border-bottom:1px solid var(--border-color);
-  cursor:pointer;
-  transition:all .3s;
-}
-.list-item:last-child { border-bottom:none; }
-.list-item:hover { background: var(--input-bg); }
-
-.list-item-avatar {
-  width:46px;height:46px;border-radius:50%;
-  background: var(--header-bg);
-  background-size:200% 200%;
-  animation:headerGlow 5s ease infinite;
-  display:flex;align-items:center;justify-content:center;
-  font-size:16px;font-weight:700;color:white;
-  flex-shrink:0;overflow:hidden;
-  box-shadow:0 4px 12px var(--header-glow);
-  border: 2px solid white;
-}
-.list-item-avatar img { width:100%; height:100%; object-fit:cover; }
-.list-item-content { flex: 1; }
-
-/* BOTTOM NAV FIXA */
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 480px;
-  background: var(--bottom-nav-bg);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-top:1px solid var(--border-color);
-  display:grid;
-  grid-template-columns:repeat(6,1fr);
-  padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
-  z-index: 1000;
-  box-shadow:0 -8px 40px rgba(0,0,0,0.05);
-  transition: background 0.4s ease, border-color 0.4s ease;
-}
-.nav-btn {
-  display:flex; flex-direction:column; align-items:center; gap:2px;
-  padding:5px 2px; cursor:pointer; background:none; border:none;
-  color: var(--text-muted); font-family:'Poppins',sans-serif;
-  transition:all .3s;
-}
-.nav-btn.active { color: var(--nav-btn-active); }
-.nav-btn.active span { font-weight:700; }
-.nav-btn i { font-size:20px; }
-.nav-btn span { font-size:8px; font-weight:600; text-align:center; line-height:1.1; }
-
-/* FAB */
-.fab {
-  position: fixed;
-  bottom: 85px;
-  right: calc(50% - 220px);
-  width:60px; height:60px;
-  border-radius:50%;
-  background: var(--header-bg);
-  background-size:200% 200%;
-  animation:headerGlow 4s ease infinite, floatBtn 3s ease-in-out infinite;
-  color:white; border:none; font-size:26px; cursor:pointer;
-  box-shadow:0 8px 30px var(--header-glow), 0 0 40px var(--header-glow);
-  display:flex; align-items:center; justify-content:center;
-  z-index:999; transition:all .3s;
-}
-.fab:hover { transform:scale(1.1) rotate(90deg); }
-@media (max-width: 480px) { .fab { right: 20px; } }
-
-.modal-overlay {
-  position:fixed; inset:0;
-  background: var(--modal-overlay);
-  backdrop-filter:blur(6px);
-  z-index:2000;
-  display:none;
-  align-items:flex-end;
-  justify-content:center;
-  transition: background 0.4s ease;
-}
-.modal-overlay.show { display:flex; }
-.modal {
-  background: var(--modal-bg);
-  border-radius:28px 28px 0 0;
-  width:100%;
-  max-width:480px;
-  max-height:88vh;
-  overflow-y:auto;
-  animation:slideUp .35s cubic-bezier(0.16,1,0.3,1);
-  transition: background 0.4s ease;
-}
-
-.form-control {
-  width:100%;
-  padding:13px 15px;
-  background: var(--input-bg);
-  border:1.5px solid var(--border-color);
-  border-radius:14px;
-  color: var(--text-main);
-  font-size:13px;
-  font-family:'Poppins',sans-serif;
-  transition:all .3s;
-  margin-top:6px;
-}
-.form-control:focus { outline:none; border-color: var(--nav-btn-active); background: var(--card-bg); }
-
-.btn-primary {
-  width:100%;
-  padding:14px;
-  border-radius:14px;
-  border:none;
-  background: var(--header-bg);
-  background-size:200% 200%;
-  animation:headerGlow 4s ease infinite;
-  color:white;
-  font-size:14px;
-  font-weight:600;
-  cursor:pointer;
-  font-family:'Poppins',sans-serif;
-  box-shadow:0 6px 25px var(--header-glow);
-  transition:all .3s;
-}
-.btn-primary:hover { transform:translateY(-2px); box-shadow:0 10px 35px var(--header-glow); }
-
-.btn-secondary {
-  padding:12px 20px;
-  border-radius:14px;
-  border:1.5px solid var(--border-color);
-  background: var(--card-bg);
-  color: var(--text-muted);
-  font-size:13px;
-  font-weight:600;
-  cursor:pointer;
-  font-family:'Poppins',sans-serif;
-  transition:all .3s;
-  flex:1;
-}
-.btn-secondary:hover { border-color: var(--nav-btn-active); color: var(--nav-btn-active); }
-
-.mini-tab {
-  padding:10px 16px;
-  border-radius:12px;
-  background: var(--input-bg);
-  border:none;
-  font-size:12px;
-  font-weight:600;
-  color: var(--text-muted);
-  cursor:pointer;
-  white-space:nowrap;
-  font-family:'Poppins',sans-serif;
-  transition:all .3s;
-}
-.mini-tab.active {
-  background: var(--header-bg);
-  color:white;
-  box-shadow:0 4px 15px var(--header-glow);
-}
-
-.status-pending { display:inline-block;font-size:9px;font-weight:700;padding:3px 10px;border-radius:20px;margin-top:4px;text-transform:uppercase;background:#fef3c7;color:#d97706; }
-.status-paid { display:inline-block;font-size:9px;font-weight:700;padding:3px 10px;border-radius:20px;margin-top:4px;text-transform:uppercase;background:#d1fae5;color:#059669; }
-.status-overdue { display:inline-block;font-size:9px;font-weight:700;padding:3px 10px;border-radius:20px;margin-top:4px;text-transform:uppercase;background:#fee2e2;color:#dc2626; }
-.status-today { display:inline-block;font-size:9px;font-weight:700;padding:3px 10px;border-radius:20px;margin-top:4px;text-transform:uppercase;background:#dbeafe;color:#2563eb; }
-.status-low { display:inline-block;font-size:9px;font-weight:700;padding:3px 10px;border-radius:20px;margin-top:4px;text-transform:uppercase;background:#fef3c7;color:#d97706; }
-.status-out { display:inline-block;font-size:9px;font-weight:700;padding:3px 10px;border-radius:20px;margin-top:4px;text-transform:uppercase;background:#fee2e2;color:#dc2626; }
-
-.cat-pill { display:inline-flex;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:600; }
-.cat-pill.pink { background:#fce7f3;color:#db2777; }
-.cat-pill.purple { background:#ede9fe;color:#7c3aed; }
-.cat-pill.green { background:#d1fae5;color:#059669; }
-.cat-pill.blue { background:#dbeafe;color:#2563eb; }
-
-.toast-container {
-  position:fixed; top:20px; left:50%; transform:translateX(-50%);
-  z-index:3000; display:flex; flex-direction:column; gap:8px;
-  width:calc(100% - 40px); max-width:400px;
-}
-.toast {
-  background: var(--card-bg); color: var(--text-main); border-radius:14px; padding:12px 16px;
-  box-shadow:0 6px 25px rgba(0,0,0,0.15);
-  display:flex; align-items:center; gap:10px;
-  font-size:13px; border-left:4px solid #059669;
-  animation:toastIn .35s ease; font-family:'Poppins',sans-serif;
-}
-.toast.error { border-left-color:#dc2626; }
-.toast.warning { border-left-color:#d97706; }
-
-.empty-state { text-align:center; padding:40px 20px; color: var(--text-muted); }
-.empty-state i { font-size:48px; margin-bottom:12px; opacity:0.4; }
-.empty-state p { font-size:13px; }
-
-.chart-wrap { background: var(--card-bg); border-radius:20px; padding:18px; box-shadow:0 8px 30px rgba(0,0,0,0.04); border:1px solid var(--border-color); margin-bottom:12px; transition: background 0.4s ease, border-color 0.4s ease; }
-.chart-container { position:relative; height:220px; }
-
-.content-area { padding:0 16px 16px; position:relative; z-index:1; }
-.section-header { display:flex; align-items:center; justify-content:space-between; margin:20px 0 12px; }
-.section-title { font-size:16px; font-weight:700; font-family:'Playfair Display',serif; color: var(--text-main); }
-.section-link { font-size:12px; color: var(--nav-btn-active); font-weight:600; cursor:pointer; }
-
-::-webkit-scrollbar { width:4px; height:4px; }
-::-webkit-scrollbar-track { background:transparent; }
-::-webkit-scrollbar-thumb { background: var(--border-color); border-radius:2px; }
-
-#floatingParticles { position:absolute; inset:0; pointer-events:none; overflow:hidden; z-index:0; }
-
-.image-upload-preview {
-  width:76px;height:76px;border-radius:50%;
-  background: var(--input-bg);
-  border:2px dashed var(--nav-btn-active);
-  display:flex;align-items:center;justify-content:center;
-  color: var(--nav-btn-active);font-size:28px;cursor:pointer;overflow:hidden;
-  transition:all .3s;
-}
-.image-upload-preview:hover { border-style:solid; transform:scale(1.05); }
-.image-upload-preview img { width:100%; height:100%; object-fit:cover; }
-
-.installment-preview {
-  background: var(--input-bg);
-  border-radius:14px;
-  padding:12px;
-  margin-top:10px;
-  border:1px solid var(--border-color);
-}
-.installment-item {
-  display:flex;justify-content:space-between;align-items:center;
-  padding:8px 10px;background: var(--card-bg);border-radius:10px;
-  font-size:12px;margin-bottom:4px;
-}
-
-.sale-item-row {
-  display:grid;
-  grid-template-columns: 1fr 60px 80px 32px;
-  gap:6px;
-  align-items:end;
-  margin-bottom:8px;
-}
-
-.modal-handle {
-  width:44px;height:5px;background: var(--border-color);border-radius:3px;margin:14px auto;
-}
-.modal-header {
-  padding:16px 22px;display:flex;align-items:center;justify-content:space-between;
-  border-bottom:1px solid var(--border-color);
-}
-.modal-header h3 { margin:0;font-family:'Playfair Display',serif;font-size:18px; color: var(--text-main); }
-.modal-close {
-  width:34px;height:34px;border-radius:10px;background: var(--input-bg);border:none;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;font-size:18px;color: var(--text-muted);
-}
-.modal-body { padding:22px; }
-
-.btn-action-outline {
-  background: var(--card-bg); border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; cursor: pointer; color: var(--nav-btn-active); transition: all .3s;
-}
-.btn-action-outline:hover { background: var(--input-bg); border-color: var(--nav-btn-active); }
-.btn-icon-sm {
-  border:none; width:30px; height:30px; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:16px; transition:all .3s;
-}
-.btn-icon-sm:hover { transform: scale(1.05); }
-
+  #touch{position:absolute;inset:0;pointer-events:none;display:none}
+  #touch .side{position:absolute;bottom:22px;display:flex;gap:14px;pointer-events:auto}
+  #touch .side.left{left:170px}
+  #touch .side.right{right:22px}
+  #touch button{
+    width:76px;height:76px;border-radius:50%;font-size:26px;color:#dff0ff;
+    background:linear-gradient(160deg,rgba(20,36,58,.85),rgba(8,14,24,.9));
+    border:2px solid rgba(90,190,255,.35);
+    box-shadow:0 6px 20px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.08);
+    touch-action:none;
+  }
+  #touch button:active{background:rgba(0,160,255,.4);transform:scale(.94)}
+  @media (hover:none) and (pointer:coarse){
+    #touch{display:block}
+    #hint{display:none}
+    #speedo{width:104px;height:104px}
+    #speedo .num span{font-size:20px}
+    .stat{min-width:74px;padding:6px 10px}
+    .stat .v{font-size:15px}
+  }
 </style>
 </head>
 <body>
+<div id="app">
+  <canvas id="cv"></canvas>
 
-<!-- SPLASH SCREEN -->
-<div id="splashScreen">
-  <div style="position:absolute;width:280px;height:280px;border-radius:50%;border:2px solid transparent;border-top-color:#d4a373;border-right-color:#a97142;animation:spinRing 2s linear infinite;opacity:0.8;"></div>
-  <div style="position:absolute;width:220px;height:220px;border-radius:50%;border:2px solid transparent;border-bottom-color:#8b5e3c;border-left-color:#d4a373;animation:spinRing 1.5s linear infinite reverse;opacity:0.6;"></div>
-  <div style="position:absolute;width:340px;height:340px;border-radius:50%;border:1px solid rgba(212,163,115,0.3);animation:spinRing 4s linear infinite;opacity:0.4;"></div>
-  
-  <div style="position:relative;z-index:2;text-align:center;">
-    <div style="font-size:64px;margin-bottom:16px;animation:logoPulse 1.5s ease-in-out infinite;">
-      <svg width="80" height="80" viewBox="0 0 24 24" fill="none">
-        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="url(#hg)"/>
-        <defs><linearGradient id="hg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#d4a373"/><stop offset="50%" stop-color="#bc8a5f"/><stop offset="100%" stop-color="#a97142"/></linearGradient></defs>
-      </svg>
+  <div id="hud">
+    <div id="stats">
+      <div class="stat"><span class="k">PONTOS</span><span class="v" id="uiScore">0</span></div>
+      <div class="stat"><span class="k">DISTÂNCIA</span><span class="v" id="uiDist">0 m</span></div>
+      <div class="stat"><span class="k">RECORDE</span><span class="v" id="uiBest">0</span></div>
     </div>
-    <h1 style="font-family:'Playfair Display',serif;font-size:32px;font-weight:800;background:linear-gradient(90deg,#d4a373,#e6b88a,#bc8a5f,#d4a373);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:gradientShift 3s ease infinite;margin:0;letter-spacing:1px;">Cláudia Collection</h1>
-    <p style="color:rgba(255,255,255,0.6);font-size:12px;letter-spacing:4px;text-transform:uppercase;margin-top:8px;font-family:'Poppins',sans-serif;">Premium Finance</p>
-  </div>
-  
-  <div style="position:relative;z-index:2;width:200px;height:3px;background:rgba(255,255,255,0.1);border-radius:2px;margin-top:40px;overflow:hidden;">
-    <div style="height:100%;width:0%;background:linear-gradient(90deg,#d4a373,#bc8a5f,#8b5e3c);border-radius:2px;animation:loadBar 2.8s ease-out forwards;box-shadow:0 0 10px #d4a373;"></div>
-  </div>
-  <p id="loadingText" style="color:rgba(255,255,255,0.4);font-size:10px;letter-spacing:2px;margin-top:12px;font-family:'Poppins',sans-serif;">CARREGANDO...</p>
-</div>
 
-<!-- MAIN APP -->
-<div id="mainApp" style="opacity:0;transition:opacity 0.6s ease;">
-<div class="app-wrapper">
-  <!-- Partículas leves de produtos/joias -->
-  <div id="floatingParticles"></div>
-
-  <!-- HEADER -->
-  <header class="app-header">
-    <div style="position:absolute;top:-60px;right:-40px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,0.15) 0%,transparent 70%);animation:floatOrb 6s ease-in-out infinite;"></div>
-    <div style="position:absolute;bottom:-70px;left:-30px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,0.1) 0%,transparent 70%);animation:floatOrb 8s ease-in-out infinite reverse;"></div>
-    <div style="display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1;">
-      <div style="display:flex;align-items:center;gap:12px;cursor:pointer;" onclick="openProfileModal()">
-        <div id="mainAvatar" style="width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,rgba(255,255,255,0.3),rgba(255,255,255,0.1));border:2px solid rgba(255,255,255,0.7);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:white;overflow:hidden;box-shadow:0 0 20px rgba(255,255,255,0.2);animation:floatBtn 4s ease-in-out infinite;position:relative;">C</div>
-        <div>
-          <div style="font-size:11px;opacity:0.85;">Olá,</div>
-          <div id="profileName" style="font-size:15px;font-weight:600;">Cláudia</div>
-        </div>
-      </div>
-      
-      <!-- Bloco com Sol/Lua e Sino juntos -->
-      <div style="display:flex; gap: 8px;">
-        <button onclick="toggleTheme()" style="width:42px;height:42px;border-radius:14px;background:rgba(255,255,255,0.2);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.25);color:white;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;position:relative;animation:floatBtn 4.5s ease-in-out infinite;">
-          <i class="ri-moon-fill" id="themeIcon"></i>
-        </button>
-        <button onclick="navigateTo('receivable')" style="width:42px;height:42px;border-radius:14px;background:rgba(255,255,255,0.2);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.25);color:white;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;position:relative;animation:floatBtn 4.5s ease-in-out infinite 0.2s;">
-          <i class="ri-notification-3-line"></i>
-          <span id="alertBadge" style="position:absolute;top:-3px;right:-3px;background:linear-gradient(135deg,#ef4444,#dc2626);color:white;font-size:9px;font-weight:700;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 5px;box-shadow:0 0 10px rgba(239,68,68,0.6);">0</span>
-        </button>
-      </div>
+    <div id="speedo">
+      <div class="bg"></div>
+      <div class="ring" id="ring"></div>
+      <div class="needle" id="needle"></div>
+      <div class="hub"></div>
+      <div class="num"><span id="uiKmh">0</span><small>KM/H</small></div>
     </div>
-  </header>
 
-  <!-- AÇÕES RÁPIDAS -->
-  <div style="padding: 18px 16px 6px;">
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;background:var(--card-bg);border-radius:22px;padding:14px 8px;box-shadow:0 8px 30px rgba(0,0,0,0.06);border:1px solid var(--border-color);margin-top:-30px;position:relative;z-index:2;">
-      <div onclick="openQuickSale()" style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:8px 4px;border-radius:16px;transition:all .3s;animation:floatBtn 5s ease-in-out infinite;">
-        <div style="width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;background:linear-gradient(135deg,#fce7f3,#fbcfe8);color:#db2777;box-shadow:0 4px 15px rgba(219,39,119,0.2);"><i class="ri-shopping-cart-line"></i></div>
-        <span style="font-size:10px;color:var(--text-muted);font-weight:600;">Nova Venda</span>
-      </div>
-      <div onclick="openQuickClient()" style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:8px 4px;border-radius:16px;transition:all .3s;animation:floatBtn 5.5s ease-in-out infinite 0.2s;">
-        <div style="width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;background:linear-gradient(135deg,#d1fae5,#a7f3d0);color:#059669;box-shadow:0 4px 15px rgba(5,150,105,0.2);"><i class="ri-user-add-line"></i></div>
-        <span style="font-size:10px;color:var(--text-muted);font-weight:600;">+ Cliente</span>
-      </div>
-      <div onclick="navigateTo('receivable')" style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:8px 4px;border-radius:16px;transition:all .3s;animation:floatBtn 6s ease-in-out infinite 0.4s;">
-        <div style="width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;background:linear-gradient(135deg,#fef3c7,#fde68a);color:#d97706;box-shadow:0 4px 15px rgba(217,119,6,0.2);"><i class="ri-money-dollar-circle-line"></i></div>
-        <span style="font-size:10px;color:var(--text-muted);font-weight:600;">A Receber</span>
-      </div>
-      <div onclick="openQuickExpense()" style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:8px 4px;border-radius:16px;transition:all .3s;animation:floatBtn 6.5s ease-in-out infinite 0.6s;">
-        <div style="width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;background:linear-gradient(135deg,#ede9fe,#ddd6fe);color:#7c3aed;box-shadow:0 4px 15px rgba(124,58,237,0.2);"><i class="ri-bill-line"></i></div>
-        <span style="font-size:10px;color:var(--text-muted);font-weight:600;">Despesa</span>
-      </div>
-    </div>
+    <div id="hint">↑/W acelerar · ↓/S frear · ←→/A D curvar · P pausar</div>
   </div>
 
-  <div class="content-area">
-    <!-- HOME -->
-    <div class="page active" id="page-home">
-      <div id="dashboardAlerts"></div>
-      <div class="section-header"><div class="section-title">Resumo Financeiro</div></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:8px;">
-        <div class="kpi-card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><span style="font-size:10px;color:var(--text-muted);font-weight:600;text-transform:uppercase;">Vendido</span><div style="width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,#fce7f3,#fbcfe8);color:#db2777;"><i class="ri-shopping-bag-line"></i></div></div><div id="kpiSold" style="font-size:20px;font-weight:700;">R$ 0,00</div><div style="font-size:10px;color:var(--text-muted);margin-top:3px;">Este mês</div></div>
-        <div class="kpi-card" style="animation-delay:0.3s;"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><span style="font-size:10px;color:var(--text-muted);font-weight:600;text-transform:uppercase;">Recebido</span><div style="width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,#d1fae5,#6ee7b7);color:#059669;"><i class="ri-bank-card-line"></i></div></div><div id="kpiReceived" style="font-size:20px;font-weight:700;">R$ 0,00</div><div style="font-size:10px;color:var(--text-muted);margin-top:3px;">Confirmado</div></div>
-        <div class="kpi-card" style="animation-delay:0.6s;"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><span style="font-size:10px;color:var(--text-muted);font-weight:600;text-transform:uppercase;">A Receber</span><div style="width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,#fef3c7,#fcd34d);color:#d97706;"><i class="ri-time-line"></i></div></div><div id="kpiReceivable" style="font-size:20px;font-weight:700;">R$ 0,00</div><div id="kpiReceivableCount" style="font-size:10px;color:var(--text-muted);margin-top:3px;">0 parcelas</div></div>
-        <div class="kpi-card" style="animation-delay:0.9s;"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><span style="font-size:10px;color:var(--text-muted);font-weight:600;text-transform:uppercase;">Atrasado</span><div style="width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,#fee2e2,#fca5a5);color:#dc2626;"><i class="ri-alarm-warning-line"></i></div></div><div id="kpiOverdue" style="font-size:20px;font-weight:700;">R$ 0,00</div><div id="kpiOverdueCount" style="font-size:10px;color:var(--text-muted);margin-top:3px;">0 parcelas</div></div>
-      </div>
-      <div class="section-header"><div class="section-title">Próximos Vencimentos</div><div class="section-link" onclick="navigateTo('receivable')">Ver todos →</div></div>
-      <div class="list-card" id="upcomingList"><div class="empty-state"><i class="ri-checkbox-circle-line"></i><p>Tudo em ordem!</p></div></div>
-      <div class="section-header"><div class="section-title">Vendas por Categoria</div></div>
-      <div class="chart-wrap"><div class="chart-container"><canvas id="homeChart"></canvas></div></div>
-      <div class="section-header"><div class="section-title">Clientes</div><div class="section-link" onclick="navigateTo('clients')">Ver todas →</div></div>
-      <div class="list-card" id="clientsHomeList"><div class="empty-state"><i class="ri-user-heart-line"></i><p>Cadastre suas clientes!</p></div></div>
+  <div id="touch">
+    <div class="side left">
+      <button data-k="left">◀</button>
+      <button data-k="right">▶</button>
     </div>
-
-    <!-- CLIENTES -->
-    <div class="page" id="page-clients">
-      <div style="font-size:20px;font-weight:700;font-family:'Playfair Display',serif;padding:16px 0 8px;">Clientes</div>
-      <div style="position:relative;margin-bottom:14px;"><i class="ri-search-line" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);"></i><input type="text" placeholder="Buscar cliente..." id="searchClient" oninput="renderClients()" class="form-control" style="padding-left:42px;margin-top:0;"></div>
-      <div class="list-card" id="clientsList"><div class="empty-state"><i class="ri-user-heart-line"></i><p>Nenhuma cliente cadastrada.</p></div></div>
-    </div>
-
-    <!-- CLIENTE DETALHE -->
-    <div class="page" id="page-client-detail">
-      <div style="display:flex;align-items:center;gap:10px;padding:16px 0 4px;"><div onclick="navigateTo('clients')" style="width:40px;height:40px;border-radius:12px;background:var(--card-bg);border:1px solid var(--border-color);display:flex;align-items:center;justify-content:center;cursor:pointer;"><i class="ri-arrow-left-line"></i></div><div style="font-size:20px;font-weight:700;font-family:'Playfair Display',serif;flex:1;">Detalhes</div></div>
-      <div style="background:var(--header-bg);background-size:200% 200%;animation:headerGlow 6s ease infinite;margin:10px -16px 20px;padding:28px 20px 36px;border-radius:0 0 28px 28px;color:white;text-align:center;position:relative;overflow:hidden;">
-        <div id="detailAvatar" style="width:84px;height:84px;border-radius:50%;background:linear-gradient(135deg,rgba(255,255,255,0.3),rgba(255,255,255,0.1));border:3px solid rgba(255,255,255,0.7);margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:700;overflow:hidden;box-shadow:0 0 30px rgba(255,255,255,0.2);animation:floatBtn 4s ease-in-out infinite;">C</div>
-        <div id="detailName" style="font-size:22px;font-weight:700;">Carregando...</div>
-        <div id="detailPhone" style="font-size:12px;opacity:0.9;margin-top:6px;">--</div>
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:-28px 0 20px;position:relative;z-index:2;">
-        <div style="background:var(--card-bg);border-radius:18px;padding:14px;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,0.06); border:1px solid var(--border-color);"><div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;font-weight:600;">Comprado</div><div id="statBought" style="font-size:18px;font-weight:700;margin-top:4px;color:#db2777;">R$ 0</div></div>
-        <div style="background:var(--card-bg);border-radius:18px;padding:14px;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,0.06); border:1px solid var(--border-color);"><div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;font-weight:600;">Pago</div><div id="statPaid" style="font-size:18px;font-weight:700;margin-top:4px;color:#059669;">R$ 0</div></div>
-        <div style="background:var(--card-bg);border-radius:18px;padding:14px;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,0.06); border:1px solid var(--border-color);"><div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;font-weight:600;">Em Aberto</div><div id="statOpen" style="font-size:18px;font-weight:700;margin-top:4px;color:#d97706;">R$ 0</div></div>
-        <div style="background:var(--card-bg);border-radius:18px;padding:14px;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,0.06); border:1px solid var(--border-color);"><div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;font-weight:600;">Atrasado</div><div id="statOverdue" style="font-size:18px;font-weight:700;margin-top:4px;color:#dc2626;">R$ 0</div></div>
-      </div>
-      <div style="display:flex;gap:8px;margin-bottom:16px;">
-        <button id="detailWhatsapp" style="flex:1;background:linear-gradient(135deg,#22c55e,#16a34a);color:white;padding:12px;border-radius:14px;border:none;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 4px 15px rgba(34,197,94,0.3);animation:floatBtn 5s ease-in-out infinite;"><i class="ri-whatsapp-line"></i> Contatar</button>
-        <button id="detailEdit" class="btn-secondary"><i class="ri-edit-line"></i> Editar Cliente</button>
-      </div>
-      <div class="section-header"><div class="section-title">Parcelas</div></div>
-      <div class="list-card" id="detailInstallments"><div class="empty-state"><i class="ri-file-list-line"></i><p>Sem parcelas.</p></div></div>
-      <div class="section-header"><div class="section-title">Histórico</div></div>
-      <div class="list-card" id="detailSales"><div class="empty-state"><i class="ri-shopping-cart-line"></i><p>Sem compras.</p></div></div>
-    </div>
-
-    <!-- A RECEBER -->
-    <div class="page" id="page-receivable">
-      <div style="font-size:20px;font-weight:700;font-family:'Playfair Display',serif;padding:16px 0 8px;">Contas a Receber</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
-        <div style="background:var(--card-bg);border-radius:18px;padding:14px;border:1px solid var(--border-color);box-shadow:0 8px 30px rgba(0,0,0,0.05);"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;"><div style="font-size:10px;color:var(--text-muted);font-weight:600;text-transform:uppercase;">Total a Receber</div><div style="width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;background:linear-gradient(135deg,#fef3c7,#fcd34d);color:#d97706;"><i class="ri-money-dollar-circle-line"></i></div></div><div id="recTotal" style="font-size:18px;font-weight:700;color:#d97706;">R$ 0</div></div>
-        <div style="background:var(--card-bg);border-radius:18px;padding:14px;border:1px solid var(--border-color);box-shadow:0 8px 30px rgba(0,0,0,0.05);"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;"><div style="font-size:10px;color:var(--text-muted);font-weight:600;text-transform:uppercase;">Total Atrasado</div><div style="width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;background:linear-gradient(135deg,#fee2e2,#fca5a5);color:#dc2626;"><i class="ri-alarm-warning-line"></i></div></div><div id="recOverdue" style="font-size:18px;font-weight:700;color:#dc2626;">R$ 0</div></div>
-      </div>
-      <div id="recTabs" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;scrollbar-width:none;">
-        <button class="mini-tab active" onclick="switchRecTab('today')">Hoje</button>
-        <button class="mini-tab" onclick="switchRecTab('week')">7 dias</button>
-        <button class="mini-tab" onclick="switchRecTab('overdue')">Atrasadas</button>
-        <button class="mini-tab" onclick="switchRecTab('all')">Todas</button>
-        <button class="mini-tab" onclick="switchRecTab('paid')">Pagas</button>
-      </div>
-      <div class="list-card" id="receivableList"><div class="empty-state"><i class="ri-checkbox-circle-line"></i><p>Nenhuma parcela.</p></div></div>
-    </div>
-
-    <!-- VENDAS -->
-    <div class="page" id="page-sales">
-      <div style="font-size:20px;font-weight:700;font-family:'Playfair Display',serif;padding:16px 0 8px;">Vendas</div>
-      <div class="list-card" id="salesList"><div class="empty-state"><i class="ri-shopping-cart-line"></i><p>Nenhuma venda registrada.</p></div></div>
-    </div>
-
-    <!-- PRODUTOS -->
-    <div class="page" id="page-products">
-      <div style="font-size:20px;font-weight:700;font-family:'Playfair Display',serif;padding:16px 0 8px;">Produtos & Estoque</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
-        <div style="background:var(--card-bg);border-radius:18px;padding:14px;border:1px solid var(--border-color);box-shadow:0 8px 30px rgba(0,0,0,0.05);"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;"><div style="font-size:10px;color:var(--text-muted);font-weight:600;text-transform:uppercase;">Valor Investido</div><div style="width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;background:linear-gradient(135deg,#dbeafe,#93c5fd);color:#2563eb;"><i class="ri-wallet-line"></i></div></div><div id="stockInvested" style="font-size:18px;font-weight:700;">R$ 0</div></div>
-        <div style="background:var(--card-bg);border-radius:18px;padding:14px;border:1px solid var(--border-color);box-shadow:0 8px 30px rgba(0,0,0,0.05);"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;"><div style="font-size:10px;color:var(--text-muted);font-weight:600;text-transform:uppercase;">Estoque Baixo</div><div style="width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;background:linear-gradient(135deg,#fee2e2,#fca5a5);color:#dc2626;"><i class="ri-alert-line"></i></div></div><div id="stockLowCount" style="font-size:18px;font-weight:700;color:#dc2626;">0</div></div>
-      </div>
-      <div style="position:relative;margin-bottom:14px;"><i class="ri-search-line" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);"></i><input type="text" placeholder="Buscar produto..." id="searchProduct" oninput="renderProducts()" class="form-control" style="padding-left:42px;margin-top:0;"></div>
-      <div class="list-card" id="productsList"><div class="empty-state"><i class="ri-gift-line"></i><p>Nenhum produto cadastrado.</p></div></div>
-    </div>
-
-    <!-- MERCADORIAS A RECEBER -->
-    <div class="page" id="page-incoming">
-      <div style="display:flex;align-items:center;gap:10px;padding:16px 0 4px;"><div style="font-size:20px;font-weight:700;font-family:'Playfair Display',serif;flex:1;">Mercadorias a Receber</div><button onclick="openIncomingModal()" style="background:linear-gradient(135deg,#4f46e5,#6366f1);color:white;border:none;width:40px;height:40px;border-radius:12px;font-size:20px;cursor:pointer;box-shadow:0 4px 15px rgba(79,70,229,0.3);"><i class="ri-add-line"></i></button></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;">
-        <div style="background:var(--card-bg);border-radius:18px;padding:14px;box-shadow:0 8px 30px rgba(0,0,0,0.05);border:1px solid var(--border-color);"><div style="font-size:10px;color:var(--text-muted);font-weight:600;text-transform:uppercase;">A caminho</div><div id="incomingPendingCount" style="font-size:20px;font-weight:700;color:#4f46e5;margin-top:4px;">0</div></div>
-        <div style="background:var(--card-bg);border-radius:18px;padding:14px;box-shadow:0 8px 30px rgba(0,0,0,0.05);border:1px solid var(--border-color);"><div style="font-size:10px;color:var(--text-muted);font-weight:600;text-transform:uppercase;">Já recebidas</div><div id="incomingReceivedCount" style="font-size:20px;font-weight:700;color:#059669;margin-top:4px;">0</div></div>
-      </div>
-      <div id="incomingTabs" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;scrollbar-width:none;">
-        <button class="mini-tab active" onclick="switchIncomingTab('pending')">A caminho</button>
-        <button class="mini-tab" onclick="switchIncomingTab('received')">Recebidas</button>
-      </div>
-      <div class="list-card" id="incomingList"><div class="empty-state"><i class="ri-truck-line"></i><p>Nenhuma mercadoria cadastrada.</p></div></div>
-    </div>
-
-    <!-- MAIS -->
-    <div class="page" id="page-more">
-      <div style="font-size:20px;font-weight:700;font-family:'Playfair Display',serif;padding:16px 0 8px;">Mais</div>
-      <div class="list-card" style="margin-bottom:16px;">
-        <div class="list-item" onclick="openQuickExpense()"><div style="width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,#fee2e2,#fca5a5);color:#dc2626;flex-shrink:0;"><i class="ri-bill-line"></i></div><div style="flex:1;"><div style="font-size:13px;font-weight:600;">Despesas</div><div style="font-size:11px;color:var(--text-muted);">Lançar e ver gastos</div></div><i class="ri-arrow-right-s-line" style="color:var(--text-muted);"></i></div>
-        <div class="list-item" onclick="navigateTo('reports')"><div style="width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,#ede9fe,#c4b5fd);color:#7c3aed;flex-shrink:0;"><i class="ri-bar-chart-box-line"></i></div><div style="flex:1;"><div style="font-size:13px;font-weight:600;">Relatórios</div><div style="font-size:11px;color:var(--text-muted);">Análise financeira completa</div></div><i class="ri-arrow-right-s-line" style="color:var(--text-muted);"></i></div>
-      </div>
-      <div class="list-card" style="margin-bottom:16px;">
-        <div class="list-item" onclick="exportData()"><div style="width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,#dbeafe,#93c5fd);color:#2563eb;flex-shrink:0;"><i class="ri-download-cloud-line"></i></div><div style="flex:1;"><div style="font-size:13px;font-weight:600;">Backup / Exportar</div><div style="font-size:11px;color:var(--text-muted);">Salvar seus dados</div></div><i class="ri-arrow-right-s-line" style="color:var(--text-muted);"></i></div>
-        <label class="list-item" style="margin:0;"><div style="width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,#d1fae5,#6ee7b7);color:#059669;flex-shrink:0;"><i class="ri-upload-cloud-line"></i></div><div style="flex:1;"><div style="font-size:13px;font-weight:600;">Importar Dados</div><div style="font-size:11px;color:var(--text-muted);">Restaurar backup</div></div><input type="file" accept=".json" style="display:none;" onchange="importData(event)"></label>
-        <div class="list-item" onclick="openProfileModal()"><div style="width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,#fce7f3,#fbcfe8);color:#db2777;flex-shrink:0;"><i class="ri-user-settings-line"></i></div><div style="flex:1;"><div style="font-size:13px;font-weight:600;">Perfil</div><div style="font-size:11px;color:var(--text-muted);">Editar foto, nome e loja</div></div><i class="ri-arrow-right-s-line" style="color:var(--text-muted);"></i></div>
-      </div>
-      <div style="text-align:center;padding:20px;color:var(--text-muted);font-size:11px;"><p style="font-weight:700;background:var(--header-bg);-webkit-background-clip:text;background-clip:text;color:transparent;font-size:14px;font-family:'Playfair Display',serif;">Cláudia Collection</p><p style="margin-top:4px;">Sistema Premium v2.0</p></div>
-    </div>
-
-    <!-- REPORTS -->
-    <div class="page" id="page-reports">
-      <div style="display:flex;align-items:center;gap:10px;padding:16px 0 4px;"><div onclick="navigateTo('more')" style="width:40px;height:40px;border-radius:12px;background:var(--card-bg);border:1px solid var(--border-color);display:flex;align-items:center;justify-content:center;cursor:pointer;"><i class="ri-arrow-left-line"></i></div><div style="font-size:20px;font-weight:700;font-family:'Playfair Display',serif;flex:1;">Relatórios</div></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;">
-        <div style="background:var(--card-bg);border-radius:18px;padding:14px;border:1px solid var(--border-color);"><div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;font-weight:600;">Vendido</div><div id="repSold" style="font-size:18px;font-weight:700;margin-top:4px;">R$ 0</div></div>
-        <div style="background:var(--card-bg);border-radius:18px;padding:14px;border:1px solid var(--border-color);"><div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;font-weight:600;">Recebido</div><div id="repReceived" style="font-size:18px;font-weight:700;margin-top:4px;">R$ 0</div></div>
-        <div style="background:var(--card-bg);border-radius:18px;padding:14px;border:1px solid var(--border-color);"><div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;font-weight:600;">Despesas</div><div id="repExp" style="font-size:18px;font-weight:700;margin-top:4px;">R$ 0</div></div>
-        <div style="background:var(--card-bg);border-radius:18px;padding:14px;border:1px solid var(--border-color);"><div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;font-weight:600;">Lucro</div><div id="repProfit" style="font-size:18px;font-weight:700;margin-top:4px;">R$ 0</div></div>
-      </div>
-      <div class="chart-wrap"><div style="font-size:14px;font-weight:600;margin-bottom:12px;font-family:'Playfair Display',serif;">Vendas por Categoria</div><div class="chart-container"><canvas id="reportChart"></canvas></div></div>
-    </div>
-
-  </div>
-
-  <!-- FAB FIXO -->
-  <button class="fab" id="fabBtn" onclick="openQuickSale()"><i class="ri-add-line"></i></button>
-
-  <!-- BOTTOM NAV FIXA -->
-  <nav class="bottom-nav">
-    <button class="nav-btn active" onclick="navigateTo('home')"><i class="ri-home-5-fill"></i><span>Início</span></button>
-    <button class="nav-btn" onclick="navigateTo('clients')"><i class="ri-user-heart-line"></i><span>Clientes</span></button>
-    <button class="nav-btn" onclick="navigateTo('sales')"><i class="ri-shopping-cart-line"></i><span>Vendas</span></button>
-    <button class="nav-btn" onclick="navigateTo('products')"><i class="ri-store-2-line"></i><span>Estoque</span></button>
-    <button class="nav-btn incoming" onclick="navigateTo('incoming')"><i class="ri-truck-line"></i><span>A Receber</span></button>
-    <button class="nav-btn" onclick="navigateTo('more')"><i class="ri-apps-line"></i><span>Mais</span></button>
-  </nav>
-</div>
-
-<!-- MODALS -->
-<!-- MODAL: PERFIL -->
-<div id="profileModal" class="modal-overlay">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-header">
-      <h3>Seu Perfil</h3>
-      <button class="modal-close" onclick="closeModal('profileModal')"><i class="ri-close-line"></i></button>
-    </div>
-    <div class="modal-body">
-      <div style="text-align:center;margin-bottom:20px;">
-        <div class="image-upload-preview" style="margin:0 auto 10px;width:96px;height:96px;" onclick="document.getElementById('profileImage').click()" id="profileImagePreview">
-          <i class="ri-camera-line"></i>
-        </div>
-        <input type="file" id="profileImage" accept="image/*" style="display:none;" onchange="handleProfileImage(event)">
-        <p style="font-size:11px;color:var(--text-muted);">Clique para alterar a foto</p>
-      </div>
-      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Seu nome</label><input type="text" id="profileNameInput" class="form-control" placeholder="Cláudia"></div>
-      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Nome da loja</label><input type="text" id="storeNameInput" class="form-control" value="Cláudia Collection"></div>
-      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Dia padrão de vencimento</label><input type="number" id="dueDayInput" class="form-control" value="10" min="1" max="28"></div>
-      <button class="btn-primary" onclick="saveProfile()"><i class="ri-save-line"></i> Salvar Perfil</button>
+    <div class="side right">
+      <button data-k="brake">▼</button>
+      <button data-k="gas">▲</button>
     </div>
   </div>
-</div>
-
-<!-- MODAL: CLIENTE -->
-<div id="clientModal" class="modal-overlay">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-header">
-      <h3 id="clientModalTitle">Nova Cliente</h3>
-      <button class="modal-close" onclick="closeModal('clientModal')"><i class="ri-close-line"></i></button>
-    </div>
-    <div class="modal-body">
-      <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;">
-        <div class="image-upload-preview" onclick="document.getElementById('clientImage').click()" id="clientImagePreview" style="width:70px;height:70px;border-radius:16px;"><i class="ri-camera-line"></i></div>
-        <input type="file" id="clientImage" accept="image/*" style="display:none;" onchange="handleClientImage(event)">
-        <div><h4 style="font-size:14px;font-weight:600;">Foto da cliente</h4><p style="font-size:11px;color:var(--text-muted);margin-top:4px;">Opcional</p></div>
-      </div>
-      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Nome *</label><input type="text" id="clientName" class="form-control" placeholder="Ex: Maria da Silva"></div>
-      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Telefone *</label><input type="text" id="clientPhone" class="form-control" placeholder="(00) 00000-0000" oninput="formatPhone(this)"></div>
-      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Endereço</label><input type="text" id="clientAddress" class="form-control" placeholder="Rua, número, bairro"></div>
-      <button class="btn-primary" onclick="saveClient()"><i class="ri-save-line"></i> Salvar Cliente</button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL: PRODUTO -->
-<div id="productModal" class="modal-overlay">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-header">
-      <h3 id="productModalTitle">Novo Produto</h3>
-      <button class="modal-close" onclick="closeModal('productModal')"><i class="ri-close-line"></i></button>
-    </div>
-    <div class="modal-body">
-      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Nome *</label><input type="text" id="productName" class="form-control" placeholder="Ex: Kit Shampoo"></div>
-      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Categoria</label>
-        <select id="productCategory" class="form-control">
-          <option>Semijoias</option><option>Roupa de cama</option><option>Produtos para cabelo</option>
-          <option>Perfumes</option><option>Cuidados pessoais</option><option>Outros</option>
-        </select>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
-        <div><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Preço</label><input type="number" id="productPrice" step="0.01" class="form-control"></div>
-        <div><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Estoque</label><input type="number" id="productStock" value="0" class="form-control"></div>
-      </div>
-      <button class="btn-primary" onclick="saveProduct()"><i class="ri-save-line"></i> Salvar Produto</button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL: VENDA -->
-<div id="saleModal" class="modal-overlay">
-  <div class="modal" style="max-height:90vh;">
-    <div class="modal-handle"></div>
-    <div class="modal-header">
-      <h3>Nova Venda</h3>
-      <button class="modal-close" onclick="closeModal('saleModal')"><i class="ri-close-line"></i></button>
-    </div>
-    <div class="modal-body">
-      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Cliente *</label><select id="saleClient" class="form-control"><option value="">Selecione...</option></select></div>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Produtos</label><button class="btn-secondary" style="padding:6px 12px;flex:none;" onclick="addSaleItem()"><i class="ri-add-line"></i> Item</button></div>
-      <div id="saleItems"></div>
-      <div style="margin-top:14px;margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Total da Venda</label><input type="text" id="saleTotal" readonly class="form-control" style="background:linear-gradient(135deg,var(--input-bg),var(--card-bg));color:var(--nav-btn-active);font-weight:800;font-size:18px;text-align:center;"></div>
-      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Forma de pagamento</label><select id="salePaymentType" class="form-control" onchange="updateSaleForm()"><option value="vista">À Vista</option><option value="parcelado">Parcelado / Fiado</option></select></div>
-      <div id="parceladoFields" style="display:none;">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
-          <div><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Entrada (R$)</label><input type="number" id="saleEntry" step="0.01" min="0" value="0" class="form-control" oninput="updateInstallments()"></div>
-          <div><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Parcelas</label><input type="number" id="saleInstallments" min="1" value="2" class="form-control" oninput="updateInstallments()"></div>
-        </div>
-        <div style="margin-bottom:10px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">1º Vencimento</label><input type="date" id="saleFirstDue" class="form-control" onchange="updateInstallments()"></div>
-        <div id="installmentPreview"></div>
-      </div>
-      <button class="btn-primary" style="margin-top:12px;" onclick="saveSale()"><i class="ri-check-line"></i> Confirmar Venda</button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL: PAGAMENTO -->
-<div id="paymentModal" class="modal-overlay">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-header">
-      <h3>Registrar Pagamento</h3>
-      <button class="modal-close" onclick="closeModal('paymentModal')"><i class="ri-close-line"></i></button>
-    </div>
-    <div class="modal-body">
-      <div id="paymentInfo" style="background:var(--input-bg);border-radius:14px;padding:14px;margin-bottom:16px;font-size:13px;border:1px solid var(--border-color);"></div>
-      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Valor (R$)</label><input type="number" id="paymentAmount" step="0.01" min="0" class="form-control"></div>
-      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Forma</label>
-        <select id="paymentMethod" class="form-control">
-          <option value="Dinheiro">Dinheiro</option><option value="Pix">Pix</option>
-          <option value="Cartão">Cartão</option><option value="Transferência">Transferência</option>
-        </select>
-      </div>
-      <button class="btn-primary" style="background:linear-gradient(135deg,#059669,#10b981);" onclick="confirmPayment()"><i class="ri-check-line"></i> Confirmar</button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL: DESPESA -->
-<div id="expenseModal" class="modal-overlay">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-header">
-      <h3>Nova Despesa</h3>
-      <button class="modal-close" onclick="closeModal('expenseModal')"><i class="ri-close-line"></i></button>
-    </div>
-    <div class="modal-body">
-      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Descrição *</label><input type="text" id="expenseDesc" class="form-control" placeholder="Ex: Compra de mercadorias"></div>
-      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Valor *</label><input type="number" id="expenseValue" step="0.01" class="form-control"></div>
-      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Categoria</label>
-        <select id="expenseCategory" class="form-control">
-          <option value="Mercadorias">Compra de mercadorias</option><option value="Frete">Frete</option>
-          <option value="Embalagens">Embalagens</option><option value="Taxas">Taxas de cartão</option>
-          <option value="Publicidade">Publicidade</option><option value="Outros">Outros</option>
-        </select>
-      </div>
-      <button class="btn-primary" onclick="saveExpense()"><i class="ri-save-line"></i> Salvar</button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL: MERCADORIA A RECEBER -->
-<div id="incomingModal" class="modal-overlay">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-header">
-      <h3 id="incomingModalTitle">Nova Mercadoria</h3>
-      <button class="modal-close" onclick="closeModal('incomingModal')"><i class="ri-close-line"></i></button>
-    </div>
-    <div class="modal-body">
-      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">O que você comprou? *</label><input type="text" id="incomingDesc" class="form-control" placeholder="Ex: Kit Shampoo profissional"></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
-        <div><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Qtd</label><input type="number" id="incomingQty" value="1" min="1" class="form-control"></div>
-        <div><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Valor (R$)</label><input type="number" id="incomingValue" step="0.01" min="0" class="form-control" placeholder="Opcional"></div>
-      </div>
-      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Data da compra</label><input type="date" id="incomingPurchaseDate" class="form-control"></div>
-      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Previsão de chegada (opcional)</label><input type="date" id="incomingExpectedDate" class="form-control"></div>
-      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Observação</label><input type="text" id="incomingNote" class="form-control" placeholder="Ex: Mercado Livre, Shopee..."></div>
-      <button class="btn-primary" style="background:linear-gradient(135deg,#4f46e5,#6366f1);" onclick="saveIncoming()"><i class="ri-save-line"></i> Salvar</button>
-    </div>
-  </div>
-</div>
-
-<!-- TOAST -->
-<div class="toast-container" id="toastContainer"></div>
-
 </div>
 
 <script>
-// Verificar Tema Salvo
-if(localStorage.getItem('theme') === 'dark') {
-  document.body.classList.add('dark-mode');
-}
-
-// Animações iniciais e Partículas
 (function(){
-  // Atualiza ícone do tema baseado no estado inicial
-  const themeIcon = document.getElementById('themeIcon');
-  if(themeIcon) {
-    themeIcon.className = document.body.classList.contains('dark-mode') ? 'ri-sun-fill' : 'ri-moon-fill';
+"use strict";
+
+/* =====================================================================
+   ESTRADA INFINITA 3D — pseudo-3D racing engine v2
+   ===================================================================== */
+
+/* ------------------------- CONSTANTES ------------------------- */
+const SEG_LEN      = 200;
+const RUMBLE_LEN   = 3;
+const ROAD_WIDTH   = 2000;
+const LANES        = 3;
+const FOV          = 100;
+const CAM_HEIGHT   = 1000;
+const CAM_DEPTH    = 1 / Math.tan((FOV/2) * Math.PI/180);
+const DRAW_DIST    = 300;
+const PLAYER_Z     = CAM_HEIGHT * CAM_DEPTH;
+const FOG_DENSITY  = 5;
+
+const MAX_SPEED       = SEG_LEN * 60;
+const ACCEL           = MAX_SPEED / 4.5;
+const BREAKING        = -MAX_SPEED;
+const DECEL           = -MAX_SPEED / 5;
+const OFF_ROAD_DECEL  = -MAX_SPEED / 2.2;
+const OFF_ROAD_LIMIT  = MAX_SPEED / 4;
+const CENTRIFUGAL     = 0.32;
+
+const PLAYER_W = 700 / ROAD_WIDTH;
+
+const SKY_TOP  = '#0b4a8a';
+const SKY_MID  = '#4b9bd8';
+const SKY_BOT  = '#c8e6f7';
+const FOG_COLOR= '#c8e6f7';
+
+const COLORS = {
+  LIGHT : { road:'#4a4a54', grass:'#2f9e44', rumble:'#f1f3f5', lane:'#f8f9fa' },
+  DARK  : { road:'#41414b', grass:'#2b8a3e', rumble:'#e03131', lane:null     },
+  START : { road:'#ffffff', grass:'#2f9e44', rumble:'#ffffff', lane:null     },
+  FINISH: { road:'#1b1f24', grass:'#2b8a3e', rumble:'#1b1f24', lane:null     }
+};
+
+/* ------------------------- UTILITÁRIOS ------------------------- */
+const limit     = (v,a,b) => Math.max(a, Math.min(v,b));
+const easeIn    = (a,b,p) => a + (b-a) * p*p;
+const easeInOut = (a,b,p) => a + (b-a) * ((-Math.cos(p*Math.PI)/2) + 0.5);
+const interp    = (a,b,p) => a + (b-a) * p;
+const percentRemaining = (n,t) => (n % t) / t;
+const expFog    = (d,dens) => 1 / Math.pow(Math.E, d*d*dens);
+const accelerate= (v,a,dt) => v + a*dt;
+const randomChoice = arr => arr[Math.floor(Math.random()*arr.length)];
+
+function increase(start, inc, max){
+  let r = start + inc;
+  while (r >= max) r -= max;
+  while (r < 0)    r += max;
+  return r;
+}
+function roundRect(g,x,y,w,h,r){
+  r = Math.min(r, w/2, h/2);
+  g.beginPath();
+  g.moveTo(x+r,y);
+  g.arcTo(x+w,y,   x+w,y+h, r);
+  g.arcTo(x+w,y+h, x,  y+h, r);
+  g.arcTo(x,  y+h, x,  y,   r);
+  g.arcTo(x,  y,   x+w,y,   r);
+  g.closePath();
+}
+
+/* =====================================================================
+   CANVAS
+   ===================================================================== */
+const cv  = document.getElementById('cv');
+const ctx = cv.getContext('2d', { alpha:false });
+let W = 0, H = 0, skyGrad = null;
+
+function resize(){
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  W = cv.clientWidth  || window.innerWidth;
+  H = cv.clientHeight || window.innerHeight;
+  cv.width  = Math.round(W * dpr);
+  cv.height = Math.round(H * dpr);
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  skyGrad = ctx.createLinearGradient(0,0,0,H*0.62);
+  skyGrad.addColorStop(0,    SKY_TOP);
+  skyGrad.addColorStop(0.55, SKY_MID);
+  skyGrad.addColorStop(1,    SKY_BOT);
+}
+window.addEventListener('resize', resize);
+
+/* =====================================================================
+   SPRITES PRÉ-RENDERIZADOS
+   ===================================================================== */
+function makeSprite(worldW, worldH, drawFn, frames, frameDuration){
+  const n = frames || 1;
+  const h = 256;
+  const w = Math.max(8, Math.round(h * worldW / worldH));
+  const list = [];
+  for (let i=0;i<n;i++){
+    const c = document.createElement('canvas');
+    c.width = w; c.height = h;
+    const g = c.getContext('2d');
+    drawFn(g, 0, 0, w, h, i);
+    list.push(c);
+  }
+  return { img:list[0], frames:list, w:worldW, h:worldH, count:n,
+           frameDuration: frameDuration || 150 };
+}
+
+/* ---------- vegetação / cenário ---------- */
+function drawTree(g,x,y,w,h){
+  const cx = x + w/2;
+  g.fillStyle = '#5b3a1e';
+  g.fillRect(cx - w*0.07, y + h*0.52, w*0.14, h*0.48);
+  const blob = (bx,by,r,col) => { g.fillStyle=col; g.beginPath(); g.arc(bx,by,r,0,7); g.fill(); };
+  blob(cx,           y+h*0.40, w*0.40, '#1f7a35');
+  blob(cx - w*0.26,  y+h*0.54, w*0.30, '#1f7a35');
+  blob(cx + w*0.26,  y+h*0.54, w*0.30, '#1f7a35');
+  blob(cx - w*0.12,  y+h*0.28, w*0.28, '#2ba84a');
+  blob(cx + w*0.14,  y+h*0.32, w*0.24, '#2ba84a');
+  blob(cx,           y+h*0.20, w*0.22, '#3cc45c');
+}
+
+function drawPine(g,x,y,w,h){
+  const cx = x + w/2;
+  g.fillStyle = '#4a3018';
+  g.fillRect(cx - w*0.06, y + h*0.78, w*0.12, h*0.22);
+  const tri = (ty,by,hw,col) => {
+    g.fillStyle = col;
+    g.beginPath(); g.moveTo(cx, ty); g.lineTo(cx+hw, by); g.lineTo(cx-hw, by);
+    g.closePath(); g.fill();
+  };
+  tri(y+h*0.02, y+h*0.42, w*0.30, '#146b2c');
+  tri(y+h*0.22, y+h*0.62, w*0.38, '#1a8035');
+  tri(y+h*0.44, y+h*0.82, w*0.46, '#1f9440');
+}
+
+function drawPalm(g,x,y,w,h){
+  const cx = x + w/2;
+  g.strokeStyle = '#7a5a34'; g.lineWidth = w*0.10; g.lineCap='round';
+  g.beginPath(); g.moveTo(cx, y+h); g.quadraticCurveTo(cx+w*0.06, y+h*0.5, cx, y+h*0.22); g.stroke();
+  g.fillStyle = '#1f8f3a';
+  for (let i=0;i<7;i++){
+    const a = -Math.PI/2 + (i-3)*0.42;
+    g.beginPath();
+    g.moveTo(cx, y+h*0.22);
+    g.quadraticCurveTo(cx + Math.cos(a)*w*0.42, y+h*0.22 + Math.sin(a)*h*0.14,
+                       cx + Math.cos(a)*w*0.60, y+h*0.22 + Math.sin(a)*h*0.22 + h*0.05);
+    g.quadraticCurveTo(cx + Math.cos(a)*w*0.40, y+h*0.24 + Math.sin(a)*h*0.10,
+                       cx, y+h*0.24);
+    g.closePath(); g.fill();
+  }
+  g.fillStyle='#8a6a3a';
+  g.beginPath(); g.arc(cx-w*0.07, y+h*0.25, w*0.06,0,7); g.fill();
+  g.beginPath(); g.arc(cx+w*0.07, y+h*0.25, w*0.06,0,7); g.fill();
+}
+
+function drawBush(g,x,y,w,h){
+  g.fillStyle = '#1f7a35';
+  g.beginPath(); g.arc(x+w*0.30, y+h*0.66, w*0.30, 0, 7); g.fill();
+  g.beginPath(); g.arc(x+w*0.70, y+h*0.66, w*0.30, 0, 7); g.fill();
+  g.fillStyle = '#2ba84a';
+  g.beginPath(); g.arc(x+w*0.50, y+h*0.44, w*0.36, 0, 7); g.fill();
+}
+
+function drawRock(g,x,y,w,h){
+  g.fillStyle = '#6b7280';
+  g.beginPath();
+  g.moveTo(x+w*0.06, y+h);
+  g.lineTo(x+w*0.24, y+h*0.22);
+  g.lineTo(x+w*0.58, y);
+  g.lineTo(x+w*0.88, y+h*0.34);
+  g.lineTo(x+w, y+h);
+  g.closePath(); g.fill();
+  g.fillStyle = '#8b93a1';
+  g.beginPath();
+  g.moveTo(x+w*0.24, y+h*0.22);
+  g.lineTo(x+w*0.58, y);
+  g.lineTo(x+w*0.66, y+h*0.42);
+  g.closePath(); g.fill();
+}
+
+function drawHouse(g,x,y,w,h){
+  g.fillStyle = '#e9e2d4';
+  g.fillRect(x+w*0.12, y+h*0.36, w*0.76, h*0.64);
+  g.fillStyle = '#b23a2e';
+  g.beginPath();
+  g.moveTo(x, y+h*0.40); g.lineTo(x+w*0.5, y); g.lineTo(x+w, y+h*0.40);
+  g.closePath(); g.fill();
+  g.fillStyle = '#8ecae6';
+  g.fillRect(x+w*0.22, y+h*0.52, w*0.20, h*0.22);
+  g.fillRect(x+w*0.58, y+h*0.52, w*0.20, h*0.22);
+  g.fillStyle = '#6b4a2a';
+  g.fillRect(x+w*0.44, y+h*0.72, w*0.16, h*0.28);
+}
+
+function drawBuilding(g,x,y,w,h){
+  g.fillStyle = '#8d99ae';
+  g.fillRect(x+w*0.06, y, w*0.88, h);
+  g.fillStyle = '#6b7689';
+  g.fillRect(x+w*0.06, y, w*0.88, h*0.05);
+  g.fillStyle = '#ffe6a7';
+  for (let r=0;r<6;r++){
+    for (let c=0;c<3;c++){
+      if (Math.random() < 0.72)
+        g.fillRect(x + w*(0.16 + c*0.26), y + h*(0.10 + r*0.145), w*0.16, h*0.085);
+    }
+  }
+}
+
+function drawSign(g,x,y,w,h){
+  g.fillStyle = '#7a7a7a';
+  g.fillRect(x+w*0.44, y+h*0.55, w*0.12, h*0.45);
+  g.fillStyle = '#2b8a3e';
+  g.fillRect(x, y, w, h*0.58);
+  g.strokeStyle = '#fff'; g.lineWidth = Math.max(1,w*0.06);
+  g.strokeRect(x+w*0.09, y+h*0.08, w*0.82, h*0.42);
+  g.fillStyle = '#fff';
+  g.fillRect(x+w*0.22, y+h*0.19, w*0.56, h*0.06);
+  g.fillRect(x+w*0.22, y+h*0.31, w*0.38, h*0.06);
+}
+
+function drawLamp(g,x,y,w,h){
+  g.fillStyle = '#6b7280';
+  g.fillRect(x+w*0.38, y+h*0.10, w*0.24, h*0.90);
+  g.beginPath();
+  g.arc(x+w*0.5, y+h*0.10, w*0.42, Math.PI, 0);
+  g.lineTo(x+w*0.92, y+h*0.10);
+  g.lineTo(x+w*0.08, y+h*0.10);
+  g.closePath(); g.fill();
+  g.fillStyle = '#ffe9a8';
+  g.beginPath(); g.arc(x+w*0.5, y+h*0.14, w*0.20, 0, 7); g.fill();
+}
+
+/* ---------- SEMÁFORO (4 estados) ---------- */
+function drawTrafficLight(g,x,y,w,h,f){
+  const cx = x + w/2;
+
+  // poste
+  g.fillStyle = '#3a3a3a';
+  g.fillRect(cx - w*0.045, y + h*0.30, w*0.09, h*0.70);
+  // base
+  g.fillStyle = '#242424';
+  g.fillRect(cx - w*0.11, y + h*0.965, w*0.22, h*0.035);
+  // suporte
+  g.fillStyle = '#2e2e2e';
+  g.fillRect(cx - w*0.035, y + h*0.295, w*0.07, h*0.03);
+
+  // caixa
+  g.fillStyle = '#161616';
+  roundRect(g, x + w*0.15, y, w*0.70, h*0.33, w*0.12);
+  g.fill();
+  // moldura
+  g.strokeStyle = '#2a2a2a';
+  g.lineWidth = Math.max(1, w*0.025);
+  roundRect(g, x + w*0.15, y, w*0.70, h*0.33, w*0.12);
+  g.stroke();
+
+  // estados: 0=vermelho, 1=verm+amar, 2=verde, 3=amarelo
+  const states = [
+    [1,0,0],
+    [1,1,0],
+    [0,0,1],
+    [0,1,0]
+  ];
+  const s = states[f % 4];
+  const r = w*0.135;
+  const ys = [y + h*0.075, y + h*0.165, y + h*0.255];
+  const cols = [
+    ['#ff2222','#390909'],
+    ['#ffcc00','#392900'],
+    ['#22dd44','#0a3a12']
+  ];
+
+  for (let i=0;i<3;i++){
+    const on = s[i];
+    if (on){
+      g.shadowColor = cols[i][0];
+      g.shadowBlur = 16;
+    }
+    g.fillStyle = on ? cols[i][0] : cols[i][1];
+    g.beginPath();
+    g.arc(cx, ys[i], r, 0, 7);
+    g.fill();
+    g.shadowBlur = 0;
   }
 
-  // Partículas levinhas (emojis)
-  const fp=document.getElementById('floatingParticles');
-  const pItems=['💍','💎','🧴','💄','🛍️','🎀','✨'];
-  for(let i=0;i<10;i++){
-    const d=document.createElement('div');
-    const sz=Math.random()*12+12;
-    d.style.cssText=`position:absolute;font-size:${sz}px;left:${Math.random()*100}%;bottom:-40px;opacity:0.4;animation:particleFloat ${12+Math.random()*10}s linear infinite;animation-delay:${Math.random()*8}s;z-index:0;`;
-    d.textContent = pItems[Math.floor(Math.random()*pItems.length)];
-    fp.appendChild(d);
+  // brilho/reflexo na parte de baixo
+  g.fillStyle = 'rgba(255,255,255,.06)';
+  g.beginPath();
+  g.ellipse(cx, y+h*0.33, w*0.28, h*0.008, 0, 0, 7);
+  g.fill();
+}
+
+/* ---------- PESSOA (ciclo de caminhada 8 frames) ---------- */
+function drawPerson(g,x,y,w,h,f,shirt,hair){
+  const t = (f / 8) * Math.PI * 2;
+  const legSwing = Math.sin(t)     * w * 0.22;
+  const armSwing = Math.sin(t)     * w * 0.20;
+  const bob      = Math.abs(Math.sin(t)) * h * 0.014;
+  const cx = x + w/2;
+  const cy = y + bob;
+
+  // sombra no chão
+  g.fillStyle = 'rgba(0,0,0,.30)';
+  g.beginPath();
+  g.ellipse(cx, y + h*0.985, w*0.34, h*0.020, 0, 0, 7);
+  g.fill();
+
+  // pernas
+  g.strokeStyle = '#2b3a55';
+  g.lineWidth = w*0.14;
+  g.lineCap = 'round';
+  g.beginPath();
+  g.moveTo(cx - w*0.07, cy + h*0.56);
+  g.lineTo(cx - w*0.07 + legSwing, cy + h*0.955);
+  g.moveTo(cx + w*0.07, cy + h*0.56);
+  g.lineTo(cx + w*0.07 - legSwing, cy + h*0.955);
+  g.stroke();
+
+  // sapatos
+  g.fillStyle = '#14161c';
+  g.beginPath();
+  g.ellipse(cx - w*0.07 + legSwing, cy + h*0.962, w*0.10, h*0.020, 0, 0, 7);
+  g.fill();
+  g.beginPath();
+  g.ellipse(cx + w*0.07 - legSwing, cy + h*0.962, w*0.10, h*0.020, 0, 0, 7);
+  g.fill();
+
+  // torso
+  g.fillStyle = shirt;
+  roundRect(g, cx - w*0.20, cy + h*0.28, w*0.40, h*0.32, w*0.10);
+  g.fill();
+  // sombreamento lateral
+  g.fillStyle = 'rgba(0,0,0,.14)';
+  roundRect(g, cx + w*0.01, cy + h*0.28, w*0.19, h*0.32, w*0.10);
+  g.fill();
+  // colarinho
+  g.fillStyle = 'rgba(0,0,0,.18)';
+  roundRect(g, cx - w*0.12, cy + h*0.27, w*0.24, h*0.04, w*0.03);
+  g.fill();
+
+  // braços
+  g.strokeStyle = shirt;
+  g.lineWidth = w*0.11;
+  g.lineCap = 'round';
+  g.beginPath();
+  g.moveTo(cx - w*0.17, cy + h*0.31);
+  g.lineTo(cx - w*0.17 - armSwing*0.75, cy + h*0.555);
+  g.moveTo(cx + w*0.17, cy + h*0.31);
+  g.lineTo(cx + w*0.17 + armSwing*0.75, cy + h*0.555);
+  g.stroke();
+
+  // mãos
+  g.fillStyle = '#e8b48a';
+  g.beginPath();
+  g.arc(cx - w*0.17 - armSwing*0.75, cy + h*0.565, w*0.055, 0, 7);
+  g.fill();
+  g.beginPath();
+  g.arc(cx + w*0.17 + armSwing*0.75, cy + h*0.565, w*0.055, 0, 7);
+  g.fill();
+
+  // pescoço
+  g.fillStyle = '#dba57c';
+  g.fillRect(cx - w*0.05, cy + h*0.245, w*0.10, h*0.05);
+
+  // cabeça (vista de trás)
+  g.fillStyle = '#e8b48a';
+  g.beginPath();
+  g.arc(cx, cy + h*0.16, w*0.17, 0, 7);
+  g.fill();
+
+  // cabelo
+  g.fillStyle = hair;
+  g.beginPath();
+  g.arc(cx, cy + h*0.152, w*0.178, 0, 7);
+  g.fill();
+  // orelhas
+  g.fillStyle = '#dba57c';
+  g.beginPath();
+  g.arc(cx - w*0.168, cy + h*0.168, w*0.032, 0, 7);
+  g.fill();
+  g.beginPath();
+  g.arc(cx + w*0.168, cy + h*0.168, w*0.032, 0, 7);
+  g.fill();
+}
+
+/* ---------- CARRO (visto de trás) ---------- */
+function drawCarSprite(g,x,y,w,h,color){
+  g.fillStyle = 'rgba(0,0,0,.35)';
+  g.beginPath(); g.ellipse(x+w*0.5, y+h*0.97, w*0.48, h*0.09, 0, 0, 7); g.fill();
+
+  // rodas
+  g.fillStyle = '#15161a';
+  roundRect(g, x+w*0.00, y+h*0.52, w*0.16, h*0.44, h*0.05); g.fill();
+  roundRect(g, x+w*0.84, y+h*0.52, w*0.16, h*0.44, h*0.05); g.fill();
+
+  // teto
+  g.fillStyle = color.dark;
+  roundRect(g, x+w*0.17, y+h*0.02, w*0.66, h*0.46, h*0.14); g.fill();
+
+  // vidro traseiro
+  const vg = g.createLinearGradient(0, y+h*0.06, 0, y+h*0.36);
+  vg.addColorStop(0,'#0d1a26');
+  vg.addColorStop(1,'#2c4f6a');
+  g.fillStyle = vg;
+  roundRect(g, x+w*0.22, y+h*0.09, w*0.56, h*0.28, h*0.07); g.fill();
+
+  // carroceria
+  const bg = g.createLinearGradient(0, y+h*0.30, 0, y+h*0.92);
+  bg.addColorStop(0, color.main);
+  bg.addColorStop(0.5, color.dark);
+  bg.addColorStop(1, color.main);
+  g.fillStyle = bg;
+  roundRect(g, x+w*0.04, y+h*0.30, w*0.92, h*0.60, h*0.13); g.fill();
+
+  // brilho
+  g.fillStyle = 'rgba(255,255,255,.18)';
+  roundRect(g, x+w*0.08, y+h*0.34, w*0.84, h*0.12, h*0.05); g.fill();
+
+  // lanternas
+  g.fillStyle = '#ff2d2d';
+  g.shadowColor = '#ff2d2d';
+  g.shadowBlur = 8;
+  roundRect(g, x+w*0.08, y+h*0.52, w*0.20, h*0.13, h*0.04); g.fill();
+  roundRect(g, x+w*0.72, y+h*0.52, w*0.20, h*0.13, h*0.04); g.fill();
+  g.shadowBlur = 0;
+
+  // para-choque
+  g.fillStyle = '#26282e';
+  roundRect(g, x+w*0.04, y+h*0.76, w*0.92, h*0.14, h*0.05); g.fill();
+
+  // placa
+  g.fillStyle = '#dfe6ee';
+  roundRect(g, x+w*0.40, y+h*0.66, w*0.20, h*0.10, h*0.02); g.fill();
+}
+
+/* ---------- ÔNIBUS ---------- */
+function drawBusSprite(g,x,y,w,h,color){
+  // sombra
+  g.fillStyle = 'rgba(0,0,0,.38)';
+  g.beginPath(); g.ellipse(x+w*0.5, y+h*0.98, w*0.47, h*0.022, 0, 0, 7); g.fill();
+
+  // rodas
+  g.fillStyle = '#111';
+  roundRect(g, x+w*0.00, y+h*0.72, w*0.075, h*0.24, h*0.025); g.fill();
+  roundRect(g, x+w*0.925, y+h*0.72, w*0.075, h*0.24, h*0.025); g.fill();
+
+  // carroceria
+  const bg = g.createLinearGradient(0, y+h*0.04, 0, y+h*0.94);
+  bg.addColorStop(0, color.main);
+  bg.addColorStop(0.55, color.dark);
+  bg.addColorStop(1, color.main);
+  g.fillStyle = bg;
+  roundRect(g, x+w*0.04, y+h*0.02, w*0.92, h*0.94, h*0.05); g.fill();
+
+  // faixa superior
+  g.fillStyle = 'rgba(255,255,255,.20)';
+  roundRect(g, x+w*0.05, y+h*0.04, w*0.90, h*0.045, h*0.018); g.fill();
+
+  // janela traseira grande
+  const wg = g.createLinearGradient(0, y+h*0.12, 0, y+h*0.40);
+  wg.addColorStop(0,'#0a1824');
+  wg.addColorStop(1,'#25445c');
+  g.fillStyle = wg;
+  roundRect(g, x+w*0.10, y+h*0.11, w*0.80, h*0.28, h*0.025); g.fill();
+
+  // divisórias da janela
+  g.fillStyle = color.dark;
+  g.fillRect(x+w*0.36, y+h*0.11, w*0.028, h*0.28);
+  g.fillRect(x+w*0.60, y+h*0.11, w*0.028, h*0.28);
+
+  // reflexo
+  g.fillStyle = 'rgba(180,220,255,.22)';
+  roundRect(g, x+w*0.12, y+h*0.135, w*0.76, h*0.075, h*0.015); g.fill();
+
+  // porta traseira
+  g.fillStyle = color.dark;
+  roundRect(g, x+w*0.42, y+h*0.50, w*0.16, h*0.38, h*0.012); g.fill();
+  g.strokeStyle = 'rgba(0,0,0,.5)';
+  g.lineWidth = Math.max(1, w*0.008);
+  roundRect(g, x+w*0.42, y+h*0.50, w*0.16, h*0.38, h*0.012);
+  g.stroke();
+
+  // vidro da porta
+  g.fillStyle = '#1a2a3a';
+  roundRect(g, x+w*0.445, y+h*0.515, w*0.11, h*0.14, h*0.008); g.fill();
+
+  // lanternas
+  g.fillStyle = '#ff2d2d';
+  g.shadowColor = '#ff2d2d';
+  g.shadowBlur = 10;
+  roundRect(g, x+w*0.07, y+h*0.80, w*0.15, h*0.075, h*0.012); g.fill();
+  roundRect(g, x+w*0.78, y+h*0.80, w*0.15, h*0.075, h*0.012); g.fill();
+  g.shadowBlur = 0;
+
+  // para-choque
+  g.fillStyle = '#1c1e23';
+  roundRect(g, x+w*0.04, y+h*0.90, w*0.92, h*0.06, h*0.018); g.fill();
+
+  // placa
+  g.fillStyle = '#e9eef4';
+  roundRect(g, x+w*0.40, y+h*0.84, w*0.20, h*0.055, h*0.01); g.fill();
+
+  // letreiro
+  g.fillStyle = '#ffe28a';
+  g.shadowColor = '#ffe28a';
+  g.shadowBlur = 6;
+  roundRect(g, x+w*0.15, y+h*0.44, w*0.70, h*0.045, h*0.012); g.fill();
+  g.shadowBlur = 0;
+}
+
+/* -------- catálogo -------- */
+const SPRITES = {
+  TREE     : makeSprite(2400, 4200, drawTree),
+  PINE     : makeSprite(1800, 4500, drawPine),
+  PALM     : makeSprite(2000, 4600, drawPalm),
+  BUSH     : makeSprite(1100,  750, drawBush),
+  ROCK     : makeSprite( 950,  680, drawRock),
+  HOUSE    : makeSprite(4000, 3000, drawHouse),
+  BUILDING : makeSprite(3200, 6200, drawBuilding),
+  SIGN     : makeSprite(1000, 1400, drawSign),
+  LAMP     : makeSprite( 520, 3400, drawLamp),
+  TRAFFIC  : makeSprite( 520, 2100, drawTrafficLight, 4, 2000)
+};
+
+const PERSON_SHIRTS = ['#e63946','#457b9d','#f4a261','#2a9d8f','#9b5de5','#ee6c4d'];
+const PERSON_HAIRS  = ['#2b1d12','#1a1a1a','#4a2f18','#8a5a2a','#d4c1a0','#3a3a3a'];
+const PERSON_SPRITES = PERSON_SHIRTS.map((shirt,i) =>
+  makeSprite(420, 820, (g,x,y,w,h,f) => drawPerson(g,x,y,w,h,f,shirt,PERSON_HAIRS[i]), 8, 100)
+);
+
+const CAR_COLORS = [
+  { main:'#c92a2a', dark:'#8f1d1d' },
+  { main:'#1c7ed6', dark:'#155fa0' },
+  { main:'#f59f00', dark:'#b87700' },
+  { main:'#37b24d', dark:'#268a38' },
+  { main:'#f1f3f5', dark:'#b9bfc6' },
+  { main:'#7048e8', dark:'#5636b8' },
+  { main:'#111418', dark:'#000000' },
+  { main:'#adb5bd', dark:'#7a828a' },
+  { main:'#e8590c', dark:'#a83e08' },
+  { main:'#0ca678', dark:'#077a58' }
+];
+const CAR_SPRITES = CAR_COLORS.map(c => makeSprite(760, 620, (g,x,y,w,h)=>drawCarSprite(g,x,y,w,h,c)));
+
+const BUS_COLORS = [
+  { main:'#f59f00', dark:'#b87700' },
+  { main:'#1c7ed6', dark:'#155fa0' },
+  { main:'#e03131', dark:'#a01a1a' },
+  { main:'#f1f3f5', dark:'#b9bfc6' },
+  { main:'#2b8a3e', dark:'#1f6530' }
+];
+const BUS_SPRITES = BUS_COLORS.map(c => makeSprite(1000, 1250, (g,x,y,w,h)=>drawBusSprite(g,x,y,w,h,c)));
+
+/* =====================================================================
+   CONSTRUÇÃO DA PISTA
+   ===================================================================== */
+let segments = [];
+let cars = [];
+let trackLength = 0;
+
+const ROAD = {
+  LENGTH: { NONE:0, SHORT:25, MEDIUM:50, LONG:100 },
+  HILL  : { NONE:0, LOW:20, MEDIUM:40, HIGH:60 },
+  CURVE : { NONE:0, EASY:2, MEDIUM:4, HARD:6 }
+};
+
+function lastY(){
+  return segments.length === 0 ? 0 : segments[segments.length-1].p2.world.y;
+}
+
+function addSegment(curve, y){
+  const n = segments.length;
+  segments.push({
+    index : n,
+    p1 : { world:{ y:lastY(), z: n*SEG_LEN },      camera:{}, screen:{} },
+    p2 : { world:{ y:y,       z:(n+1)*SEG_LEN },   camera:{}, screen:{} },
+    curve : curve,
+    sprites : [],
+    cars : [],
+    fog : 1,
+    clip : 0,
+    color : null
+  });
+}
+
+function addRoad(enter, hold, leave, curve, y){
+  const startY = lastY();
+  const endY   = startY + (y || 0) * SEG_LEN;
+  const total  = enter + hold + leave;
+  for (let n=0;n<enter;n++) addSegment(easeIn(0,curve,n/enter),      easeInOut(startY,endY,n/total));
+  for (let n=0;n<hold ;n++) addSegment(curve,                        easeInOut(startY,endY,(enter+n)/total));
+  for (let n=0;n<leave;n++) addSegment(easeInOut(curve,0,n/leave),   easeInOut(startY,endY,(enter+hold+n)/total));
+}
+
+const addStraight = (n) => { n = n || ROAD.LENGTH.MEDIUM; addRoad(n,n,n,0,0); };
+const addHill     = (n,h) => { n = n || ROAD.LENGTH.MEDIUM; h = (h===undefined?ROAD.HILL.MEDIUM:h); addRoad(n,n,n,0,h); };
+const addCurve    = (n,c,h) => { n = n || ROAD.LENGTH.MEDIUM; c = (c===undefined?ROAD.CURVE.MEDIUM:c); h = h||0; addRoad(n,n,n,c,h); };
+
+function addLowRollingHills(n,h){
+  n = n || ROAD.LENGTH.SHORT; h = h || ROAD.HILL.LOW;
+  addRoad(n,n,n, 0,                     h/2);
+  addRoad(n,n,n, 0,                    -h);
+  addRoad(n,n,n, ROAD.CURVE.EASY,       h);
+  addRoad(n,n,n, 0,                     0);
+  addRoad(n,n,n,-ROAD.CURVE.EASY,       h/2);
+  addRoad(n,n,n, 0,                     0);
+}
+
+function addSCurves(){
+  addRoad(ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, -ROAD.CURVE.EASY,   ROAD.HILL.NONE);
+  addRoad(ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM,  ROAD.CURVE.MEDIUM, ROAD.HILL.MEDIUM);
+  addRoad(ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM,  ROAD.CURVE.EASY,  -ROAD.HILL.LOW);
+  addRoad(ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, -ROAD.CURVE.EASY,   ROAD.HILL.MEDIUM);
+  addRoad(ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, ROAD.LENGTH.MEDIUM, -ROAD.CURVE.MEDIUM,-ROAD.HILL.MEDIUM);
+}
+
+function addBumps(){
+  addRoad(10,10,10,0, 5);
+  addRoad(10,10,10,0,-2);
+  addRoad(10,10,10,0,-5);
+  addRoad(10,10,10,0, 8);
+  addRoad(10,10,10,0, 5);
+  addRoad(10,10,10,0,-7);
+  addRoad(10,10,10,0, 5);
+  addRoad(10,10,10,0,-2);
+}
+
+function addDownhillToEnd(n){
+  n = n || 200;
+  addRoad(n,n,n, -ROAD.CURVE.EASY, -lastY()/SEG_LEN);
+}
+
+function addSprite(i, sprite, offset, phase){
+  if (i < 0 || i >= segments.length) return;
+  segments[i].sprites.push({ source:sprite, offset:offset, phase: phase || 0 });
+}
+
+function buildTrack(){
+  segments = [];
+  cars = [];
+
+  addStraight(ROAD.LENGTH.SHORT);
+  addLowRollingHills();
+  addSCurves();
+  addCurve(ROAD.LENGTH.MEDIUM, ROAD.CURVE.MEDIUM, ROAD.HILL.LOW);
+  addBumps();
+  addLowRollingHills();
+  addCurve(ROAD.LENGTH.LONG*2, ROAD.CURVE.MEDIUM, ROAD.HILL.MEDIUM);
+  addStraight();
+  addHill(ROAD.LENGTH.MEDIUM, ROAD.HILL.HIGH);
+  addSCurves();
+  addCurve(ROAD.LENGTH.LONG, -ROAD.CURVE.MEDIUM, ROAD.HILL.NONE);
+  addHill(ROAD.LENGTH.LONG, ROAD.HILL.HIGH);
+  addCurve(ROAD.LENGTH.LONG, ROAD.CURVE.MEDIUM, -ROAD.HILL.LOW);
+  addBumps();
+  addHill(ROAD.LENGTH.LONG, -ROAD.HILL.MEDIUM);
+  addStraight();
+  addSCurves();
+  addDownhillToEnd();
+
+  for (let n=0;n<segments.length;n++){
+    segments[n].color = (Math.floor(n/RUMBLE_LEN) % 2) ? COLORS.DARK : COLORS.LIGHT;
+  }
+  for (let n=0;n<12;n++){
+    segments[n].color = COLORS.START;
+    segments[segments.length-1-n].color = COLORS.FINISH;
   }
 
-  const lts=['CARREGANDO...','PREPARANDO...','ACESSANDO DADOS...','QUASE LÁ...'];let lti=0;
-  const ltInt=setInterval(()=>{lti=(lti+1)%lts.length;const el=document.getElementById('loadingText');if(el)el.textContent=lts[lti];},700);
-  setTimeout(()=>{clearInterval(ltInt);const splash=document.getElementById('splashScreen');const main=document.getElementById('mainApp');splash.style.opacity='0';splash.style.transform='scale(1.1)';setTimeout(()=>{splash.style.display='none';main.style.opacity='1';initApp();},600);},3000);
+  trackLength = segments.length * SEG_LEN;
+
+  decorate();
+  resetCars();
+}
+
+function decorate(){
+  const n = segments.length;
+
+  // postes de luz
+  for (let i=24; i<n-24; i+=16){
+    addSprite(i, SPRITES.LAMP,  1.28);
+    addSprite(i, SPRITES.LAMP, -1.28);
+  }
+
+  // SEMÁFOROS (pares, a cada ~380 segmentos)
+  for (let i=120; i<n-120; i+=380){
+    const phase = Math.random() * 8000;
+    addSprite(i, SPRITES.TRAFFIC,  1.28, phase);
+    addSprite(i, SPRITES.TRAFFIC, -1.28, phase);
+  }
+
+  // PESSOAS andando no acostamento — muitas, com fase aleatória
+  for (let i=16; i<n-16; i+=3){
+    if (Math.random() < 0.62){
+      const side = Math.random() < 0.5 ? -1 : 1;
+      const off  = side * (1.05 + Math.random()*0.75);
+      const sp   = randomChoice(PERSON_SPRITES);
+      addSprite(i, sp, off, Math.random()*2000);
+    }
+  }
+
+  // vegetação
+  for (let i=8; i<n-8; i+=2){
+    if (Math.random() < 0.55){
+      const side = Math.random() < 0.5 ? -1 : 1;
+      const off  = side * (2.3 + Math.random()*5.5);
+      const kind = Math.random();
+      const sp = kind < 0.34 ? SPRITES.TREE
+               : kind < 0.58 ? SPRITES.PINE
+               : kind < 0.74 ? SPRITES.PALM
+               : kind < 0.90 ? SPRITES.BUSH
+               :               SPRITES.ROCK;
+      addSprite(i, sp, off);
+    }
+  }
+
+  // casas e prédios
+  for (let i=40; i<n-40; i+=22){
+    const side = Math.random() < 0.5 ? -1 : 1;
+    const off  = side * (3.6 + Math.random()*3.2);
+    addSprite(i, Math.random() < 0.72 ? SPRITES.HOUSE : SPRITES.BUILDING, off);
+  }
+
+  // placas
+  for (let i=60; i<n-60; i+=47){
+    const side = Math.random() < 0.5 ? -1 : 1;
+    addSprite(i, SPRITES.SIGN, side * 1.40);
+  }
+}
+
+/* --------- trânsito (carros + ônibus) --------- */
+function resetCars(){
+  cars = [];
+  const totalCars = 42;
+  const totalBuses = 12;
+  const total = totalCars + totalBuses;
+
+  for (let i=0;i<total;i++){
+    const isBus = i >= totalCars;
+    const offset = (Math.random()*1.6 - 0.8);
+    const z = Math.floor(Math.random()*segments.length) * SEG_LEN;
+    const sprite = isBus ? randomChoice(BUS_SPRITES) : randomChoice(CAR_SPRITES);
+    const baseSpd = MAX_SPEED/4.5 + Math.random()*MAX_SPEED/3.2;
+    const spd = isBus ? baseSpd * 0.72 : baseSpd;
+    const car = { offset:offset, z:z, sprite:sprite, speed:spd, percent:0, isBus:isBus };
+    const seg = findSegment(z);
+    if (seg) seg.cars.push(car);
+    cars.push(car);
+  }
+}
+
+/* =====================================================================
+   ESTADO DO JOGO
+   ===================================================================== */
+let position = 0;
+let playerX  = 0;
+let speed    = 0;
+let shake    = 0;
+let bgOffset = 0;
+let time     = 0;
+let distanceM = 0;
+let score     = 0;
+let best      = parseInt(localStorage.getItem('estrada_best_v2') || '0', 10) || 0;
+let paused    = false;
+let lastKmh   = -1;
+
+/* ---- COMANDOS MELHORADOS ---- */
+const input = { gas:false, brake:false, left:false, right:false };
+let steerInput = 0;      // -1..1 suavizado
+let steerVisual = 0;     // inclinação visual do carro
+let throttle = 0;        // 0..1 suavizado
+
+/* =====================================================================
+   ENTRADA
+   ===================================================================== */
+const KEYMAP = {
+  ArrowUp:'gas', KeyW:'gas', Space:'gas',
+  ArrowDown:'brake', KeyS:'brake',
+  ArrowLeft:'left', KeyA:'left',
+  ArrowRight:'right', KeyD:'right'
+};
+
+window.addEventListener('keydown', e => {
+  const a = KEYMAP[e.code];
+  if (a){ input[a] = true; e.preventDefault(); }
+  if (e.code === 'KeyP'){ paused = !paused; }
+}, { passive:false });
+
+window.addEventListener('keyup', e => {
+  const a = KEYMAP[e.code];
+  if (a){ input[a] = false; e.preventDefault(); }
+}, { passive:false });
+
+window.addEventListener('blur', () => {
+  input.gas = input.brake = input.left = input.right = false;
+});
+
+document.querySelectorAll('#touch button').forEach(btn => {
+  const k = btn.dataset.k;
+  const on  = e => { e.preventDefault(); input[k] = true;  };
+  const off = e => { e.preventDefault(); input[k] = false; };
+  btn.addEventListener('pointerdown', on);
+  btn.addEventListener('pointerup', off);
+  btn.addEventListener('pointercancel', off);
+  btn.addEventListener('pointerleave', off);
+  btn.addEventListener('contextmenu', e => e.preventDefault());
+});
+
+/* =====================================================================
+   LÓGICA
+   ===================================================================== */
+function findSegment(z){
+  return segments[Math.floor(z / SEG_LEN) % segments.length];
+}
+
+function overlap(x1,w1,x2,w2,pct){
+  const half = (pct || 1) / 2;
+  const min1 = x1 - w1*half, max1 = x1 + w1*half;
+  const min2 = x2 - w2*half, max2 = x2 + w2*half;
+  return !(max1 < min2 || min1 > max2);
+}
+
+function update(dt){
+  time += dt;
+
+  const playerSegment = findSegment(position + PLAYER_Z);
+  const speedPercent  = speed / MAX_SPEED;
+
+  /* ---- SUAVIZAÇÃO DOS COMANDOS ---- */
+  // esterço: interpolação exponencial (suave mas responsivo)
+  const steerTarget = (input.right?1:0) - (input.left?1:0);
+  const steerLerp = 1 - Math.pow(0.0015, dt);      // ~ rápido a 60fps
+  steerInput += (steerTarget - steerInput) * steerLerp;
+  if (Math.abs(steerInput) < 0.02 && steerTarget === 0) steerInput = 0;
+
+  // throttle/brake suave para visual
+  const thTarget = input.gas ? 1 : (input.brake ? -1 : 0);
+  throttle += (thTarget - throttle) * Math.min(1, dt*6);
+
+  /* ---- MOVIMENTO ---- */
+  position = increase(position, dt * speed, trackLength);
+  distanceM += (dt * speed) / 380;
+
+  // direção com autoridade dependente da velocidade
+  const steerAuthority = 1 - speedPercent * 0.18;
+  const dx = dt * 2.2 * speedPercent * steerAuthority;
+  playerX += steerInput * dx;
+
+  // força centrífuga nas curvas
+  playerX -= dx * speedPercent * playerSegment.curve * CENTRIFUGAL;
+
+  // aceleração / freio / desaceleração
+  if (input.gas)        speed = accelerate(speed, ACCEL, dt);
+  else if (input.brake) speed = accelerate(speed, BREAKING, dt);
+  else                  speed = accelerate(speed, DECEL, dt);
+
+  // fora da estrada
+  const offRoad = (playerX < -1 || playerX > 1);
+  if (offRoad && speed > OFF_ROAD_LIMIT){
+    speed = accelerate(speed, OFF_ROAD_DECEL, dt);
+    shake = Math.min(1, shake + dt*3);
+  } else {
+    shake = Math.max(0, shake - dt*3);
+  }
+
+  // trânsito
+  updateCars(dt, playerSegment);
+
+  // colisão com carros/ônibus
+  for (const car of playerSegment.cars){
+    const carW = car.sprite.w / ROAD_WIDTH;
+    if (speed > car.speed && overlap(playerX, PLAYER_W, car.offset, carW, 0.82)){
+      speed = car.speed * (car.isBus ? 0.28 : 0.42);
+      position = increase(car.z, -PLAYER_Z, trackLength);
+      shake = 1;
+      break;
+    }
+  }
+
+  playerX = limit(playerX, -2.4, 2.4);
+  speed   = limit(speed, 0, MAX_SPEED);
+
+  /* ---- VISUAL: inclinação do carro ---- */
+  const leanTarget = steerInput * speedPercent;
+  steerVisual += (leanTarget - steerVisual) * Math.min(1, dt*9);
+
+  // pontuação
+  score += dt * speedPercent * 42 * (offRoad ? 0.35 : 1);
+
+  // fundo parallax
+  bgOffset += playerSegment.curve * speedPercent * dt * 380;
+}
+
+function updateCars(dt, playerSegment){
+  for (let i=0;i<cars.length;i++){
+    const car = cars[i];
+    const oldSeg = findSegment(car.z);
+
+    car.z = increase(car.z, dt * car.speed, trackLength);
+    car.percent = percentRemaining(car.z, SEG_LEN);
+
+    const newSeg = findSegment(car.z);
+    if (oldSeg !== newSeg){
+      const idx = oldSeg.cars.indexOf(car);
+      if (idx >= 0) oldSeg.cars.splice(idx,1);
+      newSeg.cars.push(car);
+    }
+  }
+}
+
+/* =====================================================================
+   RENDERIZAÇÃO
+   ===================================================================== */
+function project(p, camX, camY, camZ, depth, width, height, roadWidth){
+  p.camera.x = (p.world.x || 0) - camX;
+  p.camera.y = (p.world.y || 0) - camY;
+  p.camera.z = (p.world.z || 0) - camZ;
+  p.screen.scale = depth / p.camera.z;
+  p.screen.x = Math.round((width /2) + (p.screen.scale * p.camera.x * width /2));
+  p.screen.y = Math.round((height/2) - (p.screen.scale * p.camera.y * height/2));
+  p.screen.w = Math.round(             (p.screen.scale * roadWidth  * width /2));
+}
+
+function polygon(x1,y1,x2,y2,x3,y3,x4,y4,color){
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.lineTo(x3,y3); ctx.lineTo(x4,y4);
+  ctx.closePath(); ctx.fill();
+}
+
+function renderSegment(seg){
+  const p1 = seg.p1.screen, p2 = seg.p2.screen;
+  const c  = seg.color;
+  const r1 = p1.w / Math.max(6, 2*LANES);
+  const r2 = p2.w / Math.max(6, 2*LANES);
+  const l1 = p1.w / Math.max(32, 8*LANES);
+  const l2 = p2.w / Math.max(32, 8*LANES);
+
+  ctx.fillStyle = c.grass;
+  ctx.fillRect(0, p2.y, W, p1.y - p2.y);
+
+  polygon(p1.x-p1.w-r1, p1.y, p1.x-p1.w, p1.y, p2.x-p2.w, p2.y, p2.x-p2.w-r2, p2.y, c.rumble);
+  polygon(p1.x+p1.w+r1, p1.y, p1.x+p1.w, p1.y, p2.x+p2.w, p2.y, p2.x+p2.w+r2, p2.y, c.rumble);
+  polygon(p1.x-p1.w, p1.y, p1.x+p1.w, p1.y, p2.x+p2.w, p2.y, p2.x-p2.w, p2.y, c.road);
+
+  if (c.lane){
+    const lw1 = p1.w*2/LANES, lw2 = p2.w*2/LANES;
+    let lx1 = p1.x - p1.w + lw1;
+    let lx2 = p2.x - p2.w + lw2;
+    for (let lane=1; lane<LANES; lane++, lx1+=lw1, lx2+=lw2){
+      polygon(lx1-l1/2, p1.y, lx1+l1/2, p1.y, lx2+l2/2, p2.y, lx2-l2/2, p2.y, c.lane);
+    }
+  }
+
+  if (seg.fog < 1){
+    ctx.globalAlpha = 1 - seg.fog;
+    ctx.fillStyle = FOG_COLOR;
+    ctx.fillRect(0, p2.y, W, p1.y - p2.y);
+    ctx.globalAlpha = 1;
+  }
+}
+
+function renderSprite(src, scale, destX, destY, clipY, fog, obj){
+  if (scale <= 0) return;
+  const dw = scale * src.w * W/2;
+  const dh = scale * src.h * W/2;
+  if (dw < 1.6 || dh < 1.6) return;
+
+  const x = destX - dw/2;
+  const y = destY - dh;
+  if (x > W || x + dw < 0) return;
+
+  const alpha = fog;
+  if (alpha < 0.035) return;
+
+  let img = src.img;
+  if (src.frames && src.frames.length > 1){
+    const phase = obj ? (obj.phase || 0) : 0;
+    const idx = Math.floor((time*1000 + phase) / src.frameDuration) % src.frames.length;
+    img = src.frames[(idx + src.frames.length) % src.frames.length];
+  }
+
+  const needClip = (y + dh) > clipY;
+  if (needClip){
+    if (clipY <= 0) return;
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(0, 0, W, clipY);
+    ctx.clip();
+  }
+
+  ctx.globalAlpha = alpha;
+  ctx.drawImage(img, x, y, dw, dh);
+  ctx.globalAlpha = 1;
+
+  if (needClip) ctx.restore();
+}
+
+/* ---------- fundo ---------- */
+function drawSky(){
+  ctx.fillStyle = skyGrad;
+  ctx.fillRect(0,0,W,H);
+
+  const sx = W*0.74, sy = H*0.19;
+  const glow = ctx.createRadialGradient(sx,sy,4, sx,sy, H*0.30);
+  glow.addColorStop(0,   'rgba(255,250,215,.95)');
+  glow.addColorStop(0.14,'rgba(255,238,160,.55)');
+  glow.addColorStop(1,   'rgba(255,230,140,0)');
+  ctx.fillStyle = glow;
+  ctx.beginPath(); ctx.arc(sx,sy,H*0.30,0,7); ctx.fill();
+  ctx.fillStyle = 'rgba(255,252,230,.95)';
+  ctx.beginPath(); ctx.arc(sx,sy,H*0.045,0,7); ctx.fill();
+
+  ctx.fillStyle = 'rgba(255,255,255,.55)';
+  const co = (bgOffset*0.06) % (W*1.6);
+  const clouds = [[0.10,0.16,1.0],[0.42,0.10,0.72],[0.68,0.24,0.85],[0.92,0.14,0.6]];
+  for (const [cx,cy,s] of clouds){
+    let px = ((cx*W*1.6 - co) % (W*1.6));
+    if (px < -W*0.3) px += W*1.6;
+    const py = cy*H, r = H*0.030*s;
+    ctx.beginPath();
+    ctx.arc(px,        py,       r*1.5, 0,7);
+    ctx.arc(px + r*1.5,py - r*0.4,r*1.1, 0,7);
+    ctx.arc(px - r*1.5,py + r*0.1,r*1.0, 0,7);
+    ctx.arc(px + r*0.4,py + r*0.5,r*1.2, 0,7);
+    ctx.fill();
+  }
+}
+
+function drawHills(){
+  const horizon = H/2;
+
+  const layer = (baseY, amp, color, off, freq) => {
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(0, baseY + 400);
+    for (let x=0; x<=W; x+=10){
+      const t = (x + off) * freq;
+      const y = baseY - amp * (0.55
+                 + 0.30*Math.sin(t)
+                 + 0.18*Math.sin(t*2.31 + 1.2)
+                 + 0.14*Math.sin(t*0.63 + 0.4));
+      ctx.lineTo(x, y);
+    }
+    ctx.lineTo(W, baseY + 400);
+    ctx.closePath();
+    ctx.fill();
+  };
+
+  const off = bgOffset;
+  layer(horizon + 4,  H*0.085, '#8fb6d4', off*0.22, 2*Math.PI/900);
+  layer(horizon + 10, H*0.055, '#6d9cc0', off*0.42, 2*Math.PI/620);
+  layer(horizon + 16, H*0.030, '#4f7fa6', off*0.68, 2*Math.PI/430);
+}
+
+/* ---------- CARRO DO JOGADOR (bem detalhado) ---------- */
+function drawPlayerCar(){
+  const carW = Math.min(W*0.30, H*0.48);
+  const carH = carW * 0.72;
+
+  const baseX = W/2 + limit(playerX, -1.6, 1.6) * W * 0.045
+              + (shake ? (Math.random()-0.5) * shake * 9 : 0);
+  const baseY = H - carH*0.78
+              + Math.sin(time*22) * (speed/MAX_SPEED) * 2.8
+              + (shake ? (Math.random()-0.5) * shake * 6 : 0);
+
+  ctx.save();
+  ctx.translate(baseX, baseY);
+  ctx.rotate(steerVisual * 0.055);   // inclinação por esterço
+
+  const x = -carW/2, y = -carH/2, w = carW, h = carH;
+
+  // sombra
+  ctx.fillStyle = 'rgba(0,0,0,.45)';
+  ctx.beginPath();
+  ctx.ellipse(0, h*0.50, w*0.53, h*0.14, 0, 0, 7);
+  ctx.fill();
+
+  // rodas traseiras
+  ctx.fillStyle = '#111216';
+  roundRect(ctx, x+w*0.00, y+h*0.20, w*0.15, h*0.62, h*0.05); ctx.fill();
+  roundRect(ctx, x+w*0.85, y+h*0.20, w*0.15, h*0.62, h*0.05); ctx.fill();
+  // rodas dianteiras (um pouco mais largas, viram com o esterço)
+  const wTurn = steerInput * w * 0.03;
+  ctx.fillStyle = '#0d0e12';
+  roundRect(ctx, x+w*0.015 + wTurn, y+h*0.22, w*0.13, h*0.58, h*0.05); ctx.fill();
+  roundRect(ctx, x+w*0.855 + wTurn, y+h*0.22, w*0.13, h*0.58, h*0.05); ctx.fill();
+  // detalhes das rodas
+  ctx.fillStyle = '#3a3d44';
+  roundRect(ctx, x+w*0.025, y+h*0.28, w*0.11, h*0.20, h*0.04); ctx.fill();
+  roundRect(ctx, x+w*0.865, y+h*0.28, w*0.11, h*0.20, h*0.04); ctx.fill();
+
+  // teto
+  const tg = ctx.createLinearGradient(0, y, 0, y+h*0.42);
+  tg.addColorStop(0, '#7a1010');
+  tg.addColorStop(1, '#4a0a0a');
+  ctx.fillStyle = tg;
+  roundRect(ctx, x+w*0.19, y+h*0.00, w*0.62, h*0.42, h*0.13); ctx.fill();
+
+  // vidro traseiro
+  const vg = ctx.createLinearGradient(0, y+h*0.04, 0, y+h*0.36);
+  vg.addColorStop(0,'#0a1620');
+  vg.addColorStop(0.5,'#1f3d54');
+  vg.addColorStop(1,'#2e5670');
+  ctx.fillStyle = vg;
+  roundRect(ctx, x+w*0.24, y+h*0.06, w*0.52, h*0.28, h*0.07); ctx.fill();
+  // reflexo do vidro
+  ctx.fillStyle = 'rgba(200,230,255,.22)';
+  roundRect(ctx, x+w*0.27, y+h*0.10, w*0.46, h*0.08, h*0.03); ctx.fill();
+
+  // carroceria
+  const bg = ctx.createLinearGradient(0, y+h*0.22, 0, y+h*0.92);
+  bg.addColorStop(0,   '#ff5858');
+  bg.addColorStop(0.35,'#e62626');
+  bg.addColorStop(0.7, '#b91616');
+  bg.addColorStop(1,   '#7a0a0a');
+  ctx.fillStyle = bg;
+  roundRect(ctx, x+w*0.04, y+h*0.24, w*0.92, h*0.66, h*0.14); ctx.fill();
+
+  // brilho superior
+  ctx.fillStyle = 'rgba(255,255,255,.22)';
+  roundRect(ctx, x+w*0.09, y+h*0.28, w*0.82, h*0.11, h*0.05); ctx.fill();
+
+  // lanternas
+  const brakeOn = input.brake || speed < 30;
+  ctx.shadowColor = brakeOn ? '#ff3a3a' : 'rgba(255,60,60,.4)';
+  ctx.shadowBlur  = brakeOn ? 26 : 10;
+  ctx.fillStyle   = brakeOn ? '#ff6a6a' : '#c02020';
+  roundRect(ctx, x+w*0.08, y+h*0.44, w*0.20, h*0.15, h*0.05); ctx.fill();
+  roundRect(ctx, x+w*0.72, y+h*0.44, w*0.20, h*0.15, h*0.05); ctx.fill();
+  ctx.shadowBlur = 0;
+
+  // para-choque
+  ctx.fillStyle = '#25272d';
+  roundRect(ctx, x+w*0.04, y+h*0.72, w*0.92, h*0.16, h*0.05); ctx.fill();
+  // detalhe cromado
+  ctx.fillStyle = '#8a929c';
+  roundRect(ctx, x+w*0.10, y+h*0.74, w*0.80, h*0.025, h*0.01); ctx.fill();
+
+  // placa
+  ctx.fillStyle = '#e9eef4';
+  roundRect(ctx, x+w*0.40, y+h*0.60, w*0.20, h*0.11, h*0.02); ctx.fill();
+  ctx.fillStyle = '#5a6673';
+  ctx.fillRect(x+w*0.42, y+h*0.635, w*0.16, h*0.012);
+  ctx.fillRect(x+w*0.42, y+h*0.665, w*0.16, h*0.012);
+
+  // aerofólio
+  ctx.fillStyle = '#1c1e23';
+  roundRect(ctx, x+w*0.06, y+h*0.20, w*0.88, h*0.06, h*0.02); ctx.fill();
+  // hastes do aerofólio
+  ctx.fillStyle = '#2a2c32';
+  roundRect(ctx, x+w*0.16, y+h*0.24, w*0.05, h*0.05, h*0.01); ctx.fill();
+  roundRect(ctx, x+w*0.79, y+h*0.24, w*0.05, h*0.05, h*0.01); ctx.fill();
+
+  // escape
+  ctx.fillStyle = '#3a3d44';
+  roundRect(ctx, x+w*0.18, y+h*0.86, w*0.10, h*0.045, h*0.015); ctx.fill();
+  roundRect(ctx, x+w*0.72, y+h*0.86, w*0.10, h*0.045, h*0.015); ctx.fill();
+
+  ctx.restore();
+}
+
+/* ---------- render principal ---------- */
+function render(){
+  const baseSegment  = findSegment(position);
+  const basePercent  = percentRemaining(position, SEG_LEN);
+  const playerSegment= findSegment(position + PLAYER_Z);
+  const playerPercent= percentRemaining(position + PLAYER_Z, SEG_LEN);
+  const playerY      = interp(playerSegment.p1.world.y, playerSegment.p2.world.y, playerPercent);
+
+  drawSky();
+  drawHills();
+
+  let maxy = H;
+  let x  = 0;
+  let dx = -(baseSegment.curve * basePercent);
+
+  const camShake = shake * 60 * (Math.random() - 0.5);
+  const camY = playerY + CAM_HEIGHT + camShake;
+
+  // ---- estrada ----
+  for (let n=0; n<DRAW_DIST; n++){
+    const seg = segments[(baseSegment.index + n) % segments.length];
+    seg.looped = seg.index < baseSegment.index;
+    seg.fog    = expFog(n / DRAW_DIST, FOG_DENSITY);
+    seg.clip   = maxy;
+
+    const camZ = position - (seg.looped ? trackLength : 0);
+
+    project(seg.p1, (playerX * ROAD_WIDTH) - x,      camY, camZ, CAM_DEPTH, W, H, ROAD_WIDTH);
+    project(seg.p2, (playerX * ROAD_WIDTH) - x - dx, camY, camZ, CAM_DEPTH, W, H, ROAD_WIDTH);
+
+    x  += dx;
+    dx += seg.curve;
+
+    if (seg.p1.camera.z <= CAM_DEPTH) continue;
+    if (seg.p2.screen.y >= seg.p1.screen.y) continue;
+    if (seg.p2.screen.y >= maxy) continue;
+
+    renderSegment(seg);
+    maxy = seg.p1.screen.y;
+  }
+
+  // ---- sprites e veículos ----
+  for (let n = DRAW_DIST - 1; n > 0; n--){
+    const seg = segments[(baseSegment.index + n) % segments.length];
+
+    // veículos de trânsito
+    for (let i=0;i<seg.cars.length;i++){
+      const car = seg.cars[i];
+      const scale = interp(seg.p1.screen.scale, seg.p2.screen.scale, car.percent);
+      const cx    = interp(seg.p1.screen.x, seg.p2.screen.x, car.percent)
+                  + (scale * car.offset * ROAD_WIDTH * W/2);
+      const cy    = interp(seg.p1.screen.y, seg.p2.screen.y, car.percent);
+      renderSprite(car.sprite, scale, cx, cy, seg.clip, seg.fog, null);
+    }
+
+    // cenário / pessoas / semáforos
+    for (let i=0;i<seg.sprites.length;i++){
+      const sp = seg.sprites[i];
+      const scale = seg.p1.screen.scale;
+      const sx = seg.p1.screen.x + (scale * sp.offset * ROAD_WIDTH * W/2);
+      const sy = seg.p1.screen.y;
+      renderSprite(sp.source, scale, sx, sy, seg.clip, seg.fog, sp);
+    }
+  }
+
+  // ---- carro do jogador ----
+  drawPlayerCar();
+
+  // ---- vinheta ----
+  const vg = ctx.createRadialGradient(W/2, H*0.5, Math.min(W,H)*0.35, W/2, H*0.5, Math.max(W,H)*0.75);
+  vg.addColorStop(0,'rgba(0,0,0,0)');
+  vg.addColorStop(1,'rgba(0,0,0,0.42)');
+  ctx.fillStyle = vg;
+  ctx.fillRect(0,0,W,H);
+
+  // ---- flash de colisão ----
+  if (shake > 0.72){
+    ctx.fillStyle = 'rgba(255,60,60,' + ((shake-0.72)*0.6) + ')';
+    ctx.fillRect(0,0,W,H);
+  }
+
+  // ---- pausa ----
+  if (paused){
+    ctx.fillStyle = 'rgba(4,8,16,.72)';
+    ctx.fillRect(0,0,W,H);
+    ctx.fillStyle = '#eaf4ff';
+    ctx.textAlign = 'center';
+    ctx.font = '800 ' + Math.round(H*0.07) + 'px Segoe UI, system-ui, sans-serif';
+    ctx.fillText('PAUSADO', W/2, H/2);
+    ctx.font = '600 ' + Math.round(H*0.026) + 'px Segoe UI, system-ui, sans-serif';
+    ctx.fillStyle = '#8ec6ea';
+    ctx.fillText('Pressione P para continuar', W/2, H/2 + H*0.065);
+    ctx.textAlign = 'start';
+  }
+}
+
+/* =====================================================================
+   HUD
+   ===================================================================== */
+const uiScore = document.getElementById('uiScore');
+const uiDist  = document.getElementById('uiDist');
+const uiBest  = document.getElementById('uiBest');
+const uiKmh   = document.getElementById('uiKmh');
+const needle  = document.getElementById('needle');
+const ring    = document.getElementById('ring');
+
+uiBest.textContent = Math.floor(best).toLocaleString('pt-BR');
+
+function updateHUD(){
+  const kmh = Math.round((speed / MAX_SPEED) * 320);
+  if (kmh !== lastKmh){
+    lastKmh = kmh;
+    uiKmh.textContent = kmh;
+    const pct = kmh / 320;
+    needle.style.transform =
+      'translate(-50%,-100%) rotate(' + (-120 + pct*240) + 'deg)';
+    ring.style.background =
+      'conic-gradient(from 210deg, #00e5ff 0deg, #00ffa3 ' + (pct*240) + 'deg, ' +
+      'rgba(255,255,255,.07) ' + (pct*240) + 'deg, rgba(255,255,255,.07) 240deg, transparent 240deg)';
+  }
+  uiScore.textContent = Math.floor(score).toLocaleString('pt-BR');
+  uiDist.textContent  = Math.floor(distanceM).toLocaleString('pt-BR') + ' m';
+}
+
+let bestTimer = 0;
+function checkBest(dt){
+  bestTimer += dt;
+  if (bestTimer > 0.5){
+    bestTimer = 0;
+    if (score > best){
+      best = score;
+      localStorage.setItem('estrada_best_v2', String(Math.floor(best)));
+      uiBest.textContent = Math.floor(best).toLocaleString('pt-BR');
+    }
+  }
+}
+
+/* =====================================================================
+   LOOP
+   ===================================================================== */
+const STEP = 1/60;
+let lastTime = 0;
+let accumulator = 0;
+
+function frame(now){
+  if (!lastTime) lastTime = now;
+  let dt = (now - lastTime) / 1000;
+  lastTime = now;
+  if (dt > 0.25) dt = 0.25;
+
+  if (!paused){
+    accumulator += dt;
+    let guard = 0;
+    while (accumulator >= STEP && guard < 6){
+      update(STEP);
+      accumulator -= STEP;
+      guard++;
+    }
+    if (guard >= 6) accumulator = 0;
+  } else {
+    accumulator = 0;
+  }
+
+  render();
+  updateHUD();
+  checkBest(dt);
+
+  requestAnimationFrame(frame);
+}
+
+/* =====================================================================
+   INICIALIZAÇÃO
+   ===================================================================== */
+resize();
+buildTrack();
+position = 0;
+playerX  = 0;
+speed    = MAX_SPEED * 0.12;
+requestAnimationFrame(frame);
+
 })();
-
-// Função Tema Escuro/Claro
-function toggleTheme() {
-  document.body.classList.toggle('dark-mode');
-  const isDark = document.body.classList.contains('dark-mode');
-  localStorage.setItem('theme', isDark ? 'dark' : 'light');
-  document.getElementById('themeIcon').className = isDark ? 'ri-sun-fill' : 'ri-moon-fill';
-  
-  // Atualiza as cores das fontes nos gráficos ao trocar de tema
-  renderHomeChart();
-  if(document.getElementById('page-reports').classList.contains('active')) renderReports();
-}
-
-// DATABASE
-const DB={profile:{name:'Cláudia',image:null,storeName:'Cláudia Collection',dueDay:10},clients:[],products:[],sales:[],installments:[],expenses:[],incoming:[],temp:{clientImage:null,editingClientId:null,editingProductId:null,editingIncomingId:null,currentPayment:null,currentClient:null,saleItemCount:0},charts:{home:null,report:null},reportPeriod:'month',recTab:'today',incomingTab:'pending'};
-
-function saveDB(){localStorage.setItem('claudiaPremium',JSON.stringify({profile:DB.profile,clients:DB.clients,products:DB.products,sales:DB.sales,installments:DB.installments,expenses:DB.expenses,incoming:DB.incoming}));}
-function loadDB(){const d=localStorage.getItem('claudiaPremium');if(d){const p=JSON.parse(d);DB.profile={...DB.profile,...(p.profile||{})};DB.clients=p.clients||[];DB.products=p.products||[];DB.sales=p.sales||[];DB.installments=p.installments||[];DB.expenses=p.expenses||[];DB.incoming=p.incoming||[];}else{loadSampleData();}applyProfile();}
-function loadSampleData(){
-  const today=todayStr();
-  const addDays=n=>{const d=new Date();d.setDate(d.getDate()+n);return d.toISOString().split('T')[0];};
-  DB.clients=[{id:genId(),name:'Maria da Silva',phone:'(73) 98811-2233',address:'Centro',notes:'',image:null,date:today},{id:genId(),name:'Ana Paula Souza',phone:'(73) 99922-3344',address:'',notes:'',image:null,date:today},{id:genId(),name:'Juliana Lima',phone:'(73) 98100-4455',address:'Bairro Novo',notes:'',image:null,date:today}];
-  DB.products=[{id:genId(),name:'Kit Shampoo + Condicionador',category:'Produtos para cabelo',cost:45,price:85,stock:12},{id:genId(),name:'Colar de Pérolas Semijoia',category:'Semijoias',cost:60,price:130,stock:8},{id:genId(),name:'Jogo de Cama Casal',category:'Roupa de cama',cost:80,price:180,stock:5},{id:genId(),name:'Perfume Floral 100ml',category:'Perfumes',cost:55,price:120,stock:3},{id:genId(),name:'Creme Hidratante',category:'Cuidados pessoais',cost:18,price:40,stock:15},{id:genId(),name:'Brincos de Prata',category:'Semijoias',cost:25,price:65,stock:0}];
-  const s1={id:genId(),clientId:DB.clients[0].id,date:today,items:[{productId:DB.products[0].id,productName:DB.products[0].name,qty:1,price:85},{productId:DB.products[1].id,productName:DB.products[1].name,qty:1,price:130}],total:215,paymentType:'parcelado',entry:50,installmentsCount:2,status:'parcial'};
-  DB.sales.push(s1);
-  DB.installments.push({id:genId(),saleId:s1.id,clientId:DB.clients[0].id,number:1,value:82.5,dueDate:addDays(2),status:'pending',paidDate:null,paidValue:0,paymentMethod:null},{id:genId(),saleId:s1.id,clientId:DB.clients[0].id,number:2,value:82.5,dueDate:addDays(32),status:'pending',paidDate:null,paidValue:0,paymentMethod:null});
-  DB.expenses=[{id:genId(),desc:'Compra de mercadorias',value:350,date:today,category:'Mercadorias'}];
-  DB.incoming=[{id:genId(),desc:'Kit Shampoo profissional',qty:3,value:150,purchaseDate:today,expectedDate:addDays(5),note:'Mercado Livre',status:'pending',receivedDate:null},{id:genId(),desc:'Embalagens para presente',qty:1,value:45,purchaseDate:addDays(-10),expectedDate:addDays(-3),note:'Shopee',status:'received',receivedDate:addDays(-4)}];
-  saveDB();
-}
-function genId(){return Date.now().toString(36)+Math.random().toString(36).substr(2,5);}
-function fmtMoney(v){return 'R$ '+(Number(v)||0).toFixed(2).replace('.',',');}
-function fmtDateBR(d){if(!d)return'--';const p=d.split('-');return p[2]+'/'+p[1]+'/'+p[0];}
-function todayStr(){return new Date().toISOString().split('T')[0];}
-function getInitials(n){return n.split(' ').map(x=>x[0]).slice(0,2).join('').toUpperCase();}
-function onlyNumbers(s){return(s||'').replace(/\D/g,'');}
-function formatPhone(el){let v=el.value.replace(/\D/g,'').slice(0,11);if(v.length>0)v='('+v;if(v.length>3)v=v.slice(0,3)+') '+v.slice(3);if(v.length>10)v=v.slice(0,10)+'-'+v.slice(10);el.value=v;}
-
-function toast(msg,type='success'){
-  const c=document.getElementById('toastContainer');const t=document.createElement('div');
-  t.className='toast'+(type==='error'?' error':type==='warning'?' warning':'');
-  const color=type==='error'?'#dc2626':type==='warning'?'#d97706':'#059669';
-  const icon=type==='error'?'ri-error-warning-fill':type==='warning'?'ri-alert-fill':'ri-checkbox-circle-fill';
-  t.innerHTML=`<i class="${icon}" style="font-size:20px;color:${color};"></i><span>${msg}</span>`;
-  c.appendChild(t);setTimeout(()=>{t.style.opacity='0';t.style.transition='all .3s';},2200);setTimeout(()=>t.remove(),2600);
-}
-
-function applyProfile(){
-  const a=document.getElementById('mainAvatar');
-  if(DB.profile.image)a.innerHTML=`<img src="${DB.profile.image}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
-  else a.textContent=getInitials(DB.profile.name);
-  document.getElementById('profileName').textContent=DB.profile.name;
-}
-
-function openProfileModal(){
-  document.getElementById('profileNameInput').value=DB.profile.name;
-  document.getElementById('storeNameInput').value=DB.profile.storeName;
-  document.getElementById('dueDayInput').value=DB.profile.dueDay;
-  const prev=document.getElementById('profileImagePreview');
-  prev.innerHTML=DB.profile.image?`<img src="${DB.profile.image}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`:'<i class="ri-camera-line"></i>';
-  openModal('profileModal');
-}
-
-function handleProfileImage(e){
-  const f=e.target.files[0];if(!f)return;const r=new FileReader();
-  r.onload=ev=>{DB.profile.image=ev.target.result;document.getElementById('profileImagePreview').innerHTML=`<img src="${ev.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;};
-  r.readAsDataURL(f);
-}
-
-function saveProfile(){
-  DB.profile.name=document.getElementById('profileNameInput').value.trim()||'Cláudia';
-  DB.profile.storeName=document.getElementById('storeNameInput').value.trim()||'Cláudia Collection';
-  DB.profile.dueDay=Number(document.getElementById('dueDayInput').value)||10;
-  saveDB();applyProfile();closeModal('profileModal');toast('Perfil atualizado!','success');
-}
-
-function openModal(id){document.getElementById(id).classList.add('show');}
-function closeModal(id){document.getElementById(id).classList.remove('show');}
-
-function navigateTo(pageId){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  const pg=document.getElementById('page-'+pageId);if(pg)pg.classList.add('active');
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  const btns=document.querySelectorAll('.nav-btn');
-  const map={'home':0,'clients':1,'sales':2,'products':3,'incoming':4,'more':5};
-  if(map[pageId]!==undefined&&btns[map[pageId]])btns[map[pageId]].classList.add('active');
-  const fab=document.getElementById('fabBtn');
-  fab.style.display=['home','clients','sales','products','incoming'].includes(pageId)?'flex':'none';
-  if(pageId==='clients')fab.onclick=openQuickClient;
-  else if(pageId==='products')fab.onclick=openProductModal;
-  else if(pageId==='incoming')fab.onclick=openIncomingModal;
-  else fab.onclick=openQuickSale;
-  renderPage(pageId);window.scrollTo({top:0,behavior:'smooth'});
-}
-
-function renderPage(p){switch(p){case'home':renderHome();break;case'clients':renderClients();break;case'client-detail':renderClientDetail();break;case'receivable':renderReceivable();break;case'sales':renderSales();break;case'products':renderProducts();break;case'incoming':renderIncoming();break;case'reports':renderReports();break;}updateAlertBadge();}
-function renderCurrentPage(){const a=document.querySelector('.page.active');if(a)renderPage(a.id.replace('page-',''));}
-function updateAlertBadge(){const today=todayStr();const c=DB.installments.filter(i=>i.status!=='paid'&&i.dueDate<=today).length;const b=document.getElementById('alertBadge');b.textContent=c;b.style.display=c>0?'flex':'none';}
-
-function renderHome(){
-  const now=new Date();const ms=new Date(now.getFullYear(),now.getMonth(),1).toISOString().split('T')[0];const me=new Date(now.getFullYear(),now.getMonth()+1,0).toISOString().split('T')[0];const today=todayStr();
-  const mS=DB.sales.filter(s=>s.date>=ms&&s.date<=me);const sold=mS.reduce((s,v)=>s+Number(v.total),0);
-  const mI=DB.installments.filter(i=>i.status==='paid'&&i.paidDate>=ms&&i.paidDate<=me);const rI=mI.reduce((s,v)=>s+Number(v.paidValue||v.value),0);
-  const rV=mS.filter(s=>s.paymentType==='vista').reduce((s,v)=>s+Number(v.total),0);const received=rI+rV;
-  const pend=DB.installments.filter(i=>i.status!=='paid');const recv=pend.reduce((s,v)=>s+(Number(v.value)-Number(v.paidValue||0)),0);
-  const over=pend.filter(i=>i.dueDate<today);const overT=over.reduce((s,v)=>s+(Number(v.value)-Number(v.paidValue||0)),0);
-  document.getElementById('kpiSold').textContent=fmtMoney(sold);document.getElementById('kpiReceived').textContent=fmtMoney(received);
-  document.getElementById('kpiReceivable').textContent=fmtMoney(recv);document.getElementById('kpiReceivableCount').textContent=pend.length+' parcelas';
-  document.getElementById('kpiOverdue').textContent=fmtMoney(overT);document.getElementById('kpiOverdueCount').textContent=over.length+' atrasadas';
-  
-  const alerts=[];const tInst=pend.filter(i=>i.dueDate===today);
-  if(tInst.length>0)alerts.push(`<div onclick="navigateTo('receivable')" style="background:linear-gradient(135deg,#eff6ff,#dbeafe);border-radius:18px;padding:14px;margin-bottom:12px;border:1px solid #bfdbfe;display:flex;align-items:center;gap:12px;cursor:pointer;"><div style="width:40px;height:40px;border-radius:12px;background:white;display:flex;align-items:center;justify-content:center;font-size:20px;color:#2563eb;flex-shrink:0;"><i class="ri-calendar-event-line"></i></div><div style="flex:1;"><div style="font-size:12px;font-weight:600;color:#2d2a3e;">Vencem hoje</div><div style="font-size:11px;color:#5a5670;">${tInst.length} parcela(s) para receber</div></div><span style="background:#2563eb;color:white;font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;">${tInst.length}</span></div>`);
-  if(over.length>0)alerts.push(`<div onclick="navigateTo('receivable')" style="background:linear-gradient(135deg,#fef2f2,#fee2e2);border-radius:18px;padding:14px;margin-bottom:12px;border:1px solid #fecaca;display:flex;align-items:center;gap:12px;cursor:pointer;"><div style="width:40px;height:40px;border-radius:12px;background:white;display:flex;align-items:center;justify-content:center;font-size:20px;color:#dc2626;flex-shrink:0;"><i class="ri-alarm-warning-line"></i></div><div style="flex:1;"><div style="font-size:12px;font-weight:600;color:#2d2a3e;">Parcelas atrasadas</div><div style="font-size:11px;color:#5a5670;">${over.length} cliente(s) com pagamento atrasado</div></div><span style="background:#dc2626;color:white;font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;">${over.length}</span></div>`);
-  const incomingPend = DB.incoming.filter(i=>i.status==='pending');
-  if(incomingPend.length>0)alerts.push(`<div onclick="navigateTo('incoming')" style="background:linear-gradient(135deg,#eef2ff,#e0e7ff);border-radius:18px;padding:14px;margin-bottom:12px;border:1px solid #c7d2fe;display:flex;align-items:center;gap:12px;cursor:pointer;"><div style="width:40px;height:40px;border-radius:12px;background:white;display:flex;align-items:center;justify-content:center;font-size:20px;color:#4f46e5;flex-shrink:0;"><i class="ri-truck-line"></i></div><div style="flex:1;"><div style="font-size:12px;font-weight:600;color:#2d2a3e;">Mercadorias a caminho</div><div style="font-size:11px;color:#5a5670;">${incomingPend.length} encomenda(s) para receber</div></div><span style="background:#4f46e5;color:white;font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;">${incomingPend.length}</span></div>`);
-  document.getElementById('dashboardAlerts').innerHTML=alerts.join('');
-  
-  const upc=pend.filter(i=>i.dueDate>=today).sort((a,b)=>a.dueDate.localeCompare(b.dueDate)).slice(0,4);
-  const uEl=document.getElementById('upcomingList');
-  if(upc.length===0){uEl.innerHTML=`<div class="empty-state"><i class="ri-checkbox-circle-line"></i><p>Tudo em ordem! Nenhum vencimento próximo.</p></div>`;}
-  else{uEl.innerHTML=upc.map(i=>{const c=DB.clients.find(x=>x.id===i.clientId);return`<div class="list-item" onclick="openPaymentModal('${i.id}')"><div class="list-item-avatar">${c?(c.image?`<img src="${c.image}">`:getInitials(c.name)):'?'}</div><div class="list-item-content"><div style="font-size:13px;font-weight:600;">${c?c.name:'Cliente'}</div><div style="font-size:11px;color:var(--text-muted);margin-top:3px;">${fmtDateBR(i.dueDate)} • Parcela ${i.number}</div></div><div style="text-align:right;"><div style="font-size:14px;font-weight:700;color:#db2777;">${fmtMoney(i.value)}</div><span class="status-pending">PENDENTE</span></div></div>`;}).join('');}
-  
-  const cEl=document.getElementById('clientsHomeList');
-  if(DB.clients.length===0){cEl.innerHTML=`<div class="empty-state"><i class="ri-user-heart-line"></i><p>Cadastre suas clientes!</p></div>`;}
-  else{cEl.innerHTML=DB.clients.slice(0,4).map(c=>{const cI=DB.installments.filter(i=>i.clientId===c.id&&i.status!=='paid');const op=cI.reduce((s,v)=>s+(Number(v.value)-Number(v.paidValue||0)),0);return`<div class="list-item" onclick="viewClientDetail('${c.id}')"><div class="list-item-avatar">${c.image?`<img src="${c.image}">`:getInitials(c.name)}</div><div class="list-item-content"><div style="font-size:13px;font-weight:600;">${c.name}</div><div style="font-size:11px;color:var(--text-muted);margin-top:3px;">${c.phone}</div></div><div style="text-align:right;"><div style="font-size:12px;font-weight:700;color:${op>0?'#d97706':'#059669'};">${op>0?fmtMoney(op)+' aberto':'Em dia'}</div></div></div>`;}).join('');}
-  renderHomeChart();
-}
-
-function renderHomeChart(){
-  const ctx=document.getElementById('homeChart');if(!ctx)return;
-  const cats={};DB.sales.forEach(s=>s.items.forEach(it=>{const p=DB.products.find(x=>x.id===it.productId);const cat=p?p.category:'Outros';cats[cat]=(cats[cat]||0)+(Number(it.price)*Number(it.qty));}));
-  const colors=['#ec4899','#f59e0b','#8b5cf6','#10b981','#3b82f6','#ef4444','#06b6d4'];
-  const textColor = getComputedStyle(document.body).getPropertyValue('--text-muted').trim() || '#9a95b0';
-  
-  if(DB.charts.home)DB.charts.home.destroy();
-  DB.charts.home=new Chart(ctx,{type:'doughnut',data:{labels:Object.keys(cats),datasets:[{data:Object.values(cats),backgroundColor:colors,borderWidth:0,hoverOffset:8}]},options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{position:'bottom',labels:{color:textColor,font:{size:10,family:'Poppins'},padding:12,usePointStyle:true,pointStyle:'circle'}},tooltip:{callbacks:{label:c=>' '+c.label+': '+fmtMoney(c.parsed)}}}}});
-}
-
-function renderClients(){const s=(document.getElementById('searchClient')?.value||'').toLowerCase();let l=DB.clients.filter(c=>!s||c.name.toLowerCase().includes(s)||c.phone.includes(s));const el=document.getElementById('clientsList');if(l.length===0){el.innerHTML=`<div class="empty-state"><i class="ri-user-heart-line"></i><p>Nenhuma cliente cadastrada.</p></div>`;return;}el.innerHTML=l.map(c=>{const cS=DB.sales.filter(s=>s.clientId===c.id);const b=cS.reduce((s,v)=>s+Number(v.total),0);const cI=DB.installments.filter(i=>i.clientId===c.id&&i.status!=='paid');const op=cI.reduce((s,v)=>s+(Number(v.value)-Number(v.paidValue||0)),0);return`<div class="list-item" onclick="viewClientDetail('${c.id}')"><div class="list-item-avatar">${c.image?`<img src="${c.image}">`:getInitials(c.name)}</div><div class="list-item-content"><div style="font-size:13px;font-weight:600;">${c.name}</div><div style="font-size:11px;color:var(--text-muted);margin-top:3px;"><i class="ri-whatsapp-line" style="color:#22c55e;"></i> ${c.phone}</div></div><div style="text-align:right;"><div style="font-size:14px;font-weight:700;color:${op>0?'#d97706':'#059669'};">${op>0?fmtMoney(op):'Em dia'}</div><div style="font-size:10px;color:var(--text-muted);margin-top:2px;">Total: ${fmtMoney(b)}</div></div></div>`;}).join('');}
-
-function viewClientDetail(id){DB.temp.currentClient=id;const c=DB.clients.find(x=>x.id===id);if(!c)return;const av=document.getElementById('detailAvatar');av.innerHTML=c.image?`<img src="${c.image}" style="width:100%;height:100%;object-fit:cover;">`:getInitials(c.name);document.getElementById('detailName').textContent=c.name;document.getElementById('detailPhone').textContent=c.phone||'Telefone não cadastrado';const cS=DB.sales.filter(s=>s.clientId===c.id);const b=cS.reduce((s,v)=>s+Number(v.total),0);const cI=DB.installments.filter(i=>i.clientId===c.id);const pd=cI.filter(i=>i.status==='paid').reduce((s,v)=>s+Number(v.paidValue||v.value),0);const vP=cS.filter(s=>s.paymentType==='vista').reduce((s,v)=>s+Number(v.total),0);const aP=pd+vP;const pnd=cI.filter(i=>i.status!=='paid');const op=pnd.reduce((s,v)=>s+(Number(v.value)-Number(v.paidValue||0)),0);const today=todayStr();const ovd=pnd.filter(i=>i.dueDate<today).reduce((s,v)=>s+(Number(v.value)-Number(v.paidValue||0)),0);document.getElementById('statBought').textContent=fmtMoney(b);document.getElementById('statPaid').textContent=fmtMoney(aP);document.getElementById('statOpen').textContent=fmtMoney(op);document.getElementById('statOverdue').textContent=fmtMoney(ovd);document.getElementById('detailWhatsapp').onclick=()=>{const ph=onlyNumbers(c.phone);if(ph)window.open(`https://wa.me/55${ph}`,'_blank');else toast('Telefone não cadastrado','error');};document.getElementById('detailEdit').onclick=()=>editClient(id);const iEl=document.getElementById('detailInstallments');if(cI.length===0){iEl.innerHTML=`<div class="empty-state"><i class="ri-file-list-line"></i><p>Sem parcelas.</p></div>`;}else{iEl.innerHTML=cI.sort((a,b)=>a.number-b.number).map(i=>{const isOvd=i.dueDate<today&&i.status!=='paid';let cls='status-pending',lb='PENDENTE';if(i.status==='paid'){cls='status-paid';lb='PAGA';}else if(isOvd){cls='status-overdue';lb='ATRASADA';}return`<div class="list-item"><div class="list-item-content"><div style="font-size:13px;font-weight:600;">Parcela ${i.number}</div><div style="font-size:11px;color:var(--text-muted);margin-top:3px;">Vencimento: ${fmtDateBR(i.dueDate)}</div></div><div style="text-align:right;"><div style="font-size:14px;font-weight:700;color:#db2777;">${fmtMoney(i.value)}</div><span class="${cls}">${lb}</span>${i.status!=='paid'?`<div style="display:flex;gap:4px;margin-top:6px;justify-content:flex-end;"><button class="btn-icon-sm" style="background:#d1fae5;color:#059669;border:none;width:28px;height:28px;border-radius:6px;cursor:pointer;" onclick="event.stopPropagation();chargeWhatsApp('${i.id}')" title="WhatsApp"><i class="ri-whatsapp-line"></i></button><button class="btn-icon-sm" style="background:#d1fae5;color:#059669;border:none;width:28px;height:28px;border-radius:6px;cursor:pointer;" onclick="event.stopPropagation();openPaymentModal('${i.id}')" title="Pagar"><i class="ri-check-line"></i></button></div>`:''}</div></div>`;}).join('');}const sEl=document.getElementById('detailSales');if(cS.length===0){sEl.innerHTML=`<div class="empty-state"><i class="ri-shopping-cart-line"></i><p>Sem compras.</p></div>`;}else{sEl.innerHTML=[...cS].sort((a,b)=>b.date.localeCompare(a.date)).map(s=>{const it=s.items.map(i=>`${i.qty}x ${i.productName}`).join(', ');return`<div class="list-item"><div class="list-item-content"><div style="font-size:13px;font-weight:600;">${fmtDateBR(s.date)}</div><div style="font-size:11px;color:var(--text-muted);margin-top:3px;">${it}</div></div><div style="text-align:right;"><div style="font-size:14px;font-weight:700;color:#db2777;">${fmtMoney(s.total)}</div></div></div>`;}).join('');}navigateTo('client-detail');}
-
-function editClient(id){const c=DB.clients.find(x=>x.id===id);if(!c)return;DB.temp.editingClientId=id;DB.temp.clientImage=c.image||null;document.getElementById('clientModalTitle').textContent='Editar Cliente';document.getElementById('clientName').value=c.name;document.getElementById('clientPhone').value=c.phone;document.getElementById('clientAddress').value=c.address||'';document.getElementById('clientImagePreview').innerHTML=c.image?`<img src="${c.image}" style="width:100%;height:100%;object-fit:cover;border-radius:16px;">`:'<i class="ri-camera-line"></i>';openModal('clientModal');}
-function handleClientImage(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{DB.temp.clientImage=ev.target.result;document.getElementById('clientImagePreview').innerHTML=`<img src="${ev.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:16px;">`;};r.readAsDataURL(f);}
-function openQuickClient(){DB.temp.editingClientId=null;DB.temp.clientImage=null;document.getElementById('clientModalTitle').textContent='Nova Cliente';document.getElementById('clientName').value='';document.getElementById('clientPhone').value='';document.getElementById('clientAddress').value='';document.getElementById('clientImagePreview').innerHTML='<i class="ri-camera-line"></i>';openModal('clientModal');}
-
-function saveClient(){const n=document.getElementById('clientName').value.trim();const ph=document.getElementById('clientPhone').value.trim();if(!n){toast('Informe o nome!','error');return;}if(!ph){toast('Informe o telefone!','error');return;}const data={name:n,phone:ph,address:document.getElementById('clientAddress').value.trim(),notes:'',image:DB.temp.clientImage,date:todayStr()};if(DB.temp.editingClientId){const idx=DB.clients.findIndex(c=>c.id===DB.temp.editingClientId);if(idx>=0)DB.clients[idx]={...DB.clients[idx],...data,date:DB.clients[idx].date};toast('Cliente atualizada!','success');}else{DB.clients.push({id:genId(),...data});toast('Cliente cadastrada!','success');}saveDB();closeModal('clientModal');renderCurrentPage();}
-
-function switchRecTab(tab){DB.recTab=tab;document.querySelectorAll('#recTabs .mini-tab').forEach(t=>t.classList.remove('active'));const act=document.querySelector(`#recTabs .mini-tab[onclick="switchRecTab('${tab}')"]`);if(act)act.classList.add('active');renderReceivable();}
-
-function chargeWhatsApp(instId){
-  const i=DB.installments.find(x=>x.id===instId);
-  if(!i)return;
-  const c=DB.clients.find(x=>x.id===i.clientId);
-  if(!c)return;
-  const phone=onlyNumbers(c.phone);
-  if(!phone){toast('Telefone não cadastrado','error');return;}
-  const sale=DB.sales.find(s=>s.id===i.saleId);
-  let productNames="seus produtos";
-  if(sale && sale.items && sale.items.length>0){
-    productNames = sale.items.map(it => it.productName).join(', ');
-  }
-  const today=todayStr();
-  const firstName=c.name.split(' ')[0];
-  const loja=DB.profile.storeName || "Cláudia Collection";
-  let msg='';
-  if(i.dueDate<today){
-    msg=`Olá ${firstName}! Tudo bem?\n\nPassando aqui pela *${loja}* para lembrar que a sua parcela de *${fmtMoney(i.value)}* (referente a: ${productNames}) venceu no dia *${fmtDateBR(i.dueDate)}*.\n\nComo podemos combinar o acerto? Aguardo seu retorno! Obrigada ❤️`;
-  }else if(i.dueDate===today){
-    msg=`Olá ${firstName}, tudo bem?\n\nPassando aqui pela *${loja}* para te lembrar que a sua parcela de *${fmtMoney(i.value)}* (referente a: ${productNames}) vence *HOJE* (${fmtDateBR(i.dueDate)}).\n\nQualquer dúvida, estou à disposição. Obrigada! ✨`;
-  }else{
-    msg=`Olá ${firstName}, tudo bem?\n\nSó passando aqui pela *${loja}* para te lembrar que sua parcela de *${fmtMoney(i.value)}* (referente a: ${productNames}) vence no dia *${fmtDateBR(i.dueDate)}*.\n\nQualquer coisa, estou por aqui! 🥰`;
-  }
-  window.open(`https://wa.me/55${phone}?text=${encodeURIComponent(msg)}`,'_blank');
-}
-
-function openPaymentModal(instId){const i=DB.installments.find(x=>x.id===instId);if(!i)return;DB.temp.currentPayment=instId;const c=DB.clients.find(x=>x.id===i.clientId);const remaining=Number(i.value)-Number(i.paidValue||0);document.getElementById('paymentInfo').innerHTML=`<strong>Cliente:</strong> ${c?c.name:'Cliente'}<br><strong>Parcela:</strong> ${i.number} • <strong style="color:#db2777;">${fmtMoney(i.value)}</strong><br><strong>Vencimento:</strong> ${fmtDateBR(i.dueDate)}${i.paidValue>0?`<br><strong style="color:#059669;">Já pago:</strong> ${fmtMoney(i.paidValue)}`:''}`;document.getElementById('paymentAmount').value=remaining.toFixed(2);openModal('paymentModal');}
-
-function confirmPayment(){const i=DB.installments.find(x=>x.id===DB.temp.currentPayment);if(!i)return;const amount=Number(document.getElementById('paymentAmount').value);const method=document.getElementById('paymentMethod').value;if(!amount||amount<=0){toast('Valor inválido!','error');return;}const totalPaid=Number(i.paidValue||0)+amount;if(totalPaid>=Number(i.value)-0.01){i.status='paid';i.paidValue=Number(i.value);i.paidDate=todayStr();i.paymentMethod=method;toast('Pagamento confirmado!','success');}else{i.paidValue=totalPaid;i.paymentMethod=method;if(!i.paidDate)i.paidDate=todayStr();toast(`Pagamento parcial de ${fmtMoney(amount)} registrado`,'warning');}const sale=DB.sales.find(s=>s.id===i.saleId);if(sale){const sInst=DB.installments.filter(x=>x.saleId===sale.id);sale.status=sInst.every(x=>x.status==='paid')?'paid':'parcial';}saveDB();closeModal('paymentModal');renderCurrentPage();}
-
-function renderReceivable(){const today=todayStr();const nw=new Date();nw.setDate(nw.getDate()+7);const nws=nw.toISOString().split('T')[0];let l=[];switch(DB.recTab){case'today':l=DB.installments.filter(i=>i.status!=='paid'&&i.dueDate===today);break;case'week':l=DB.installments.filter(i=>i.status!=='paid'&&i.dueDate>today&&i.dueDate<=nws);break;case'overdue':l=DB.installments.filter(i=>i.status!=='paid'&&i.dueDate<today);break;case'all':l=DB.installments.filter(i=>i.status!=='paid');break;case'paid':l=DB.installments.filter(i=>i.status==='paid');break;}l.sort((a,b)=>a.dueDate.localeCompare(b.dueDate));const pend=DB.installments.filter(i=>i.status!=='paid');const rT=pend.reduce((s,v)=>s+(Number(v.value)-Number(v.paidValue||0)),0);const ovd=pend.filter(i=>i.dueDate<today);const oT=ovd.reduce((s,v)=>s+(Number(v.value)-Number(v.paidValue||0)),0);document.getElementById('recTotal').textContent=fmtMoney(rT);document.getElementById('recOverdue').textContent=fmtMoney(oT);const el=document.getElementById('receivableList');if(l.length===0){el.innerHTML=`<div class="empty-state"><i class="ri-checkbox-circle-line"></i><p>Nenhuma parcela nesta aba.</p></div>`;return;}el.innerHTML=l.map(i=>{const c=DB.clients.find(x=>x.id===i.clientId);const isOvd=i.dueDate<today&&i.status!=='paid';const isTod=i.dueDate===today&&i.status!=='paid';let cls='status-pending',lb='PENDENTE';if(i.status==='paid'){cls='status-paid';lb='PAGA';}else if(isOvd){cls='status-overdue';lb='ATRASADA';}else if(isTod){cls='status-today';lb='HOJE';}return`<div class="list-item"><div class="list-item-avatar">${c?(c.image?`<img src="${c.image}">`:getInitials(c.name)):'?'}</div><div class="list-item-content"><div style="font-size:13px;font-weight:600;">${c?c.name:'Cliente'}</div><div style="font-size:11px;color:var(--text-muted);margin-top:3px;">${fmtDateBR(i.dueDate)} • Parcela ${i.number}</div></div><div style="text-align:right;"><div style="font-size:14px;font-weight:700;color:#db2777;">${fmtMoney(i.value)}</div><span class="${cls}">${lb}</span>${i.status!=='paid'?`<div style="display:flex;gap:4px;margin-top:6px;justify-content:flex-end;"><button class="btn-icon-sm" style="background:#d1fae5;color:#059669;border:none;width:28px;height:28px;border-radius:6px;cursor:pointer;" onclick="event.stopPropagation();chargeWhatsApp('${i.id}')"><i class="ri-whatsapp-line"></i></button><button class="btn-icon-sm" style="background:#d1fae5;color:#059669;border:none;width:28px;height:28px;border-radius:6px;cursor:pointer;" onclick="event.stopPropagation();openPaymentModal('${i.id}')"><i class="ri-check-line"></i></button></div>`:''}</div></div>`;}).join('');}
-
-function renderSales(){const el=document.getElementById('salesList');if(DB.sales.length===0){el.innerHTML=`<div class="empty-state"><i class="ri-shopping-cart-line"></i><p>Nenhuma venda registrada.</p></div>`;return;}el.innerHTML=[...DB.sales].sort((a,b)=>b.date.localeCompare(a.date)).map(s=>{const c=DB.clients.find(x=>x.id===s.clientId);const it=s.items.map(i=>`${i.qty}x ${i.productName}`).join(', ');return`<div class="list-item"><div class="list-item-avatar">${c?(c.image?`<img src="${c.image}">`:getInitials(c.name)):'?'}</div><div class="list-item-content"><div style="font-size:13px;font-weight:600;">${c?c.name:'Cliente'}</div><div style="font-size:11px;color:var(--text-muted);margin-top:3px;">${it}</div><div style="font-size:10px;color:var(--text-muted);margin-top:2px;">${fmtDateBR(s.date)}</div></div><div style="text-align:right;"><div style="font-size:14px;font-weight:700;color:#db2777;">${fmtMoney(s.total)}</div></div></div>`;}).join('');}
-
-function openQuickSale(){
-  if(DB.clients.length===0){toast('Cadastre uma cliente primeiro!','error');return;}
-  if(DB.products.length===0){toast('Cadastre um produto primeiro!','error');return;}
-  const sel=document.getElementById('saleClient');
-  sel.innerHTML='<option value="">Selecione...</option>'+DB.clients.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
-  const dueDay=DB.profile.dueDay||10;const now=new Date();let firstDue=new Date(now.getFullYear(),now.getMonth(),dueDay);if(firstDue<=now)firstDue=new Date(now.getFullYear(),now.getMonth()+1,dueDay);
-  document.getElementById('saleFirstDue').value=firstDue.toISOString().split('T')[0];
-  document.getElementById('salePaymentType').value='vista';
-  document.getElementById('saleEntry').value=0;
-  document.getElementById('saleInstallments').value=2;
-  DB.temp.saleItemCount=0;
-  document.getElementById('saleItems').innerHTML='';
-  addSaleItem();
-  updateSaleForm();
-  openModal('saleModal');
-}
-
-function addSaleItem(){
-  DB.temp.saleItemCount++;
-  const id=DB.temp.saleItemCount;
-  const opts=DB.products.map(p=>`<option value="${p.id}" data-price="${p.price}">${p.name} — ${fmtMoney(p.price)}</option>`).join('');
-  const div=document.createElement('div');
-  div.className='sale-item-row';div.id=`saleItem-${id}`;
-  div.innerHTML=`<select class="form-control" style="margin-top:0;" onchange="updateSaleTotal(this)"><option value="">Produto...</option>${opts}</select><input type="number" value="1" min="1" class="form-control" style="margin-top:0;padding:10px;font-size:12px;" onchange="updateSaleTotal()"><input type="number" step="0.01" min="0" class="form-control item-price" style="margin-top:0;padding:10px;font-size:12px;" placeholder="Preço" onchange="updateSaleTotal()"><button class="btn-icon-sm" style="background:#fee2e2;color:#dc2626;border:none;width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:14px;" onclick="removeSaleItem(${id})"><i class="ri-close-line"></i></button>`;
-  document.getElementById('saleItems').appendChild(div);
-  const select=div.querySelector('select');
-  const priceInput=div.querySelector('.item-price');
-  select.addEventListener('change',function(){const opt=this.selectedOptions[0];if(opt&&opt.dataset.price)priceInput.value=opt.dataset.price;updateSaleTotal();});
-}
-
-function removeSaleItem(id){
-  const items=document.querySelectorAll('.sale-item-row');
-  if(items.length<=1){toast('Mantenha pelo menos 1 item','error');return;}
-  document.getElementById(`saleItem-${id}`).remove();
-  updateSaleTotal();
-}
-
-function updateSaleTotal(){
-  let total=0;
-  document.querySelectorAll('.sale-item-row').forEach(row=>{
-    const sel=row.querySelector('select');
-    const qty=Number(row.querySelector('input[type="number"]:nth-child(2)').value)||0;
-    const price=Number(row.querySelector('.item-price').value)||0;
-    total+=qty*price;
-  });
-  document.getElementById('saleTotal').value=fmtMoney(total);
-  updateInstallments();
-}
-
-function updateSaleForm(){
-  const isParcelado=document.getElementById('salePaymentType').value==='parcelado';
-  document.getElementById('parceladoFields').style.display=isParcelado?'block':'none';
-  updateInstallments();
-}
-
-function updateInstallments(){
-  if(document.getElementById('salePaymentType').value!=='parcelado')return;
-  const totalStr=document.getElementById('saleTotal').value.replace(/R\$ |\./g,'').replace(',','.');
-  const total=Number(totalStr)||0;
-  const entry=Number(document.getElementById('saleEntry').value)||0;
-  const count=Number(document.getElementById('saleInstallments').value)||1;
-  const firstDue=document.getElementById('saleFirstDue').value;
-  const rest=Math.max(0,total-entry);
-  const val=count>0?rest/count:0;
-  let html=`<div class="installment-preview"><h4 style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;font-weight:600;">Prévia</h4><div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">Restante: <strong style="color:var(--nav-btn-active);">${fmtMoney(rest)}</strong> • ${count}x de ${fmtMoney(val)}</div>`;
-  if(firstDue){for(let i=0;i<count;i++){const d=new Date(firstDue);d.setMonth(d.getMonth()+i);html+=`<div class="installment-item"><span style="font-weight:700;color:var(--nav-btn-active);">${i+1}ª</span><span style="color:var(--text-muted);font-size:11px;">${fmtDateBR(d.toISOString().split('T')[0])}</span><span style="font-weight:700;">${fmtMoney(val)}</span></div>`;}}
-  html+='</div>';
-  document.getElementById('installmentPreview').innerHTML=html;
-}
-
-function saveSale(){
-  const clientId=document.getElementById('saleClient').value;
-  if(!clientId){toast('Selecione uma cliente!','error');return;}
-  const items=[];let total=0;let hasError=false;
-  document.querySelectorAll('.sale-item-row').forEach((row,idx)=>{
-    const sel=row.querySelector('select');
-    const productId=sel.value;
-    const productName=sel.selectedOptions[0]?.text.split(' — ')[0]||'';
-    const qty=Number(row.querySelector('input[type="number"]:nth-child(2)').value)||0;
-    const price=Number(row.querySelector('.item-price').value)||0;
-    if(!productId){toast(`Selecione o produto ${idx+1}!`,'error');hasError=true;return;}
-    if(qty<=0){toast(`Quantidade inválida!`,'error');hasError=true;return;}
-    const p=DB.products.find(x=>x.id===productId);
-    if(p&&p.stock<qty){toast(`Estoque insuficiente: ${p.name}`,'error');hasError=true;return;}
-    items.push({productId,productName,qty,price});
-    total+=qty*price;
-  });
-  if(hasError||items.length===0)return;
-  const paymentType=document.getElementById('salePaymentType').value;
-  const entry=paymentType==='vista'?total:Number(document.getElementById('saleEntry').value)||0;
-  const instCount=paymentType==='vista'?0:Number(document.getElementById('saleInstallments').value)||1;
-  const firstDue=document.getElementById('saleFirstDue').value;
-  const sale={id:genId(),clientId,date:todayStr(),items,total,paymentType,entry,installmentsCount:instCount,status:paymentType==='vista'?'paid':'pending'};
-  DB.sales.push(sale);
-  items.forEach(it=>{const p=DB.products.find(x=>x.id===it.productId);if(p)p.stock-=it.qty;});
-  if(paymentType==='parcelado'&&firstDue){
-    const rest=Math.max(0,total-entry);const val=instCount>0?rest/instCount:0;
-    for(let i=0;i<instCount;i++){const d=new Date(firstDue);d.setMonth(d.getMonth()+i);DB.installments.push({id:genId(),saleId:sale.id,clientId,number:i+1,value:val,dueDate:d.toISOString().split('T')[0],status:'pending',paidDate:null,paidValue:0,paymentMethod:null});}
-    if(entry>0)sale.status='parcial';
-  }
-  saveDB();closeModal('saleModal');toast('Venda registrada!','success');renderCurrentPage();
-}
-
-function renderProducts(){
-  const s=(document.getElementById('searchProduct')?.value||'').toLowerCase();
-  let l=DB.products.filter(p=>!s||p.name.toLowerCase().includes(s));
-  const inv=DB.products.reduce((s,p)=>s+(Number(p.cost)*Number(p.stock)),0);
-  const ls=DB.products.filter(p=>p.stock>0&&p.stock<=5).length;
-  document.getElementById('stockInvested').textContent=fmtMoney(inv);
-  document.getElementById('stockLowCount').textContent=ls;
-  const el=document.getElementById('productsList');
-  if(l.length===0){el.innerHTML=`<div class="empty-state"><i class="ri-gift-line"></i><p>Nenhum produto cadastrado.</p></div>`;return;}
-  const cc={'Semijoias':'cat-pill pink','Roupa de cama':'cat-pill purple','Produtos para cabelo':'cat-pill green','Perfumes':'cat-pill pink','Cuidados pessoais':'cat-pill blue','Outros':'cat-pill purple'};
-  el.innerHTML=l.map(p=>{
-    let cls='status-low',lb='OK';
-    if(p.stock===0){cls='status-out';lb='ESGOTADO';}else if(p.stock<=5){cls='status-low';lb='BAIXO';}
-    return`<div class="list-item"><div style="width:46px;height:46px;border-radius:14px;background:linear-gradient(135deg,#fdf2f8,#ede9fe);display:flex;align-items:center;justify-content:center;font-size:20px;color:#db2777;flex-shrink:0;"><i class="ri-gift-line"></i></div><div class="list-item-content"><div style="font-size:13px;font-weight:600;">${p.name}</div><div style="margin-top:3px;"><span class="${cc[p.category]||'cat-pill purple'}">${p.category}</span><span style="margin-left:6px;font-size:11px;color:var(--text-muted);">Estoque: <strong>${p.stock}</strong></span></div></div><div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:6px;"><div style="font-size:14px;font-weight:700;color:#db2777;">${fmtMoney(p.price)}</div><span class="${cls}">${lb}</span><button class="btn-action-outline" onclick="editProduct('${p.id}')">Editar</button></div></div>`;
-  }).join('');
-}
-
-function openProductModal(){
-  DB.temp.editingProductId=null;
-  document.getElementById('productModalTitle').textContent='Novo Produto';
-  document.getElementById('productName').value='';
-  document.getElementById('productCategory').value='Semijoias';
-  document.getElementById('productPrice').value='';
-  document.getElementById('productStock').value=0;
-  openModal('productModal');
-}
-
-function editProduct(id){
-  const p=DB.products.find(x=>x.id===id);
-  if(!p)return;
-  DB.temp.editingProductId=id;
-  document.getElementById('productModalTitle').textContent='Editar Produto';
-  document.getElementById('productName').value=p.name;
-  document.getElementById('productCategory').value=p.category;
-  document.getElementById('productPrice').value=p.price;
-  document.getElementById('productStock').value=p.stock;
-  openModal('productModal');
-}
-
-function saveProduct(){
-  const n=document.getElementById('productName').value.trim();
-  const pr=Number(document.getElementById('productPrice').value);
-  if(!n){toast('Informe o nome!','error');return;}
-  if(!pr||pr<=0){toast('Informe o preço!','error');return;}
-  const data = {name:n,category:document.getElementById('productCategory').value,cost:0,price:pr,stock:Number(document.getElementById('productStock').value)||0};
-  if(DB.temp.editingProductId){
-    const idx = DB.products.findIndex(p=>p.id===DB.temp.editingProductId);
-    if(idx>=0) DB.products[idx] = {...DB.products[idx], ...data};
-    toast('Produto atualizado!','success');
-  } else {
-    DB.products.push({id:genId(), ...data});
-    toast('Produto cadastrado!','success');
-  }
-  saveDB();closeModal('productModal');renderCurrentPage();
-}
-
-function openQuickExpense(){document.getElementById('expenseDesc').value='';document.getElementById('expenseValue').value='';document.getElementById('expenseCategory').value='Mercadorias';openModal('expenseModal');}
-function saveExpense(){const d=document.getElementById('expenseDesc').value.trim();const v=Number(document.getElementById('expenseValue').value);if(!d){toast('Informe a descrição!','error');return;}if(!v||v<=0){toast('Informe o valor!','error');return;}DB.expenses.push({id:genId(),desc:d,value:v,date:todayStr(),category:document.getElementById('expenseCategory').value});saveDB();closeModal('expenseModal');toast('Despesa lançada!','success');renderCurrentPage();}
-
-function exportData(){const data={profile:DB.profile,clients:DB.clients,products:DB.products,sales:DB.sales,installments:DB.installments,expenses:DB.expenses,incoming:DB.incoming};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`backup-claudia-${todayStr()}.json`;a.click();URL.revokeObjectURL(url);toast('Backup exportado!','success');}
-function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);DB.profile={...DB.profile,...(d.profile||{})};DB.clients=d.clients||[];DB.products=d.products||[];DB.sales=d.sales||[];DB.installments=d.installments||[];DB.expenses=d.expenses||[];DB.incoming=d.incoming||[];saveDB();applyProfile();toast('Dados importados!','success');renderCurrentPage();}catch(err){toast('Arquivo inválido!','error');}};r.readAsText(f);e.target.value='';}
-
-function renderReports(){
-  const now=new Date();let st,en;switch(DB.reportPeriod){case'month':st=new Date(now.getFullYear(),now.getMonth(),1).toISOString().split('T')[0];en=new Date(now.getFullYear(),now.getMonth()+1,0).toISOString().split('T')[0];break;case'year':st=new Date(now.getFullYear(),0,1).toISOString().split('T')[0];en=new Date(now.getFullYear(),11,31).toISOString().split('T')[0];break;default:st='1900-01-01';en='2999-12-31';}const pS=DB.sales.filter(s=>s.date>=st&&s.date<=en);const sold=pS.reduce((s,v)=>s+Number(v.total),0);const pI=DB.installments.filter(i=>i.status==='paid'&&i.paidDate>=st&&i.paidDate<=en);const rI=pI.reduce((s,v)=>s+Number(v.paidValue||v.value),0);const rV=pS.filter(s=>s.paymentType==='vista').reduce((s,v)=>s+Number(v.total),0);const rec=rI+rV;const pE=DB.expenses.filter(e=>e.date>=st&&e.date<=en);const exp=pE.reduce((s,v)=>s+Number(v.value),0);document.getElementById('repSold').textContent=fmtMoney(sold);document.getElementById('repReceived').textContent=fmtMoney(rec);document.getElementById('repExp').textContent=fmtMoney(exp);document.getElementById('repProfit').textContent=fmtMoney(rec-exp);const cats={};pS.forEach(s=>s.items.forEach(it=>{const p=DB.products.find(x=>x.id===it.productId);const cat=p?p.category:'Outros';cats[cat]=(cats[cat]||0)+(Number(it.price)*Number(it.qty));}));const ctx=document.getElementById('reportChart');
-  
-  if(ctx){
-    const colors=['#ec4899','#f59e0b','#8b5cf6','#10b981','#3b82f6','#ef4444'];
-    const textColor = getComputedStyle(document.body).getPropertyValue('--text-muted').trim() || '#9a95b0';
-    if(DB.charts.report)DB.charts.report.destroy();
-    
-    DB.charts.report=new Chart(ctx,{type:'bar',data:{labels:Object.keys(cats),datasets:[{label:'Vendas',data:Object.values(cats),backgroundColor:colors,borderRadius:8}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+fmtMoney(c.parsed.y)}}},scales:{x:{ticks:{color:textColor,font:{size:9}},grid:{display:false}},y:{ticks:{color:textColor,font:{size:9},callback:v=>'R$'+v},grid:{color:'rgba(154,149,176,.1)'}}}}});
-  }
-}
-
-function setReportPeriod(p){DB.reportPeriod=p;renderReports();}
-
-// ==================== MERCADORIAS A RECEBER ====================
-function switchIncomingTab(tab){
-  DB.incomingTab=tab;
-  document.querySelectorAll('#incomingTabs .mini-tab').forEach(t=>t.classList.remove('active'));
-  const act=document.querySelector(`#incomingTabs .mini-tab[onclick="switchIncomingTab('${tab}')"]`);
-  if(act)act.classList.add('active');
-  renderIncoming();
-}
-
-function openIncomingModal(){
-  DB.temp.editingIncomingId=null;
-  document.getElementById('incomingModalTitle').textContent='Nova Mercadoria';
-  document.getElementById('incomingDesc').value='';
-  document.getElementById('incomingQty').value=1;
-  document.getElementById('incomingValue').value='';
-  document.getElementById('incomingPurchaseDate').value=todayStr();
-  document.getElementById('incomingExpectedDate').value='';
-  document.getElementById('incomingNote').value='';
-  openModal('incomingModal');
-}
-
-function editIncoming(id){
-  const it=DB.incoming.find(x=>x.id===id);
-  if(!it)return;
-  DB.temp.editingIncomingId=id;
-  document.getElementById('incomingModalTitle').textContent='Editar Mercadoria';
-  document.getElementById('incomingDesc').value=it.desc;
-  document.getElementById('incomingQty').value=it.qty;
-  document.getElementById('incomingValue').value=it.value||'';
-  document.getElementById('incomingPurchaseDate').value=it.purchaseDate||'';
-  document.getElementById('incomingExpectedDate').value=it.expectedDate||'';
-  document.getElementById('incomingNote').value=it.note||'';
-  openModal('incomingModal');
-}
-
-function saveIncoming(){
-  const desc=document.getElementById('incomingDesc').value.trim();
-  const qty=Number(document.getElementById('incomingQty').value)||1;
-  const value=Number(document.getElementById('incomingValue').value)||0;
-  const purchaseDate=document.getElementById('incomingPurchaseDate').value||todayStr();
-  const expectedDate=document.getElementById('incomingExpectedDate').value||'';
-  const note=document.getElementById('incomingNote').value.trim();
-  if(!desc){toast('Informe o que você comprou!','error');return;}
-  if(DB.temp.editingIncomingId){
-    const idx=DB.incoming.findIndex(x=>x.id===DB.temp.editingIncomingId);
-    if(idx>=0){
-      DB.incoming[idx]={...DB.incoming[idx],desc,qty,value,purchaseDate,expectedDate,note};
-    }
-    toast('Mercadoria atualizada!','success');
-  } else {
-    DB.incoming.push({id:genId(),desc,qty,value,purchaseDate,expectedDate,note,status:'pending',receivedDate:null});
-    toast('Mercadoria cadastrada!','success');
-  }
-  saveDB();closeModal('incomingModal');renderCurrentPage();
-}
-
-function markIncomingReceived(id){
-  const it=DB.incoming.find(x=>x.id===id);
-  if(!it)return;
-  it.status='received';
-  it.receivedDate=todayStr();
-  saveDB();
-  toast('Mercadoria marcada como recebida!','success');
-  renderIncoming();
-  renderHome();
-}
-
-function deleteIncoming(id){
-  const it=DB.incoming.find(x=>x.id===id);
-  if(!it)return;
-  if(confirm(`Deseja realmente excluir "${it.desc}"?`)){
-    DB.incoming=DB.incoming.filter(x=>x.id!==id);
-    saveDB();
-    toast('Item excluído!','warning');
-    renderIncoming();
-    renderHome();
-  }
-}
-
-function renderIncoming(){
-  const pend=DB.incoming.filter(i=>i.status==='pending');
-  const recv=DB.incoming.filter(i=>i.status==='received');
-  document.getElementById('incomingPendingCount').textContent=pend.length;
-  document.getElementById('incomingReceivedCount').textContent=recv.length;
-  const list=DB.incomingTab==='pending'?pend:recv;
-  const el=document.getElementById('incomingList');
-  if(list.length===0){
-    el.innerHTML=`<div class="empty-state"><i class="ri-truck-line"></i><p>${DB.incomingTab==='pending'?'Nenhuma mercadoria a caminho.':'Nenhuma mercadoria recebida ainda.'}</p></div>`;
-    return;
-  }
-  const today=todayStr();
-  el.innerHTML=list.sort((a,b)=>(b.purchaseDate||'').localeCompare(a.purchaseDate||'')).map(it=>{
-    const isReceived=it.status==='received';
-    const late=!isReceived && it.expectedDate && it.expectedDate<today;
-    const arrivingToday=!isReceived && it.expectedDate===today;
-    let statusBadge='';
-    if(isReceived){
-      statusBadge=`<span class="status-paid">RECEBIDO</span>`;
-    } else if(late){
-      statusBadge=`<span class="status-overdue">ATRASADO</span>`;
-    } else if(arrivingToday){
-      statusBadge=`<span class="status-today">CHEGA HOJE</span>`;
-    } else {
-      statusBadge=`<span class="status-pending">A CAMINHO</span>`;
-    }
-    const expectedTxt=it.expectedDate?`<div style="font-size:11px;color:var(--text-muted);margin-top:3px;"><i class="ri-calendar-line"></i> Previsão: ${fmtDateBR(it.expectedDate)}</div>`:'';
-    const purchaseTxt=it.purchaseDate?`<div style="font-size:10px;color:var(--text-muted);margin-top:2px;">Comprado em: ${fmtDateBR(it.purchaseDate)}</div>`:'';
-    const receivedTxt=isReceived&&it.receivedDate?`<div style="font-size:11px;color:#059669;margin-top:3px;"><i class="ri-checkbox-circle-line"></i> Recebido em: ${fmtDateBR(it.receivedDate)}</div>`:'';
-    const noteTxt=it.note?`<div style="font-size:10px;color:var(--text-muted);margin-top:2px;font-style:italic;"><i class="ri-store-line"></i> ${it.note}</div>`:'';
-    const valueTxt=it.value>0?`<div style="font-size:12px;font-weight:700;color:#4f46e5;margin-top:2px;">${fmtMoney(it.value)}</div>`:'';
-    return`<div class="list-item" style="align-items:flex-start;">
-      <div style="width:46px;height:46px;border-radius:14px;background:${isReceived?'linear-gradient(135deg,#d1fae5,#6ee7b7)':'linear-gradient(135deg,#e0e7ff,#c7d2fe)'};display:flex;align-items:center;justify-content:center;font-size:22px;color:${isReceived?'#059669':'#4f46e5'};flex-shrink:0;"><i class="ri-truck-line"></i></div>
-      <div class="list-item-content">
-        <div style="font-size:13px;font-weight:600;">${it.desc}</div>
-        <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Qtd: <strong>${it.qty}</strong> ${valueTxt}</div>
-        ${purchaseTxt}
-        ${expectedTxt}
-        ${receivedTxt}
-        ${noteTxt}
-      </div>
-      <div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
-        ${statusBadge}
-        <div style="display:flex;gap:4px;">
-          ${!isReceived?`<button class="btn-icon-sm" style="background:#d1fae5;color:#059669;border:none;width:30px;height:30px;border-radius:8px;cursor:pointer;" onclick="event.stopPropagation();markIncomingReceived('${it.id}')" title="Recebido"><i class="ri-check-line"></i></button>`:''}
-          <button class="btn-icon-sm" style="background:#fef3c7;color:#d97706;border:none;width:30px;height:30px;border-radius:8px;cursor:pointer;" onclick="event.stopPropagation();editIncoming('${it.id}')" title="Editar"><i class="ri-edit-line"></i></button>
-          <button class="btn-icon-sm" style="background:#fee2e2;color:#dc2626;border:none;width:30px;height:30px;border-radius:8px;cursor:pointer;" onclick="event.stopPropagation();deleteIncoming('${it.id}')" title="Excluir"><i class="ri-delete-bin-line"></i></button>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function initApp(){loadDB();renderHome();updateAlertBadge();console.log('%cCláudia Collection Premium','color:#a97142;font-size:18px;font-weight:bold;');}
 </script>
 </body>
 </html>

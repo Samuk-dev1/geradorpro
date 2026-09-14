@@ -1,0 +1,18 @@
+{
+  "appId": "com.financeapp.app",
+  "appName": "FinanceApp",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "plugins": {
+    "LocalNotifications": {
+      "smallIcon": "ic_stat_icon_config_sample",
+      "iconColor": "#1E88E5",
+      "sound": "notificacao.wav",
+      "importance": "high",
+      "priority": "high",
+      "vibrate": true,
+      "ongoing": false,
+      "autoCancel": true
+    }
+  }
+}

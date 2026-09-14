@@ -1,4 +1,4 @@
-name: Gerar APK — Gestor IPTV
+name: Gerar APK — Gestor IPTV Profissional
 on:
   workflow_dispatch:
     inputs:
@@ -22,12 +22,15 @@ on:
         description: 'Usuário enviou projeto ZIP completo?'
         required: false
         default: 'nao'
+      versao:
+        description: 'Versão do App (ex: 1.0.0)'
+        required: true
+        default: '1.0.0'
 
 jobs:
   build:
     runs-on: ubuntu-latest
     
-    # ⚠️ PERMISSÃO NECESSÁRIA PARA O BOT PODER APAGAR OS ARQUIVOS ⚠️
     permissions:
       contents: write
 
@@ -39,6 +42,7 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: 20
+        cache: 'npm'
 
     - name: Configurar Java 17
       uses: actions/setup-java@v4
@@ -46,7 +50,17 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Preparar Ambiente e Gerar APK
+    - name: ⚡ Cache Gradle (acelera compilação)
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+
+    - name: Preparar Ambiente e Gerar Projeto
       run: |
         # ==========================================
         # 📦 OPÇÃO 1: Se usuário enviou ZIP do projeto
@@ -55,21 +69,14 @@ jobs:
         
         if [ "$ENVIOU_ZIP" = "sim" ]; then
           echo "📦 Usuário enviou ZIP do projeto..."
-          
-          # Procura por arquivos .zip na raiz (independente do nome)
           ZIP_FILE=$(find . -maxdepth 1 -name "*.zip" | head -1)
           
           if [ -n "$ZIP_FILE" ]; then
             echo "✅ ZIP encontrado: $ZIP_FILE"
-            
-            # Extrai para pasta temporária
             mkdir -p projeto_zip
             unzip -q "$ZIP_FILE" -d projeto_zip
-            
-            # Copia tudo do ZIP para a raiz
             cp -r projeto_zip/* ./ 2>/dev/null || true
             cp -r projeto_zip/.* ./ 2>/dev/null || true
-            
             echo "✅ ZIP extraído com sucesso!"
           else
             echo "⚠️ Nenhum arquivo ZIP encontrado na raiz!"
@@ -81,14 +88,12 @@ jobs:
         # ==========================================
         npm init -y
         
-        # Deixando apenas o core, android, cli e o plugin de notificações
         npm install @capacitor/core@5 @capacitor/android@5 @capacitor/cli@5 \
           @capacitor/local-notifications@5
 
         # Cria pasta www e copia o arquivo único index.html
         mkdir -p www
         
-        # ✅ SEU ARQUIVO ÚNICO É COPIADO AQUI
         if [ -f index.html ]; then
           cp index.html www/index.html
           echo "✅ Arquivo index.html copiado com sucesso!"
@@ -105,6 +110,7 @@ jobs:
         fi
 
         APP_NAME="${{ github.event.inputs.app_name }}"
+        VERSAO="${{ github.event.inputs.versao }}"
         
         # Gera ID único a partir do nome
         APP_ID=$(echo "$APP_NAME" | tr '[:upper:]' '[:lower:]' | tr -cd '[:alnum:]')
@@ -114,11 +120,17 @@ jobs:
 
         # Inicializa Capacitor
         npx cap init "$APP_NAME" com.gestoriptv.$APP_ID --web-dir www
-        
-        # 🔧 CORREÇÃO APLICADA AQUI: Remove a pasta android caso já exista para evitar conflito
-        rm -rf android 
-        
         npx cap add android
+
+        # ==========================================
+        # 🔧 ATUALIZA PARA ANDROID NOVO (resolve aviso "versão antiga")
+        # ==========================================
+        BUILD_GRADLE="android/app/build.gradle"
+        if [ -f "$BUILD_GRADLE" ]; then
+          sed -i 's/targetSdkVersion [0-9]*/targetSdkVersion 34/' "$BUILD_GRADLE"
+          sed -i 's/compileSdkVersion [0-9]*/compileSdkVersion 34/' "$BUILD_GRADLE"
+          echo "✅ Android atualizado para SDK 34 (versão nova)"
+        fi
 
         # Aplica nome personalizado no Android
         STRINGS_FILE="android/app/src/main/res/values/strings.xml"
@@ -128,7 +140,7 @@ jobs:
 
         # Processa logo personalizada se existir
         if [ -f logo.png ]; then
-          echo "Logo encontrada! Otimizando..."
+          echo "🎨 Logo encontrada! Otimizando..."
           sudo apt-get update && sudo apt-get install -y imagemagick > /dev/null 2>&1
 
           mkdir -p android/app/src/main/res/mipmap-mdpi
@@ -157,45 +169,30 @@ jobs:
         ENVIOU_SOM="${{ github.event.inputs.enviou_som }}"
         NOME_SOM="${{ github.event.inputs.nome_arquivo_som }}"
         
-        # Cria pasta res/raw do Android (onde ficam os sons)
         mkdir -p android/app/src/main/res/raw
         
         SOM_USADO=""
         
-        # Prioridade 1: Se usuário enviou som separado
         if [ "$ENVIOU_SOM" = "sim" ] && [ -n "$NOME_SOM" ] && [ -f "$NOME_SOM" ]; then
           echo "🔊 Som personalizado encontrado: $NOME_SOM"
-          
-          # Copia para res/raw com nome padrão (notificacao.extensao)
           EXTENSAO="${NOME_SOM##*.}"
           cp "$NOME_SOM" "android/app/src/main/res/raw/notificacao.$EXTENSAO"
           SOM_USADO="notificacao.$EXTENSAO"
-          echo "✅ Som copiado para: android/app/src/main/res/raw/notificacao.$EXTENSAO"
+          echo "✅ Som copiado!"
         
-        # Prioridade 2: Se tem som dentro do projeto (assets ou já no res/raw)
         elif [ -d "assets" ]; then
-          # Procura arquivos de som na pasta assets
           SOM_ASSETS=$(find assets -type f \( -name "*.mp3" -o -name "*.ogg" -o -name "*.wav" \) | head -1)
           if [ -n "$SOM_ASSETS" ]; then
             echo "🔊 Som encontrado na pasta assets: $SOM_ASSETS"
             EXTENSAO="${SOM_ASSETS##*.}"
             cp "$SOM_ASSETS" "android/app/src/main/res/raw/notificacao.$EXTENSAO"
             SOM_USADO="notificacao.$EXTENSAO"
-            echo "✅ Som copiado de assets para res/raw"
           fi
         fi
         
-        # Se encontrou algum som, configura o Capacitor
         if [ -n "$SOM_USADO" ]; then
           echo "⚙️ Configurando Capacitor para usar som: $SOM_USADO"
-          
-          # Cria ou atualiza capacitor.config.json
           printf '{\n  "appId": "com.gestoriptv.%s",\n  "appName": "%s",\n  "webDir": "www",\n  "plugins": {\n    "LocalNotifications": {\n      "smallIcon": "ic_stat_icon_config_sample",\n      "iconColor": "#00A8E1",\n      "sound": "%s",\n      "importance": "high",\n      "priority": "high",\n      "vibrate": true,\n      "ongoing": false,\n      "autoCancel": true\n    }\n  }\n}\n' "$APP_ID" "$APP_NAME" "$SOM_USADO" > capacitor.config.json
-          
-          echo "✅ capacitor.config.json configurado!"
-          cat capacitor.config.json
-        else
-          echo "ℹ️ Nenhum som personalizado encontrado — usando som padrão do sistema"
         fi
 
         # ==========================================
@@ -215,39 +212,84 @@ jobs:
         # Sincroniza tudo
         npx cap sync android
 
-    - name: Compilar APK
+    - name: 🔐 Preparar chave de assinatura
+      env:
+        KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+        KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+        KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+      run: |
+        if [ -n "$KEYSTORE_BASE64" ]; then
+          echo "🔑 Chave de assinatura encontrada! Preparando..."
+          echo "$KEYSTORE_BASE64" | base64 -d > android/app/release-key.jks
+          
+          cat > android/keystore.properties << EOF
+storeFile=release-key.jks
+storePassword=$KEYSTORE_PASSWORD
+keyAlias=$KEY_ALIAS
+keyPassword=$KEY_PASSWORD
+EOF
+          
+          # Configura build.gradle para assinar automaticamente
+          BUILD_GRADLE="android/app/build.gradle"
+          if [ -f "$BUILD_GRADLE" ]; then
+            sed -i '/android {/a \    signingConfigs {\n        release {\n            def keystorePropertiesFile = rootProject.file("keystore.properties")\n            def keystoreProperties = new Properties()\n            keystoreProperties.load(new FileInputStream(keystorePropertiesFile))\n            storeFile file(keystoreProperties["storeFile"])\n            storePassword keystoreProperties["storePassword"]\n            keyAlias keystoreProperties["keyAlias"]\n            keyPassword keystoreProperties["keyPassword"]\n        }\n    }' "$BUILD_GRADLE"
+            
+            sed -i 's/release {/release {\n            signingConfig signingConfigs.release/' "$BUILD_GRADLE"
+          fi
+          
+          echo "✅ Assinatura configurada!"
+        else
+          echo "ℹ️ Nenhuma chave de assinatura configurada nos secrets. Gerando APK sem assinatura."
+        fi
+
+    - name: 🏗️ Compilar APK
       run: |
         cd android
-        ./gradlew assembleDebug
+        if [ -f keystore.properties ]; then
+          ./gradlew assembleRelease
+        else
+          ./gradlew assembleDebug
+        fi
 
-    - name: Disponibilizar APK (Apaga em 2 dias)
+    - name: 📦 Renomear e organizar APK
+      run: |
+        APP_NAME="${{ github.event.inputs.app_name }}"
+        VERSAO="${{ github.event.inputs.versao }}"
+        NOME_LIMPO=$(echo "$APP_NAME" | tr '[:upper:]' '[:lower:]' | tr -cd '[:alnum:]')
+        
+        mkdir -p apk-final
+        
+        if [ -f android/app/build/outputs/apk/release/app-release.apk ]; then
+          cp android/app/build/outputs/apk/release/app-release.apk "apk-final/${NOME_LIMPO}-v${VERSAO}-assinado.apk"
+          echo "✅ APK ASSINADO pronto: ${NOME_LIMPO}-v${VERSAO}-assinado.apk"
+        else
+          cp android/app/build/outputs/apk/debug/app-debug.apk "apk-final/${NOME_LIMPO}-v${VERSAO}.apk"
+          echo "✅ APK pronto: ${NOME_LIMPO}-v${VERSAO}.apk"
+        fi
+
+    - name: 📤 Disponibilizar APK (Apaga em 2 dias)
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ github.event.inputs.app_name || 'GestorIPTV' }}-APK
-        path: android/app/build/outputs/apk/debug/app-debug.apk
-        retention-days: 2 # ⏳ Reduzido para 2 dias conforme seu pedido
+        name: ${{ github.event.inputs.app_name }}-v${{ github.event.inputs.versao }}-APK
+        path: apk-final/*.apk
+        retention-days: 2
 
     # =================================================================
-    # 🧹 ETAPA FINAL: FAXINA AUTOMÁTICA DO GITHUB (Limpa zip, logo, som)
+    # 🧹 ETAPA FINAL: FAXINA AUTOMÁTICA
     # =================================================================
     - name: 🧹 Limpar arquivos temporários do repositório
-      if: always() # Garante que vai limpar mesmo se a compilação der erro
+      if: always()
       run: |
-        # Configura o Robô do GitHub para fazer a alteração
         git config --global user.name "GitHub-Actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
         
-        echo "🗑️ Apagando zips, imagens, audios e html temporários..."
-        
-        # Apaga arquivos indesejados (o asterisco pega QUALQUER NOME)
+        echo "🗑️ Apagando arquivos temporários..."
         rm -f *.zip
         rm -f logo.png
         rm -f *.mp3 *.ogg *.wav
         rm -f index.html
         
-        # Prepara a limpeza para salvar no GitHub
         git add -A
-        
-        # Verifica se tem algo para limpar. Se tiver, ele apaga do repositório.
-        git diff --staged --quiet || git commit -m "🧹 Faxina automática: removendo zip e arquivos temporários [skip ci]"
-        git push || echo "✅ O repositório já está limpo!"
+        git diff --staged --quiet || git commit -m "🧹 Faxina automática [skip ci]"
+        git push || echo "✅ Repositório já está limpo!"

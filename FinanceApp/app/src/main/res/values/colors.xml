@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Cores Primárias -->
+    <color name="primary">#1E88E5</color>
+    <color name="primary_dark">#1565C0</color>
+    <color name="primary_light">#64B5F6</color>
+
+    <!-- Cores Secundárias -->
+    <color name="secondary">#26A69A</color>
+    <color name="secondary_dark">#00897B</color>
+
+    <!-- Cores de Status -->
+    <color name="income_color">#4CAF50</color>
+    <color name="income_light">#E8F5E9</color>
+    <color name="expense_color">#F44336</color>
+    <color name="expense_light">#FFEBEE</color>
+    <color name="warning_color">#FF9800</color>
+    <color name="warning_light">#FFF3E0</color>
+
+    <!-- Cores de Fundo e Texto -->
+    <color name="background">#F5F7FA</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="text_primary">#1A1A2E</color>
+    <color name="text_secondary">#6B7280</color>
+    <color name="text_hint">#9CA3AF</color>
+
+    <!-- Cores de Categorias -->
+    <color name="cat_salary">#2196F3</color>
+    <color name="cat_freelance">#9C27B0</color>
+    <color name="cat_investment">#FF9800</color>
+    <color name="cat_food">#E91E63</color>
+    <color name="cat_transport">#00BCD4</color>
+    <color name="cat_housing">#795548</color>
+    <color name="cat_health">#F44336</color>
+    <color name="cat_education">#3F51B5</color>
+    <color name="cat_entertainment">#FF5722</color>
+    <color name="cat_shopping">#E91E63</color>
+    <color name="cat_bills">#607D8B</color>
+    <color name="cat_other">#9E9E9E</color>
+
+    <!-- Bordas e Divisores -->
+    <color name="divider">#E5E7EB</color>
+    <color name="border">#D1D5DB</color>
+
+    <!-- Ícones -->
+    <color name="icon_tint">#FFFFFF</color>
+</resources>

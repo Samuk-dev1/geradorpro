@@ -8,21 +8,51 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.js"></script>
 <style>
+:root {
+  --bg-main: linear-gradient(180deg, #fdf8f5 0%, #f5ece6 50%, #f0e4dc 100%);
+  --header-bg: linear-gradient(135deg, #d4a373 0%, #bc8a5f 25%, #a97142 55%, #8b5e3c 85%, #6b4423 100%);
+  --header-glow: rgba(169, 113, 66, 0.4);
+  --card-bg: #ffffff;
+  --text-main: #4a3b32;
+  --text-muted: #8c7a6b;
+  --border-color: #eaddd3;
+  --input-bg: #fdf5f0;
+  --bottom-nav-bg: rgba(255, 255, 255, 0.98);
+  --nav-btn-active: #a97142;
+  --modal-bg: #ffffff;
+  --modal-overlay: rgba(74, 59, 50, 0.5);
+}
+
+.dark-mode {
+  --bg-main: linear-gradient(180deg, #2a1f1a 0%, #201713 50%, #1a120f 100%);
+  --header-bg: linear-gradient(135deg, #3d2c23 0%, #2e2019 25%, #241711 55%, #35251c 85%, #1f140e 100%);
+  --header-glow: rgba(0, 0, 0, 0.5);
+  --card-bg: #2b221d;
+  --text-main: #f0e6de;
+  --text-muted: #a3968d;
+  --border-color: #403229;
+  --input-bg: #201713;
+  --bottom-nav-bg: rgba(30, 22, 17, 0.98);
+  --nav-btn-active: #d4a373;
+  --modal-bg: #2b221d;
+  --modal-overlay: rgba(0, 0, 0, 0.8);
+}
+
 * { margin:0; padding:0; box-sizing:border-box; }
 html, body {
-  background:linear-gradient(180deg,#fdf2f8 0%,#fff7ed 50%,#faf5ff 100%);
-  color:#2d2a3e;
+  background: var(--bg-main);
+  color: var(--text-main);
   font-family:'Poppins', sans-serif;
   overflow-x:hidden;
   -webkit-font-smoothing: antialiased;
   min-height:100vh;
+  transition: background 0.4s ease, color 0.4s ease;
 }
 h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
 
 @keyframes orbFloat { 0%,100% { transform: translate(0,0); } 50% { transform: translate(30px,-20px); } }
-@keyframes orbPulse { 0%,100% { transform: translate(-50%,-50%) scale(1); opacity:0.6; } 50% { transform: translate(-50%,-50%) scale(1.3); opacity:0.9; } }
 @keyframes spinRing { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-@keyframes logoPulse { 0%,100% { transform: scale(1); filter: drop-shadow(0 0 20px #ec4899) drop-shadow(0 0 40px #f59e0b); } 50% { transform: scale(1.08); filter: drop-shadow(0 0 30px #ec4899) drop-shadow(0 0 60px #8b5cf6); } }
+@keyframes logoPulse { 0%,100% { transform: scale(1); filter: drop-shadow(0 0 20px #d4a373) drop-shadow(0 0 40px #8b5e3c); } 50% { transform: scale(1.08); filter: drop-shadow(0 0 30px #d4a373) drop-shadow(0 0 60px #a97142); } }
 @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 @keyframes loadBar { 0% { width: 0%; } 100% { width: 100%; } }
 @keyframes headerGlow { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
@@ -31,8 +61,7 @@ h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
 @keyframes floatCard { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
 @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 @keyframes fadeIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
-@keyframes sparkle { 0% { opacity:0; transform: scale(0) rotate(0deg); } 50% { opacity:1; transform: scale(1) rotate(180deg); } 100% { opacity:0; transform: scale(0) rotate(360deg); } }
-@keyframes particleFloat { 0% { transform: translateY(0) translateX(0); opacity:0; } 10% { opacity:0.6; } 90% { opacity:0.6; } 100% { transform: translateY(-600px) translateX(30px); opacity:0; } }
+@keyframes particleFloat { 0% { transform: translateY(0) translateX(0) rotate(0deg); opacity:0; } 10% { opacity:1; } 90% { opacity:1; } 100% { transform: translateY(-600px) translateX(40px) rotate(360deg); opacity:0; } }
 @keyframes toastIn { from { opacity:0; transform: translateY(-15px); } to { opacity:1; transform: translateY(0); } }
 
 .app-wrapper {
@@ -40,15 +69,16 @@ h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
   margin: 0 auto;
   min-height: 100vh;
   position: relative;
-  background:linear-gradient(180deg,#fdf2f8 0%,#fff7ed 50%,#faf5ff 100%);
+  background: var(--bg-main);
   padding-bottom: 90px;
   overflow: hidden;
+  transition: background 0.4s ease;
 }
 
 /* SPLASH */
 #splashScreen {
   position:fixed; inset:0; z-index:9999;
-  background:linear-gradient(135deg,#1a0a1f 0%,#2d0f3a 30%,#1a0a1f 60%,#3d0a2e 100%);
+  background:linear-gradient(135deg,#2a1f1a 0%,#3d2c23 30%,#2a1f1a 60%,#4a3528 100%);
   display:flex; align-items:center; justify-content:center; flex-direction:column;
   overflow:hidden;
   transition: opacity 0.6s ease, transform 0.6s ease;
@@ -56,7 +86,7 @@ h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
 
 /* HEADER */
 .app-header {
-  background:linear-gradient(135deg,#be185d 0%,#db2777 25%,#c026d3 55%,#9333ea 85%,#7c3aed 100%);
+  background: var(--header-bg);
   background-size:200% 200%;
   animation:headerGlow 6s ease infinite;
   padding:20px 20px 50px;
@@ -64,58 +94,59 @@ h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
   color:white;
   position:relative;
   overflow:hidden;
-  box-shadow:0 10px 50px rgba(190,24,93,0.4);
+  box-shadow:0 10px 50px var(--header-glow);
+  transition: background 0.4s ease, box-shadow 0.4s ease;
 }
 
 .page { display:none; animation: fadeIn .4s ease; }
 .page.active { display:block; }
 
 .kpi-card {
-  background:white;
+  background: var(--card-bg);
   border-radius:20px;
   padding:16px;
-  border:1px solid rgba(236,72,153,0.1);
-  box-shadow:0 8px 30px rgba(190,24,93,0.08);
+  border:1px solid var(--border-color);
+  box-shadow:0 8px 30px rgba(0,0,0,0.04);
   transition:all .4s;
   animation:floatCard 6s ease-in-out infinite;
 }
-.kpi-card:hover { transform:translateY(-6px) scale(1.02); box-shadow:0 15px 40px rgba(190,24,93,0.15); }
+.kpi-card:hover { transform:translateY(-6px) scale(1.02); box-shadow:0 15px 40px rgba(0,0,0,0.08); }
 
 .list-card {
-  background:white;
+  background: var(--card-bg);
   border-radius:20px;
-  box-shadow:0 8px 30px rgba(190,24,93,0.08);
+  box-shadow:0 8px 30px rgba(0,0,0,0.04);
   overflow:hidden;
-  border:1px solid rgba(236,72,153,0.08);
+  border:1px solid var(--border-color);
   margin-bottom:12px;
+  transition: background 0.4s ease, border-color 0.4s ease;
 }
 
 .list-item {
   display:flex; align-items:center; gap:12px;
   padding:14px;
-  border-bottom:1px solid #fce7f3;
+  border-bottom:1px solid var(--border-color);
   cursor:pointer;
   transition:all .3s;
 }
 .list-item:last-child { border-bottom:none; }
-.list-item:hover { background:linear-gradient(90deg,#fdf2f8,transparent); }
+.list-item:hover { background: var(--input-bg); }
 
 .list-item-avatar {
   width:46px;height:46px;border-radius:50%;
-  background:linear-gradient(135deg,#be185d,#db2777,#c026d3,#9333ea);
+  background: var(--header-bg);
   background-size:200% 200%;
   animation:headerGlow 5s ease infinite;
   display:flex;align-items:center;justify-content:center;
   font-size:16px;font-weight:700;color:white;
   flex-shrink:0;overflow:hidden;
-  box-shadow:0 4px 12px rgba(190,24,93,0.25);
+  box-shadow:0 4px 12px var(--header-glow);
   border: 2px solid white;
 }
 .list-item-avatar img { width:100%; height:100%; object-fit:cover; }
-
 .list-item-content { flex: 1; }
 
-/* BOTTOM NAV FIXA - AGORA COM 6 ABAS */
+/* BOTTOM NAV FIXA */
 .bottom-nav {
   position: fixed;
   bottom: 0;
@@ -123,27 +154,27 @@ h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
   transform: translateX(-50%);
   width: 100%;
   max-width: 480px;
-  background: rgba(255,255,255,0.98);
+  background: var(--bottom-nav-bg);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-top:1px solid #fce7f3;
+  border-top:1px solid var(--border-color);
   display:grid;
   grid-template-columns:repeat(6,1fr);
   padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
   z-index: 1000;
-  box-shadow:0 -8px 40px rgba(190,24,93,0.1);
+  box-shadow:0 -8px 40px rgba(0,0,0,0.05);
+  transition: background 0.4s ease, border-color 0.4s ease;
 }
 .nav-btn {
   display:flex; flex-direction:column; align-items:center; gap:2px;
   padding:5px 2px; cursor:pointer; background:none; border:none;
-  color:#9a95b0; font-family:'Poppins',sans-serif;
+  color: var(--text-muted); font-family:'Poppins',sans-serif;
   transition:all .3s;
 }
-.nav-btn.active { color:#db2777; }
+.nav-btn.active { color: var(--nav-btn-active); }
 .nav-btn.active span { font-weight:700; }
 .nav-btn i { font-size:20px; }
 .nav-btn span { font-size:8px; font-weight:600; text-align:center; line-height:1.1; }
-.nav-btn.incoming.active { color:#4f46e5; }
 
 /* FAB */
 .fab {
@@ -152,59 +183,59 @@ h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
   right: calc(50% - 220px);
   width:60px; height:60px;
   border-radius:50%;
-  background:linear-gradient(135deg,#be185d,#db2777,#c026d3,#9333ea);
+  background: var(--header-bg);
   background-size:200% 200%;
   animation:headerGlow 4s ease infinite, floatBtn 3s ease-in-out infinite;
   color:white; border:none; font-size:26px; cursor:pointer;
-  box-shadow:0 8px 30px rgba(190,24,93,0.5), 0 0 40px rgba(192,38,211,0.3);
+  box-shadow:0 8px 30px var(--header-glow), 0 0 40px var(--header-glow);
   display:flex; align-items:center; justify-content:center;
   z-index:999; transition:all .3s;
 }
 .fab:hover { transform:scale(1.1) rotate(90deg); }
-@media (max-width: 480px) {
-  .fab { right: 20px; }
-}
+@media (max-width: 480px) { .fab { right: 20px; } }
 
 .modal-overlay {
   position:fixed; inset:0;
-  background:rgba(45,42,62,0.5);
+  background: var(--modal-overlay);
   backdrop-filter:blur(6px);
   z-index:2000;
   display:none;
   align-items:flex-end;
   justify-content:center;
+  transition: background 0.4s ease;
 }
 .modal-overlay.show { display:flex; }
 .modal {
-  background:white;
+  background: var(--modal-bg);
   border-radius:28px 28px 0 0;
   width:100%;
   max-width:480px;
   max-height:88vh;
   overflow-y:auto;
   animation:slideUp .35s cubic-bezier(0.16,1,0.3,1);
+  transition: background 0.4s ease;
 }
 
 .form-control {
   width:100%;
   padding:13px 15px;
-  background:#fdf2f8;
-  border:1.5px solid #fce7f3;
+  background: var(--input-bg);
+  border:1.5px solid var(--border-color);
   border-radius:14px;
-  color:#2d2a3e;
+  color: var(--text-main);
   font-size:13px;
   font-family:'Poppins',sans-serif;
   transition:all .3s;
   margin-top:6px;
 }
-.form-control:focus { outline:none; border-color:#ec4899; background:white; }
+.form-control:focus { outline:none; border-color: var(--nav-btn-active); background: var(--card-bg); }
 
 .btn-primary {
   width:100%;
   padding:14px;
   border-radius:14px;
   border:none;
-  background:linear-gradient(135deg,#be185d,#db2777,#c026d3,#9333ea);
+  background: var(--header-bg);
   background-size:200% 200%;
   animation:headerGlow 4s ease infinite;
   color:white;
@@ -212,17 +243,17 @@ h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
   font-weight:600;
   cursor:pointer;
   font-family:'Poppins',sans-serif;
-  box-shadow:0 6px 25px rgba(190,24,93,0.35);
+  box-shadow:0 6px 25px var(--header-glow);
   transition:all .3s;
 }
-.btn-primary:hover { transform:translateY(-2px); box-shadow:0 10px 35px rgba(190,24,93,0.45); }
+.btn-primary:hover { transform:translateY(-2px); box-shadow:0 10px 35px var(--header-glow); }
 
 .btn-secondary {
   padding:12px 20px;
   border-radius:14px;
-  border:1.5px solid #fce7f3;
-  background:white;
-  color:#5a5670;
+  border:1.5px solid var(--border-color);
+  background: var(--card-bg);
+  color: var(--text-muted);
   font-size:13px;
   font-weight:600;
   cursor:pointer;
@@ -230,25 +261,25 @@ h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
   transition:all .3s;
   flex:1;
 }
-.btn-secondary:hover { border-color:#ec4899; color:#db2777; }
+.btn-secondary:hover { border-color: var(--nav-btn-active); color: var(--nav-btn-active); }
 
 .mini-tab {
   padding:10px 16px;
   border-radius:12px;
-  background:#fdf2f8;
+  background: var(--input-bg);
   border:none;
   font-size:12px;
   font-weight:600;
-  color:#9a95b0;
+  color: var(--text-muted);
   cursor:pointer;
   white-space:nowrap;
   font-family:'Poppins',sans-serif;
   transition:all .3s;
 }
 .mini-tab.active {
-  background:linear-gradient(135deg,#be185d,#db2777);
+  background: var(--header-bg);
   color:white;
-  box-shadow:0 4px 15px rgba(190,24,93,0.3);
+  box-shadow:0 4px 15px var(--header-glow);
 }
 
 .status-pending { display:inline-block;font-size:9px;font-weight:700;padding:3px 10px;border-radius:20px;margin-top:4px;text-transform:uppercase;background:#fef3c7;color:#d97706; }
@@ -270,8 +301,8 @@ h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
   width:calc(100% - 40px); max-width:400px;
 }
 .toast {
-  background:white; border-radius:14px; padding:12px 16px;
-  box-shadow:0 6px 25px rgba(0,0,0,0.12);
+  background: var(--card-bg); color: var(--text-main); border-radius:14px; padding:12px 16px;
+  box-shadow:0 6px 25px rgba(0,0,0,0.15);
   display:flex; align-items:center; gap:10px;
   font-size:13px; border-left:4px solid #059669;
   animation:toastIn .35s ease; font-family:'Poppins',sans-serif;
@@ -279,45 +310,45 @@ h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
 .toast.error { border-left-color:#dc2626; }
 .toast.warning { border-left-color:#d97706; }
 
-.empty-state { text-align:center; padding:40px 20px; color:#9a95b0; }
+.empty-state { text-align:center; padding:40px 20px; color: var(--text-muted); }
 .empty-state i { font-size:48px; margin-bottom:12px; opacity:0.4; }
 .empty-state p { font-size:13px; }
 
-.chart-wrap { background:white; border-radius:20px; padding:18px; box-shadow:0 8px 30px rgba(190,24,93,0.08); border:1px solid rgba(236,72,153,0.08); margin-bottom:12px; }
+.chart-wrap { background: var(--card-bg); border-radius:20px; padding:18px; box-shadow:0 8px 30px rgba(0,0,0,0.04); border:1px solid var(--border-color); margin-bottom:12px; transition: background 0.4s ease, border-color 0.4s ease; }
 .chart-container { position:relative; height:220px; }
 
 .content-area { padding:0 16px 16px; position:relative; z-index:1; }
 .section-header { display:flex; align-items:center; justify-content:space-between; margin:20px 0 12px; }
-.section-title { font-size:16px; font-weight:700; font-family:'Playfair Display',serif; }
-.section-link { font-size:12px; color:#db2777; font-weight:600; cursor:pointer; }
+.section-title { font-size:16px; font-weight:700; font-family:'Playfair Display',serif; color: var(--text-main); }
+.section-link { font-size:12px; color: var(--nav-btn-active); font-weight:600; cursor:pointer; }
 
 ::-webkit-scrollbar { width:4px; height:4px; }
 ::-webkit-scrollbar-track { background:transparent; }
-::-webkit-scrollbar-thumb { background:#fbcfe8; border-radius:2px; }
+::-webkit-scrollbar-thumb { background: var(--border-color); border-radius:2px; }
 
 #floatingParticles { position:absolute; inset:0; pointer-events:none; overflow:hidden; z-index:0; }
 
 .image-upload-preview {
   width:76px;height:76px;border-radius:50%;
-  background:linear-gradient(135deg,#fce7f3,#ede9fe);
-  border:2px dashed #db2777;
+  background: var(--input-bg);
+  border:2px dashed var(--nav-btn-active);
   display:flex;align-items:center;justify-content:center;
-  color:#db2777;font-size:28px;cursor:pointer;overflow:hidden;
+  color: var(--nav-btn-active);font-size:28px;cursor:pointer;overflow:hidden;
   transition:all .3s;
 }
 .image-upload-preview:hover { border-style:solid; transform:scale(1.05); }
 .image-upload-preview img { width:100%; height:100%; object-fit:cover; }
 
 .installment-preview {
-  background:#fdf2f8;
+  background: var(--input-bg);
   border-radius:14px;
   padding:12px;
   margin-top:10px;
-  border:1px solid #fce7f3;
+  border:1px solid var(--border-color);
 }
 .installment-item {
   display:flex;justify-content:space-between;align-items:center;
-  padding:8px 10px;background:white;border-radius:10px;
+  padding:8px 10px;background: var(--card-bg);border-radius:10px;
   font-size:12px;margin-bottom:4px;
 }
 
@@ -330,23 +361,23 @@ h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
 }
 
 .modal-handle {
-  width:44px;height:5px;background:#fce7f3;border-radius:3px;margin:14px auto;
+  width:44px;height:5px;background: var(--border-color);border-radius:3px;margin:14px auto;
 }
 .modal-header {
   padding:16px 22px;display:flex;align-items:center;justify-content:space-between;
-  border-bottom:1px solid #fce7f3;
+  border-bottom:1px solid var(--border-color);
 }
-.modal-header h3 { margin:0;font-family:'Playfair Display',serif;font-size:18px; }
+.modal-header h3 { margin:0;font-family:'Playfair Display',serif;font-size:18px; color: var(--text-main); }
 .modal-close {
-  width:34px;height:34px;border-radius:10px;background:#fdf2f8;border:none;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;font-size:18px;color:#9a95b0;
+  width:34px;height:34px;border-radius:10px;background: var(--input-bg);border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:18px;color: var(--text-muted);
 }
 .modal-body { padding:22px; }
 
 .btn-action-outline {
-  background: white; border: 1px solid #fce7f3; padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; cursor: pointer; color: #db2777; transition: all .3s; box-shadow: 0 2px 5px rgba(190,24,93,0.05);
+  background: var(--card-bg); border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; cursor: pointer; color: var(--nav-btn-active); transition: all .3s;
 }
-.btn-action-outline:hover { background: #fdf2f8; border-color: #fbcfe8; }
+.btn-action-outline:hover { background: var(--input-bg); border-color: var(--nav-btn-active); }
 .btn-icon-sm {
   border:none; width:30px; height:30px; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:16px; transition:all .3s;
 }
@@ -358,73 +389,77 @@ h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
 
 <!-- SPLASH SCREEN -->
 <div id="splashScreen">
-  <div style="position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(236,72,153,0.4) 0%,transparent 70%);top:-100px;left:-100px;animation:orbFloat 8s ease-in-out infinite;"></div>
-  <div style="position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(245,158,11,0.35) 0%,transparent 70%);bottom:-50px;right:-50px;animation:orbFloat 10s ease-in-out infinite reverse;"></div>
-  <div style="position:absolute;width:250px;height:250px;border-radius:50%;background:radial-gradient(circle,rgba(139,92,246,0.4) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);animation:orbPulse 3s ease-in-out infinite;"></div>
-  <div style="position:absolute;width:280px;height:280px;border-radius:50%;border:2px solid transparent;border-top-color:#ec4899;border-right-color:#f59e0b;animation:spinRing 2s linear infinite;opacity:0.8;"></div>
-  <div style="position:absolute;width:220px;height:220px;border-radius:50%;border:2px solid transparent;border-bottom-color:#8b5cf6;border-left-color:#ec4899;animation:spinRing 1.5s linear infinite reverse;opacity:0.6;"></div>
-  <div style="position:absolute;width:340px;height:340px;border-radius:50%;border:1px solid rgba(236,72,153,0.3);animation:spinRing 4s linear infinite;opacity:0.4;"></div>
+  <div style="position:absolute;width:280px;height:280px;border-radius:50%;border:2px solid transparent;border-top-color:#d4a373;border-right-color:#a97142;animation:spinRing 2s linear infinite;opacity:0.8;"></div>
+  <div style="position:absolute;width:220px;height:220px;border-radius:50%;border:2px solid transparent;border-bottom-color:#8b5e3c;border-left-color:#d4a373;animation:spinRing 1.5s linear infinite reverse;opacity:0.6;"></div>
+  <div style="position:absolute;width:340px;height:340px;border-radius:50%;border:1px solid rgba(212,163,115,0.3);animation:spinRing 4s linear infinite;opacity:0.4;"></div>
   
   <div style="position:relative;z-index:2;text-align:center;">
     <div style="font-size:64px;margin-bottom:16px;animation:logoPulse 1.5s ease-in-out infinite;">
       <svg width="80" height="80" viewBox="0 0 24 24" fill="none">
         <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="url(#hg)"/>
-        <defs><linearGradient id="hg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ec4899"/><stop offset="50%" stop-color="#f472b6"/><stop offset="100%" stop-color="#f59e0b"/></linearGradient></defs>
+        <defs><linearGradient id="hg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#d4a373"/><stop offset="50%" stop-color="#bc8a5f"/><stop offset="100%" stop-color="#a97142"/></linearGradient></defs>
       </svg>
     </div>
-    <h1 style="font-family:'Playfair Display',serif;font-size:32px;font-weight:800;background:linear-gradient(90deg,#ec4899,#f59e0b,#8b5cf6,#ec4899);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:gradientShift 3s ease infinite;margin:0;letter-spacing:1px;">Cláudia Collection</h1>
+    <h1 style="font-family:'Playfair Display',serif;font-size:32px;font-weight:800;background:linear-gradient(90deg,#d4a373,#e6b88a,#bc8a5f,#d4a373);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:gradientShift 3s ease infinite;margin:0;letter-spacing:1px;">Cláudia Collection</h1>
     <p style="color:rgba(255,255,255,0.6);font-size:12px;letter-spacing:4px;text-transform:uppercase;margin-top:8px;font-family:'Poppins',sans-serif;">Premium Finance</p>
   </div>
   
   <div style="position:relative;z-index:2;width:200px;height:3px;background:rgba(255,255,255,0.1);border-radius:2px;margin-top:40px;overflow:hidden;">
-    <div style="height:100%;width:0%;background:linear-gradient(90deg,#ec4899,#f59e0b,#8b5cf6);border-radius:2px;animation:loadBar 2.8s ease-out forwards;box-shadow:0 0 10px #ec4899;"></div>
+    <div style="height:100%;width:0%;background:linear-gradient(90deg,#d4a373,#bc8a5f,#8b5e3c);border-radius:2px;animation:loadBar 2.8s ease-out forwards;box-shadow:0 0 10px #d4a373;"></div>
   </div>
   <p id="loadingText" style="color:rgba(255,255,255,0.4);font-size:10px;letter-spacing:2px;margin-top:12px;font-family:'Poppins',sans-serif;">CARREGANDO...</p>
-  <div id="sparkles" style="position:absolute;inset:0;pointer-events:none;"></div>
 </div>
 
 <!-- MAIN APP -->
 <div id="mainApp" style="opacity:0;transition:opacity 0.6s ease;">
 <div class="app-wrapper">
+  <!-- Partículas leves de produtos/joias -->
   <div id="floatingParticles"></div>
 
   <!-- HEADER -->
   <header class="app-header">
-    <div style="position:absolute;top:-60px;right:-40px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,0.25) 0%,transparent 70%);animation:floatOrb 6s ease-in-out infinite;"></div>
-    <div style="position:absolute;bottom:-70px;left:-30px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(245,158,11,0.35) 0%,transparent 70%);animation:floatOrb 8s ease-in-out infinite reverse;"></div>
+    <div style="position:absolute;top:-60px;right:-40px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,0.15) 0%,transparent 70%);animation:floatOrb 6s ease-in-out infinite;"></div>
+    <div style="position:absolute;bottom:-70px;left:-30px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,0.1) 0%,transparent 70%);animation:floatOrb 8s ease-in-out infinite reverse;"></div>
     <div style="display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1;">
       <div style="display:flex;align-items:center;gap:12px;cursor:pointer;" onclick="openProfileModal()">
-        <div id="mainAvatar" style="width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,rgba(255,255,255,0.4),rgba(255,255,255,0.15));border:2px solid rgba(255,255,255,0.7);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:white;overflow:hidden;box-shadow:0 0 20px rgba(255,255,255,0.3);animation:floatBtn 4s ease-in-out infinite;position:relative;">C</div>
+        <div id="mainAvatar" style="width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,rgba(255,255,255,0.3),rgba(255,255,255,0.1));border:2px solid rgba(255,255,255,0.7);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:white;overflow:hidden;box-shadow:0 0 20px rgba(255,255,255,0.2);animation:floatBtn 4s ease-in-out infinite;position:relative;">C</div>
         <div>
           <div style="font-size:11px;opacity:0.85;">Olá,</div>
           <div id="profileName" style="font-size:15px;font-weight:600;">Cláudia</div>
         </div>
       </div>
-      <button onclick="navigateTo('receivable')" style="width:42px;height:42px;border-radius:14px;background:rgba(255,255,255,0.2);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.25);color:white;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;position:relative;animation:floatBtn 4.5s ease-in-out infinite;">
-        <i class="ri-notification-3-line"></i>
-        <span id="alertBadge" style="position:absolute;top:-3px;right:-3px;background:linear-gradient(135deg,#ef4444,#dc2626);color:white;font-size:9px;font-weight:700;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 5px;box-shadow:0 0 10px rgba(239,68,68,0.6);">0</span>
-      </button>
+      
+      <!-- Bloco com Sol/Lua e Sino juntos -->
+      <div style="display:flex; gap: 8px;">
+        <button onclick="toggleTheme()" style="width:42px;height:42px;border-radius:14px;background:rgba(255,255,255,0.2);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.25);color:white;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;position:relative;animation:floatBtn 4.5s ease-in-out infinite;">
+          <i class="ri-moon-fill" id="themeIcon"></i>
+        </button>
+        <button onclick="navigateTo('receivable')" style="width:42px;height:42px;border-radius:14px;background:rgba(255,255,255,0.2);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.25);color:white;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;position:relative;animation:floatBtn 4.5s ease-in-out infinite 0.2s;">
+          <i class="ri-notification-3-line"></i>
+          <span id="alertBadge" style="position:absolute;top:-3px;right:-3px;background:linear-gradient(135deg,#ef4444,#dc2626);color:white;font-size:9px;font-weight:700;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 5px;box-shadow:0 0 10px rgba(239,68,68,0.6);">0</span>
+        </button>
+      </div>
     </div>
   </header>
 
   <!-- AÇÕES RÁPIDAS -->
   <div style="padding: 18px 16px 6px;">
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;background:white;border-radius:22px;padding:14px 8px;box-shadow:0 8px 30px rgba(190,24,93,0.1);border:1px solid rgba(236,72,153,0.08);margin-top:-30px;position:relative;z-index:2;">
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;background:var(--card-bg);border-radius:22px;padding:14px 8px;box-shadow:0 8px 30px rgba(0,0,0,0.06);border:1px solid var(--border-color);margin-top:-30px;position:relative;z-index:2;">
       <div onclick="openQuickSale()" style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:8px 4px;border-radius:16px;transition:all .3s;animation:floatBtn 5s ease-in-out infinite;">
         <div style="width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;background:linear-gradient(135deg,#fce7f3,#fbcfe8);color:#db2777;box-shadow:0 4px 15px rgba(219,39,119,0.2);"><i class="ri-shopping-cart-line"></i></div>
-        <span style="font-size:10px;color:#5a5670;font-weight:600;">Nova Venda</span>
+        <span style="font-size:10px;color:var(--text-muted);font-weight:600;">Nova Venda</span>
       </div>
       <div onclick="openQuickClient()" style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:8px 4px;border-radius:16px;transition:all .3s;animation:floatBtn 5.5s ease-in-out infinite 0.2s;">
         <div style="width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;background:linear-gradient(135deg,#d1fae5,#a7f3d0);color:#059669;box-shadow:0 4px 15px rgba(5,150,105,0.2);"><i class="ri-user-add-line"></i></div>
-        <span style="font-size:10px;color:#5a5670;font-weight:600;">+ Cliente</span>
+        <span style="font-size:10px;color:var(--text-muted);font-weight:600;">+ Cliente</span>
       </div>
       <div onclick="navigateTo('receivable')" style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:8px 4px;border-radius:16px;transition:all .3s;animation:floatBtn 6s ease-in-out infinite 0.4s;">
         <div style="width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;background:linear-gradient(135deg,#fef3c7,#fde68a);color:#d97706;box-shadow:0 4px 15px rgba(217,119,6,0.2);"><i class="ri-money-dollar-circle-line"></i></div>
-        <span style="font-size:10px;color:#5a5670;font-weight:600;">A Receber</span>
+        <span style="font-size:10px;color:var(--text-muted);font-weight:600;">A Receber</span>
       </div>
       <div onclick="openQuickExpense()" style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:8px 4px;border-radius:16px;transition:all .3s;animation:floatBtn 6.5s ease-in-out infinite 0.6s;">
         <div style="width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;background:linear-gradient(135deg,#ede9fe,#ddd6fe);color:#7c3aed;box-shadow:0 4px 15px rgba(124,58,237,0.2);"><i class="ri-bill-line"></i></div>
-        <span style="font-size:10px;color:#5a5670;font-weight:600;">Despesa</span>
+        <span style="font-size:10px;color:var(--text-muted);font-weight:600;">Despesa</span>
       </div>
     </div>
   </div>
@@ -435,10 +470,10 @@ h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
       <div id="dashboardAlerts"></div>
       <div class="section-header"><div class="section-title">Resumo Financeiro</div></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:8px;">
-        <div class="kpi-card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><span style="font-size:10px;color:#9a95b0;font-weight:600;text-transform:uppercase;">Vendido</span><div style="width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,#fce7f3,#fbcfe8);color:#db2777;"><i class="ri-shopping-bag-line"></i></div></div><div id="kpiSold" style="font-size:20px;font-weight:700;">R$ 0,00</div><div style="font-size:10px;color:#9a95b0;margin-top:3px;">Este mês</div></div>
-        <div class="kpi-card" style="animation-delay:0.3s;"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><span style="font-size:10px;color:#9a95b0;font-weight:600;text-transform:uppercase;">Recebido</span><div style="width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,#d1fae5,#6ee7b7);color:#059669;"><i class="ri-bank-card-line"></i></div></div><div id="kpiReceived" style="font-size:20px;font-weight:700;">R$ 0,00</div><div style="font-size:10px;color:#9a95b0;margin-top:3px;">Confirmado</div></div>
-        <div class="kpi-card" style="animation-delay:0.6s;"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><span style="font-size:10px;color:#9a95b0;font-weight:600;text-transform:uppercase;">A Receber</span><div style="width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,#fef3c7,#fcd34d);color:#d97706;"><i class="ri-time-line"></i></div></div><div id="kpiReceivable" style="font-size:20px;font-weight:700;">R$ 0,00</div><div id="kpiReceivableCount" style="font-size:10px;color:#9a95b0;margin-top:3px;">0 parcelas</div></div>
-        <div class="kpi-card" style="animation-delay:0.9s;"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><span style="font-size:10px;color:#9a95b0;font-weight:600;text-transform:uppercase;">Atrasado</span><div style="width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,#fee2e2,#fca5a5);color:#dc2626;"><i class="ri-alarm-warning-line"></i></div></div><div id="kpiOverdue" style="font-size:20px;font-weight:700;">R$ 0,00</div><div id="kpiOverdueCount" style="font-size:10px;color:#9a95b0;margin-top:3px;">0 parcelas</div></div>
+        <div class="kpi-card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><span style="font-size:10px;color:var(--text-muted);font-weight:600;text-transform:uppercase;">Vendido</span><div style="width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,#fce7f3,#fbcfe8);color:#db2777;"><i class="ri-shopping-bag-line"></i></div></div><div id="kpiSold" style="font-size:20px;font-weight:700;">R$ 0,00</div><div style="font-size:10px;color:var(--text-muted);margin-top:3px;">Este mês</div></div>
+        <div class="kpi-card" style="animation-delay:0.3s;"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><span style="font-size:10px;color:var(--text-muted);font-weight:600;text-transform:uppercase;">Recebido</span><div style="width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,#d1fae5,#6ee7b7);color:#059669;"><i class="ri-bank-card-line"></i></div></div><div id="kpiReceived" style="font-size:20px;font-weight:700;">R$ 0,00</div><div style="font-size:10px;color:var(--text-muted);margin-top:3px;">Confirmado</div></div>
+        <div class="kpi-card" style="animation-delay:0.6s;"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><span style="font-size:10px;color:var(--text-muted);font-weight:600;text-transform:uppercase;">A Receber</span><div style="width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,#fef3c7,#fcd34d);color:#d97706;"><i class="ri-time-line"></i></div></div><div id="kpiReceivable" style="font-size:20px;font-weight:700;">R$ 0,00</div><div id="kpiReceivableCount" style="font-size:10px;color:var(--text-muted);margin-top:3px;">0 parcelas</div></div>
+        <div class="kpi-card" style="animation-delay:0.9s;"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><span style="font-size:10px;color:var(--text-muted);font-weight:600;text-transform:uppercase;">Atrasado</span><div style="width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,#fee2e2,#fca5a5);color:#dc2626;"><i class="ri-alarm-warning-line"></i></div></div><div id="kpiOverdue" style="font-size:20px;font-weight:700;">R$ 0,00</div><div id="kpiOverdueCount" style="font-size:10px;color:var(--text-muted);margin-top:3px;">0 parcelas</div></div>
       </div>
       <div class="section-header"><div class="section-title">Próximos Vencimentos</div><div class="section-link" onclick="navigateTo('receivable')">Ver todos →</div></div>
       <div class="list-card" id="upcomingList"><div class="empty-state"><i class="ri-checkbox-circle-line"></i><p>Tudo em ordem!</p></div></div>
@@ -451,27 +486,27 @@ h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
     <!-- CLIENTES -->
     <div class="page" id="page-clients">
       <div style="font-size:20px;font-weight:700;font-family:'Playfair Display',serif;padding:16px 0 8px;">Clientes</div>
-      <div style="position:relative;margin-bottom:14px;"><i class="ri-search-line" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#9a95b0;"></i><input type="text" placeholder="Buscar cliente..." id="searchClient" oninput="renderClients()" class="form-control" style="padding-left:42px;margin-top:0;"></div>
+      <div style="position:relative;margin-bottom:14px;"><i class="ri-search-line" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);"></i><input type="text" placeholder="Buscar cliente..." id="searchClient" oninput="renderClients()" class="form-control" style="padding-left:42px;margin-top:0;"></div>
       <div class="list-card" id="clientsList"><div class="empty-state"><i class="ri-user-heart-line"></i><p>Nenhuma cliente cadastrada.</p></div></div>
     </div>
 
     <!-- CLIENTE DETALHE -->
     <div class="page" id="page-client-detail">
-      <div style="display:flex;align-items:center;gap:10px;padding:16px 0 4px;"><div onclick="navigateTo('clients')" style="width:40px;height:40px;border-radius:12px;background:white;border:1px solid #fce7f3;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 15px rgba(190,24,93,0.08);"><i class="ri-arrow-left-line"></i></div><div style="font-size:20px;font-weight:700;font-family:'Playfair Display',serif;flex:1;">Detalhes</div></div>
-      <div style="background:linear-gradient(135deg,#be185d,#db2777,#c026d3,#9333ea);background-size:200% 200%;animation:headerGlow 6s ease infinite;margin:10px -16px 20px;padding:28px 20px 36px;border-radius:0 0 28px 28px;color:white;text-align:center;position:relative;overflow:hidden;">
-        <div id="detailAvatar" style="width:84px;height:84px;border-radius:50%;background:linear-gradient(135deg,rgba(255,255,255,0.4),rgba(255,255,255,0.15));border:3px solid rgba(255,255,255,0.7);margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:700;overflow:hidden;box-shadow:0 0 30px rgba(255,255,255,0.3);animation:floatBtn 4s ease-in-out infinite;">C</div>
+      <div style="display:flex;align-items:center;gap:10px;padding:16px 0 4px;"><div onclick="navigateTo('clients')" style="width:40px;height:40px;border-radius:12px;background:var(--card-bg);border:1px solid var(--border-color);display:flex;align-items:center;justify-content:center;cursor:pointer;"><i class="ri-arrow-left-line"></i></div><div style="font-size:20px;font-weight:700;font-family:'Playfair Display',serif;flex:1;">Detalhes</div></div>
+      <div style="background:var(--header-bg);background-size:200% 200%;animation:headerGlow 6s ease infinite;margin:10px -16px 20px;padding:28px 20px 36px;border-radius:0 0 28px 28px;color:white;text-align:center;position:relative;overflow:hidden;">
+        <div id="detailAvatar" style="width:84px;height:84px;border-radius:50%;background:linear-gradient(135deg,rgba(255,255,255,0.3),rgba(255,255,255,0.1));border:3px solid rgba(255,255,255,0.7);margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:700;overflow:hidden;box-shadow:0 0 30px rgba(255,255,255,0.2);animation:floatBtn 4s ease-in-out infinite;">C</div>
         <div id="detailName" style="font-size:22px;font-weight:700;">Carregando...</div>
         <div id="detailPhone" style="font-size:12px;opacity:0.9;margin-top:6px;">--</div>
       </div>
       <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:-28px 0 20px;position:relative;z-index:2;">
-        <div style="background:white;border-radius:18px;padding:14px;text-align:center;box-shadow:0 8px 30px rgba(190,24,93,0.1);"><div style="font-size:10px;color:#9a95b0;text-transform:uppercase;font-weight:600;">Comprado</div><div id="statBought" style="font-size:18px;font-weight:700;margin-top:4px;color:#db2777;">R$ 0</div></div>
-        <div style="background:white;border-radius:18px;padding:14px;text-align:center;box-shadow:0 8px 30px rgba(5,150,105,0.1);"><div style="font-size:10px;color:#9a95b0;text-transform:uppercase;font-weight:600;">Pago</div><div id="statPaid" style="font-size:18px;font-weight:700;margin-top:4px;color:#059669;">R$ 0</div></div>
-        <div style="background:white;border-radius:18px;padding:14px;text-align:center;box-shadow:0 8px 30px rgba(217,119,6,0.1);"><div style="font-size:10px;color:#9a95b0;text-transform:uppercase;font-weight:600;">Em Aberto</div><div id="statOpen" style="font-size:18px;font-weight:700;margin-top:4px;color:#d97706;">R$ 0</div></div>
-        <div style="background:white;border-radius:18px;padding:14px;text-align:center;box-shadow:0 8px 30px rgba(220,38,38,0.1);"><div style="font-size:10px;color:#9a95b0;text-transform:uppercase;font-weight:600;">Atrasado</div><div id="statOverdue" style="font-size:18px;font-weight:700;margin-top:4px;color:#dc2626;">R$ 0</div></div>
+        <div style="background:var(--card-bg);border-radius:18px;padding:14px;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,0.06); border:1px solid var(--border-color);"><div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;font-weight:600;">Comprado</div><div id="statBought" style="font-size:18px;font-weight:700;margin-top:4px;color:#db2777;">R$ 0</div></div>
+        <div style="background:var(--card-bg);border-radius:18px;padding:14px;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,0.06); border:1px solid var(--border-color);"><div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;font-weight:600;">Pago</div><div id="statPaid" style="font-size:18px;font-weight:700;margin-top:4px;color:#059669;">R$ 0</div></div>
+        <div style="background:var(--card-bg);border-radius:18px;padding:14px;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,0.06); border:1px solid var(--border-color);"><div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;font-weight:600;">Em Aberto</div><div id="statOpen" style="font-size:18px;font-weight:700;margin-top:4px;color:#d97706;">R$ 0</div></div>
+        <div style="background:var(--card-bg);border-radius:18px;padding:14px;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,0.06); border:1px solid var(--border-color);"><div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;font-weight:600;">Atrasado</div><div id="statOverdue" style="font-size:18px;font-weight:700;margin-top:4px;color:#dc2626;">R$ 0</div></div>
       </div>
       <div style="display:flex;gap:8px;margin-bottom:16px;">
         <button id="detailWhatsapp" style="flex:1;background:linear-gradient(135deg,#22c55e,#16a34a);color:white;padding:12px;border-radius:14px;border:none;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 4px 15px rgba(34,197,94,0.3);animation:floatBtn 5s ease-in-out infinite;"><i class="ri-whatsapp-line"></i> Contatar</button>
-        <button id="detailEdit" style="flex:1;background:white;color:#5a5670;padding:12px;border-radius:14px;border:1.5px solid #fce7f3;font-size:13px;font-weight:600;cursor:pointer;"><i class="ri-edit-line"></i> Editar Cliente</button>
+        <button id="detailEdit" class="btn-secondary"><i class="ri-edit-line"></i> Editar Cliente</button>
       </div>
       <div class="section-header"><div class="section-title">Parcelas</div></div>
       <div class="list-card" id="detailInstallments"><div class="empty-state"><i class="ri-file-list-line"></i><p>Sem parcelas.</p></div></div>
@@ -483,8 +518,8 @@ h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
     <div class="page" id="page-receivable">
       <div style="font-size:20px;font-weight:700;font-family:'Playfair Display',serif;padding:16px 0 8px;">Contas a Receber</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
-        <div style="background:white;border-radius:18px;padding:14px;border:1px solid rgba(245,158,11,0.1);box-shadow:0 8px 30px rgba(217,119,6,0.08);"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;"><div style="font-size:10px;color:#9a95b0;font-weight:600;text-transform:uppercase;">Total a Receber</div><div style="width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;background:linear-gradient(135deg,#fef3c7,#fcd34d);color:#d97706;"><i class="ri-money-dollar-circle-line"></i></div></div><div id="recTotal" style="font-size:18px;font-weight:700;color:#d97706;">R$ 0</div></div>
-        <div style="background:white;border-radius:18px;padding:14px;border:1px solid rgba(239,68,68,0.1);box-shadow:0 8px 30px rgba(220,38,38,0.08);"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;"><div style="font-size:10px;color:#9a95b0;font-weight:600;text-transform:uppercase;">Total Atrasado</div><div style="width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;background:linear-gradient(135deg,#fee2e2,#fca5a5);color:#dc2626;"><i class="ri-alarm-warning-line"></i></div></div><div id="recOverdue" style="font-size:18px;font-weight:700;color:#dc2626;">R$ 0</div></div>
+        <div style="background:var(--card-bg);border-radius:18px;padding:14px;border:1px solid var(--border-color);box-shadow:0 8px 30px rgba(0,0,0,0.05);"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;"><div style="font-size:10px;color:var(--text-muted);font-weight:600;text-transform:uppercase;">Total a Receber</div><div style="width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;background:linear-gradient(135deg,#fef3c7,#fcd34d);color:#d97706;"><i class="ri-money-dollar-circle-line"></i></div></div><div id="recTotal" style="font-size:18px;font-weight:700;color:#d97706;">R$ 0</div></div>
+        <div style="background:var(--card-bg);border-radius:18px;padding:14px;border:1px solid var(--border-color);box-shadow:0 8px 30px rgba(0,0,0,0.05);"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;"><div style="font-size:10px;color:var(--text-muted);font-weight:600;text-transform:uppercase;">Total Atrasado</div><div style="width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;background:linear-gradient(135deg,#fee2e2,#fca5a5);color:#dc2626;"><i class="ri-alarm-warning-line"></i></div></div><div id="recOverdue" style="font-size:18px;font-weight:700;color:#dc2626;">R$ 0</div></div>
       </div>
       <div id="recTabs" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;scrollbar-width:none;">
         <button class="mini-tab active" onclick="switchRecTab('today')">Hoje</button>
@@ -506,19 +541,19 @@ h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
     <div class="page" id="page-products">
       <div style="font-size:20px;font-weight:700;font-family:'Playfair Display',serif;padding:16px 0 8px;">Produtos & Estoque</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
-        <div style="background:white;border-radius:18px;padding:14px;border:1px solid rgba(59,130,246,0.1);box-shadow:0 8px 30px rgba(37,99,235,0.08);"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;"><div style="font-size:10px;color:#9a95b0;font-weight:600;text-transform:uppercase;">Valor Investido</div><div style="width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;background:linear-gradient(135deg,#dbeafe,#93c5fd);color:#2563eb;"><i class="ri-wallet-line"></i></div></div><div id="stockInvested" style="font-size:18px;font-weight:700;">R$ 0</div></div>
-        <div style="background:white;border-radius:18px;padding:14px;border:1px solid rgba(239,68,68,0.1);box-shadow:0 8px 30px rgba(220,38,38,0.08);"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;"><div style="font-size:10px;color:#9a95b0;font-weight:600;text-transform:uppercase;">Estoque Baixo</div><div style="width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;background:linear-gradient(135deg,#fee2e2,#fca5a5);color:#dc2626;"><i class="ri-alert-line"></i></div></div><div id="stockLowCount" style="font-size:18px;font-weight:700;color:#dc2626;">0</div></div>
+        <div style="background:var(--card-bg);border-radius:18px;padding:14px;border:1px solid var(--border-color);box-shadow:0 8px 30px rgba(0,0,0,0.05);"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;"><div style="font-size:10px;color:var(--text-muted);font-weight:600;text-transform:uppercase;">Valor Investido</div><div style="width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;background:linear-gradient(135deg,#dbeafe,#93c5fd);color:#2563eb;"><i class="ri-wallet-line"></i></div></div><div id="stockInvested" style="font-size:18px;font-weight:700;">R$ 0</div></div>
+        <div style="background:var(--card-bg);border-radius:18px;padding:14px;border:1px solid var(--border-color);box-shadow:0 8px 30px rgba(0,0,0,0.05);"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;"><div style="font-size:10px;color:var(--text-muted);font-weight:600;text-transform:uppercase;">Estoque Baixo</div><div style="width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;background:linear-gradient(135deg,#fee2e2,#fca5a5);color:#dc2626;"><i class="ri-alert-line"></i></div></div><div id="stockLowCount" style="font-size:18px;font-weight:700;color:#dc2626;">0</div></div>
       </div>
-      <div style="position:relative;margin-bottom:14px;"><i class="ri-search-line" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#9a95b0;"></i><input type="text" placeholder="Buscar produto..." id="searchProduct" oninput="renderProducts()" class="form-control" style="padding-left:42px;margin-top:0;"></div>
+      <div style="position:relative;margin-bottom:14px;"><i class="ri-search-line" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);"></i><input type="text" placeholder="Buscar produto..." id="searchProduct" oninput="renderProducts()" class="form-control" style="padding-left:42px;margin-top:0;"></div>
       <div class="list-card" id="productsList"><div class="empty-state"><i class="ri-gift-line"></i><p>Nenhum produto cadastrado.</p></div></div>
     </div>
 
-    <!-- MERCADORIAS A RECEBER (AGORA COMO PÁGINA PRINCIPAL) -->
+    <!-- MERCADORIAS A RECEBER -->
     <div class="page" id="page-incoming">
       <div style="display:flex;align-items:center;gap:10px;padding:16px 0 4px;"><div style="font-size:20px;font-weight:700;font-family:'Playfair Display',serif;flex:1;">Mercadorias a Receber</div><button onclick="openIncomingModal()" style="background:linear-gradient(135deg,#4f46e5,#6366f1);color:white;border:none;width:40px;height:40px;border-radius:12px;font-size:20px;cursor:pointer;box-shadow:0 4px 15px rgba(79,70,229,0.3);"><i class="ri-add-line"></i></button></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;">
-        <div style="background:white;border-radius:18px;padding:14px;box-shadow:0 8px 30px rgba(79,70,229,0.08);border:1px solid rgba(79,70,229,0.1);"><div style="font-size:10px;color:#9a95b0;font-weight:600;text-transform:uppercase;">A caminho</div><div id="incomingPendingCount" style="font-size:20px;font-weight:700;color:#4f46e5;margin-top:4px;">0</div></div>
-        <div style="background:white;border-radius:18px;padding:14px;box-shadow:0 8px 30px rgba(5,150,105,0.08);border:1px solid rgba(5,150,105,0.1);"><div style="font-size:10px;color:#9a95b0;font-weight:600;text-transform:uppercase;">Já recebidas</div><div id="incomingReceivedCount" style="font-size:20px;font-weight:700;color:#059669;margin-top:4px;">0</div></div>
+        <div style="background:var(--card-bg);border-radius:18px;padding:14px;box-shadow:0 8px 30px rgba(0,0,0,0.05);border:1px solid var(--border-color);"><div style="font-size:10px;color:var(--text-muted);font-weight:600;text-transform:uppercase;">A caminho</div><div id="incomingPendingCount" style="font-size:20px;font-weight:700;color:#4f46e5;margin-top:4px;">0</div></div>
+        <div style="background:var(--card-bg);border-radius:18px;padding:14px;box-shadow:0 8px 30px rgba(0,0,0,0.05);border:1px solid var(--border-color);"><div style="font-size:10px;color:var(--text-muted);font-weight:600;text-transform:uppercase;">Já recebidas</div><div id="incomingReceivedCount" style="font-size:20px;font-weight:700;color:#059669;margin-top:4px;">0</div></div>
       </div>
       <div id="incomingTabs" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;scrollbar-width:none;">
         <button class="mini-tab active" onclick="switchIncomingTab('pending')">A caminho</button>
@@ -531,25 +566,25 @@ h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
     <div class="page" id="page-more">
       <div style="font-size:20px;font-weight:700;font-family:'Playfair Display',serif;padding:16px 0 8px;">Mais</div>
       <div class="list-card" style="margin-bottom:16px;">
-        <div class="list-item" onclick="openQuickExpense()"><div style="width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,#fee2e2,#fca5a5);color:#dc2626;flex-shrink:0;"><i class="ri-bill-line"></i></div><div style="flex:1;"><div style="font-size:13px;font-weight:600;">Despesas</div><div style="font-size:11px;color:#9a95b0;">Lançar e ver gastos</div></div><i class="ri-arrow-right-s-line" style="color:#9a95b0;"></i></div>
-        <div class="list-item" onclick="navigateTo('reports')"><div style="width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,#ede9fe,#c4b5fd);color:#7c3aed;flex-shrink:0;"><i class="ri-bar-chart-box-line"></i></div><div style="flex:1;"><div style="font-size:13px;font-weight:600;">Relatórios</div><div style="font-size:11px;color:#9a95b0;">Análise financeira completa</div></div><i class="ri-arrow-right-s-line" style="color:#9a95b0;"></i></div>
+        <div class="list-item" onclick="openQuickExpense()"><div style="width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,#fee2e2,#fca5a5);color:#dc2626;flex-shrink:0;"><i class="ri-bill-line"></i></div><div style="flex:1;"><div style="font-size:13px;font-weight:600;">Despesas</div><div style="font-size:11px;color:var(--text-muted);">Lançar e ver gastos</div></div><i class="ri-arrow-right-s-line" style="color:var(--text-muted);"></i></div>
+        <div class="list-item" onclick="navigateTo('reports')"><div style="width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,#ede9fe,#c4b5fd);color:#7c3aed;flex-shrink:0;"><i class="ri-bar-chart-box-line"></i></div><div style="flex:1;"><div style="font-size:13px;font-weight:600;">Relatórios</div><div style="font-size:11px;color:var(--text-muted);">Análise financeira completa</div></div><i class="ri-arrow-right-s-line" style="color:var(--text-muted);"></i></div>
       </div>
       <div class="list-card" style="margin-bottom:16px;">
-        <div class="list-item" onclick="exportData()"><div style="width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,#dbeafe,#93c5fd);color:#2563eb;flex-shrink:0;"><i class="ri-download-cloud-line"></i></div><div style="flex:1;"><div style="font-size:13px;font-weight:600;">Backup / Exportar</div><div style="font-size:11px;color:#9a95b0;">Salvar seus dados</div></div><i class="ri-arrow-right-s-line" style="color:#9a95b0;"></i></div>
-        <label class="list-item" style="margin:0;"><div style="width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,#d1fae5,#6ee7b7);color:#059669;flex-shrink:0;"><i class="ri-upload-cloud-line"></i></div><div style="flex:1;"><div style="font-size:13px;font-weight:600;">Importar Dados</div><div style="font-size:11px;color:#9a95b0;">Restaurar backup</div></div><input type="file" accept=".json" style="display:none;" onchange="importData(event)"></label>
-        <div class="list-item" onclick="openProfileModal()"><div style="width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,#fce7f3,#fbcfe8);color:#db2777;flex-shrink:0;"><i class="ri-user-settings-line"></i></div><div style="flex:1;"><div style="font-size:13px;font-weight:600;">Perfil</div><div style="font-size:11px;color:#9a95b0;">Editar foto, nome e loja</div></div><i class="ri-arrow-right-s-line" style="color:#9a95b0;"></i></div>
+        <div class="list-item" onclick="exportData()"><div style="width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,#dbeafe,#93c5fd);color:#2563eb;flex-shrink:0;"><i class="ri-download-cloud-line"></i></div><div style="flex:1;"><div style="font-size:13px;font-weight:600;">Backup / Exportar</div><div style="font-size:11px;color:var(--text-muted);">Salvar seus dados</div></div><i class="ri-arrow-right-s-line" style="color:var(--text-muted);"></i></div>
+        <label class="list-item" style="margin:0;"><div style="width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,#d1fae5,#6ee7b7);color:#059669;flex-shrink:0;"><i class="ri-upload-cloud-line"></i></div><div style="flex:1;"><div style="font-size:13px;font-weight:600;">Importar Dados</div><div style="font-size:11px;color:var(--text-muted);">Restaurar backup</div></div><input type="file" accept=".json" style="display:none;" onchange="importData(event)"></label>
+        <div class="list-item" onclick="openProfileModal()"><div style="width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,#fce7f3,#fbcfe8);color:#db2777;flex-shrink:0;"><i class="ri-user-settings-line"></i></div><div style="flex:1;"><div style="font-size:13px;font-weight:600;">Perfil</div><div style="font-size:11px;color:var(--text-muted);">Editar foto, nome e loja</div></div><i class="ri-arrow-right-s-line" style="color:var(--text-muted);"></i></div>
       </div>
-      <div style="text-align:center;padding:20px;color:#9a95b0;font-size:11px;"><p style="font-weight:700;background:linear-gradient(90deg,#db2777,#c026d3,#9333ea);-webkit-background-clip:text;background-clip:text;color:transparent;font-size:14px;font-family:'Playfair Display',serif;">Cláudia Collection</p><p style="margin-top:4px;">Sistema Premium v2.0</p></div>
+      <div style="text-align:center;padding:20px;color:var(--text-muted);font-size:11px;"><p style="font-weight:700;background:var(--header-bg);-webkit-background-clip:text;background-clip:text;color:transparent;font-size:14px;font-family:'Playfair Display',serif;">Cláudia Collection</p><p style="margin-top:4px;">Sistema Premium v2.0</p></div>
     </div>
 
     <!-- REPORTS -->
     <div class="page" id="page-reports">
-      <div style="display:flex;align-items:center;gap:10px;padding:16px 0 4px;"><div onclick="navigateTo('more')" style="width:40px;height:40px;border-radius:12px;background:white;border:1px solid #fce7f3;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 15px rgba(190,24,93,0.08);"><i class="ri-arrow-left-line"></i></div><div style="font-size:20px;font-weight:700;font-family:'Playfair Display',serif;flex:1;">Relatórios</div></div>
+      <div style="display:flex;align-items:center;gap:10px;padding:16px 0 4px;"><div onclick="navigateTo('more')" style="width:40px;height:40px;border-radius:12px;background:var(--card-bg);border:1px solid var(--border-color);display:flex;align-items:center;justify-content:center;cursor:pointer;"><i class="ri-arrow-left-line"></i></div><div style="font-size:20px;font-weight:700;font-family:'Playfair Display',serif;flex:1;">Relatórios</div></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;">
-        <div style="background:white;border-radius:18px;padding:14px;box-shadow:0 8px 30px rgba(190,24,93,0.08);"><div style="font-size:10px;color:#9a95b0;text-transform:uppercase;font-weight:600;">Vendido</div><div id="repSold" style="font-size:18px;font-weight:700;margin-top:4px;">R$ 0</div></div>
-        <div style="background:white;border-radius:18px;padding:14px;box-shadow:0 8px 30px rgba(5,150,105,0.08);"><div style="font-size:10px;color:#9a95b0;text-transform:uppercase;font-weight:600;">Recebido</div><div id="repReceived" style="font-size:18px;font-weight:700;margin-top:4px;">R$ 0</div></div>
-        <div style="background:white;border-radius:18px;padding:14px;box-shadow:0 8px 30px rgba(220,38,38,0.08);"><div style="font-size:10px;color:#9a95b0;text-transform:uppercase;font-weight:600;">Despesas</div><div id="repExp" style="font-size:18px;font-weight:700;margin-top:4px;">R$ 0</div></div>
-        <div style="background:white;border-radius:18px;padding:14px;box-shadow:0 8px 30px rgba(124,58,237,0.08);"><div style="font-size:10px;color:#9a95b0;text-transform:uppercase;font-weight:600;">Lucro</div><div id="repProfit" style="font-size:18px;font-weight:700;margin-top:4px;">R$ 0</div></div>
+        <div style="background:var(--card-bg);border-radius:18px;padding:14px;border:1px solid var(--border-color);"><div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;font-weight:600;">Vendido</div><div id="repSold" style="font-size:18px;font-weight:700;margin-top:4px;">R$ 0</div></div>
+        <div style="background:var(--card-bg);border-radius:18px;padding:14px;border:1px solid var(--border-color);"><div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;font-weight:600;">Recebido</div><div id="repReceived" style="font-size:18px;font-weight:700;margin-top:4px;">R$ 0</div></div>
+        <div style="background:var(--card-bg);border-radius:18px;padding:14px;border:1px solid var(--border-color);"><div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;font-weight:600;">Despesas</div><div id="repExp" style="font-size:18px;font-weight:700;margin-top:4px;">R$ 0</div></div>
+        <div style="background:var(--card-bg);border-radius:18px;padding:14px;border:1px solid var(--border-color);"><div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;font-weight:600;">Lucro</div><div id="repProfit" style="font-size:18px;font-weight:700;margin-top:4px;">R$ 0</div></div>
       </div>
       <div class="chart-wrap"><div style="font-size:14px;font-weight:600;margin-bottom:12px;font-family:'Playfair Display',serif;">Vendas por Categoria</div><div class="chart-container"><canvas id="reportChart"></canvas></div></div>
     </div>
@@ -559,7 +594,7 @@ h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
   <!-- FAB FIXO -->
   <button class="fab" id="fabBtn" onclick="openQuickSale()"><i class="ri-add-line"></i></button>
 
-  <!-- BOTTOM NAV FIXA - AGORA COM 6 ABAS -->
+  <!-- BOTTOM NAV FIXA -->
   <nav class="bottom-nav">
     <button class="nav-btn active" onclick="navigateTo('home')"><i class="ri-home-5-fill"></i><span>Início</span></button>
     <button class="nav-btn" onclick="navigateTo('clients')"><i class="ri-user-heart-line"></i><span>Clientes</span></button>
@@ -570,6 +605,7 @@ h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
   </nav>
 </div>
 
+<!-- MODALS -->
 <!-- MODAL: PERFIL -->
 <div id="profileModal" class="modal-overlay">
   <div class="modal">
@@ -584,11 +620,11 @@ h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
           <i class="ri-camera-line"></i>
         </div>
         <input type="file" id="profileImage" accept="image/*" style="display:none;" onchange="handleProfileImage(event)">
-        <p style="font-size:11px;color:#9a95b0;">Clique para alterar a foto</p>
+        <p style="font-size:11px;color:var(--text-muted);">Clique para alterar a foto</p>
       </div>
-      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:#5a5670;">Seu nome</label><input type="text" id="profileNameInput" class="form-control" placeholder="Cláudia"></div>
-      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:#5a5670;">Nome da loja</label><input type="text" id="storeNameInput" class="form-control" value="Cláudia Collection"></div>
-      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:#5a5670;">Dia padrão de vencimento</label><input type="number" id="dueDayInput" class="form-control" value="10" min="1" max="28"></div>
+      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Seu nome</label><input type="text" id="profileNameInput" class="form-control" placeholder="Cláudia"></div>
+      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Nome da loja</label><input type="text" id="storeNameInput" class="form-control" value="Cláudia Collection"></div>
+      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Dia padrão de vencimento</label><input type="number" id="dueDayInput" class="form-control" value="10" min="1" max="28"></div>
       <button class="btn-primary" onclick="saveProfile()"><i class="ri-save-line"></i> Salvar Perfil</button>
     </div>
   </div>
@@ -606,11 +642,11 @@ h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
       <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;">
         <div class="image-upload-preview" onclick="document.getElementById('clientImage').click()" id="clientImagePreview" style="width:70px;height:70px;border-radius:16px;"><i class="ri-camera-line"></i></div>
         <input type="file" id="clientImage" accept="image/*" style="display:none;" onchange="handleClientImage(event)">
-        <div><h4 style="font-size:14px;font-weight:600;">Foto da cliente</h4><p style="font-size:11px;color:#9a95b0;margin-top:4px;">Opcional</p></div>
+        <div><h4 style="font-size:14px;font-weight:600;">Foto da cliente</h4><p style="font-size:11px;color:var(--text-muted);margin-top:4px;">Opcional</p></div>
       </div>
-      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:#5a5670;">Nome *</label><input type="text" id="clientName" class="form-control" placeholder="Ex: Maria da Silva"></div>
-      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:#5a5670;">Telefone *</label><input type="text" id="clientPhone" class="form-control" placeholder="(00) 00000-0000" oninput="formatPhone(this)"></div>
-      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:#5a5670;">Endereço</label><input type="text" id="clientAddress" class="form-control" placeholder="Rua, número, bairro"></div>
+      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Nome *</label><input type="text" id="clientName" class="form-control" placeholder="Ex: Maria da Silva"></div>
+      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Telefone *</label><input type="text" id="clientPhone" class="form-control" placeholder="(00) 00000-0000" oninput="formatPhone(this)"></div>
+      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Endereço</label><input type="text" id="clientAddress" class="form-control" placeholder="Rua, número, bairro"></div>
       <button class="btn-primary" onclick="saveClient()"><i class="ri-save-line"></i> Salvar Cliente</button>
     </div>
   </div>
@@ -625,16 +661,16 @@ h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
       <button class="modal-close" onclick="closeModal('productModal')"><i class="ri-close-line"></i></button>
     </div>
     <div class="modal-body">
-      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:#5a5670;">Nome *</label><input type="text" id="productName" class="form-control" placeholder="Ex: Kit Shampoo"></div>
-      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:#5a5670;">Categoria</label>
+      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Nome *</label><input type="text" id="productName" class="form-control" placeholder="Ex: Kit Shampoo"></div>
+      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Categoria</label>
         <select id="productCategory" class="form-control">
           <option>Semijoias</option><option>Roupa de cama</option><option>Produtos para cabelo</option>
           <option>Perfumes</option><option>Cuidados pessoais</option><option>Outros</option>
         </select>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
-        <div><label style="font-size:12px;font-weight:600;color:#5a5670;">Preço</label><input type="number" id="productPrice" step="0.01" class="form-control"></div>
-        <div><label style="font-size:12px;font-weight:600;color:#5a5670;">Estoque</label><input type="number" id="productStock" value="0" class="form-control"></div>
+        <div><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Preço</label><input type="number" id="productPrice" step="0.01" class="form-control"></div>
+        <div><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Estoque</label><input type="number" id="productStock" value="0" class="form-control"></div>
       </div>
       <button class="btn-primary" onclick="saveProduct()"><i class="ri-save-line"></i> Salvar Produto</button>
     </div>
@@ -650,17 +686,17 @@ h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
       <button class="modal-close" onclick="closeModal('saleModal')"><i class="ri-close-line"></i></button>
     </div>
     <div class="modal-body">
-      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:#5a5670;">Cliente *</label><select id="saleClient" class="form-control"><option value="">Selecione...</option></select></div>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><label style="font-size:12px;font-weight:600;color:#5a5670;">Produtos</label><button class="btn-secondary" style="padding:6px 12px;flex:none;" onclick="addSaleItem()"><i class="ri-add-line"></i> Item</button></div>
+      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Cliente *</label><select id="saleClient" class="form-control"><option value="">Selecione...</option></select></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Produtos</label><button class="btn-secondary" style="padding:6px 12px;flex:none;" onclick="addSaleItem()"><i class="ri-add-line"></i> Item</button></div>
       <div id="saleItems"></div>
-      <div style="margin-top:14px;margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:#5a5670;">Total da Venda</label><input type="text" id="saleTotal" readonly class="form-control" style="background:linear-gradient(135deg,#fce7f3,#ede9fe);color:#db2777;font-weight:800;font-size:18px;text-align:center;border-color:#fbcfe8;"></div>
-      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:#5a5670;">Forma de pagamento</label><select id="salePaymentType" class="form-control" onchange="updateSaleForm()"><option value="vista">À Vista</option><option value="parcelado">Parcelado / Fiado</option></select></div>
+      <div style="margin-top:14px;margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Total da Venda</label><input type="text" id="saleTotal" readonly class="form-control" style="background:linear-gradient(135deg,var(--input-bg),var(--card-bg));color:var(--nav-btn-active);font-weight:800;font-size:18px;text-align:center;"></div>
+      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Forma de pagamento</label><select id="salePaymentType" class="form-control" onchange="updateSaleForm()"><option value="vista">À Vista</option><option value="parcelado">Parcelado / Fiado</option></select></div>
       <div id="parceladoFields" style="display:none;">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
-          <div><label style="font-size:12px;font-weight:600;color:#5a5670;">Entrada (R$)</label><input type="number" id="saleEntry" step="0.01" min="0" value="0" class="form-control" oninput="updateInstallments()"></div>
-          <div><label style="font-size:12px;font-weight:600;color:#5a5670;">Parcelas</label><input type="number" id="saleInstallments" min="1" value="2" class="form-control" oninput="updateInstallments()"></div>
+          <div><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Entrada (R$)</label><input type="number" id="saleEntry" step="0.01" min="0" value="0" class="form-control" oninput="updateInstallments()"></div>
+          <div><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Parcelas</label><input type="number" id="saleInstallments" min="1" value="2" class="form-control" oninput="updateInstallments()"></div>
         </div>
-        <div style="margin-bottom:10px;"><label style="font-size:12px;font-weight:600;color:#5a5670;">1º Vencimento</label><input type="date" id="saleFirstDue" class="form-control" onchange="updateInstallments()"></div>
+        <div style="margin-bottom:10px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">1º Vencimento</label><input type="date" id="saleFirstDue" class="form-control" onchange="updateInstallments()"></div>
         <div id="installmentPreview"></div>
       </div>
       <button class="btn-primary" style="margin-top:12px;" onclick="saveSale()"><i class="ri-check-line"></i> Confirmar Venda</button>
@@ -677,9 +713,9 @@ h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
       <button class="modal-close" onclick="closeModal('paymentModal')"><i class="ri-close-line"></i></button>
     </div>
     <div class="modal-body">
-      <div id="paymentInfo" style="background:linear-gradient(135deg,#fdf2f8,#ede9fe);border-radius:14px;padding:14px;margin-bottom:16px;font-size:13px;border:1px solid #fce7f3;"></div>
-      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:#5a5670;">Valor (R$)</label><input type="number" id="paymentAmount" step="0.01" min="0" class="form-control"></div>
-      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:#5a5670;">Forma</label>
+      <div id="paymentInfo" style="background:var(--input-bg);border-radius:14px;padding:14px;margin-bottom:16px;font-size:13px;border:1px solid var(--border-color);"></div>
+      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Valor (R$)</label><input type="number" id="paymentAmount" step="0.01" min="0" class="form-control"></div>
+      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Forma</label>
         <select id="paymentMethod" class="form-control">
           <option value="Dinheiro">Dinheiro</option><option value="Pix">Pix</option>
           <option value="Cartão">Cartão</option><option value="Transferência">Transferência</option>
@@ -699,9 +735,9 @@ h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
       <button class="modal-close" onclick="closeModal('expenseModal')"><i class="ri-close-line"></i></button>
     </div>
     <div class="modal-body">
-      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:#5a5670;">Descrição *</label><input type="text" id="expenseDesc" class="form-control" placeholder="Ex: Compra de mercadorias"></div>
-      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:#5a5670;">Valor *</label><input type="number" id="expenseValue" step="0.01" class="form-control"></div>
-      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:#5a5670;">Categoria</label>
+      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Descrição *</label><input type="text" id="expenseDesc" class="form-control" placeholder="Ex: Compra de mercadorias"></div>
+      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Valor *</label><input type="number" id="expenseValue" step="0.01" class="form-control"></div>
+      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Categoria</label>
         <select id="expenseCategory" class="form-control">
           <option value="Mercadorias">Compra de mercadorias</option><option value="Frete">Frete</option>
           <option value="Embalagens">Embalagens</option><option value="Taxas">Taxas de cartão</option>
@@ -722,14 +758,14 @@ h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
       <button class="modal-close" onclick="closeModal('incomingModal')"><i class="ri-close-line"></i></button>
     </div>
     <div class="modal-body">
-      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:#5a5670;">O que você comprou? *</label><input type="text" id="incomingDesc" class="form-control" placeholder="Ex: Kit Shampoo profissional"></div>
+      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">O que você comprou? *</label><input type="text" id="incomingDesc" class="form-control" placeholder="Ex: Kit Shampoo profissional"></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
-        <div><label style="font-size:12px;font-weight:600;color:#5a5670;">Qtd</label><input type="number" id="incomingQty" value="1" min="1" class="form-control"></div>
-        <div><label style="font-size:12px;font-weight:600;color:#5a5670;">Valor (R$)</label><input type="number" id="incomingValue" step="0.01" min="0" class="form-control" placeholder="Opcional"></div>
+        <div><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Qtd</label><input type="number" id="incomingQty" value="1" min="1" class="form-control"></div>
+        <div><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Valor (R$)</label><input type="number" id="incomingValue" step="0.01" min="0" class="form-control" placeholder="Opcional"></div>
       </div>
-      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:#5a5670;">Data da compra</label><input type="date" id="incomingPurchaseDate" class="form-control"></div>
-      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:#5a5670;">Previsão de chegada (opcional)</label><input type="date" id="incomingExpectedDate" class="form-control"></div>
-      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:#5a5670;">Observação</label><input type="text" id="incomingNote" class="form-control" placeholder="Ex: Mercado Livre, Shopee..."></div>
+      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Data da compra</label><input type="date" id="incomingPurchaseDate" class="form-control"></div>
+      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Previsão de chegada (opcional)</label><input type="date" id="incomingExpectedDate" class="form-control"></div>
+      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:var(--text-muted);">Observação</label><input type="text" id="incomingNote" class="form-control" placeholder="Ex: Mercado Livre, Shopee..."></div>
       <button class="btn-primary" style="background:linear-gradient(135deg,#4f46e5,#6366f1);" onclick="saveIncoming()"><i class="ri-save-line"></i> Salvar</button>
     </div>
   </div>
@@ -741,18 +777,46 @@ h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
 </div>
 
 <script>
-// Animações iniciais
+// Verificar Tema Salvo
+if(localStorage.getItem('theme') === 'dark') {
+  document.body.classList.add('dark-mode');
+}
+
+// Animações iniciais e Partículas
 (function(){
-  const sp=document.getElementById('sparkles');
-  const colors=['#ec4899','#f59e0b','#8b5cf6','#f472b6','#fbbf24','#a78bfa'];
-  for(let i=0;i<25;i++){const d=document.createElement('div');const sz=Math.random()*8+4;d.style.cssText=`position:absolute;width:${sz}px;height:${sz}px;background:${colors[i%6]};border-radius:50%;left:${Math.random()*100}%;top:${Math.random()*100}%;box-shadow:0 0 ${sz*2}px ${colors[i%6]};animation:sparkle ${1.5+Math.random()*2}s ease-in-out infinite;animation-delay:${Math.random()*2}s;`;sp.appendChild(d);}
+  // Atualiza ícone do tema baseado no estado inicial
+  const themeIcon = document.getElementById('themeIcon');
+  if(themeIcon) {
+    themeIcon.className = document.body.classList.contains('dark-mode') ? 'ri-sun-fill' : 'ri-moon-fill';
+  }
+
+  // Partículas levinhas (emojis)
   const fp=document.getElementById('floatingParticles');
-  const pcolors=['rgba(236,72,153,0.3)','rgba(245,158,11,0.25)','rgba(139,92,246,0.25)'];
-  for(let i=0;i<12;i++){const d=document.createElement('div');const sz=Math.random()*8+4;d.style.cssText=`position:absolute;width:${sz}px;height:${sz}px;background:${pcolors[i%3]};border-radius:50%;left:${Math.random()*100}%;bottom:-20px;animation:particleFloat ${12+Math.random()*8}s linear infinite;animation-delay:${Math.random()*8}s;`;fp.appendChild(d);}
-  const lts=['CARREGANDO...','PREPARANDO MAGIA...','ACESSANDO DADOS...','QUASE PRONTO...'];let lti=0;
+  const pItems=['💍','💎','🧴','💄','🛍️','🎀','✨'];
+  for(let i=0;i<10;i++){
+    const d=document.createElement('div');
+    const sz=Math.random()*12+12;
+    d.style.cssText=`position:absolute;font-size:${sz}px;left:${Math.random()*100}%;bottom:-40px;opacity:0.4;animation:particleFloat ${12+Math.random()*10}s linear infinite;animation-delay:${Math.random()*8}s;z-index:0;`;
+    d.textContent = pItems[Math.floor(Math.random()*pItems.length)];
+    fp.appendChild(d);
+  }
+
+  const lts=['CARREGANDO...','PREPARANDO...','ACESSANDO DADOS...','QUASE LÁ...'];let lti=0;
   const ltInt=setInterval(()=>{lti=(lti+1)%lts.length;const el=document.getElementById('loadingText');if(el)el.textContent=lts[lti];},700);
   setTimeout(()=>{clearInterval(ltInt);const splash=document.getElementById('splashScreen');const main=document.getElementById('mainApp');splash.style.opacity='0';splash.style.transform='scale(1.1)';setTimeout(()=>{splash.style.display='none';main.style.opacity='1';initApp();},600);},3000);
 })();
+
+// Função Tema Escuro/Claro
+function toggleTheme() {
+  document.body.classList.toggle('dark-mode');
+  const isDark = document.body.classList.contains('dark-mode');
+  localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  document.getElementById('themeIcon').className = isDark ? 'ri-sun-fill' : 'ri-moon-fill';
+  
+  // Atualiza as cores das fontes nos gráficos ao trocar de tema
+  renderHomeChart();
+  if(document.getElementById('page-reports').classList.contains('active')) renderReports();
+}
 
 // DATABASE
 const DB={profile:{name:'Cláudia',image:null,storeName:'Cláudia Collection',dueDay:10},clients:[],products:[],sales:[],installments:[],expenses:[],incoming:[],temp:{clientImage:null,editingClientId:null,editingProductId:null,editingIncomingId:null,currentPayment:null,currentClient:null,saleItemCount:0},charts:{home:null,report:null},reportPeriod:'month',recTab:'today',incomingTab:'pending'};
@@ -852,20 +916,20 @@ function renderHome(){
   document.getElementById('kpiOverdue').textContent=fmtMoney(overT);document.getElementById('kpiOverdueCount').textContent=over.length+' atrasadas';
   
   const alerts=[];const tInst=pend.filter(i=>i.dueDate===today);
-  if(tInst.length>0)alerts.push(`<div onclick="navigateTo('receivable')" style="background:linear-gradient(135deg,#eff6ff,#dbeafe);border-radius:18px;padding:14px;margin-bottom:12px;border:1px solid #bfdbfe;display:flex;align-items:center;gap:12px;cursor:pointer;"><div style="width:40px;height:40px;border-radius:12px;background:white;display:flex;align-items:center;justify-content:center;font-size:20px;color:#2563eb;flex-shrink:0;"><i class="ri-calendar-event-line"></i></div><div style="flex:1;"><div style="font-size:12px;font-weight:600;">Vencem hoje</div><div style="font-size:11px;color:#5a5670;">${tInst.length} parcela(s) para receber</div></div><span style="background:#2563eb;color:white;font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;">${tInst.length}</span></div>`);
-  if(over.length>0)alerts.push(`<div onclick="navigateTo('receivable')" style="background:linear-gradient(135deg,#fef2f2,#fee2e2);border-radius:18px;padding:14px;margin-bottom:12px;border:1px solid #fecaca;display:flex;align-items:center;gap:12px;cursor:pointer;"><div style="width:40px;height:40px;border-radius:12px;background:white;display:flex;align-items:center;justify-content:center;font-size:20px;color:#dc2626;flex-shrink:0;"><i class="ri-alarm-warning-line"></i></div><div style="flex:1;"><div style="font-size:12px;font-weight:600;">Parcelas atrasadas</div><div style="font-size:11px;color:#5a5670;">${over.length} cliente(s) com pagamento atrasado</div></div><span style="background:#dc2626;color:white;font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;">${over.length}</span></div>`);
+  if(tInst.length>0)alerts.push(`<div onclick="navigateTo('receivable')" style="background:linear-gradient(135deg,#eff6ff,#dbeafe);border-radius:18px;padding:14px;margin-bottom:12px;border:1px solid #bfdbfe;display:flex;align-items:center;gap:12px;cursor:pointer;"><div style="width:40px;height:40px;border-radius:12px;background:white;display:flex;align-items:center;justify-content:center;font-size:20px;color:#2563eb;flex-shrink:0;"><i class="ri-calendar-event-line"></i></div><div style="flex:1;"><div style="font-size:12px;font-weight:600;color:#2d2a3e;">Vencem hoje</div><div style="font-size:11px;color:#5a5670;">${tInst.length} parcela(s) para receber</div></div><span style="background:#2563eb;color:white;font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;">${tInst.length}</span></div>`);
+  if(over.length>0)alerts.push(`<div onclick="navigateTo('receivable')" style="background:linear-gradient(135deg,#fef2f2,#fee2e2);border-radius:18px;padding:14px;margin-bottom:12px;border:1px solid #fecaca;display:flex;align-items:center;gap:12px;cursor:pointer;"><div style="width:40px;height:40px;border-radius:12px;background:white;display:flex;align-items:center;justify-content:center;font-size:20px;color:#dc2626;flex-shrink:0;"><i class="ri-alarm-warning-line"></i></div><div style="flex:1;"><div style="font-size:12px;font-weight:600;color:#2d2a3e;">Parcelas atrasadas</div><div style="font-size:11px;color:#5a5670;">${over.length} cliente(s) com pagamento atrasado</div></div><span style="background:#dc2626;color:white;font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;">${over.length}</span></div>`);
   const incomingPend = DB.incoming.filter(i=>i.status==='pending');
-  if(incomingPend.length>0)alerts.push(`<div onclick="navigateTo('incoming')" style="background:linear-gradient(135deg,#eef2ff,#e0e7ff);border-radius:18px;padding:14px;margin-bottom:12px;border:1px solid #c7d2fe;display:flex;align-items:center;gap:12px;cursor:pointer;"><div style="width:40px;height:40px;border-radius:12px;background:white;display:flex;align-items:center;justify-content:center;font-size:20px;color:#4f46e5;flex-shrink:0;"><i class="ri-truck-line"></i></div><div style="flex:1;"><div style="font-size:12px;font-weight:600;">Mercadorias a caminho</div><div style="font-size:11px;color:#5a5670;">${incomingPend.length} encomenda(s) para receber</div></div><span style="background:#4f46e5;color:white;font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;">${incomingPend.length}</span></div>`);
+  if(incomingPend.length>0)alerts.push(`<div onclick="navigateTo('incoming')" style="background:linear-gradient(135deg,#eef2ff,#e0e7ff);border-radius:18px;padding:14px;margin-bottom:12px;border:1px solid #c7d2fe;display:flex;align-items:center;gap:12px;cursor:pointer;"><div style="width:40px;height:40px;border-radius:12px;background:white;display:flex;align-items:center;justify-content:center;font-size:20px;color:#4f46e5;flex-shrink:0;"><i class="ri-truck-line"></i></div><div style="flex:1;"><div style="font-size:12px;font-weight:600;color:#2d2a3e;">Mercadorias a caminho</div><div style="font-size:11px;color:#5a5670;">${incomingPend.length} encomenda(s) para receber</div></div><span style="background:#4f46e5;color:white;font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;">${incomingPend.length}</span></div>`);
   document.getElementById('dashboardAlerts').innerHTML=alerts.join('');
   
   const upc=pend.filter(i=>i.dueDate>=today).sort((a,b)=>a.dueDate.localeCompare(b.dueDate)).slice(0,4);
   const uEl=document.getElementById('upcomingList');
   if(upc.length===0){uEl.innerHTML=`<div class="empty-state"><i class="ri-checkbox-circle-line"></i><p>Tudo em ordem! Nenhum vencimento próximo.</p></div>`;}
-  else{uEl.innerHTML=upc.map(i=>{const c=DB.clients.find(x=>x.id===i.clientId);return`<div class="list-item" onclick="openPaymentModal('${i.id}')"><div class="list-item-avatar">${c?(c.image?`<img src="${c.image}">`:getInitials(c.name)):'?'}</div><div class="list-item-content"><div style="font-size:13px;font-weight:600;">${c?c.name:'Cliente'}</div><div style="font-size:11px;color:#9a95b0;margin-top:3px;">${fmtDateBR(i.dueDate)} • Parcela ${i.number}</div></div><div style="text-align:right;"><div style="font-size:14px;font-weight:700;color:#db2777;">${fmtMoney(i.value)}</div><span class="status-pending">PENDENTE</span></div></div>`;}).join('');}
+  else{uEl.innerHTML=upc.map(i=>{const c=DB.clients.find(x=>x.id===i.clientId);return`<div class="list-item" onclick="openPaymentModal('${i.id}')"><div class="list-item-avatar">${c?(c.image?`<img src="${c.image}">`:getInitials(c.name)):'?'}</div><div class="list-item-content"><div style="font-size:13px;font-weight:600;">${c?c.name:'Cliente'}</div><div style="font-size:11px;color:var(--text-muted);margin-top:3px;">${fmtDateBR(i.dueDate)} • Parcela ${i.number}</div></div><div style="text-align:right;"><div style="font-size:14px;font-weight:700;color:#db2777;">${fmtMoney(i.value)}</div><span class="status-pending">PENDENTE</span></div></div>`;}).join('');}
   
   const cEl=document.getElementById('clientsHomeList');
   if(DB.clients.length===0){cEl.innerHTML=`<div class="empty-state"><i class="ri-user-heart-line"></i><p>Cadastre suas clientes!</p></div>`;}
-  else{cEl.innerHTML=DB.clients.slice(0,4).map(c=>{const cI=DB.installments.filter(i=>i.clientId===c.id&&i.status!=='paid');const op=cI.reduce((s,v)=>s+(Number(v.value)-Number(v.paidValue||0)),0);return`<div class="list-item" onclick="viewClientDetail('${c.id}')"><div class="list-item-avatar">${c.image?`<img src="${c.image}">`:getInitials(c.name)}</div><div class="list-item-content"><div style="font-size:13px;font-weight:600;">${c.name}</div><div style="font-size:11px;color:#9a95b0;margin-top:3px;">${c.phone}</div></div><div style="text-align:right;"><div style="font-size:12px;font-weight:700;color:${op>0?'#d97706':'#059669'};">${op>0?fmtMoney(op)+' aberto':'Em dia'}</div></div></div>`;}).join('');}
+  else{cEl.innerHTML=DB.clients.slice(0,4).map(c=>{const cI=DB.installments.filter(i=>i.clientId===c.id&&i.status!=='paid');const op=cI.reduce((s,v)=>s+(Number(v.value)-Number(v.paidValue||0)),0);return`<div class="list-item" onclick="viewClientDetail('${c.id}')"><div class="list-item-avatar">${c.image?`<img src="${c.image}">`:getInitials(c.name)}</div><div class="list-item-content"><div style="font-size:13px;font-weight:600;">${c.name}</div><div style="font-size:11px;color:var(--text-muted);margin-top:3px;">${c.phone}</div></div><div style="text-align:right;"><div style="font-size:12px;font-weight:700;color:${op>0?'#d97706':'#059669'};">${op>0?fmtMoney(op)+' aberto':'Em dia'}</div></div></div>`;}).join('');}
   renderHomeChart();
 }
 
@@ -873,13 +937,15 @@ function renderHomeChart(){
   const ctx=document.getElementById('homeChart');if(!ctx)return;
   const cats={};DB.sales.forEach(s=>s.items.forEach(it=>{const p=DB.products.find(x=>x.id===it.productId);const cat=p?p.category:'Outros';cats[cat]=(cats[cat]||0)+(Number(it.price)*Number(it.qty));}));
   const colors=['#ec4899','#f59e0b','#8b5cf6','#10b981','#3b82f6','#ef4444','#06b6d4'];
+  const textColor = getComputedStyle(document.body).getPropertyValue('--text-muted').trim() || '#9a95b0';
+  
   if(DB.charts.home)DB.charts.home.destroy();
-  DB.charts.home=new Chart(ctx,{type:'doughnut',data:{labels:Object.keys(cats),datasets:[{data:Object.values(cats),backgroundColor:colors,borderWidth:0,hoverOffset:8}]},options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{position:'bottom',labels:{color:'#5a5670',font:{size:10,family:'Poppins'},padding:12,usePointStyle:true,pointStyle:'circle'}},tooltip:{callbacks:{label:c=>' '+c.label+': '+fmtMoney(c.parsed)}}}}});
+  DB.charts.home=new Chart(ctx,{type:'doughnut',data:{labels:Object.keys(cats),datasets:[{data:Object.values(cats),backgroundColor:colors,borderWidth:0,hoverOffset:8}]},options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{position:'bottom',labels:{color:textColor,font:{size:10,family:'Poppins'},padding:12,usePointStyle:true,pointStyle:'circle'}},tooltip:{callbacks:{label:c=>' '+c.label+': '+fmtMoney(c.parsed)}}}}});
 }
 
-function renderClients(){const s=(document.getElementById('searchClient')?.value||'').toLowerCase();let l=DB.clients.filter(c=>!s||c.name.toLowerCase().includes(s)||c.phone.includes(s));const el=document.getElementById('clientsList');if(l.length===0){el.innerHTML=`<div class="empty-state"><i class="ri-user-heart-line"></i><p>Nenhuma cliente cadastrada.</p></div>`;return;}el.innerHTML=l.map(c=>{const cS=DB.sales.filter(s=>s.clientId===c.id);const b=cS.reduce((s,v)=>s+Number(v.total),0);const cI=DB.installments.filter(i=>i.clientId===c.id&&i.status!=='paid');const op=cI.reduce((s,v)=>s+(Number(v.value)-Number(v.paidValue||0)),0);return`<div class="list-item" onclick="viewClientDetail('${c.id}')"><div class="list-item-avatar">${c.image?`<img src="${c.image}">`:getInitials(c.name)}</div><div class="list-item-content"><div style="font-size:13px;font-weight:600;">${c.name}</div><div style="font-size:11px;color:#9a95b0;margin-top:3px;"><i class="ri-whatsapp-line" style="color:#22c55e;"></i> ${c.phone}</div></div><div style="text-align:right;"><div style="font-size:14px;font-weight:700;color:${op>0?'#d97706':'#059669'};">${op>0?fmtMoney(op):'Em dia'}</div><div style="font-size:10px;color:#9a95b0;margin-top:2px;">Total: ${fmtMoney(b)}</div></div></div>`;}).join('');}
+function renderClients(){const s=(document.getElementById('searchClient')?.value||'').toLowerCase();let l=DB.clients.filter(c=>!s||c.name.toLowerCase().includes(s)||c.phone.includes(s));const el=document.getElementById('clientsList');if(l.length===0){el.innerHTML=`<div class="empty-state"><i class="ri-user-heart-line"></i><p>Nenhuma cliente cadastrada.</p></div>`;return;}el.innerHTML=l.map(c=>{const cS=DB.sales.filter(s=>s.clientId===c.id);const b=cS.reduce((s,v)=>s+Number(v.total),0);const cI=DB.installments.filter(i=>i.clientId===c.id&&i.status!=='paid');const op=cI.reduce((s,v)=>s+(Number(v.value)-Number(v.paidValue||0)),0);return`<div class="list-item" onclick="viewClientDetail('${c.id}')"><div class="list-item-avatar">${c.image?`<img src="${c.image}">`:getInitials(c.name)}</div><div class="list-item-content"><div style="font-size:13px;font-weight:600;">${c.name}</div><div style="font-size:11px;color:var(--text-muted);margin-top:3px;"><i class="ri-whatsapp-line" style="color:#22c55e;"></i> ${c.phone}</div></div><div style="text-align:right;"><div style="font-size:14px;font-weight:700;color:${op>0?'#d97706':'#059669'};">${op>0?fmtMoney(op):'Em dia'}</div><div style="font-size:10px;color:var(--text-muted);margin-top:2px;">Total: ${fmtMoney(b)}</div></div></div>`;}).join('');}
 
-function viewClientDetail(id){DB.temp.currentClient=id;const c=DB.clients.find(x=>x.id===id);if(!c)return;const av=document.getElementById('detailAvatar');av.innerHTML=c.image?`<img src="${c.image}" style="width:100%;height:100%;object-fit:cover;">`:getInitials(c.name);document.getElementById('detailName').textContent=c.name;document.getElementById('detailPhone').textContent=c.phone||'Telefone não cadastrado';const cS=DB.sales.filter(s=>s.clientId===c.id);const b=cS.reduce((s,v)=>s+Number(v.total),0);const cI=DB.installments.filter(i=>i.clientId===c.id);const pd=cI.filter(i=>i.status==='paid').reduce((s,v)=>s+Number(v.paidValue||v.value),0);const vP=cS.filter(s=>s.paymentType==='vista').reduce((s,v)=>s+Number(v.total),0);const aP=pd+vP;const pnd=cI.filter(i=>i.status!=='paid');const op=pnd.reduce((s,v)=>s+(Number(v.value)-Number(v.paidValue||0)),0);const today=todayStr();const ovd=pnd.filter(i=>i.dueDate<today).reduce((s,v)=>s+(Number(v.value)-Number(v.paidValue||0)),0);document.getElementById('statBought').textContent=fmtMoney(b);document.getElementById('statPaid').textContent=fmtMoney(aP);document.getElementById('statOpen').textContent=fmtMoney(op);document.getElementById('statOverdue').textContent=fmtMoney(ovd);document.getElementById('detailWhatsapp').onclick=()=>{const ph=onlyNumbers(c.phone);if(ph)window.open(`https://wa.me/55${ph}`,'_blank');else toast('Telefone não cadastrado','error');};document.getElementById('detailEdit').onclick=()=>editClient(id);const iEl=document.getElementById('detailInstallments');if(cI.length===0){iEl.innerHTML=`<div class="empty-state"><i class="ri-file-list-line"></i><p>Sem parcelas.</p></div>`;}else{iEl.innerHTML=cI.sort((a,b)=>a.number-b.number).map(i=>{const isOvd=i.dueDate<today&&i.status!=='paid';let cls='status-pending',lb='PENDENTE';if(i.status==='paid'){cls='status-paid';lb='PAGA';}else if(isOvd){cls='status-overdue';lb='ATRASADA';}return`<div class="list-item"><div class="list-item-content"><div style="font-size:13px;font-weight:600;">Parcela ${i.number}</div><div style="font-size:11px;color:#9a95b0;margin-top:3px;">Vencimento: ${fmtDateBR(i.dueDate)}</div></div><div style="text-align:right;"><div style="font-size:14px;font-weight:700;color:#db2777;">${fmtMoney(i.value)}</div><span class="${cls}">${lb}</span>${i.status!=='paid'?`<div style="display:flex;gap:4px;margin-top:6px;justify-content:flex-end;"><button class="btn-icon-sm" style="background:#d1fae5;color:#059669;border:none;width:28px;height:28px;border-radius:6px;cursor:pointer;" onclick="event.stopPropagation();chargeWhatsApp('${i.id}')" title="WhatsApp"><i class="ri-whatsapp-line"></i></button><button class="btn-icon-sm" style="background:#d1fae5;color:#059669;border:none;width:28px;height:28px;border-radius:6px;cursor:pointer;" onclick="event.stopPropagation();openPaymentModal('${i.id}')" title="Pagar"><i class="ri-check-line"></i></button></div>`:''}</div></div>`;}).join('');}const sEl=document.getElementById('detailSales');if(cS.length===0){sEl.innerHTML=`<div class="empty-state"><i class="ri-shopping-cart-line"></i><p>Sem compras.</p></div>`;}else{sEl.innerHTML=[...cS].sort((a,b)=>b.date.localeCompare(a.date)).map(s=>{const it=s.items.map(i=>`${i.qty}x ${i.productName}`).join(', ');return`<div class="list-item"><div class="list-item-content"><div style="font-size:13px;font-weight:600;">${fmtDateBR(s.date)}</div><div style="font-size:11px;color:#9a95b0;margin-top:3px;">${it}</div></div><div style="text-align:right;"><div style="font-size:14px;font-weight:700;color:#db2777;">${fmtMoney(s.total)}</div></div></div>`;}).join('');}navigateTo('client-detail');}
+function viewClientDetail(id){DB.temp.currentClient=id;const c=DB.clients.find(x=>x.id===id);if(!c)return;const av=document.getElementById('detailAvatar');av.innerHTML=c.image?`<img src="${c.image}" style="width:100%;height:100%;object-fit:cover;">`:getInitials(c.name);document.getElementById('detailName').textContent=c.name;document.getElementById('detailPhone').textContent=c.phone||'Telefone não cadastrado';const cS=DB.sales.filter(s=>s.clientId===c.id);const b=cS.reduce((s,v)=>s+Number(v.total),0);const cI=DB.installments.filter(i=>i.clientId===c.id);const pd=cI.filter(i=>i.status==='paid').reduce((s,v)=>s+Number(v.paidValue||v.value),0);const vP=cS.filter(s=>s.paymentType==='vista').reduce((s,v)=>s+Number(v.total),0);const aP=pd+vP;const pnd=cI.filter(i=>i.status!=='paid');const op=pnd.reduce((s,v)=>s+(Number(v.value)-Number(v.paidValue||0)),0);const today=todayStr();const ovd=pnd.filter(i=>i.dueDate<today).reduce((s,v)=>s+(Number(v.value)-Number(v.paidValue||0)),0);document.getElementById('statBought').textContent=fmtMoney(b);document.getElementById('statPaid').textContent=fmtMoney(aP);document.getElementById('statOpen').textContent=fmtMoney(op);document.getElementById('statOverdue').textContent=fmtMoney(ovd);document.getElementById('detailWhatsapp').onclick=()=>{const ph=onlyNumbers(c.phone);if(ph)window.open(`https://wa.me/55${ph}`,'_blank');else toast('Telefone não cadastrado','error');};document.getElementById('detailEdit').onclick=()=>editClient(id);const iEl=document.getElementById('detailInstallments');if(cI.length===0){iEl.innerHTML=`<div class="empty-state"><i class="ri-file-list-line"></i><p>Sem parcelas.</p></div>`;}else{iEl.innerHTML=cI.sort((a,b)=>a.number-b.number).map(i=>{const isOvd=i.dueDate<today&&i.status!=='paid';let cls='status-pending',lb='PENDENTE';if(i.status==='paid'){cls='status-paid';lb='PAGA';}else if(isOvd){cls='status-overdue';lb='ATRASADA';}return`<div class="list-item"><div class="list-item-content"><div style="font-size:13px;font-weight:600;">Parcela ${i.number}</div><div style="font-size:11px;color:var(--text-muted);margin-top:3px;">Vencimento: ${fmtDateBR(i.dueDate)}</div></div><div style="text-align:right;"><div style="font-size:14px;font-weight:700;color:#db2777;">${fmtMoney(i.value)}</div><span class="${cls}">${lb}</span>${i.status!=='paid'?`<div style="display:flex;gap:4px;margin-top:6px;justify-content:flex-end;"><button class="btn-icon-sm" style="background:#d1fae5;color:#059669;border:none;width:28px;height:28px;border-radius:6px;cursor:pointer;" onclick="event.stopPropagation();chargeWhatsApp('${i.id}')" title="WhatsApp"><i class="ri-whatsapp-line"></i></button><button class="btn-icon-sm" style="background:#d1fae5;color:#059669;border:none;width:28px;height:28px;border-radius:6px;cursor:pointer;" onclick="event.stopPropagation();openPaymentModal('${i.id}')" title="Pagar"><i class="ri-check-line"></i></button></div>`:''}</div></div>`;}).join('');}const sEl=document.getElementById('detailSales');if(cS.length===0){sEl.innerHTML=`<div class="empty-state"><i class="ri-shopping-cart-line"></i><p>Sem compras.</p></div>`;}else{sEl.innerHTML=[...cS].sort((a,b)=>b.date.localeCompare(a.date)).map(s=>{const it=s.items.map(i=>`${i.qty}x ${i.productName}`).join(', ');return`<div class="list-item"><div class="list-item-content"><div style="font-size:13px;font-weight:600;">${fmtDateBR(s.date)}</div><div style="font-size:11px;color:var(--text-muted);margin-top:3px;">${it}</div></div><div style="text-align:right;"><div style="font-size:14px;font-weight:700;color:#db2777;">${fmtMoney(s.total)}</div></div></div>`;}).join('');}navigateTo('client-detail');}
 
 function editClient(id){const c=DB.clients.find(x=>x.id===id);if(!c)return;DB.temp.editingClientId=id;DB.temp.clientImage=c.image||null;document.getElementById('clientModalTitle').textContent='Editar Cliente';document.getElementById('clientName').value=c.name;document.getElementById('clientPhone').value=c.phone;document.getElementById('clientAddress').value=c.address||'';document.getElementById('clientImagePreview').innerHTML=c.image?`<img src="${c.image}" style="width:100%;height:100%;object-fit:cover;border-radius:16px;">`:'<i class="ri-camera-line"></i>';openModal('clientModal');}
 function handleClientImage(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{DB.temp.clientImage=ev.target.result;document.getElementById('clientImagePreview').innerHTML=`<img src="${ev.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:16px;">`;};r.readAsDataURL(f);}
@@ -919,9 +985,9 @@ function openPaymentModal(instId){const i=DB.installments.find(x=>x.id===instId)
 
 function confirmPayment(){const i=DB.installments.find(x=>x.id===DB.temp.currentPayment);if(!i)return;const amount=Number(document.getElementById('paymentAmount').value);const method=document.getElementById('paymentMethod').value;if(!amount||amount<=0){toast('Valor inválido!','error');return;}const totalPaid=Number(i.paidValue||0)+amount;if(totalPaid>=Number(i.value)-0.01){i.status='paid';i.paidValue=Number(i.value);i.paidDate=todayStr();i.paymentMethod=method;toast('Pagamento confirmado!','success');}else{i.paidValue=totalPaid;i.paymentMethod=method;if(!i.paidDate)i.paidDate=todayStr();toast(`Pagamento parcial de ${fmtMoney(amount)} registrado`,'warning');}const sale=DB.sales.find(s=>s.id===i.saleId);if(sale){const sInst=DB.installments.filter(x=>x.saleId===sale.id);sale.status=sInst.every(x=>x.status==='paid')?'paid':'parcial';}saveDB();closeModal('paymentModal');renderCurrentPage();}
 
-function renderReceivable(){const today=todayStr();const nw=new Date();nw.setDate(nw.getDate()+7);const nws=nw.toISOString().split('T')[0];let l=[];switch(DB.recTab){case'today':l=DB.installments.filter(i=>i.status!=='paid'&&i.dueDate===today);break;case'week':l=DB.installments.filter(i=>i.status!=='paid'&&i.dueDate>today&&i.dueDate<=nws);break;case'overdue':l=DB.installments.filter(i=>i.status!=='paid'&&i.dueDate<today);break;case'all':l=DB.installments.filter(i=>i.status!=='paid');break;case'paid':l=DB.installments.filter(i=>i.status==='paid');break;}l.sort((a,b)=>a.dueDate.localeCompare(b.dueDate));const pend=DB.installments.filter(i=>i.status!=='paid');const rT=pend.reduce((s,v)=>s+(Number(v.value)-Number(v.paidValue||0)),0);const ovd=pend.filter(i=>i.dueDate<today);const oT=ovd.reduce((s,v)=>s+(Number(v.value)-Number(v.paidValue||0)),0);document.getElementById('recTotal').textContent=fmtMoney(rT);document.getElementById('recOverdue').textContent=fmtMoney(oT);const el=document.getElementById('receivableList');if(l.length===0){el.innerHTML=`<div class="empty-state"><i class="ri-checkbox-circle-line"></i><p>Nenhuma parcela nesta aba.</p></div>`;return;}el.innerHTML=l.map(i=>{const c=DB.clients.find(x=>x.id===i.clientId);const isOvd=i.dueDate<today&&i.status!=='paid';const isTod=i.dueDate===today&&i.status!=='paid';let cls='status-pending',lb='PENDENTE';if(i.status==='paid'){cls='status-paid';lb='PAGA';}else if(isOvd){cls='status-overdue';lb='ATRASADA';}else if(isTod){cls='status-today';lb='HOJE';}return`<div class="list-item"><div class="list-item-avatar">${c?(c.image?`<img src="${c.image}">`:getInitials(c.name)):'?'}</div><div class="list-item-content"><div style="font-size:13px;font-weight:600;">${c?c.name:'Cliente'}</div><div style="font-size:11px;color:#9a95b0;margin-top:3px;">${fmtDateBR(i.dueDate)} • Parcela ${i.number}</div></div><div style="text-align:right;"><div style="font-size:14px;font-weight:700;color:#db2777;">${fmtMoney(i.value)}</div><span class="${cls}">${lb}</span>${i.status!=='paid'?`<div style="display:flex;gap:4px;margin-top:6px;justify-content:flex-end;"><button class="btn-icon-sm" style="background:#d1fae5;color:#059669;border:none;width:28px;height:28px;border-radius:6px;cursor:pointer;" onclick="event.stopPropagation();chargeWhatsApp('${i.id}')"><i class="ri-whatsapp-line"></i></button><button class="btn-icon-sm" style="background:#d1fae5;color:#059669;border:none;width:28px;height:28px;border-radius:6px;cursor:pointer;" onclick="event.stopPropagation();openPaymentModal('${i.id}')"><i class="ri-check-line"></i></button></div>`:''}</div></div>`;}).join('');}
+function renderReceivable(){const today=todayStr();const nw=new Date();nw.setDate(nw.getDate()+7);const nws=nw.toISOString().split('T')[0];let l=[];switch(DB.recTab){case'today':l=DB.installments.filter(i=>i.status!=='paid'&&i.dueDate===today);break;case'week':l=DB.installments.filter(i=>i.status!=='paid'&&i.dueDate>today&&i.dueDate<=nws);break;case'overdue':l=DB.installments.filter(i=>i.status!=='paid'&&i.dueDate<today);break;case'all':l=DB.installments.filter(i=>i.status!=='paid');break;case'paid':l=DB.installments.filter(i=>i.status==='paid');break;}l.sort((a,b)=>a.dueDate.localeCompare(b.dueDate));const pend=DB.installments.filter(i=>i.status!=='paid');const rT=pend.reduce((s,v)=>s+(Number(v.value)-Number(v.paidValue||0)),0);const ovd=pend.filter(i=>i.dueDate<today);const oT=ovd.reduce((s,v)=>s+(Number(v.value)-Number(v.paidValue||0)),0);document.getElementById('recTotal').textContent=fmtMoney(rT);document.getElementById('recOverdue').textContent=fmtMoney(oT);const el=document.getElementById('receivableList');if(l.length===0){el.innerHTML=`<div class="empty-state"><i class="ri-checkbox-circle-line"></i><p>Nenhuma parcela nesta aba.</p></div>`;return;}el.innerHTML=l.map(i=>{const c=DB.clients.find(x=>x.id===i.clientId);const isOvd=i.dueDate<today&&i.status!=='paid';const isTod=i.dueDate===today&&i.status!=='paid';let cls='status-pending',lb='PENDENTE';if(i.status==='paid'){cls='status-paid';lb='PAGA';}else if(isOvd){cls='status-overdue';lb='ATRASADA';}else if(isTod){cls='status-today';lb='HOJE';}return`<div class="list-item"><div class="list-item-avatar">${c?(c.image?`<img src="${c.image}">`:getInitials(c.name)):'?'}</div><div class="list-item-content"><div style="font-size:13px;font-weight:600;">${c?c.name:'Cliente'}</div><div style="font-size:11px;color:var(--text-muted);margin-top:3px;">${fmtDateBR(i.dueDate)} • Parcela ${i.number}</div></div><div style="text-align:right;"><div style="font-size:14px;font-weight:700;color:#db2777;">${fmtMoney(i.value)}</div><span class="${cls}">${lb}</span>${i.status!=='paid'?`<div style="display:flex;gap:4px;margin-top:6px;justify-content:flex-end;"><button class="btn-icon-sm" style="background:#d1fae5;color:#059669;border:none;width:28px;height:28px;border-radius:6px;cursor:pointer;" onclick="event.stopPropagation();chargeWhatsApp('${i.id}')"><i class="ri-whatsapp-line"></i></button><button class="btn-icon-sm" style="background:#d1fae5;color:#059669;border:none;width:28px;height:28px;border-radius:6px;cursor:pointer;" onclick="event.stopPropagation();openPaymentModal('${i.id}')"><i class="ri-check-line"></i></button></div>`:''}</div></div>`;}).join('');}
 
-function renderSales(){const el=document.getElementById('salesList');if(DB.sales.length===0){el.innerHTML=`<div class="empty-state"><i class="ri-shopping-cart-line"></i><p>Nenhuma venda registrada.</p></div>`;return;}el.innerHTML=[...DB.sales].sort((a,b)=>b.date.localeCompare(a.date)).map(s=>{const c=DB.clients.find(x=>x.id===s.clientId);const it=s.items.map(i=>`${i.qty}x ${i.productName}`).join(', ');return`<div class="list-item"><div class="list-item-avatar">${c?(c.image?`<img src="${c.image}">`:getInitials(c.name)):'?'}</div><div class="list-item-content"><div style="font-size:13px;font-weight:600;">${c?c.name:'Cliente'}</div><div style="font-size:11px;color:#9a95b0;margin-top:3px;">${it}</div><div style="font-size:10px;color:#9a95b0;margin-top:2px;">${fmtDateBR(s.date)}</div></div><div style="text-align:right;"><div style="font-size:14px;font-weight:700;color:#db2777;">${fmtMoney(s.total)}</div></div></div>`;}).join('');}
+function renderSales(){const el=document.getElementById('salesList');if(DB.sales.length===0){el.innerHTML=`<div class="empty-state"><i class="ri-shopping-cart-line"></i><p>Nenhuma venda registrada.</p></div>`;return;}el.innerHTML=[...DB.sales].sort((a,b)=>b.date.localeCompare(a.date)).map(s=>{const c=DB.clients.find(x=>x.id===s.clientId);const it=s.items.map(i=>`${i.qty}x ${i.productName}`).join(', ');return`<div class="list-item"><div class="list-item-avatar">${c?(c.image?`<img src="${c.image}">`:getInitials(c.name)):'?'}</div><div class="list-item-content"><div style="font-size:13px;font-weight:600;">${c?c.name:'Cliente'}</div><div style="font-size:11px;color:var(--text-muted);margin-top:3px;">${it}</div><div style="font-size:10px;color:var(--text-muted);margin-top:2px;">${fmtDateBR(s.date)}</div></div><div style="text-align:right;"><div style="font-size:14px;font-weight:700;color:#db2777;">${fmtMoney(s.total)}</div></div></div>`;}).join('');}
 
 function openQuickSale(){
   if(DB.clients.length===0){toast('Cadastre uma cliente primeiro!','error');return;}
@@ -987,8 +1053,8 @@ function updateInstallments(){
   const firstDue=document.getElementById('saleFirstDue').value;
   const rest=Math.max(0,total-entry);
   const val=count>0?rest/count:0;
-  let html=`<div class="installment-preview"><h4 style="font-size:11px;color:#9a95b0;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;font-weight:600;">Prévia</h4><div style="font-size:11px;color:#9a95b0;margin-bottom:6px;">Restante: <strong style="color:#db2777;">${fmtMoney(rest)}</strong> • ${count}x de ${fmtMoney(val)}</div>`;
-  if(firstDue){for(let i=0;i<count;i++){const d=new Date(firstDue);d.setMonth(d.getMonth()+i);html+=`<div class="installment-item"><span style="font-weight:700;color:#db2777;">${i+1}ª</span><span style="color:#9a95b0;font-size:11px;">${fmtDateBR(d.toISOString().split('T')[0])}</span><span style="font-weight:700;">${fmtMoney(val)}</span></div>`;}}
+  let html=`<div class="installment-preview"><h4 style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;font-weight:600;">Prévia</h4><div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">Restante: <strong style="color:var(--nav-btn-active);">${fmtMoney(rest)}</strong> • ${count}x de ${fmtMoney(val)}</div>`;
+  if(firstDue){for(let i=0;i<count;i++){const d=new Date(firstDue);d.setMonth(d.getMonth()+i);html+=`<div class="installment-item"><span style="font-weight:700;color:var(--nav-btn-active);">${i+1}ª</span><span style="color:var(--text-muted);font-size:11px;">${fmtDateBR(d.toISOString().split('T')[0])}</span><span style="font-weight:700;">${fmtMoney(val)}</span></div>`;}}
   html+='</div>';
   document.getElementById('installmentPreview').innerHTML=html;
 }
@@ -1039,7 +1105,7 @@ function renderProducts(){
   el.innerHTML=l.map(p=>{
     let cls='status-low',lb='OK';
     if(p.stock===0){cls='status-out';lb='ESGOTADO';}else if(p.stock<=5){cls='status-low';lb='BAIXO';}
-    return`<div class="list-item"><div style="width:46px;height:46px;border-radius:14px;background:linear-gradient(135deg,#fdf2f8,#ede9fe);display:flex;align-items:center;justify-content:center;font-size:20px;color:#db2777;flex-shrink:0;"><i class="ri-gift-line"></i></div><div class="list-item-content"><div style="font-size:13px;font-weight:600;">${p.name}</div><div style="margin-top:3px;"><span class="${cc[p.category]||'cat-pill purple'}">${p.category}</span><span style="margin-left:6px;font-size:11px;color:#9a95b0;">Estoque: <strong>${p.stock}</strong></span></div></div><div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:6px;"><div style="font-size:14px;font-weight:700;color:#db2777;">${fmtMoney(p.price)}</div><span class="${cls}">${lb}</span><button class="btn-action-outline" onclick="editProduct('${p.id}')">Editar</button></div></div>`;
+    return`<div class="list-item"><div style="width:46px;height:46px;border-radius:14px;background:linear-gradient(135deg,#fdf2f8,#ede9fe);display:flex;align-items:center;justify-content:center;font-size:20px;color:#db2777;flex-shrink:0;"><i class="ri-gift-line"></i></div><div class="list-item-content"><div style="font-size:13px;font-weight:600;">${p.name}</div><div style="margin-top:3px;"><span class="${cc[p.category]||'cat-pill purple'}">${p.category}</span><span style="margin-left:6px;font-size:11px;color:var(--text-muted);">Estoque: <strong>${p.stock}</strong></span></div></div><div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:6px;"><div style="font-size:14px;font-weight:700;color:#db2777;">${fmtMoney(p.price)}</div><span class="${cls}">${lb}</span><button class="btn-action-outline" onclick="editProduct('${p.id}')">Editar</button></div></div>`;
   }).join('');
 }
 
@@ -1088,7 +1154,17 @@ function saveExpense(){const d=document.getElementById('expenseDesc').value.trim
 function exportData(){const data={profile:DB.profile,clients:DB.clients,products:DB.products,sales:DB.sales,installments:DB.installments,expenses:DB.expenses,incoming:DB.incoming};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`backup-claudia-${todayStr()}.json`;a.click();URL.revokeObjectURL(url);toast('Backup exportado!','success');}
 function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);DB.profile={...DB.profile,...(d.profile||{})};DB.clients=d.clients||[];DB.products=d.products||[];DB.sales=d.sales||[];DB.installments=d.installments||[];DB.expenses=d.expenses||[];DB.incoming=d.incoming||[];saveDB();applyProfile();toast('Dados importados!','success');renderCurrentPage();}catch(err){toast('Arquivo inválido!','error');}};r.readAsText(f);e.target.value='';}
 
-function renderReports(){const now=new Date();let st,en;switch(DB.reportPeriod){case'month':st=new Date(now.getFullYear(),now.getMonth(),1).toISOString().split('T')[0];en=new Date(now.getFullYear(),now.getMonth()+1,0).toISOString().split('T')[0];break;case'year':st=new Date(now.getFullYear(),0,1).toISOString().split('T')[0];en=new Date(now.getFullYear(),11,31).toISOString().split('T')[0];break;default:st='1900-01-01';en='2999-12-31';}const pS=DB.sales.filter(s=>s.date>=st&&s.date<=en);const sold=pS.reduce((s,v)=>s+Number(v.total),0);const pI=DB.installments.filter(i=>i.status==='paid'&&i.paidDate>=st&&i.paidDate<=en);const rI=pI.reduce((s,v)=>s+Number(v.paidValue||v.value),0);const rV=pS.filter(s=>s.paymentType==='vista').reduce((s,v)=>s+Number(v.total),0);const rec=rI+rV;const pE=DB.expenses.filter(e=>e.date>=st&&e.date<=en);const exp=pE.reduce((s,v)=>s+Number(v.value),0);document.getElementById('repSold').textContent=fmtMoney(sold);document.getElementById('repReceived').textContent=fmtMoney(rec);document.getElementById('repExp').textContent=fmtMoney(exp);document.getElementById('repProfit').textContent=fmtMoney(rec-exp);const cats={};pS.forEach(s=>s.items.forEach(it=>{const p=DB.products.find(x=>x.id===it.productId);const cat=p?p.category:'Outros';cats[cat]=(cats[cat]||0)+(Number(it.price)*Number(it.qty));}));const ctx=document.getElementById('reportChart');if(ctx){const colors=['#ec4899','#f59e0b','#8b5cf6','#10b981','#3b82f6','#ef4444'];if(DB.charts.report)DB.charts.report.destroy();DB.charts.report=new Chart(ctx,{type:'bar',data:{labels:Object.keys(cats),datasets:[{label:'Vendas',data:Object.values(cats),backgroundColor:colors,borderRadius:8}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+fmtMoney(c.parsed.y)}}},scales:{x:{ticks:{color:'#9a95b0',font:{size:9}},grid:{display:false}},y:{ticks:{color:'#9a95b0',font:{size:9},callback:v=>'R$'+v},grid:{color:'rgba(154,149,176,.1)'}}}}});}}
+function renderReports(){
+  const now=new Date();let st,en;switch(DB.reportPeriod){case'month':st=new Date(now.getFullYear(),now.getMonth(),1).toISOString().split('T')[0];en=new Date(now.getFullYear(),now.getMonth()+1,0).toISOString().split('T')[0];break;case'year':st=new Date(now.getFullYear(),0,1).toISOString().split('T')[0];en=new Date(now.getFullYear(),11,31).toISOString().split('T')[0];break;default:st='1900-01-01';en='2999-12-31';}const pS=DB.sales.filter(s=>s.date>=st&&s.date<=en);const sold=pS.reduce((s,v)=>s+Number(v.total),0);const pI=DB.installments.filter(i=>i.status==='paid'&&i.paidDate>=st&&i.paidDate<=en);const rI=pI.reduce((s,v)=>s+Number(v.paidValue||v.value),0);const rV=pS.filter(s=>s.paymentType==='vista').reduce((s,v)=>s+Number(v.total),0);const rec=rI+rV;const pE=DB.expenses.filter(e=>e.date>=st&&e.date<=en);const exp=pE.reduce((s,v)=>s+Number(v.value),0);document.getElementById('repSold').textContent=fmtMoney(sold);document.getElementById('repReceived').textContent=fmtMoney(rec);document.getElementById('repExp').textContent=fmtMoney(exp);document.getElementById('repProfit').textContent=fmtMoney(rec-exp);const cats={};pS.forEach(s=>s.items.forEach(it=>{const p=DB.products.find(x=>x.id===it.productId);const cat=p?p.category:'Outros';cats[cat]=(cats[cat]||0)+(Number(it.price)*Number(it.qty));}));const ctx=document.getElementById('reportChart');
+  
+  if(ctx){
+    const colors=['#ec4899','#f59e0b','#8b5cf6','#10b981','#3b82f6','#ef4444'];
+    const textColor = getComputedStyle(document.body).getPropertyValue('--text-muted').trim() || '#9a95b0';
+    if(DB.charts.report)DB.charts.report.destroy();
+    
+    DB.charts.report=new Chart(ctx,{type:'bar',data:{labels:Object.keys(cats),datasets:[{label:'Vendas',data:Object.values(cats),backgroundColor:colors,borderRadius:8}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+fmtMoney(c.parsed.y)}}},scales:{x:{ticks:{color:textColor,font:{size:9}},grid:{display:false}},y:{ticks:{color:textColor,font:{size:9},callback:v=>'R$'+v},grid:{color:'rgba(154,149,176,.1)'}}}}});
+  }
+}
 
 function setReportPeriod(p){DB.reportPeriod=p;renderReports();}
 
@@ -1197,16 +1273,16 @@ function renderIncoming(){
     } else {
       statusBadge=`<span class="status-pending">A CAMINHO</span>`;
     }
-    const expectedTxt=it.expectedDate?`<div style="font-size:11px;color:#9a95b0;margin-top:3px;"><i class="ri-calendar-line"></i> Previsão: ${fmtDateBR(it.expectedDate)}</div>`:'';
-    const purchaseTxt=it.purchaseDate?`<div style="font-size:10px;color:#9a95b0;margin-top:2px;">Comprado em: ${fmtDateBR(it.purchaseDate)}</div>`:'';
+    const expectedTxt=it.expectedDate?`<div style="font-size:11px;color:var(--text-muted);margin-top:3px;"><i class="ri-calendar-line"></i> Previsão: ${fmtDateBR(it.expectedDate)}</div>`:'';
+    const purchaseTxt=it.purchaseDate?`<div style="font-size:10px;color:var(--text-muted);margin-top:2px;">Comprado em: ${fmtDateBR(it.purchaseDate)}</div>`:'';
     const receivedTxt=isReceived&&it.receivedDate?`<div style="font-size:11px;color:#059669;margin-top:3px;"><i class="ri-checkbox-circle-line"></i> Recebido em: ${fmtDateBR(it.receivedDate)}</div>`:'';
-    const noteTxt=it.note?`<div style="font-size:10px;color:#9a95b0;margin-top:2px;font-style:italic;"><i class="ri-store-line"></i> ${it.note}</div>`:'';
+    const noteTxt=it.note?`<div style="font-size:10px;color:var(--text-muted);margin-top:2px;font-style:italic;"><i class="ri-store-line"></i> ${it.note}</div>`:'';
     const valueTxt=it.value>0?`<div style="font-size:12px;font-weight:700;color:#4f46e5;margin-top:2px;">${fmtMoney(it.value)}</div>`:'';
     return`<div class="list-item" style="align-items:flex-start;">
       <div style="width:46px;height:46px;border-radius:14px;background:${isReceived?'linear-gradient(135deg,#d1fae5,#6ee7b7)':'linear-gradient(135deg,#e0e7ff,#c7d2fe)'};display:flex;align-items:center;justify-content:center;font-size:22px;color:${isReceived?'#059669':'#4f46e5'};flex-shrink:0;"><i class="ri-truck-line"></i></div>
       <div class="list-item-content">
         <div style="font-size:13px;font-weight:600;">${it.desc}</div>
-        <div style="font-size:11px;color:#9a95b0;margin-top:2px;">Qtd: <strong>${it.qty}</strong> ${valueTxt}</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Qtd: <strong>${it.qty}</strong> ${valueTxt}</div>
         ${purchaseTxt}
         ${expectedTxt}
         ${receivedTxt}
@@ -1224,7 +1300,7 @@ function renderIncoming(){
   }).join('');
 }
 
-function initApp(){loadDB();renderHome();updateAlertBadge();console.log('%cCláudia Collection Premium','color:#ec4899;font-size:18px;font-weight:bold;');}
+function initApp(){loadDB();renderHome();updateAlertBadge();console.log('%cCláudia Collection Premium','color:#a97142;font-size:18px;font-weight:bold;');}
 </script>
 </body>
 </html>

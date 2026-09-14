@@ -1,0 +1,83 @@
+<resources>
+    <string name="app_name">FinanceApp</string>
+    <string name="app_description">Sistema Financeiro Completo</string>
+
+    <!-- Navegação -->
+    <string name="nav_home">Início</string>
+    <string name="nav_transactions">Transações</string>
+    <string name="nav_reports">Relatórios</string>
+    <string name="nav_settings">Configurações</string>
+
+    <!-- Home -->
+    <string name="total_balance">Saldo Total</string>
+    <string name="monthly_income">Receitas do Mês</string>
+    <string name="monthly_expense">Despesas do Mês</string>
+    <string name="recent_transactions">Transações Recentes</string>
+    <string name="add_transaction">Adicionar Transação</string>
+    <string name="see_all">Ver Todas</string>
+
+    <!-- Transação -->
+    <string name="income">Receita</string>
+    <string name="expense">Despesa</string>
+    <string name="transaction_title">Título</string>
+    <string name="transaction_amount">Valor</string>
+    <string name="transaction_category">Categoria</string>
+    <string name="transaction_date">Data</string>
+    <string name="transaction_description">Descrição</string>
+    <string name="save">Salvar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="delete">Excluir</string>
+    <string name="edit">Editar</string>
+
+    <!-- Categorias -->
+    <string name="cat_salary">Salário</string>
+    <string name="cat_freelance">Freelance</string>
+    <string name="cat_investment">Investimentos</string>
+    <string name="cat_other_income">Outros</string>
+    <string name="cat_food">Alimentação</string>
+    <string name="cat_transport">Transporte</string>
+    <string name="cat_housing">Moradia</string>
+    <string name="cat_health">Saúde</string>
+    <string name="cat_education">Educação</string>
+    <string name="cat_entertainment">Lazer</string>
+    <string name="cat_shopping">Compras</string>
+    <string name="cat_bills">Contas</string>
+    <string name="cat_other_expense">Outros</string>
+
+    <!-- Relatórios -->
+    <string name="monthly_report">Relatório Mensal</string>
+    <string name="expense_by_category">Despesas por Categoria</string>
+    <string name="balance_evolution">Evolução do Saldo</string>
+
+    <!-- Configurações -->
+    <string name="notifications">Notificações</string>
+    <string name="daily_reminder">Lembrete Diário</string>
+    <string name="daily_reminder_desc">Notificação diária para registrar gastos</string>
+    <string name="bill_reminder">Lembrete de Contas</string>
+    <string name="bill_reminder_desc">Alertar sobre contas a pagar</string>
+    <string name="notification_sound">Som de Notificação</string>
+    <string name="persistent_service">Serviço Persistente</string>
+    <string name="persistent_service_desc">Mantém notificações ativas em segundo plano</string>
+    <string name="reminder_time">Horário do Lembrete</string>
+    <string name="about">Sobre</string>
+    <string name="version">Versão</string>
+
+    <!-- Notificações -->
+    <string name="notification_channel_reminders">Lembretes</string>
+    <string name="notification_channel_reminders_desc">Lembretes diários e alertas</string>
+    <string name="notification_channel_service">Serviço em Segundo Plano</string>
+    <string name="notification_channel_service_desc">Serviço de monitoramento contínuo</string>
+    <string name="notification_channel_alerts">Alertas Financeiros</string>
+    <string name="notification_channel_alerts_desc">Alertas importantes sobre suas finanças</string>
+
+    <string name="daily_reminder_title">Não esqueça de registrar seus gastos!</string>
+    <string name="daily_reminder_text">Mantenha suas finanças organizadas. Registre as transações de hoje.</string>
+    <string name="service_running_title">FinanceApp Ativo</string>
+    <string name="service_running_text">Monitorando suas finanças em segundo plano</string>
+    <string name="budget_alert_title">Alerta de Orçamento</string>
+    <string name="budget_alert_text">Você está próximo do limite de gastos deste mês!</string>
+
+    <!-- Formatação -->
+    <string name="currency_format">R$ %.2f</string>
+    <string name="date_format">dd/MM/yyyy</string>
+</resources>

@@ -1,6 +1,6 @@
 {
-  "appId": "com.gestoriptv.claudia",
-  "appName": "Claudia",
+  "appId": "com.gestoriptv.claudiacollection",
+  "appName": "Claudia Collection",
   "webDir": "www",
   "server": {
     "androidScheme": "https"

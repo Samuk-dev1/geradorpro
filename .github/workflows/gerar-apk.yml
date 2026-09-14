@@ -114,6 +114,10 @@ jobs:
 
         # Inicializa Capacitor
         npx cap init "$APP_NAME" com.gestoriptv.$APP_ID --web-dir www
+        
+        # 🔧 CORREÇÃO APLICADA AQUI: Remove a pasta android caso já exista para evitar conflito
+        rm -rf android 
+        
         npx cap add android
 
         # Aplica nome personalizado no Android

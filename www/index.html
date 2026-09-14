@@ -615,7 +615,7 @@ window.onload = async () => {
   await renderizarPlanosSelect();
   await renderizarPlanos();
   await renderizarClientes();
-  solicitarPermissaoNotif();
+  solicitarPermissaoNotif(); // Chama a permissão logo na abertura
 };
 
 function navegarPara(telaId, el) {
@@ -1339,26 +1339,27 @@ async function salvarNotifConfig(){
 }
 
 async function solicitarPermissaoNotif() {
-  if ('Notification' in window) { 
-    const p = await Notification.requestPermission(); 
-    if(p === 'granted') mostrarToast('Notificações Web ativadas!'); 
-  }
-  
+  // Prioridade total para o Capacitor no Android
   if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications) { 
-    const LocalNotifications = window.Capacitor.Plugins.LocalNotifications;
-    await LocalNotifications.requestPermissions(); 
-    
     try {
+      const LocalNotifications = window.Capacitor.Plugins.LocalNotifications;
+      let permStatus = await LocalNotifications.checkPermissions();
+      if (permStatus.display !== 'granted') {
+         await LocalNotifications.requestPermissions(); 
+      }
       await LocalNotifications.createChannel({ 
         id: 'alertas_gestor', 
         name: 'Alertas do Gestor', 
-        description: 'Notificações de vencimento de clientes',
+        description: 'Notificações de vencimento',
         importance: 5, 
         visibility: 1, 
         vibration: true
       });
-      mostrarToast('✅ Alertas Mobile ativados no Android!'); 
-    } catch(e) { console.log(e); }
+      console.log("Notificações nativas ativadas.");
+    } catch(e) { console.error("Erro ao pedir permissão nativa:", e); }
+  } else if ('Notification' in window) { 
+    // Fallback Web
+    await Notification.requestPermission(); 
   }
 }
 
@@ -1462,51 +1463,39 @@ async function exportarBackup(){
   const str = JSON.stringify(dados, null, 2);
   const name = `Backup_IPTV_${new Date().toISOString().slice(0,10)}.json`;
   
-  // MODO APLICATIVO NATIVO (Capacitor no Android)
+  // MODO NATIVO ANDROID: Salva em CACHE e abre a janela do sistema para o usuário ESCOLHER onde salvar
   if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Filesystem) {
     try {
       const Filesystem = window.Capacitor.Plugins.Filesystem;
       const Share = window.Capacitor.Plugins.Share;
       
-      // 1. Salva na pasta pública de Documentos do celular
+      // O Android 11+ bloqueia salvar direto na pasta DOCUMENTS sem permissão especial.
+      // Salvar no CACHE e depois compartilhar é 100% garantido de funcionar.
       const result = await Filesystem.writeFile({
         path: name,
         data: str,
-        directory: 'DOCUMENTS', // Fica acessível no gerenciador de arquivos
+        directory: 'CACHE',
         encoding: 'utf8'
       });
       
-      // 2. Tenta abrir a janela de compartilhamento para o usuário mandar pro WhatsApp ou Drive
       if (Share) {
         await Share.share({
-          title: 'Backup IPTV',
-          text: 'Backup do Gestor IPTV',
+          title: 'Salvar Backup IPTV',
+          text: 'Selecione "Salvar no dispositivo", "Google Drive" ou mande no WhatsApp.',
           url: result.uri,
-          dialogTitle: 'Salvar arquivo de Backup'
+          dialogTitle: 'Escolha onde salvar o backup'
         });
-        mostrarToast('✅ Backup pronto para salvar ou enviar!');
-      } else {
-        mostrarToast('✅ Backup salvo na pasta Documentos!');
+        return;
       }
-      return;
     } catch(e) {
-      console.error(e);
-      mostrarToast('Erro nativo, tentando modo web...');
+      console.error("Erro no Filesystem/Share nativo:", e);
     }
   }
 
-  // MODO NAVEGADOR (Fallback)
-  if (navigator.share) {
-    try {
-      const file = new File([str], name, {type: "application/json"});
-      await navigator.share({ title: 'Backup IPTV', files: [file] });
-      return mostrarToast('✅ Backup compartilhado!');
-    } catch(e) {}
-  }
-  
+  // FALLBACK NAVEGADOR
   const b = new Blob([str], {type:'application/json'});
   const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = name; a.click();
-  mostrarToast('✅ Backup baixado (Verifique os downloads)!');
+  mostrarToast('✅ Backup baixado (Verifique a pasta Downloads)!');
 }
 
 async function importarBackup(e){

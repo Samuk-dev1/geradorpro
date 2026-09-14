@@ -59,23 +59,12 @@ h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
   background:linear-gradient(135deg,#be185d 0%,#db2777 25%,#c026d3 55%,#9333ea 85%,#7c3aed 100%);
   background-size:200% 200%;
   animation:headerGlow 6s ease infinite;
-  padding:20px 20px 30px;
+  padding:20px 20px 50px;
   border-radius:0 0 36px 36px;
   color:white;
   position:relative;
   overflow:hidden;
   box-shadow:0 10px 50px rgba(190,24,93,0.4);
-}
-
-.balance-card {
-  background:white;
-  border-radius:24px;
-  padding:22px;
-  margin:-18px 16px 20px;
-  position:relative;
-  z-index:2;
-  border:1px solid rgba(236,72,153,0.1);
-  box-shadow:0 20px 60px rgba(190,24,93,0.18);
 }
 
 .page { display:none; animation: fadeIn .4s ease; }
@@ -126,7 +115,7 @@ h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
 
 .list-item-content { flex: 1; }
 
-/* BOTTOM NAV FIXA */
+/* BOTTOM NAV FIXA - AGORA COM 6 ABAS */
 .bottom-nav {
   position: fixed;
   bottom: 0;
@@ -139,21 +128,22 @@ h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
   -webkit-backdrop-filter: blur(20px);
   border-top:1px solid #fce7f3;
   display:grid;
-  grid-template-columns:repeat(5,1fr);
+  grid-template-columns:repeat(6,1fr);
   padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
   z-index: 1000;
   box-shadow:0 -8px 40px rgba(190,24,93,0.1);
 }
 .nav-btn {
-  display:flex; flex-direction:column; align-items:center; gap:3px;
-  padding:6px; cursor:pointer; background:none; border:none;
+  display:flex; flex-direction:column; align-items:center; gap:2px;
+  padding:5px 2px; cursor:pointer; background:none; border:none;
   color:#9a95b0; font-family:'Poppins',sans-serif;
   transition:all .3s;
 }
 .nav-btn.active { color:#db2777; }
 .nav-btn.active span { font-weight:700; }
-.nav-btn i { font-size:22px; }
-.nav-btn span { font-size:9px; font-weight:600; }
+.nav-btn i { font-size:20px; }
+.nav-btn span { font-size:8px; font-weight:600; text-align:center; line-height:1.1; }
+.nav-btn.incoming.active { color:#4f46e5; }
 
 /* FAB */
 .fab {
@@ -353,7 +343,6 @@ h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
 }
 .modal-body { padding:22px; }
 
-/* Botões rápidos em listas */
 .btn-action-outline {
   background: white; border: 1px solid #fce7f3; padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; cursor: pointer; color: #db2777; transition: all .3s; box-shadow: 0 2px 5px rgba(190,24,93,0.05);
 }
@@ -418,25 +407,22 @@ h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
     </div>
   </header>
 
-  <!-- BALANCE CARD -->
-  <div class="balance-card" id="balanceCard">
-    <div style="font-size:11px;color:#9a95b0;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin-bottom:6px;">Saldo do mês</div>
-    <div id="balanceValue" style="font-size:32px;font-weight:800;background:linear-gradient(135deg,#be185d,#db2777,#c026d3,#9333ea);background-size:200% 200%;animation:gradientShift 4s ease infinite;-webkit-background-clip:text;background-clip:text;color:transparent;">R$ 0,00</div>
-    <div style="font-size:11px;color:#9a95b0;margin-top:4px;">Recebido - Despesas</div>
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:18px;padding-top:18px;border-top:1px solid #fce7f3;">
-      <div onclick="openQuickSale()" style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:10px 4px;border-radius:16px;transition:all .3s;animation:floatBtn 5s ease-in-out infinite;">
+  <!-- AÇÕES RÁPIDAS -->
+  <div style="padding: 18px 16px 6px;">
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;background:white;border-radius:22px;padding:14px 8px;box-shadow:0 8px 30px rgba(190,24,93,0.1);border:1px solid rgba(236,72,153,0.08);margin-top:-30px;position:relative;z-index:2;">
+      <div onclick="openQuickSale()" style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:8px 4px;border-radius:16px;transition:all .3s;animation:floatBtn 5s ease-in-out infinite;">
         <div style="width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;background:linear-gradient(135deg,#fce7f3,#fbcfe8);color:#db2777;box-shadow:0 4px 15px rgba(219,39,119,0.2);"><i class="ri-shopping-cart-line"></i></div>
         <span style="font-size:10px;color:#5a5670;font-weight:600;">Nova Venda</span>
       </div>
-      <div onclick="openQuickClient()" style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:10px 4px;border-radius:16px;transition:all .3s;animation:floatBtn 5.5s ease-in-out infinite 0.2s;">
+      <div onclick="openQuickClient()" style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:8px 4px;border-radius:16px;transition:all .3s;animation:floatBtn 5.5s ease-in-out infinite 0.2s;">
         <div style="width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;background:linear-gradient(135deg,#d1fae5,#a7f3d0);color:#059669;box-shadow:0 4px 15px rgba(5,150,105,0.2);"><i class="ri-user-add-line"></i></div>
         <span style="font-size:10px;color:#5a5670;font-weight:600;">+ Cliente</span>
       </div>
-      <div onclick="navigateTo('receivable')" style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:10px 4px;border-radius:16px;transition:all .3s;animation:floatBtn 6s ease-in-out infinite 0.4s;">
+      <div onclick="navigateTo('receivable')" style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:8px 4px;border-radius:16px;transition:all .3s;animation:floatBtn 6s ease-in-out infinite 0.4s;">
         <div style="width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;background:linear-gradient(135deg,#fef3c7,#fde68a);color:#d97706;box-shadow:0 4px 15px rgba(217,119,6,0.2);"><i class="ri-money-dollar-circle-line"></i></div>
         <span style="font-size:10px;color:#5a5670;font-weight:600;">A Receber</span>
       </div>
-      <div onclick="openQuickExpense()" style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:10px 4px;border-radius:16px;transition:all .3s;animation:floatBtn 6.5s ease-in-out infinite 0.6s;">
+      <div onclick="openQuickExpense()" style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:8px 4px;border-radius:16px;transition:all .3s;animation:floatBtn 6.5s ease-in-out infinite 0.6s;">
         <div style="width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;background:linear-gradient(135deg,#ede9fe,#ddd6fe);color:#7c3aed;box-shadow:0 4px 15px rgba(124,58,237,0.2);"><i class="ri-bill-line"></i></div>
         <span style="font-size:10px;color:#5a5670;font-weight:600;">Despesa</span>
       </div>
@@ -527,6 +513,20 @@ h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
       <div class="list-card" id="productsList"><div class="empty-state"><i class="ri-gift-line"></i><p>Nenhum produto cadastrado.</p></div></div>
     </div>
 
+    <!-- MERCADORIAS A RECEBER (AGORA COMO PÁGINA PRINCIPAL) -->
+    <div class="page" id="page-incoming">
+      <div style="display:flex;align-items:center;gap:10px;padding:16px 0 4px;"><div style="font-size:20px;font-weight:700;font-family:'Playfair Display',serif;flex:1;">Mercadorias a Receber</div><button onclick="openIncomingModal()" style="background:linear-gradient(135deg,#4f46e5,#6366f1);color:white;border:none;width:40px;height:40px;border-radius:12px;font-size:20px;cursor:pointer;box-shadow:0 4px 15px rgba(79,70,229,0.3);"><i class="ri-add-line"></i></button></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;">
+        <div style="background:white;border-radius:18px;padding:14px;box-shadow:0 8px 30px rgba(79,70,229,0.08);border:1px solid rgba(79,70,229,0.1);"><div style="font-size:10px;color:#9a95b0;font-weight:600;text-transform:uppercase;">A caminho</div><div id="incomingPendingCount" style="font-size:20px;font-weight:700;color:#4f46e5;margin-top:4px;">0</div></div>
+        <div style="background:white;border-radius:18px;padding:14px;box-shadow:0 8px 30px rgba(5,150,105,0.08);border:1px solid rgba(5,150,105,0.1);"><div style="font-size:10px;color:#9a95b0;font-weight:600;text-transform:uppercase;">Já recebidas</div><div id="incomingReceivedCount" style="font-size:20px;font-weight:700;color:#059669;margin-top:4px;">0</div></div>
+      </div>
+      <div id="incomingTabs" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;scrollbar-width:none;">
+        <button class="mini-tab active" onclick="switchIncomingTab('pending')">A caminho</button>
+        <button class="mini-tab" onclick="switchIncomingTab('received')">Recebidas</button>
+      </div>
+      <div class="list-card" id="incomingList"><div class="empty-state"><i class="ri-truck-line"></i><p>Nenhuma mercadoria cadastrada.</p></div></div>
+    </div>
+
     <!-- MAIS -->
     <div class="page" id="page-more">
       <div style="font-size:20px;font-weight:700;font-family:'Playfair Display',serif;padding:16px 0 8px;">Mais</div>
@@ -559,12 +559,13 @@ h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
   <!-- FAB FIXO -->
   <button class="fab" id="fabBtn" onclick="openQuickSale()"><i class="ri-add-line"></i></button>
 
-  <!-- BOTTOM NAV FIXA -->
+  <!-- BOTTOM NAV FIXA - AGORA COM 6 ABAS -->
   <nav class="bottom-nav">
     <button class="nav-btn active" onclick="navigateTo('home')"><i class="ri-home-5-fill"></i><span>Início</span></button>
     <button class="nav-btn" onclick="navigateTo('clients')"><i class="ri-user-heart-line"></i><span>Clientes</span></button>
     <button class="nav-btn" onclick="navigateTo('sales')"><i class="ri-shopping-cart-line"></i><span>Vendas</span></button>
     <button class="nav-btn" onclick="navigateTo('products')"><i class="ri-store-2-line"></i><span>Estoque</span></button>
+    <button class="nav-btn incoming" onclick="navigateTo('incoming')"><i class="ri-truck-line"></i><span>A Receber</span></button>
     <button class="nav-btn" onclick="navigateTo('more')"><i class="ri-apps-line"></i><span>Mais</span></button>
   </nav>
 </div>
@@ -712,6 +713,28 @@ h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
   </div>
 </div>
 
+<!-- MODAL: MERCADORIA A RECEBER -->
+<div id="incomingModal" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <h3 id="incomingModalTitle">Nova Mercadoria</h3>
+      <button class="modal-close" onclick="closeModal('incomingModal')"><i class="ri-close-line"></i></button>
+    </div>
+    <div class="modal-body">
+      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:#5a5670;">O que você comprou? *</label><input type="text" id="incomingDesc" class="form-control" placeholder="Ex: Kit Shampoo profissional"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+        <div><label style="font-size:12px;font-weight:600;color:#5a5670;">Qtd</label><input type="number" id="incomingQty" value="1" min="1" class="form-control"></div>
+        <div><label style="font-size:12px;font-weight:600;color:#5a5670;">Valor (R$)</label><input type="number" id="incomingValue" step="0.01" min="0" class="form-control" placeholder="Opcional"></div>
+      </div>
+      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:#5a5670;">Data da compra</label><input type="date" id="incomingPurchaseDate" class="form-control"></div>
+      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:#5a5670;">Previsão de chegada (opcional)</label><input type="date" id="incomingExpectedDate" class="form-control"></div>
+      <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:#5a5670;">Observação</label><input type="text" id="incomingNote" class="form-control" placeholder="Ex: Mercado Livre, Shopee..."></div>
+      <button class="btn-primary" style="background:linear-gradient(135deg,#4f46e5,#6366f1);" onclick="saveIncoming()"><i class="ri-save-line"></i> Salvar</button>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast-container" id="toastContainer"></div>
 
@@ -732,11 +755,22 @@ h1,h2,h3,h4 { font-family:'Playfair Display', serif; font-weight:700; }
 })();
 
 // DATABASE
-const DB={profile:{name:'Cláudia',image:null,storeName:'Cláudia Collection',dueDay:10},clients:[],products:[],sales:[],installments:[],expenses:[],temp:{clientImage:null,editingClientId:null,editingProductId:null,currentPayment:null,currentClient:null,saleItemCount:0},charts:{home:null,report:null},reportPeriod:'month',recTab:'today'};
+const DB={profile:{name:'Cláudia',image:null,storeName:'Cláudia Collection',dueDay:10},clients:[],products:[],sales:[],installments:[],expenses:[],incoming:[],temp:{clientImage:null,editingClientId:null,editingProductId:null,editingIncomingId:null,currentPayment:null,currentClient:null,saleItemCount:0},charts:{home:null,report:null},reportPeriod:'month',recTab:'today',incomingTab:'pending'};
 
-function saveDB(){localStorage.setItem('claudiaPremium',JSON.stringify({profile:DB.profile,clients:DB.clients,products:DB.products,sales:DB.sales,installments:DB.installments,expenses:DB.expenses}));}
-function loadDB(){const d=localStorage.getItem('claudiaPremium');if(d){const p=JSON.parse(d);DB.profile={...DB.profile,...(p.profile||{})};DB.clients=p.clients||[];DB.products=p.products||[];DB.sales=p.sales||[];DB.installments=p.installments||[];DB.expenses=p.expenses||[];}else{loadSampleData();}applyProfile();}
-function loadSampleData(){const today=todayStr();const addDays=n=>{const d=new Date();d.setDate(d.getDate()+n);return d.toISOString().split('T')[0];};DB.clients=[{id:genId(),name:'Maria da Silva',phone:'(73) 98811-2233',address:'Centro',notes:'',image:null,date:today},{id:genId(),name:'Ana Paula Souza',phone:'(73) 99922-3344',address:'',notes:'',image:null,date:today},{id:genId(),name:'Juliana Lima',phone:'(73) 98100-4455',address:'Bairro Novo',notes:'',image:null,date:today}];DB.products=[{id:genId(),name:'Kit Shampoo + Condicionador',category:'Produtos para cabelo',cost:45,price:85,stock:12},{id:genId(),name:'Colar de Pérolas Semijoia',category:'Semijoias',cost:60,price:130,stock:8},{id:genId(),name:'Jogo de Cama Casal',category:'Roupa de cama',cost:80,price:180,stock:5},{id:genId(),name:'Perfume Floral 100ml',category:'Perfumes',cost:55,price:120,stock:3},{id:genId(),name:'Creme Hidratante',category:'Cuidados pessoais',cost:18,price:40,stock:15},{id:genId(),name:'Brincos de Prata',category:'Semijoias',cost:25,price:65,stock:0}];const s1={id:genId(),clientId:DB.clients[0].id,date:today,items:[{productId:DB.products[0].id,productName:DB.products[0].name,qty:1,price:85},{productId:DB.products[1].id,productName:DB.products[1].name,qty:1,price:130}],total:215,paymentType:'parcelado',entry:50,installmentsCount:2,status:'parcial'};DB.sales.push(s1);DB.installments.push({id:genId(),saleId:s1.id,clientId:DB.clients[0].id,number:1,value:82.5,dueDate:addDays(2),status:'pending',paidDate:null,paidValue:0,paymentMethod:null},{id:genId(),saleId:s1.id,clientId:DB.clients[0].id,number:2,value:82.5,dueDate:addDays(32),status:'pending',paidDate:null,paidValue:0,paymentMethod:null});DB.expenses=[{id:genId(),desc:'Compra de mercadorias',value:350,date:today,category:'Mercadorias'}];saveDB();}
+function saveDB(){localStorage.setItem('claudiaPremium',JSON.stringify({profile:DB.profile,clients:DB.clients,products:DB.products,sales:DB.sales,installments:DB.installments,expenses:DB.expenses,incoming:DB.incoming}));}
+function loadDB(){const d=localStorage.getItem('claudiaPremium');if(d){const p=JSON.parse(d);DB.profile={...DB.profile,...(p.profile||{})};DB.clients=p.clients||[];DB.products=p.products||[];DB.sales=p.sales||[];DB.installments=p.installments||[];DB.expenses=p.expenses||[];DB.incoming=p.incoming||[];}else{loadSampleData();}applyProfile();}
+function loadSampleData(){
+  const today=todayStr();
+  const addDays=n=>{const d=new Date();d.setDate(d.getDate()+n);return d.toISOString().split('T')[0];};
+  DB.clients=[{id:genId(),name:'Maria da Silva',phone:'(73) 98811-2233',address:'Centro',notes:'',image:null,date:today},{id:genId(),name:'Ana Paula Souza',phone:'(73) 99922-3344',address:'',notes:'',image:null,date:today},{id:genId(),name:'Juliana Lima',phone:'(73) 98100-4455',address:'Bairro Novo',notes:'',image:null,date:today}];
+  DB.products=[{id:genId(),name:'Kit Shampoo + Condicionador',category:'Produtos para cabelo',cost:45,price:85,stock:12},{id:genId(),name:'Colar de Pérolas Semijoia',category:'Semijoias',cost:60,price:130,stock:8},{id:genId(),name:'Jogo de Cama Casal',category:'Roupa de cama',cost:80,price:180,stock:5},{id:genId(),name:'Perfume Floral 100ml',category:'Perfumes',cost:55,price:120,stock:3},{id:genId(),name:'Creme Hidratante',category:'Cuidados pessoais',cost:18,price:40,stock:15},{id:genId(),name:'Brincos de Prata',category:'Semijoias',cost:25,price:65,stock:0}];
+  const s1={id:genId(),clientId:DB.clients[0].id,date:today,items:[{productId:DB.products[0].id,productName:DB.products[0].name,qty:1,price:85},{productId:DB.products[1].id,productName:DB.products[1].name,qty:1,price:130}],total:215,paymentType:'parcelado',entry:50,installmentsCount:2,status:'parcial'};
+  DB.sales.push(s1);
+  DB.installments.push({id:genId(),saleId:s1.id,clientId:DB.clients[0].id,number:1,value:82.5,dueDate:addDays(2),status:'pending',paidDate:null,paidValue:0,paymentMethod:null},{id:genId(),saleId:s1.id,clientId:DB.clients[0].id,number:2,value:82.5,dueDate:addDays(32),status:'pending',paidDate:null,paidValue:0,paymentMethod:null});
+  DB.expenses=[{id:genId(),desc:'Compra de mercadorias',value:350,date:today,category:'Mercadorias'}];
+  DB.incoming=[{id:genId(),desc:'Kit Shampoo profissional',qty:3,value:150,purchaseDate:today,expectedDate:addDays(5),note:'Mercado Livre',status:'pending',receivedDate:null},{id:genId(),desc:'Embalagens para presente',qty:1,value:45,purchaseDate:addDays(-10),expectedDate:addDays(-3),note:'Shopee',status:'received',receivedDate:addDays(-4)}];
+  saveDB();
+}
 function genId(){return Date.now().toString(36)+Math.random().toString(36).substr(2,5);}
 function fmtMoney(v){return 'R$ '+(Number(v)||0).toFixed(2).replace('.',',');}
 function fmtDateBR(d){if(!d)return'--';const p=d.split('-');return p[2]+'/'+p[1]+'/'+p[0];}
@@ -791,18 +825,18 @@ function navigateTo(pageId){
   const pg=document.getElementById('page-'+pageId);if(pg)pg.classList.add('active');
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   const btns=document.querySelectorAll('.nav-btn');
-  const map={'home':0,'clients':1,'sales':2,'products':3,'more':4};
+  const map={'home':0,'clients':1,'sales':2,'products':3,'incoming':4,'more':5};
   if(map[pageId]!==undefined&&btns[map[pageId]])btns[map[pageId]].classList.add('active');
-  document.getElementById('balanceCard').style.display=pageId==='home'?'block':'none';
   const fab=document.getElementById('fabBtn');
-  fab.style.display=['home','clients','sales','products'].includes(pageId)?'flex':'none';
+  fab.style.display=['home','clients','sales','products','incoming'].includes(pageId)?'flex':'none';
   if(pageId==='clients')fab.onclick=openQuickClient;
   else if(pageId==='products')fab.onclick=openProductModal;
+  else if(pageId==='incoming')fab.onclick=openIncomingModal;
   else fab.onclick=openQuickSale;
   renderPage(pageId);window.scrollTo({top:0,behavior:'smooth'});
 }
 
-function renderPage(p){switch(p){case'home':renderHome();break;case'clients':renderClients();break;case'client-detail':renderClientDetail();break;case'receivable':renderReceivable();break;case'sales':renderSales();break;case'products':renderProducts();break;case'reports':renderReports();break;}updateAlertBadge();}
+function renderPage(p){switch(p){case'home':renderHome();break;case'clients':renderClients();break;case'client-detail':renderClientDetail();break;case'receivable':renderReceivable();break;case'sales':renderSales();break;case'products':renderProducts();break;case'incoming':renderIncoming();break;case'reports':renderReports();break;}updateAlertBadge();}
 function renderCurrentPage(){const a=document.querySelector('.page.active');if(a)renderPage(a.id.replace('page-',''));}
 function updateAlertBadge(){const today=todayStr();const c=DB.installments.filter(i=>i.status!=='paid'&&i.dueDate<=today).length;const b=document.getElementById('alertBadge');b.textContent=c;b.style.display=c>0?'flex':'none';}
 
@@ -813,8 +847,6 @@ function renderHome(){
   const rV=mS.filter(s=>s.paymentType==='vista').reduce((s,v)=>s+Number(v.total),0);const received=rI+rV;
   const pend=DB.installments.filter(i=>i.status!=='paid');const recv=pend.reduce((s,v)=>s+(Number(v.value)-Number(v.paidValue||0)),0);
   const over=pend.filter(i=>i.dueDate<today);const overT=over.reduce((s,v)=>s+(Number(v.value)-Number(v.paidValue||0)),0);
-  const mE=DB.expenses.filter(e=>e.date>=ms&&e.date<=me);const exp=mE.reduce((s,v)=>s+Number(v.value),0);
-  document.getElementById('balanceValue').textContent=fmtMoney(received-exp);
   document.getElementById('kpiSold').textContent=fmtMoney(sold);document.getElementById('kpiReceived').textContent=fmtMoney(received);
   document.getElementById('kpiReceivable').textContent=fmtMoney(recv);document.getElementById('kpiReceivableCount').textContent=pend.length+' parcelas';
   document.getElementById('kpiOverdue').textContent=fmtMoney(overT);document.getElementById('kpiOverdueCount').textContent=over.length+' atrasadas';
@@ -822,6 +854,8 @@ function renderHome(){
   const alerts=[];const tInst=pend.filter(i=>i.dueDate===today);
   if(tInst.length>0)alerts.push(`<div onclick="navigateTo('receivable')" style="background:linear-gradient(135deg,#eff6ff,#dbeafe);border-radius:18px;padding:14px;margin-bottom:12px;border:1px solid #bfdbfe;display:flex;align-items:center;gap:12px;cursor:pointer;"><div style="width:40px;height:40px;border-radius:12px;background:white;display:flex;align-items:center;justify-content:center;font-size:20px;color:#2563eb;flex-shrink:0;"><i class="ri-calendar-event-line"></i></div><div style="flex:1;"><div style="font-size:12px;font-weight:600;">Vencem hoje</div><div style="font-size:11px;color:#5a5670;">${tInst.length} parcela(s) para receber</div></div><span style="background:#2563eb;color:white;font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;">${tInst.length}</span></div>`);
   if(over.length>0)alerts.push(`<div onclick="navigateTo('receivable')" style="background:linear-gradient(135deg,#fef2f2,#fee2e2);border-radius:18px;padding:14px;margin-bottom:12px;border:1px solid #fecaca;display:flex;align-items:center;gap:12px;cursor:pointer;"><div style="width:40px;height:40px;border-radius:12px;background:white;display:flex;align-items:center;justify-content:center;font-size:20px;color:#dc2626;flex-shrink:0;"><i class="ri-alarm-warning-line"></i></div><div style="flex:1;"><div style="font-size:12px;font-weight:600;">Parcelas atrasadas</div><div style="font-size:11px;color:#5a5670;">${over.length} cliente(s) com pagamento atrasado</div></div><span style="background:#dc2626;color:white;font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;">${over.length}</span></div>`);
+  const incomingPend = DB.incoming.filter(i=>i.status==='pending');
+  if(incomingPend.length>0)alerts.push(`<div onclick="navigateTo('incoming')" style="background:linear-gradient(135deg,#eef2ff,#e0e7ff);border-radius:18px;padding:14px;margin-bottom:12px;border:1px solid #c7d2fe;display:flex;align-items:center;gap:12px;cursor:pointer;"><div style="width:40px;height:40px;border-radius:12px;background:white;display:flex;align-items:center;justify-content:center;font-size:20px;color:#4f46e5;flex-shrink:0;"><i class="ri-truck-line"></i></div><div style="flex:1;"><div style="font-size:12px;font-weight:600;">Mercadorias a caminho</div><div style="font-size:11px;color:#5a5670;">${incomingPend.length} encomenda(s) para receber</div></div><span style="background:#4f46e5;color:white;font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;">${incomingPend.length}</span></div>`);
   document.getElementById('dashboardAlerts').innerHTML=alerts.join('');
   
   const upc=pend.filter(i=>i.dueDate>=today).sort((a,b)=>a.dueDate.localeCompare(b.dueDate)).slice(0,4);
@@ -855,7 +889,6 @@ function saveClient(){const n=document.getElementById('clientName').value.trim()
 
 function switchRecTab(tab){DB.recTab=tab;document.querySelectorAll('#recTabs .mini-tab').forEach(t=>t.classList.remove('active'));const act=document.querySelector(`#recTabs .mini-tab[onclick="switchRecTab('${tab}')"]`);if(act)act.classList.add('active');renderReceivable();}
 
-// FUNÇÃO ATUALIZADA: MENSAGEM WHATSAPP DINÂMICA
 function chargeWhatsApp(instId){
   const i=DB.installments.find(x=>x.id===instId);
   if(!i)return;
@@ -863,18 +896,15 @@ function chargeWhatsApp(instId){
   if(!c)return;
   const phone=onlyNumbers(c.phone);
   if(!phone){toast('Telefone não cadastrado','error');return;}
-  
   const sale=DB.sales.find(s=>s.id===i.saleId);
   let productNames="seus produtos";
   if(sale && sale.items && sale.items.length>0){
     productNames = sale.items.map(it => it.productName).join(', ');
   }
-
   const today=todayStr();
   const firstName=c.name.split(' ')[0];
   const loja=DB.profile.storeName || "Cláudia Collection";
   let msg='';
-
   if(i.dueDate<today){
     msg=`Olá ${firstName}! Tudo bem?\n\nPassando aqui pela *${loja}* para lembrar que a sua parcela de *${fmtMoney(i.value)}* (referente a: ${productNames}) venceu no dia *${fmtDateBR(i.dueDate)}*.\n\nComo podemos combinar o acerto? Aguardo seu retorno! Obrigada ❤️`;
   }else if(i.dueDate===today){
@@ -882,7 +912,6 @@ function chargeWhatsApp(instId){
   }else{
     msg=`Olá ${firstName}, tudo bem?\n\nSó passando aqui pela *${loja}* para te lembrar que sua parcela de *${fmtMoney(i.value)}* (referente a: ${productNames}) vence no dia *${fmtDateBR(i.dueDate)}*.\n\nQualquer coisa, estou por aqui! 🥰`;
   }
-  
   window.open(`https://wa.me/55${phone}?text=${encodeURIComponent(msg)}`,'_blank');
 }
 
@@ -997,7 +1026,6 @@ function saveSale(){
   saveDB();closeModal('saleModal');toast('Venda registrada!','success');renderCurrentPage();
 }
 
-// FUNÇÕES DE PRODUTO ATUALIZADAS
 function renderProducts(){
   const s=(document.getElementById('searchProduct')?.value||'').toLowerCase();
   let l=DB.products.filter(p=>!s||p.name.toLowerCase().includes(s));
@@ -1008,7 +1036,6 @@ function renderProducts(){
   const el=document.getElementById('productsList');
   if(l.length===0){el.innerHTML=`<div class="empty-state"><i class="ri-gift-line"></i><p>Nenhum produto cadastrado.</p></div>`;return;}
   const cc={'Semijoias':'cat-pill pink','Roupa de cama':'cat-pill purple','Produtos para cabelo':'cat-pill green','Perfumes':'cat-pill pink','Cuidados pessoais':'cat-pill blue','Outros':'cat-pill purple'};
-  
   el.innerHTML=l.map(p=>{
     let cls='status-low',lb='OK';
     if(p.stock===0){cls='status-out';lb='ESGOTADO';}else if(p.stock<=5){cls='status-low';lb='BAIXO';}
@@ -1043,15 +1070,7 @@ function saveProduct(){
   const pr=Number(document.getElementById('productPrice').value);
   if(!n){toast('Informe o nome!','error');return;}
   if(!pr||pr<=0){toast('Informe o preço!','error');return;}
-  
-  const data = {
-    name:n,
-    category:document.getElementById('productCategory').value,
-    cost:0,
-    price:pr,
-    stock:Number(document.getElementById('productStock').value)||0
-  };
-  
+  const data = {name:n,category:document.getElementById('productCategory').value,cost:0,price:pr,stock:Number(document.getElementById('productStock').value)||0};
   if(DB.temp.editingProductId){
     const idx = DB.products.findIndex(p=>p.id===DB.temp.editingProductId);
     if(idx>=0) DB.products[idx] = {...DB.products[idx], ...data};
@@ -1060,19 +1079,150 @@ function saveProduct(){
     DB.products.push({id:genId(), ...data});
     toast('Produto cadastrado!','success');
   }
-  
   saveDB();closeModal('productModal');renderCurrentPage();
 }
 
 function openQuickExpense(){document.getElementById('expenseDesc').value='';document.getElementById('expenseValue').value='';document.getElementById('expenseCategory').value='Mercadorias';openModal('expenseModal');}
 function saveExpense(){const d=document.getElementById('expenseDesc').value.trim();const v=Number(document.getElementById('expenseValue').value);if(!d){toast('Informe a descrição!','error');return;}if(!v||v<=0){toast('Informe o valor!','error');return;}DB.expenses.push({id:genId(),desc:d,value:v,date:todayStr(),category:document.getElementById('expenseCategory').value});saveDB();closeModal('expenseModal');toast('Despesa lançada!','success');renderCurrentPage();}
 
-function exportData(){const data={profile:DB.profile,clients:DB.clients,products:DB.products,sales:DB.sales,installments:DB.installments,expenses:DB.expenses};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`backup-claudia-${todayStr()}.json`;a.click();URL.revokeObjectURL(url);toast('Backup exportado!','success');}
-function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);DB.profile={...DB.profile,...(d.profile||{})};DB.clients=d.clients||[];DB.products=d.products||[];DB.sales=d.sales||[];DB.installments=d.installments||[];DB.expenses=d.expenses||[];saveDB();applyProfile();toast('Dados importados!','success');renderCurrentPage();}catch(err){toast('Arquivo inválido!','error');}};r.readAsText(f);e.target.value='';}
+function exportData(){const data={profile:DB.profile,clients:DB.clients,products:DB.products,sales:DB.sales,installments:DB.installments,expenses:DB.expenses,incoming:DB.incoming};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`backup-claudia-${todayStr()}.json`;a.click();URL.revokeObjectURL(url);toast('Backup exportado!','success');}
+function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);DB.profile={...DB.profile,...(d.profile||{})};DB.clients=d.clients||[];DB.products=d.products||[];DB.sales=d.sales||[];DB.installments=d.installments||[];DB.expenses=d.expenses||[];DB.incoming=d.incoming||[];saveDB();applyProfile();toast('Dados importados!','success');renderCurrentPage();}catch(err){toast('Arquivo inválido!','error');}};r.readAsText(f);e.target.value='';}
 
 function renderReports(){const now=new Date();let st,en;switch(DB.reportPeriod){case'month':st=new Date(now.getFullYear(),now.getMonth(),1).toISOString().split('T')[0];en=new Date(now.getFullYear(),now.getMonth()+1,0).toISOString().split('T')[0];break;case'year':st=new Date(now.getFullYear(),0,1).toISOString().split('T')[0];en=new Date(now.getFullYear(),11,31).toISOString().split('T')[0];break;default:st='1900-01-01';en='2999-12-31';}const pS=DB.sales.filter(s=>s.date>=st&&s.date<=en);const sold=pS.reduce((s,v)=>s+Number(v.total),0);const pI=DB.installments.filter(i=>i.status==='paid'&&i.paidDate>=st&&i.paidDate<=en);const rI=pI.reduce((s,v)=>s+Number(v.paidValue||v.value),0);const rV=pS.filter(s=>s.paymentType==='vista').reduce((s,v)=>s+Number(v.total),0);const rec=rI+rV;const pE=DB.expenses.filter(e=>e.date>=st&&e.date<=en);const exp=pE.reduce((s,v)=>s+Number(v.value),0);document.getElementById('repSold').textContent=fmtMoney(sold);document.getElementById('repReceived').textContent=fmtMoney(rec);document.getElementById('repExp').textContent=fmtMoney(exp);document.getElementById('repProfit').textContent=fmtMoney(rec-exp);const cats={};pS.forEach(s=>s.items.forEach(it=>{const p=DB.products.find(x=>x.id===it.productId);const cat=p?p.category:'Outros';cats[cat]=(cats[cat]||0)+(Number(it.price)*Number(it.qty));}));const ctx=document.getElementById('reportChart');if(ctx){const colors=['#ec4899','#f59e0b','#8b5cf6','#10b981','#3b82f6','#ef4444'];if(DB.charts.report)DB.charts.report.destroy();DB.charts.report=new Chart(ctx,{type:'bar',data:{labels:Object.keys(cats),datasets:[{label:'Vendas',data:Object.values(cats),backgroundColor:colors,borderRadius:8}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+fmtMoney(c.parsed.y)}}},scales:{x:{ticks:{color:'#9a95b0',font:{size:9}},grid:{display:false}},y:{ticks:{color:'#9a95b0',font:{size:9},callback:v=>'R$'+v},grid:{color:'rgba(154,149,176,.1)'}}}}});}}
 
 function setReportPeriod(p){DB.reportPeriod=p;renderReports();}
+
+// ==================== MERCADORIAS A RECEBER ====================
+function switchIncomingTab(tab){
+  DB.incomingTab=tab;
+  document.querySelectorAll('#incomingTabs .mini-tab').forEach(t=>t.classList.remove('active'));
+  const act=document.querySelector(`#incomingTabs .mini-tab[onclick="switchIncomingTab('${tab}')"]`);
+  if(act)act.classList.add('active');
+  renderIncoming();
+}
+
+function openIncomingModal(){
+  DB.temp.editingIncomingId=null;
+  document.getElementById('incomingModalTitle').textContent='Nova Mercadoria';
+  document.getElementById('incomingDesc').value='';
+  document.getElementById('incomingQty').value=1;
+  document.getElementById('incomingValue').value='';
+  document.getElementById('incomingPurchaseDate').value=todayStr();
+  document.getElementById('incomingExpectedDate').value='';
+  document.getElementById('incomingNote').value='';
+  openModal('incomingModal');
+}
+
+function editIncoming(id){
+  const it=DB.incoming.find(x=>x.id===id);
+  if(!it)return;
+  DB.temp.editingIncomingId=id;
+  document.getElementById('incomingModalTitle').textContent='Editar Mercadoria';
+  document.getElementById('incomingDesc').value=it.desc;
+  document.getElementById('incomingQty').value=it.qty;
+  document.getElementById('incomingValue').value=it.value||'';
+  document.getElementById('incomingPurchaseDate').value=it.purchaseDate||'';
+  document.getElementById('incomingExpectedDate').value=it.expectedDate||'';
+  document.getElementById('incomingNote').value=it.note||'';
+  openModal('incomingModal');
+}
+
+function saveIncoming(){
+  const desc=document.getElementById('incomingDesc').value.trim();
+  const qty=Number(document.getElementById('incomingQty').value)||1;
+  const value=Number(document.getElementById('incomingValue').value)||0;
+  const purchaseDate=document.getElementById('incomingPurchaseDate').value||todayStr();
+  const expectedDate=document.getElementById('incomingExpectedDate').value||'';
+  const note=document.getElementById('incomingNote').value.trim();
+  if(!desc){toast('Informe o que você comprou!','error');return;}
+  if(DB.temp.editingIncomingId){
+    const idx=DB.incoming.findIndex(x=>x.id===DB.temp.editingIncomingId);
+    if(idx>=0){
+      DB.incoming[idx]={...DB.incoming[idx],desc,qty,value,purchaseDate,expectedDate,note};
+    }
+    toast('Mercadoria atualizada!','success');
+  } else {
+    DB.incoming.push({id:genId(),desc,qty,value,purchaseDate,expectedDate,note,status:'pending',receivedDate:null});
+    toast('Mercadoria cadastrada!','success');
+  }
+  saveDB();closeModal('incomingModal');renderCurrentPage();
+}
+
+function markIncomingReceived(id){
+  const it=DB.incoming.find(x=>x.id===id);
+  if(!it)return;
+  it.status='received';
+  it.receivedDate=todayStr();
+  saveDB();
+  toast('Mercadoria marcada como recebida!','success');
+  renderIncoming();
+  renderHome();
+}
+
+function deleteIncoming(id){
+  const it=DB.incoming.find(x=>x.id===id);
+  if(!it)return;
+  if(confirm(`Deseja realmente excluir "${it.desc}"?`)){
+    DB.incoming=DB.incoming.filter(x=>x.id!==id);
+    saveDB();
+    toast('Item excluído!','warning');
+    renderIncoming();
+    renderHome();
+  }
+}
+
+function renderIncoming(){
+  const pend=DB.incoming.filter(i=>i.status==='pending');
+  const recv=DB.incoming.filter(i=>i.status==='received');
+  document.getElementById('incomingPendingCount').textContent=pend.length;
+  document.getElementById('incomingReceivedCount').textContent=recv.length;
+  const list=DB.incomingTab==='pending'?pend:recv;
+  const el=document.getElementById('incomingList');
+  if(list.length===0){
+    el.innerHTML=`<div class="empty-state"><i class="ri-truck-line"></i><p>${DB.incomingTab==='pending'?'Nenhuma mercadoria a caminho.':'Nenhuma mercadoria recebida ainda.'}</p></div>`;
+    return;
+  }
+  const today=todayStr();
+  el.innerHTML=list.sort((a,b)=>(b.purchaseDate||'').localeCompare(a.purchaseDate||'')).map(it=>{
+    const isReceived=it.status==='received';
+    const late=!isReceived && it.expectedDate && it.expectedDate<today;
+    const arrivingToday=!isReceived && it.expectedDate===today;
+    let statusBadge='';
+    if(isReceived){
+      statusBadge=`<span class="status-paid">RECEBIDO</span>`;
+    } else if(late){
+      statusBadge=`<span class="status-overdue">ATRASADO</span>`;
+    } else if(arrivingToday){
+      statusBadge=`<span class="status-today">CHEGA HOJE</span>`;
+    } else {
+      statusBadge=`<span class="status-pending">A CAMINHO</span>`;
+    }
+    const expectedTxt=it.expectedDate?`<div style="font-size:11px;color:#9a95b0;margin-top:3px;"><i class="ri-calendar-line"></i> Previsão: ${fmtDateBR(it.expectedDate)}</div>`:'';
+    const purchaseTxt=it.purchaseDate?`<div style="font-size:10px;color:#9a95b0;margin-top:2px;">Comprado em: ${fmtDateBR(it.purchaseDate)}</div>`:'';
+    const receivedTxt=isReceived&&it.receivedDate?`<div style="font-size:11px;color:#059669;margin-top:3px;"><i class="ri-checkbox-circle-line"></i> Recebido em: ${fmtDateBR(it.receivedDate)}</div>`:'';
+    const noteTxt=it.note?`<div style="font-size:10px;color:#9a95b0;margin-top:2px;font-style:italic;"><i class="ri-store-line"></i> ${it.note}</div>`:'';
+    const valueTxt=it.value>0?`<div style="font-size:12px;font-weight:700;color:#4f46e5;margin-top:2px;">${fmtMoney(it.value)}</div>`:'';
+    return`<div class="list-item" style="align-items:flex-start;">
+      <div style="width:46px;height:46px;border-radius:14px;background:${isReceived?'linear-gradient(135deg,#d1fae5,#6ee7b7)':'linear-gradient(135deg,#e0e7ff,#c7d2fe)'};display:flex;align-items:center;justify-content:center;font-size:22px;color:${isReceived?'#059669':'#4f46e5'};flex-shrink:0;"><i class="ri-truck-line"></i></div>
+      <div class="list-item-content">
+        <div style="font-size:13px;font-weight:600;">${it.desc}</div>
+        <div style="font-size:11px;color:#9a95b0;margin-top:2px;">Qtd: <strong>${it.qty}</strong> ${valueTxt}</div>
+        ${purchaseTxt}
+        ${expectedTxt}
+        ${receivedTxt}
+        ${noteTxt}
+      </div>
+      <div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+        ${statusBadge}
+        <div style="display:flex;gap:4px;">
+          ${!isReceived?`<button class="btn-icon-sm" style="background:#d1fae5;color:#059669;border:none;width:30px;height:30px;border-radius:8px;cursor:pointer;" onclick="event.stopPropagation();markIncomingReceived('${it.id}')" title="Recebido"><i class="ri-check-line"></i></button>`:''}
+          <button class="btn-icon-sm" style="background:#fef3c7;color:#d97706;border:none;width:30px;height:30px;border-radius:8px;cursor:pointer;" onclick="event.stopPropagation();editIncoming('${it.id}')" title="Editar"><i class="ri-edit-line"></i></button>
+          <button class="btn-icon-sm" style="background:#fee2e2;color:#dc2626;border:none;width:30px;height:30px;border-radius:8px;cursor:pointer;" onclick="event.stopPropagation();deleteIncoming('${it.id}')" title="Excluir"><i class="ri-delete-bin-line"></i></button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
 
 function initApp(){loadDB();renderHome();updateAlertBadge();console.log('%cCláudia Collection Premium','color:#ec4899;font-size:18px;font-weight:bold;');}
 </script>

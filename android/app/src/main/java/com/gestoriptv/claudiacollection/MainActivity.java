@@ -1,4 +1,4 @@
-package com.gestoriptv.gestorpix;
+package com.gestoriptv.claudiacollection;
 
 import com.getcapacitor.BridgeActivity;
 

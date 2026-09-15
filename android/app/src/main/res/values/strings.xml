@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Cshhd</string>
-    <string name="title_activity_main">Cshhd</string>
-    <string name="package_name">com.gestoriptv.cshhd</string>
-    <string name="custom_url_scheme">com.gestoriptv.cshhd</string>
+    <string name="app_name">Jrjd</string>
+    <string name="title_activity_main">Jrjd</string>
+    <string name="package_name">com.gestoriptv.jrjd</string>
+    <string name="custom_url_scheme">com.gestoriptv.jrjd</string>
 </resources>

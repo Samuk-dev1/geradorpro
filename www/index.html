@@ -293,6 +293,19 @@ body.dark .nav-btn.active { color:var(--primary-2); }
 .jewel-particle { position:absolute; pointer-events:none; opacity:0; animation:particleRise linear infinite; will-change: transform, opacity; }
 .notif-status-on { display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:700; padding:6px 12px; border-radius:20px; background:var(--success-soft); color:var(--success); }
 .notif-status-off { display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:700; padding:6px 12px; border-radius:20px; background:var(--danger-soft); color:var(--danger); }
+
+/* Botões de ação de parcelas */
+.inst-actions { display:flex; gap:4px; margin-top:6px; justify-content:flex-end; flex-wrap:wrap; }
+.inst-action-btn {
+  border:none; width:30px; height:30px; border-radius:8px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; font-size:15px;
+  transition:transform .2s;
+}
+.inst-action-btn:hover { transform:scale(1.1); }
+.inst-action-btn.wa { background:var(--success-soft); color:var(--success); }
+.inst-action-btn.edit { background:var(--warn-soft); color:var(--warn); }
+.inst-action-btn.pay { background:var(--success-soft); color:var(--success); }
+.inst-action-btn.del { background:var(--danger-soft); color:var(--danger); }
 </style>
 </head>
 <body>
@@ -421,7 +434,7 @@ body.dark .nav-btn.active { color:var(--primary-2); }
       </div>
       <div class="section-header"><div class="section-title">Parcelas</div></div>
       <div class="list-card" id="detailInstallments"><div class="empty-state"><i class="ri-file-list-line"></i><p>Sem parcelas.</p></div></div>
-      <div class="section-header"><div class="section-title">Histórico</div></div>
+      <div class="section-header"><div class="section-title">Histórico de Compras</div></div>
       <div class="list-card" id="detailSales"><div class="empty-state"><i class="ri-shopping-cart-line"></i><p>Sem compras.</p></div></div>
     </div>
 
@@ -443,6 +456,9 @@ body.dark .nav-btn.active { color:var(--primary-2); }
 
     <div class="page" id="page-sales">
       <div style="font-size:20px;font-weight:700;font-family:'Playfair Display',serif;padding:16px 0 8px;">Vendas</div>
+      <div class="section-header" style="margin-top:8px;"><div class="section-title">Parcelas a Vencer</div></div>
+      <div class="list-card" id="salesInstallmentsList"><div class="empty-state"><i class="ri-checkbox-circle-line"></i><p>Nenhuma parcela a vencer!</p></div></div>
+      <div class="section-header"><div class="section-title">Histórico de Vendas</div></div>
       <div class="list-card" id="salesList"><div class="empty-state"><i class="ri-shopping-cart-line"></i><p>Nenhuma venda registrada.</p></div></div>
     </div>
 
@@ -480,7 +496,7 @@ body.dark .nav-btn.active { color:var(--primary-2); }
         <label class="list-item" style="margin:0;"><div style="width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:var(--success-soft);color:var(--success);flex-shrink:0;"><i class="ri-upload-cloud-line"></i></div><div style="flex:1;"><div style="font-size:13px;font-weight:600;">Importar Dados</div><div style="font-size:11px;color:var(--text-soft);">Restaurar backup de arquivo .json</div></div><input type="file" accept=".json,application/json" style="display:none;" onchange="importData(event)"></label>
         <div class="list-item" onclick="openProfileModal()"><div style="width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:rgba(240,185,92,0.15);color:#f0b95c;flex-shrink:0;"><i class="ri-user-settings-line"></i></div><div style="flex:1;"><div style="font-size:13px;font-weight:600;">Perfil & Notificações</div><div style="font-size:11px;color:var(--text-soft);">Foto, plano de fundo, notificações e horários</div></div><i class="ri-arrow-right-s-line" style="color:var(--text-mute);"></i></div>
       </div>
-      <div style="text-align:center;padding:20px;color:var(--text-mute);font-size:11px;"><p style="font-weight:700;background:linear-gradient(90deg,#e94e8e,#f0b95c,#a06fd6);-webkit-background-clip:text;background-clip:text;color:transparent;font-size:14px;font-family:'Playfair Display',serif;">Cláudia Collection</p><p style="margin-top:4px;">Sistema Premium v2.3</p></div>
+      <div style="text-align:center;padding:20px;color:var(--text-mute);font-size:11px;"><p style="font-weight:700;background:linear-gradient(90deg,#e94e8e,#f0b95c,#a06fd6);-webkit-background-clip:text;background-clip:text;color:transparent;font-size:14px;font-family:'Playfair Display',serif;">Cláudia Collection</p><p style="margin-top:4px;">Sistema Premium v2.4</p></div>
     </div>
 
     <div class="page" id="page-reports">
@@ -681,6 +697,32 @@ body.dark .nav-btn.active { color:var(--primary-2); }
   </div>
 </div>
 
+<!-- NOVO: Modal de edição de parcela -->
+<div id="editInstallmentModal" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <h3>Editar Parcela</h3>
+      <button class="modal-close" onclick="closeModal('editInstallmentModal')"><i class="ri-close-line"></i></button>
+    </div>
+    <div class="modal-body">
+      <div id="editInstallmentInfo" style="background:var(--card-alt);border-radius:14px;padding:14px;margin-bottom:16px;font-size:13px;border:1px solid var(--border);line-height:1.6;"></div>
+      <div style="margin-bottom:14px;">
+        <label style="font-size:12px;font-weight:600;color:var(--text-soft);">Nova data de vencimento</label>
+        <input type="date" id="editInstDate" class="form-control">
+      </div>
+      <div style="margin-bottom:14px;">
+        <label style="font-size:12px;font-weight:600;color:var(--text-soft);">Valor (R$)</label>
+        <input type="number" id="editInstValue" step="0.01" min="0" class="form-control">
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-secondary" onclick="closeModal('editInstallmentModal')">Cancelar</button>
+        <button class="btn-primary" onclick="saveInstallmentEdit()"><i class="ri-save-line"></i> Salvar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="expenseModal" class="modal-overlay">
   <div class="modal">
     <div class="modal-handle"></div>
@@ -797,40 +839,20 @@ function createJewelParticles(){
   },3000);
 })();
 
-/* ================================================================
-   ⬇️⬇️⬇️  COLE O CÓDIGO DO GERADOR AQUI  ⬇️⬇️⬇️
-
-   Abra o arquivo "gerador.html", escolha as imagens, clique em
-   "Gerar Código", copie o resultado e substitua o bloco abaixo
-   (mantenha a palavra "const BAKED_IMAGES = { ... };").
-
-   Enquanto estiver null, o app funciona normal, só não vem com
-   imagem nenhuma de fábrica.
-
-   EXEMPLO de como vai ficar depois de colar:
-   const BAKED_IMAGES = {
-     profileImage: "data:image/jpeg;base64,/9j/4AAQ...",
-     headerBg: "data:image/jpeg;base64,/9j/4AAQ..."
-   };
-   ================================================================ */
 const BAKED_IMAGES = {
-  profileImage: null,   // ← cole aqui o base64 da foto de perfil (logo)
-  headerBg: null        // ← cole aqui o base64 do papel de fundo (luxo)
+  profileImage: null,
+  headerBg: null
 };
-/* ================================================================
-   ⬆️⬆️⬆️  FIM DO BLOCO DE IMAGENS EMBUTIDAS  ⬆️⬆️⬆️
-   ================================================================ */
 
 // DATABASE
 const DB={
   profile:{name:'Cláudia',image:null,storeName:'Cláudia Collection',dueDay:10,headerBg:null,notifEnabled:false,notifTimes:['09:00','14:00','19:00']},
   clients:[],products:[],sales:[],installments:[],expenses:[],incoming:[],
-  temp:{clientImage:null,editingClientId:null,editingProductId:null,editingIncomingId:null,currentPayment:null,currentClient:null,saleItemCount:0},
+  temp:{clientImage:null,editingClientId:null,editingProductId:null,editingIncomingId:null,currentPayment:null,currentClient:null,saleItemCount:0,editingInstallmentId:null},
   charts:{home:null,report:null},
   reportPeriod:'month',recTab:'today',incomingTab:'pending'
 };
 
-// ⭐ saveDB retorna true/false e captura erro de cota
 function saveDB(){
   try {
     localStorage.setItem('claudiaPremium', JSON.stringify({
@@ -859,7 +881,6 @@ function saveDB(){
   }
 }
 
-// ⭐ loadDB aplica BAKED_IMAGES no primeiro uso
 function loadDB(){
   const d=localStorage.getItem('claudiaPremium');
   if(d){
@@ -877,7 +898,6 @@ function loadDB(){
       loadSampleData();
     }
   } else {
-    // ⭐ PRIMEIRA VEZ: cria dados VAZIOS + aplica imagens embutidas
     loadSampleData();
     let bakedApplied = false;
     if(BAKED_IMAGES.profileImage){
@@ -889,17 +909,13 @@ function loadDB(){
       bakedApplied = true;
     }
     if(bakedApplied){
-      saveDB(); // salva para não aplicar de novo depois
+      saveDB();
       console.log('✅ Imagens embutidas aplicadas com sucesso!');
     }
   }
   applyProfile();
 }
 
-// ============================================================
-// ⭐ ZERADO — Nenhum dado de exemplo é criado.
-// A cliente vai abrir o app limpo e cadastrar do zero.
-// ============================================================
 function loadSampleData(){
   DB.clients=[];
   DB.products=[];
@@ -909,7 +925,6 @@ function loadSampleData(){
   DB.incoming=[];
   saveDB();
 }
-// ============================================================
 
 function genId(){return Date.now().toString(36)+Math.random().toString(36).substr(2,5);}
 function fmtMoney(v){return 'R$ '+(Number(v)||0).toFixed(2).replace('.',',');}
@@ -1278,6 +1293,9 @@ function renderHome(){
   </div>`);
   document.getElementById('dashboardAlerts').innerHTML=alerts.join('');
 
+  // ============================================================
+  // PRÓXIMOS VENCIMENTOS - agora com botão WhatsApp
+  // ============================================================
   const upc=pend.filter(i=>i.dueDate>=today).sort((a,b)=>a.dueDate.localeCompare(b.dueDate)).slice(0,4);
   const uEl=document.getElementById('upcomingList');
   if(upc.length===0){
@@ -1285,10 +1303,21 @@ function renderHome(){
   } else {
     uEl.innerHTML=upc.map(i=>{
       const c=DB.clients.find(x=>x.id===i.clientId);
-      return`<div class="list-item" onclick="openPaymentModal('${i.id}')">
-        <div class="list-item-avatar">${c?(c.image?`<img src="${c.image}">`:getInitials(c.name)):'?'}</div>
-        <div class="list-item-content"><div style="font-size:13px;font-weight:600;">${c?c.name:'Cliente'}</div><div style="font-size:11px;color:var(--text-soft);margin-top:3px;">${fmtDateBR(i.dueDate)} • Parcela ${i.number}</div></div>
-        <div style="text-align:right;"><div style="font-size:14px;font-weight:700;color:var(--primary-1);">${fmtMoney(i.value)}</div><span class="status-pending">PENDENTE</span></div>
+      const isTod = i.dueDate === today;
+      return`<div class="list-item">
+        <div class="list-item-avatar" onclick="openPaymentModal('${i.id}')">${c?(c.image?`<img src="${c.image}">`:getInitials(c.name)):'?'}</div>
+        <div class="list-item-content" onclick="openPaymentModal('${i.id}')">
+          <div style="font-size:13px;font-weight:600;">${c?c.name:'Cliente'}</div>
+          <div style="font-size:11px;color:var(--text-soft);margin-top:3px;">${fmtDateBR(i.dueDate)} • Parcela ${i.number}</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:14px;font-weight:700;color:var(--primary-1);">${fmtMoney(i.value)}</div>
+          <span class="${isTod?'status-today':'status-pending'}">${isTod?'HOJE':'PENDENTE'}</span>
+          <div class="inst-actions">
+            <button class="inst-action-btn wa" onclick="event.stopPropagation();chargeWhatsApp('${i.id}')" title="Enviar cobrança por WhatsApp"><i class="ri-whatsapp-line"></i></button>
+            <button class="inst-action-btn edit" onclick="event.stopPropagation();openEditInstallment('${i.id}')" title="Editar parcela"><i class="ri-edit-line"></i></button>
+          </div>
+        </div>
       </div>`;
     }).join('');
   }
@@ -1395,15 +1424,29 @@ function viewClientDetail(id){
   else{
     iEl.innerHTML=cI.sort((a,b)=>a.number-b.number).map(i=>{
       const isOvd=i.dueDate<today&&i.status!=='paid';
+      const isTod=i.dueDate===today&&i.status!=='paid';
       let cls='status-pending',lb='PENDENTE';
       if(i.status==='paid'){cls='status-paid';lb='PAGA';}
       else if(isOvd){cls='status-overdue';lb='ATRASADA';}
-      return`<div class="list-item"><div class="list-item-content"><div style="font-size:13px;font-weight:600;">Parcela ${i.number}</div><div style="font-size:11px;color:var(--text-soft);margin-top:3px;">Vencimento: ${fmtDateBR(i.dueDate)}</div></div>
-        <div style="text-align:right;"><div style="font-size:14px;font-weight:700;color:var(--primary-1);">${fmtMoney(i.value)}</div><span class="${cls}">${lb}</span>
-        ${i.status!=='paid'?`<div style="display:flex;gap:4px;margin-top:6px;justify-content:flex-end;">
-          <button class="btn-icon-sm" style="background:var(--success-soft);color:var(--success);border:none;width:28px;height:28px;border-radius:6px;cursor:pointer;" onclick="event.stopPropagation();chargeWhatsApp('${i.id}')" title="WhatsApp"><i class="ri-whatsapp-line"></i></button>
-          <button class="btn-icon-sm" style="background:var(--success-soft);color:var(--success);border:none;width:28px;height:28px;border-radius:6px;cursor:pointer;" onclick="event.stopPropagation();openPaymentModal('${i.id}')" title="Pagar"><i class="ri-check-line"></i></button>
-        </div>`:''}</div>
+      else if(isTod){cls='status-today';lb='HOJE';}
+      return`<div class="list-item" style="align-items:flex-start;">
+        <div class="list-item-content">
+          <div style="font-size:13px;font-weight:600;">Parcela ${i.number}</div>
+          <div style="font-size:11px;color:var(--text-soft);margin-top:3px;">Vencimento: ${fmtDateBR(i.dueDate)}</div>
+          ${i.paidValue>0&&i.status!=='paid'?`<div style="font-size:10px;color:var(--success);margin-top:2px;">Já pago: ${fmtMoney(i.paidValue)}</div>`:''}
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:14px;font-weight:700;color:var(--primary-1);">${fmtMoney(i.value)}</div>
+          <span class="${cls}">${lb}</span>
+          <div class="inst-actions">
+            ${i.status!=='paid'?`
+              <button class="inst-action-btn wa" onclick="event.stopPropagation();chargeWhatsApp('${i.id}')" title="WhatsApp"><i class="ri-whatsapp-line"></i></button>
+              <button class="inst-action-btn pay" onclick="event.stopPropagation();openPaymentModal('${i.id}')" title="Pagar"><i class="ri-check-line"></i></button>
+            `:''}
+            <button class="inst-action-btn edit" onclick="event.stopPropagation();openEditInstallment('${i.id}')" title="Editar"><i class="ri-edit-line"></i></button>
+            <button class="inst-action-btn del" onclick="event.stopPropagation();deleteInstallment('${i.id}')" title="Excluir"><i class="ri-delete-bin-line"></i></button>
+          </div>
+        </div>
       </div>`;
     }).join('');
   }
@@ -1412,7 +1455,16 @@ function viewClientDetail(id){
   else{
     sEl.innerHTML=[...cS].sort((a,b)=>b.date.localeCompare(a.date)).map(s=>{
       const it=s.items.map(i=>`${i.qty}x ${i.productName}`).join(', ');
-      return`<div class="list-item"><div class="list-item-content"><div style="font-size:13px;font-weight:600;">${fmtDateBR(s.date)}</div><div style="font-size:11px;color:var(--text-soft);margin-top:3px;">${it}</div></div><div style="text-align:right;"><div style="font-size:14px;font-weight:700;color:var(--primary-1);">${fmtMoney(s.total)}</div></div></div>`;
+      return`<div class="list-item">
+        <div class="list-item-content">
+          <div style="font-size:13px;font-weight:600;">${fmtDateBR(s.date)}</div>
+          <div style="font-size:11px;color:var(--text-soft);margin-top:3px;">${it}</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:14px;font-weight:700;color:var(--primary-1);">${fmtMoney(s.total)}</div>
+          <button class="inst-action-btn del" style="margin-top:6px;" onclick="event.stopPropagation();cancelSale('${s.id}')" title="Cancelar Venda"><i class="ri-close-line"></i></button>
+        </div>
+      </div>`;
     }).join('');
   }
   navigateTo('client-detail');
@@ -1557,6 +1609,86 @@ function confirmPayment(){
   renderCurrentPage();
 }
 
+// ============================================================
+// NOVAS FUNÇÕES: editar/excluir parcelas e cancelar vendas
+// ============================================================
+function openEditInstallment(instId){
+  const i=DB.installments.find(x=>x.id===instId);
+  if(!i){ toast('Parcela não encontrada','error'); return; }
+  DB.temp.editingInstallmentId=instId;
+  const c=DB.clients.find(x=>x.id===i.clientId);
+  const sale=DB.sales.find(s=>s.id===i.saleId);
+  let prodTxt='';
+  if(sale && sale.items) prodTxt = sale.items.map(it=>`${it.qty}x ${it.productName}`).join(', ');
+  document.getElementById('editInstallmentInfo').innerHTML=
+    `<strong>Cliente:</strong> ${c?c.name:'Cliente'}<br>`+
+    `<strong>Parcela:</strong> ${i.number}<br>`+
+    `<strong>Vencimento atual:</strong> ${fmtDateBR(i.dueDate)}<br>`+
+    (prodTxt?`<strong>Produtos:</strong> ${prodTxt}`:'')+
+    (i.paidValue>0?`<br><strong style="color:var(--success);">Já pago:</strong> ${fmtMoney(i.paidValue)}`:'');
+  document.getElementById('editInstDate').value=i.dueDate;
+  document.getElementById('editInstValue').value=Number(i.value).toFixed(2);
+  openModal('editInstallmentModal');
+}
+
+function saveInstallmentEdit(){
+  const i=DB.installments.find(x=>x.id===DB.temp.editingInstallmentId);
+  if(!i){ toast('Parcela não encontrada','error'); return; }
+  const newDate=document.getElementById('editInstDate').value;
+  const newValue=Number(document.getElementById('editInstValue').value);
+  if(!newDate){ toast('Informe a data de vencimento!','error'); return; }
+  if(!newValue||newValue<=0){ toast('Valor inválido!','error'); return; }
+  i.dueDate=newDate;
+  i.value=newValue;
+  if(i.status==='paid') i.paidValue=newValue;
+  saveDB();
+  closeModal('editInstallmentModal');
+  toast('Parcela atualizada!','success');
+  renderCurrentPage();
+  scheduleAllNotifications();
+}
+
+function deleteInstallment(instId){
+  const i=DB.installments.find(x=>x.id===instId);
+  if(!i){ toast('Parcela não encontrada','error'); return; }
+  if(confirm(`Excluir a parcela ${i.number} de ${fmtMoney(i.value)}?\n\nEssa ação não pode ser desfeita.`)){
+    DB.installments=DB.installments.filter(x=>x.id!==instId);
+    const restSaleInst=DB.installments.filter(x=>x.saleId===i.saleId);
+    if(restSaleInst.length===0){
+      // última parcela removida — remove a venda também
+      DB.sales=DB.sales.filter(x=>x.id!==i.saleId);
+    }
+    saveDB();
+    toast('Parcela excluída!','warning');
+    renderCurrentPage();
+    renderHome();
+    scheduleAllNotifications();
+  }
+}
+
+function cancelSale(saleId){
+  const s=DB.sales.find(x=>x.id===saleId);
+  if(!s){ toast('Venda não encontrada','error'); return; }
+  const c=DB.clients.find(x=>x.id===s.clientId);
+  if(confirm(`Cancelar a venda de ${fmtMoney(s.total)}${c?` para ${c.name}`:''}?\n\nTodas as parcelas serão removidas e o estoque dos produtos será devolvido.`)){
+    // Devolve estoque
+    if(s.items){
+      s.items.forEach(it=>{
+        const p=DB.products.find(x=>x.id===it.productId);
+        if(p) p.stock += Number(it.qty)||0;
+      });
+    }
+    DB.sales=DB.sales.filter(x=>x.id!==saleId);
+    DB.installments=DB.installments.filter(x=>x.saleId!==saleId);
+    saveDB();
+    toast('Venda cancelada!','warning');
+    renderCurrentPage();
+    renderHome();
+    scheduleAllNotifications();
+  }
+}
+// ============================================================
+
 function renderReceivable(){
   const today=todayStr();
   const nw=new Date();
@@ -1587,42 +1719,104 @@ function renderReceivable(){
     if(i.status==='paid'){cls='status-paid';lb='PAGA';}
     else if(isOvd){cls='status-overdue';lb='ATRASADA';}
     else if(isTod){cls='status-today';lb='HOJE';}
-    return`<div class="list-item">
+    return`<div class="list-item" style="align-items:flex-start;">
       <div class="list-item-avatar">${c?(c.image?`<img src="${c.image}">`:getInitials(c.name)):'?'}</div>
-      <div class="list-item-content"><div style="font-size:13px;font-weight:600;">${c?c.name:'Cliente'}</div><div style="font-size:11px;color:var(--text-soft);margin-top:3px;">${fmtDateBR(i.dueDate)} • Parcela ${i.number}</div></div>
-      <div style="text-align:right;"><div style="font-size:14px;font-weight:700;color:var(--primary-1);">${fmtMoney(i.value)}</div><span class="${cls}">${lb}</span>
-      ${i.status!=='paid'?`<div style="display:flex;gap:4px;margin-top:6px;justify-content:flex-end;">
-        <button class="btn-icon-sm" style="background:var(--success-soft);color:var(--success);border:none;width:28px;height:28px;border-radius:6px;cursor:pointer;" onclick="event.stopPropagation();chargeWhatsApp('${i.id}')"><i class="ri-whatsapp-line"></i></button>
-        <button class="btn-icon-sm" style="background:var(--success-soft);color:var(--success);border:none;width:28px;height:28px;border-radius:6px;cursor:pointer;" onclick="event.stopPropagation();openPaymentModal('${i.id}')"><i class="ri-check-line"></i></button>
-      </div>`:''}</div>
+      <div class="list-item-content">
+        <div style="font-size:13px;font-weight:600;">${c?c.name:'Cliente'}</div>
+        <div style="font-size:11px;color:var(--text-soft);margin-top:3px;">${fmtDateBR(i.dueDate)} • Parcela ${i.number}</div>
+        ${i.paidValue>0&&i.status!=='paid'?`<div style="font-size:10px;color:var(--success);margin-top:2px;">Já pago: ${fmtMoney(i.paidValue)}</div>`:''}
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:14px;font-weight:700;color:var(--primary-1);">${fmtMoney(i.value)}</div>
+        <span class="${cls}">${lb}</span>
+        <div class="inst-actions">
+          ${i.status!=='paid'?`
+            <button class="inst-action-btn wa" onclick="event.stopPropagation();chargeWhatsApp('${i.id}')" title="WhatsApp"><i class="ri-whatsapp-line"></i></button>
+            <button class="inst-action-btn pay" onclick="event.stopPropagation();openPaymentModal('${i.id}')" title="Pagar"><i class="ri-check-line"></i></button>
+          `:''}
+          <button class="inst-action-btn edit" onclick="event.stopPropagation();openEditInstallment('${i.id}')" title="Editar"><i class="ri-edit-line"></i></button>
+          <button class="inst-action-btn del" onclick="event.stopPropagation();deleteInstallment('${i.id}')" title="Excluir"><i class="ri-delete-bin-line"></i></button>
+        </div>
+      </div>
     </div>`;
   }).join('');
 }
 
+// ============================================================
+// VENDAS: parcelas a vencer no topo + histórico
+// ============================================================
 function renderSales(){
+  const today=todayStr();
+
+  // ---- Seção: Parcelas a Vencer (ordenadas: atrasadas → hoje → próximas) ----
+  const pend=DB.installments.filter(i=>i.status!=='paid').sort((a,b)=>{
+    const aOvd=a.dueDate<today;
+    const bOvd=b.dueDate<today;
+    if(aOvd && !bOvd) return -1;
+    if(!aOvd && bOvd) return 1;
+    return a.dueDate.localeCompare(b.dueDate);
+  });
+
+  const instEl=document.getElementById('salesInstallmentsList');
+  if(pend.length===0){
+    instEl.innerHTML=`<div class="empty-state"><i class="ri-checkbox-circle-line"></i><p>Nenhuma parcela a vencer!</p></div>`;
+  } else {
+    instEl.innerHTML=pend.map(i=>{
+      const c=DB.clients.find(x=>x.id===i.clientId);
+      const isOvd=i.dueDate<today;
+      const isTod=i.dueDate===today;
+      let cls='status-pending',lb='PENDENTE';
+      if(isOvd){cls='status-overdue';lb='ATRASADA';}
+      else if(isTod){cls='status-today';lb='HOJE';}
+      return`<div class="list-item" style="align-items:flex-start;${isOvd?'background:linear-gradient(90deg,rgba(201,75,63,0.06),transparent);':''}">
+        <div class="list-item-avatar">${c?(c.image?`<img src="${c.image}">`:getInitials(c.name)):'?'}</div>
+        <div class="list-item-content">
+          <div style="font-size:13px;font-weight:600;">${c?c.name:'Cliente'}</div>
+          <div style="font-size:11px;color:var(--text-soft);margin-top:3px;">${fmtDateBR(i.dueDate)} • Parcela ${i.number}</div>
+          ${i.paidValue>0?`<div style="font-size:10px;color:var(--success);margin-top:2px;">Já pago: ${fmtMoney(i.paidValue)}</div>`:''}
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:14px;font-weight:700;color:var(--primary-1);">${fmtMoney(i.value)}</div>
+          <span class="${cls}">${lb}</span>
+          <div class="inst-actions">
+            <button class="inst-action-btn wa" onclick="event.stopPropagation();chargeWhatsApp('${i.id}')" title="WhatsApp"><i class="ri-whatsapp-line"></i></button>
+            <button class="inst-action-btn pay" onclick="event.stopPropagation();openPaymentModal('${i.id}')" title="Pagar"><i class="ri-check-line"></i></button>
+            <button class="inst-action-btn edit" onclick="event.stopPropagation();openEditInstallment('${i.id}')" title="Editar"><i class="ri-edit-line"></i></button>
+            <button class="inst-action-btn del" onclick="event.stopPropagation();deleteInstallment('${i.id}')" title="Excluir"><i class="ri-delete-bin-line"></i></button>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // ---- Seção: Histórico de Vendas ----
   const el=document.getElementById('salesList');
-  if(DB.sales.length===0){el.innerHTML=`<div class="empty-state"><i class="ri-shopping-cart-line"></i><p>Nenhuma venda registrada.</p></div>`;return;}
+  if(DB.sales.length===0){
+    el.innerHTML=`<div class="empty-state"><i class="ri-shopping-cart-line"></i><p>Nenhuma venda registrada.</p></div>`;
+    return;
+  }
   el.innerHTML=[...DB.sales].sort((a,b)=>b.date.localeCompare(a.date)).map(s=>{
     const c=DB.clients.find(x=>x.id===s.clientId);
     const it=s.items.map(i=>`${i.qty}x ${i.productName}`).join(', ');
-    return`<div class="list-item">
+    const totalInst=DB.installments.filter(x=>x.saleId===s.id).length;
+    const paidInst=DB.installments.filter(x=>x.saleId===s.id && x.status==='paid').length;
+    const instInfo=totalInst>0?`<div style="font-size:10px;color:var(--text-soft);margin-top:2px;">Parcelas: ${paidInst}/${totalInst} pagas</div>`:'';
+    return`<div class="list-item" style="align-items:flex-start;">
       <div class="list-item-avatar">${c?(c.image?`<img src="${c.image}">`:getInitials(c.name)):'?'}</div>
-      <div class="list-item-content"><div style="font-size:13px;font-weight:600;">${c?c.name:'Cliente'}</div><div style="font-size:11px;color:var(--text-soft);margin-top:3px;">${it}</div><div style="font-size:10px;color:var(--text-soft);margin-top:2px;">${fmtDateBR(s.date)}</div></div>
-      <div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:6px;"><div style="font-size:14px;font-weight:700;color:var(--primary-1);">${fmtMoney(s.total)}</div>
-      <button class="btn-icon-sm" style="background:var(--danger-soft);color:var(--danger);border:none;width:28px;height:28px;border-radius:6px;cursor:pointer;" onclick="event.stopPropagation();deleteSale('${s.id}')" title="Excluir Venda"><i class="ri-delete-bin-line"></i></button></div>
+      <div class="list-item-content">
+        <div style="font-size:13px;font-weight:600;">${c?c.name:'Cliente'}</div>
+        <div style="font-size:11px;color:var(--text-soft);margin-top:3px;">${it}</div>
+        <div style="font-size:10px;color:var(--text-soft);margin-top:2px;">${fmtDateBR(s.date)}</div>
+        ${instInfo}
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:14px;font-weight:700;color:var(--primary-1);">${fmtMoney(s.total)}</div>
+        <div class="inst-actions">
+          <button class="inst-action-btn del" onclick="event.stopPropagation();cancelSale('${s.id}')" title="Cancelar Venda"><i class="ri-close-line"></i></button>
+        </div>
+      </div>
     </div>`;
   }).join('');
-}
-
-function deleteSale(id){
-  if(confirm('Deseja realmente excluir esta venda?\nTodas as parcelas geradas por ela também serão apagadas.')){
-    DB.sales=DB.sales.filter(x=>x.id!==id);
-    DB.installments=DB.installments.filter(x=>x.saleId!==id);
-    saveDB();
-    toast('Venda e parcelas excluídas!','warning');
-    renderSales();
-    renderHome();
-  }
 }
 
 function openQuickSale(){
@@ -2162,7 +2356,7 @@ function initApp(){
   updateAlertBadge();
   updateNotifBadgeUI();
   setTimeout(() => { scheduleAllNotifications(); }, 1500);
-  console.log('%cCláudia Collection Premium v2.3','color:#e94e8e;font-size:18px;font-weight:bold;');
+  console.log('%cCláudia Collection Premium v2.4','color:#e94e8e;font-size:18px;font-weight:bold;');
   console.log('%c💎 Imagens embutidas:','color:#a06fd6;font-weight:bold;', BAKED_IMAGES.profileImage ? 'Foto de perfil ✅' : 'Foto de perfil ❌', '|', BAKED_IMAGES.headerBg ? 'Papel de fundo ✅' : 'Papel de fundo ❌');
 }
 </script>

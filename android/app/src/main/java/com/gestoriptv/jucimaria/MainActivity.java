@@ -1,4 +1,4 @@
-package com.gestoriptv.jrjd;
+package com.gestoriptv.jucimaria;
 
 import com.getcapacitor.BridgeActivity;
 

@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Gestor IPTV</string>
-    <string name="title_activity_main">Gestor IPTV</string>
-    <string name="package_name">com.gestoriptv.gestoriptv</string>
-    <string name="custom_url_scheme">com.gestoriptv.gestoriptv</string>
+    <string name="app_name">Cshhd</string>
+    <string name="title_activity_main">Cshhd</string>
+    <string name="package_name">com.gestoriptv.cshhd</string>
+    <string name="custom_url_scheme">com.gestoriptv.cshhd</string>
 </resources>

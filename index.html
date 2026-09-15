@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <!-- Meta tags cruciais para aplicativos móveis (PWA/Capacitor/Cordova) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#2563eb">
+    <title>OS App Mobile</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome para Ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2563eb', // Azul moderno
+                        secondary: '#1e293b',
+                        background: '#f8fafc',
+                        card: '#ffffff'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Esconde a barra de rolagem para dar aspecto de App Nativo */
+        ::-webkit-scrollbar { display: none; }
+        * { -ms-overflow-style: none; scrollbar-width: none; -webkit-tap-highlight-color: transparent; }
+        
+        /* Animação suave para troca de telas */
+        .page { display: none; animation: fadeIn 0.2s ease-in-out; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        body { background-color: #f8fafc; overscroll-behavior-y: contain; }
+    </style>
+</head>
+<body class="h-screen w-full flex flex-col text-slate-800 font-sans">
+
+    <!-- HEADER DO APP -->
+    <header class="bg-primary text-white p-4 shadow-md flex justify-between items-center sticky top-0 z-20">
+        <div class="flex items-center gap-2">
+            <i class="fa-solid fa-gamepad text-2xl"></i>
+            <h1 class="text-xl font-bold tracking-wide" id="header-title">Dashboard</h1>
+        </div>
+        <button class="active:scale-95 transition-transform">
+            <i class="fa-solid fa-bell text-xl"></i>
+        </button>
+    </header>
+
+    <!-- ÁREA PRINCIPAL (VIEWS) -->
+    <main class="flex-1 overflow-y-auto pb-24 relative">
+        
+        <!-- ================= TELA: DASHBOARD ================= -->
+        <section id="view-dashboard" class="page active p-4 space-y-4">
+            <div class="bg-primary rounded-2xl p-5 text-white shadow-lg bg-gradient-to-r from-blue-600 to-blue-400">
+                <p class="text-blue-100 text-sm font-medium mb-1">Faturamento Estimado</p>
+                <h2 class="text-3xl font-bold" id="dash-faturamento">R$ 0,00</h2>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-card p-4 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-center justify-center text-center">
+                    <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mb-2">
+                        <i class="fa-solid fa-users text-lg"></i>
+                    </div>
+                    <span class="text-2xl font-bold text-slate-700" id="dash-clientes">0</span>
+                    <span class="text-xs text-slate-500 font-medium uppercase">Clientes</span>
+                </div>
+                <div class="bg-card p-4 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-center justify-center text-center">
+                    <div class="w-10 h-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center mb-2">
+                        <i class="fa-solid fa-screwdriver-wrench text-lg"></i>
+                    </div>
+                    <span class="text-2xl font-bold text-slate-700" id="dash-os-abertas">0</span>
+                    <span class="text-xs text-slate-500 font-medium uppercase">OS Abertas</span>
+                </div>
+            </div>
+
+            <h3 class="font-bold text-slate-700 mt-6 mb-2">Últimas OS</h3>
+            <div id="lista-os-recentes" class="space-y-3">
+                <!-- Preenchido via JS -->
+            </div>
+        </section>
+
+        <!-- ================= TELA: CLIENTES ================= -->
+        <section id="view-clientes" class="page p-4">
+            <button onclick="abrirModal('modal-cliente')" class="w-full bg-primary text-white p-3 rounded-xl font-bold shadow-md active:bg-blue-700 transition flex justify-center items-center gap-2 mb-4">
+                <i class="fa-solid fa-plus"></i> Novo Cliente
+            </button>
+            <div id="lista-clientes" class="space-y-3">
+                <!-- Lista de Cards (JS) -->
+            </div>
+        </section>
+
+        <!-- ================= TELA: APARELHOS ================= -->
+        <section id="view-aparelhos" class="page p-4">
+            <button onclick="abrirModal('modal-aparelho')" class="w-full bg-primary text-white p-3 rounded-xl font-bold shadow-md active:bg-blue-700 transition flex justify-center items-center gap-2 mb-4">
+                <i class="fa-solid fa-plus"></i> Novo Aparelho
+            </button>
+            <div id="lista-aparelhos" class="space-y-3">
+                <!-- Lista de Cards (JS) -->
+            </div>
+        </section>
+
+        <!-- ================= TELA: ORDENS DE SERVIÇO ================= -->
+        <section id="view-os" class="page p-4">
+            <button onclick="abrirModalOS()" class="w-full bg-primary text-white p-3 rounded-xl font-bold shadow-md active:bg-blue-700 transition flex justify-center items-center gap-2 mb-4">
+                <i class="fa-solid fa-plus"></i> Nova Ordem de Serviço
+            </button>
+            <div id="lista-os" class="space-y-3">
+                <!-- Lista de Cards (JS) -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- BOTTOM NAVIGATION (MENU INFERIOR ESTILO APP) -->
+    <nav class="bg-white border-t border-slate-200 fixed bottom-0 w-full z-20 pb-safe">
+        <ul class="flex justify-around items-center p-2">
+            <li class="flex-1 text-center">
+                <button onclick="navigate('dashboard', 'Dashboard', this)" class="nav-btn w-full py-2 text-primary flex flex-col items-center gap-1 transition">
+                    <i class="fa-solid fa-house text-xl"></i>
+                    <span class="text-[10px] font-semibold">Início</span>
+                </button>
+            </li>
+            <li class="flex-1 text-center">
+                <button onclick="navigate('clientes', 'Clientes', this)" class="nav-btn w-full py-2 text-slate-400 flex flex-col items-center gap-1 transition">
+                    <i class="fa-solid fa-users text-xl"></i>
+                    <span class="text-[10px] font-semibold">Clientes</span>
+                </button>
+            </li>
+            <li class="flex-1 text-center">
+                <button onclick="navigate('aparelhos', 'Aparelhos', this)" class="nav-btn w-full py-2 text-slate-400 flex flex-col items-center gap-1 transition">
+                    <i class="fa-solid fa-laptop-medical text-xl"></i>
+                    <span class="text-[10px] font-semibold">Aparelhos</span>
+                </button>
+            </li>
+            <li class="flex-1 text-center">
+                <button onclick="navigate('os', 'Ordens de Serviço', this)" class="nav-btn w-full py-2 text-slate-400 flex flex-col items-center gap-1 transition">
+                    <i class="fa-solid fa-clipboard-list text-xl"></i>
+                    <span class="text-[10px] font-semibold">OS</span>
+                </button>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- ================= MODAIS DE CADASTRO (Sobrepõe a tela) ================= -->
+    
+    <!-- Modal Cliente -->
+    <div id="modal-cliente" class="fixed inset-0 bg-slate-900 bg-opacity-50 z-50 hidden flex flex-col justify-end">
+        <div class="bg-white rounded-t-3xl p-6 shadow-2xl h-auto mt-20 animation-slide-up">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold text-slate-800">Novo Cliente</h2>
+                <button onclick="fecharModal('modal-cliente')" class="w-8 h-8 bg-slate-100 rounded-full text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="form-cliente" class="space-y-4">
+                <div>
+                    <label class="text-sm font-medium text-slate-600">Nome do Cliente</label>
+                    <input type="text" id="cli-nome" required class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-primary focus:ring-1 focus:ring-primary">
+                </div>
+                <div>
+                    <label class="text-sm font-medium text-slate-600">WhatsApp</label>
+                    <input type="tel" id="cli-whatsapp" inputmode="numeric" required class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-primary focus:ring-1 focus:ring-primary" placeholder="DDD + Número">
+                </div>
+                <button type="submit" class="w-full bg-primary text-white font-bold p-4 rounded-xl mt-4 active:bg-blue-700">Salvar Cliente</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Aparelho -->
+    <div id="modal-aparelho" class="fixed inset-0 bg-slate-900 bg-opacity-50 z-50 hidden flex flex-col justify-end">
+        <div class="bg-white rounded-t-3xl p-6 shadow-2xl h-auto mt-20">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold text-slate-800">Novo Aparelho</h2>
+                <button onclick="fecharModal('modal-aparelho')" class="w-8 h-8 bg-slate-100 rounded-full text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="form-aparelho" class="space-y-4">
+                <div>
+                    <label class="text-sm font-medium text-slate-600">Tipo de Aparelho</label>
+                    <select id="apa-tipo" required class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-primary">
+                        <option value="Console">Console (PlayStation, Xbox, Switch)</option>
+                        <option value="PC">Computador / Notebook</option>
+                        <option value="Acessório">Controle / Acessório</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-sm font-medium text-slate-600">Marca e Modelo</label>
+                    <input type="text" id="apa-modelo" required class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-primary" placeholder="Ex: PS4 Slim">
+                </div>
+                <button type="submit" class="w-full bg-primary text-white font-bold p-4 rounded-xl mt-4 active:bg-blue-700">Salvar Aparelho</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal OS -->
+    <div id="modal-os" class="fixed inset-0 bg-slate-900 bg-opacity-50 z-50 hidden flex flex-col justify-end">
+        <div class="bg-white rounded-t-3xl p-6 shadow-2xl h-[85vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4 sticky top-0 bg-white z-10 pb-2">
+                <h2 class="text-xl font-bold text-slate-800">Nova OS</h2>
+                <button onclick="fecharModal('modal-os')" class="w-8 h-8 bg-slate-100 rounded-full text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="form-os" class="space-y-4">
+                <div>
+                    <label class="text-sm font-medium text-slate-600">Selecione o Cliente</label>
+                    <select id="os-cliente" required class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none"></select>
+                </div>
+                <div>
+                    <label class="text-sm font-medium text-slate-600">Selecione o Aparelho</label>
+                    <select id="os-aparelho" required class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none"></select>
+                </div>
+                <div>
+                    <label class="text-sm font-medium text-slate-600">Defeito Relatado</label>
+                    <textarea id="os-defeito" required rows="2" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" placeholder="Ex: Não liga, bipa e desliga..."></textarea>
+                </div>
+                <div>
+                    <label class="text-sm font-medium text-slate-600">Status</label>
+                    <select id="os-status" required class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none">
+                        <option value="Orçamento">Aguardando Orçamento</option>
+                        <option value="Aprovado">Orçamento Aprovado</option>
+                        <option value="Aguardando Peca">Aguardando Peça</option>
+                        <option value="Concluido">Concluído</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-sm font-medium text-slate-600">Valor (R$)</label>
+                    <input type="number" step="0.01" inputmode="decimal" id="os-valor" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" placeholder="0.00">
+                </div>
+                <button type="submit" class="w-full bg-green-600 text-white font-bold p-4 rounded-xl mt-4 active:bg-green-700">Criar Ordem de Serviço</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts do App Móvel -->
+    <script>
+        // Sistema de Banco de Dados Local (LocalStorage)
+        const db = {
+            get: (key) => JSON.parse(localStorage.getItem(key)) || [],
+            set: (key, data) => localStorage.setItem(key, JSON.stringify(data)),
+            id: () => Math.random().toString(36).substring(2, 9).toUpperCase()
+        };
+
+        // --- NAVEGAÇÃO ---
+        function navigate(pageId, title, btnElement) {
+            // Esconder todas as páginas
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            // Mostrar página alvo
+            document.getElementById(`view-${pageId}`).classList.add('active');
+            
+            // Alterar Título do Header
+            document.getElementById('header-title').innerText = title;
+
+            // Resetar estilos dos botões do menu inferior
+            document.querySelectorAll('.nav-btn').forEach(b => {
+                b.classList.remove('text-primary');
+                b.classList.add('text-slate-400');
+            });
+            // Ativar botão clicado
+            btnElement.classList.add('text-primary');
+            btnElement.classList.remove('text-slate-400');
+
+            atualizarDados();
+        }
+
+        // --- MODAIS ---
+        function abrirModal(id) {
+            document.getElementById(id).classList.remove('hidden');
+        }
+        function fecharModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+        function abrirModalOS() {
+            const clientes = db.get('clientes');
+            const aparelhos = db.get('aparelhos');
+            
+            if(clientes.length === 0 || aparelhos.length === 0) {
+                alert("Você precisa cadastrar pelo menos 1 cliente e 1 aparelho antes de criar uma OS.");
+                return;
+            }
+
+            document.getElementById('os-cliente').innerHTML = clientes.map(c => `<option value="${c.nome}">${c.nome}</option>`).join('');
+            document.getElementById('os-aparelho').innerHTML = aparelhos.map(a => `<option value="${a.modelo}">${a.modelo} (${a.tipo})</option>`).join('');
+            
+            abrirModal('modal-os');
+        }
+
+        // --- FUNCIONALIDADES (CRUD) ---
+
+        // Cadastrar Cliente
+        document.getElementById('form-cliente').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const clientes = db.get('clientes');
+            clientes.push({
+                id: db.id(),
+                nome: document.getElementById('cli-nome').value,
+                whatsapp: document.getElementById('cli-whatsapp').value
+            });
+            db.set('clientes', clientes);
+            this.reset();
+            fecharModal('modal-cliente');
+            atualizarDados();
+        });
+
+        // Cadastrar Aparelho
+        document.getElementById('form-aparelho').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const aparelhos = db.get('aparelhos');
+            aparelhos.push({
+                id: db.id(),
+                tipo: document.getElementById('apa-tipo').value,
+                modelo: document.getElementById('apa-modelo').value
+            });
+            db.set('aparelhos', aparelhos);
+            this.reset();
+            fecharModal('modal-aparelho');
+            atualizarDados();
+        });
+
+        // Cadastrar OS
+        document.getElementById('form-os').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const ordens = db.get('ordens');
+            const numOs = String(ordens.length + 1).padStart(4, '0');
+            
+            ordens.push({
+                os: numOs,
+                cliente: document.getElementById('os-cliente').value,
+                aparelho: document.getElementById('os-aparelho').value,
+                defeito: document.getElementById('os-defeito').value,
+                status: document.getElementById('os-status').value,
+                valor: parseFloat(document.getElementById('os-valor').value || 0),
+                data: new Date().toLocaleDateString('pt-BR')
+            });
+            db.set('ordens', ordens);
+            this.reset();
+            fecharModal('modal-os');
+            atualizarDados();
+        });
+
+        // --- RENDERIZAÇÃO NA TELA (Design em Cards) ---
+        function atualizarDados() {
+            const clientes = db.get('clientes');
+            const aparelhos = db.get('aparelhos');
+            const ordens = db.get('ordens');
+
+            // Render Clientes
+            document.getElementById('lista-clientes').innerHTML = clientes.length ? clientes.map(c => `
+                <div class="bg-card p-4 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
+                    <div>
+                        <h4 class="font-bold text-slate-800">${c.nome}</h4>
+                        <p class="text-sm text-slate-500"><i class="fa-brands fa-whatsapp text-green-500"></i> ${c.whatsapp}</p>
+                    </div>
+                    <button class="w-10 h-10 bg-slate-100 rounded-full text-primary"><i class="fa-solid fa-pen"></i></button>
+                </div>
+            `).join('') : '<p class="text-center text-slate-400 mt-10">Nenhum cliente cadastrado.</p>';
+
+            // Render Aparelhos
+            document.getElementById('lista-aparelhos').innerHTML = aparelhos.length ? aparelhos.map(a => `
+                <div class="bg-card p-4 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4">
+                    <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center text-xl">
+                        <i class="fa-solid ${a.tipo === 'PC' ? 'fa-computer' : a.tipo === 'Console' ? 'fa-gamepad' : 'fa-headset'}"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-slate-400 uppercase">${a.tipo}</p>
+                        <h4 class="font-bold text-slate-800">${a.modelo}</h4>
+                    </div>
+                </div>
+            `).join('') : '<p class="text-center text-slate-400 mt-10">Nenhum aparelho cadastrado.</p>';
+
+            // Render OS (Para Tela de OS e Dashboard)
+            const badges = {
+                'Orçamento': 'bg-yellow-100 text-yellow-700',
+                'Aprovado': 'bg-blue-100 text-blue-700',
+                'Aguardando Peca': 'bg-orange-100 text-orange-700',
+                'Concluido': 'bg-green-100 text-green-700'
+            };
+
+            const htmlOS = ordens.map(o => `
+                <div class="bg-card p-4 rounded-2xl shadow-sm border border-slate-100">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="font-black text-slate-800">OS #${o.os}</span>
+                        <span class="text-[10px] font-bold px-2 py-1 rounded-md uppercase ${badges[o.status] || 'bg-slate-100'}">${o.status}</span>
+                    </div>
+                    <h4 class="font-bold text-primary text-sm">${o.cliente}</h4>
+                    <p class="text-sm text-slate-600 mb-2">${o.aparelho}</p>
+                    <div class="bg-slate-50 p-2 rounded-lg text-xs text-slate-500 mb-3 line-clamp-2">
+                        <i class="fa-solid fa-triangle-exclamation mr-1"></i> ${o.defeito}
+                    </div>
+                    <div class="flex justify-between items-center border-t border-slate-100 pt-3">
+                        <span class="text-xs text-slate-400"><i class="fa-regular fa-calendar"></i> ${o.data}</span>
+                        <span class="font-bold text-slate-800">R$ ${o.valor.toFixed(2).replace('.', ',')}</span>
+                    </div>
+                </div>
+            `).reverse().join('');
+
+            document.getElementById('lista-os').innerHTML = ordens.length ? htmlOS : '<p class="text-center text-slate-400 mt-10">Nenhuma OS gerada.</p>';
+            
+            // Dashboard preenchimento
+            document.getElementById('lista-os-recentes').innerHTML = ordens.length ? htmlOS : '<p class="text-center text-slate-400 mt-4 text-sm">Nenhuma movimentação.</p>';
+            
+            document.getElementById('dash-clientes').innerText = clientes.length;
+            
+            const osAbertas = ordens.filter(o => o.status !== 'Concluido').length;
+            document.getElementById('dash-os-abertas').innerText = osAbertas;
+
+            const faturamento = ordens.filter(o => o.status === 'Concluido').reduce((acc, curr) => acc + curr.valor, 0);
+            document.getElementById('dash-faturamento').innerText = `R$ ${faturamento.toFixed(2).replace('.', ',')}`;
+        }
+
+        // Inicializar dados ao abrir o app
+        atualizarDados();
+    </script>
+</body>
+</html>

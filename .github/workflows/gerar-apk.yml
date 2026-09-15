@@ -81,8 +81,8 @@ jobs:
         # ==========================================
         npm init -y
         
-        # 🔧 ATUALIZADO PARA CAPACITOR 6 (Exigência do Google Play Protect / API 34)
-        npm install @capacitor/core@6 @capacitor/android@6 @capacitor/cli@6 @capacitor/local-notifications@6
+        # 🔧 ATUALIZADO PARA CAPACITOR 6 + PLUGINS DE BACKUP (Filesystem e Share)
+        npm install @capacitor/core@6 @capacitor/android@6 @capacitor/cli@6 @capacitor/local-notifications@6 @capacitor/filesystem@6 @capacitor/share@6
 
         # Cria pasta www e copia o arquivo único index.html
         mkdir -p www
@@ -210,6 +210,7 @@ jobs:
         # ==========================================
         MANIFEST_FILE="android/app/src/main/AndroidManifest.xml"
         if [ -f "$MANIFEST_FILE" ]; then
+          # Permissões de notificação
           sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />' "$MANIFEST_FILE"
           sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />' "$MANIFEST_FILE"
           sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />' "$MANIFEST_FILE"
@@ -217,10 +218,22 @@ jobs:
           sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.INTERNET" />' "$MANIFEST_FILE"
           sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.WAKE_LOCK" />' "$MANIFEST_FILE"
           sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />' "$MANIFEST_FILE"
+          
+          # 🔧 NOVO: Permissões de ARMAZENAMENTO (necessárias para o Backup funcionar)
+          sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />' "$MANIFEST_FILE"
+          sed -i '/<manifest/ a \    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="32" />' "$MANIFEST_FILE"
+          
+          echo "✅ Permissões (notificações + armazenamento) adicionadas ao AndroidManifest.xml"
         fi
 
-        # Sincroniza tudo
+        # Sincroniza tudo (isso registra os plugins @capacitor/filesystem e @capacitor/share no projeto Android)
         npx cap sync android
+        
+        echo ""
+        echo "🔍 Verificando se os plugins foram registrados..."
+        if [ -f "android/app/src/main/assets/capacitor.plugins.json" ]; then
+          cat android/app/src/main/assets/capacitor.plugins.json
+        fi
 
     - name: Compilar APK
       run: |

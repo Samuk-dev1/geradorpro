@@ -294,7 +294,6 @@ body.dark .nav-btn.active { color:var(--primary-2); }
 .notif-status-on { display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:700; padding:6px 12px; border-radius:20px; background:var(--success-soft); color:var(--success); }
 .notif-status-off { display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:700; padding:6px 12px; border-radius:20px; background:var(--danger-soft); color:var(--danger); }
 
-/* Botões de ação de parcelas */
 .inst-actions { display:flex; gap:4px; margin-top:6px; justify-content:flex-end; flex-wrap:wrap; }
 .inst-action-btn {
   border:none; width:30px; height:30px; border-radius:8px; cursor:pointer;
@@ -306,6 +305,19 @@ body.dark .nav-btn.active { color:var(--primary-2); }
 .inst-action-btn.edit { background:var(--warn-soft); color:var(--warn); }
 .inst-action-btn.pay { background:var(--success-soft); color:var(--success); }
 .inst-action-btn.del { background:var(--danger-soft); color:var(--danger); }
+
+.report-card {
+  padding:16px; border-radius:18px;
+  background:linear-gradient(135deg,rgba(107,142,107,0.12),rgba(107,142,107,0.04));
+  border:1px solid rgba(107,142,107,0.25);
+  margin-bottom:16px;
+}
+.report-card .head { display:flex; align-items:center; gap:8px; margin-bottom:12px; }
+.report-card .head .ico {
+  width:36px;height:36px;border-radius:12px;
+  background:linear-gradient(135deg,#5a8a5a,#6b8e6b);
+  color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;
+}
 </style>
 </head>
 <body>
@@ -496,7 +508,7 @@ body.dark .nav-btn.active { color:var(--primary-2); }
         <label class="list-item" style="margin:0;"><div style="width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:var(--success-soft);color:var(--success);flex-shrink:0;"><i class="ri-upload-cloud-line"></i></div><div style="flex:1;"><div style="font-size:13px;font-weight:600;">Importar Dados</div><div style="font-size:11px;color:var(--text-soft);">Restaurar backup de arquivo .json</div></div><input type="file" accept=".json,application/json" style="display:none;" onchange="importData(event)"></label>
         <div class="list-item" onclick="openProfileModal()"><div style="width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:rgba(240,185,92,0.15);color:#f0b95c;flex-shrink:0;"><i class="ri-user-settings-line"></i></div><div style="flex:1;"><div style="font-size:13px;font-weight:600;">Perfil & Notificações</div><div style="font-size:11px;color:var(--text-soft);">Foto, plano de fundo, notificações e horários</div></div><i class="ri-arrow-right-s-line" style="color:var(--text-mute);"></i></div>
       </div>
-      <div style="text-align:center;padding:20px;color:var(--text-mute);font-size:11px;"><p style="font-weight:700;background:linear-gradient(90deg,#e94e8e,#f0b95c,#a06fd6);-webkit-background-clip:text;background-clip:text;color:transparent;font-size:14px;font-family:'Playfair Display',serif;">Cláudia Collection</p><p style="margin-top:4px;">Sistema Premium v2.4</p></div>
+      <div style="text-align:center;padding:20px;color:var(--text-mute);font-size:11px;"><p style="font-weight:700;background:linear-gradient(90deg,#e94e8e,#f0b95c,#a06fd6);-webkit-background-clip:text;background-clip:text;color:transparent;font-size:14px;font-family:'Playfair Display',serif;">Cláudia Collection</p><p style="margin-top:4px;">Sistema Premium v2.5</p></div>
     </div>
 
     <div class="page" id="page-reports">
@@ -557,13 +569,14 @@ body.dark .nav-btn.active { color:var(--primary-2); }
       <div style="margin-bottom:14px;"><label style="font-size:12px;font-weight:600;color:var(--text-soft);">Nome da loja</label><input type="text" id="storeNameInput" class="form-control" value="Cláudia Collection"></div>
       <div style="margin-bottom:20px;"><label style="font-size:12px;font-weight:600;color:var(--text-soft);">Dia padrão de vencimento</label><input type="number" id="dueDayInput" class="form-control" value="10" min="1" max="28"></div>
 
+      <!-- NOTIFICAÇÕES (só parcelas vencendo hoje) -->
       <div style="padding:16px;border-radius:18px;background:var(--card-alt);border:1px solid var(--border);margin-bottom:16px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
           <div style="display:flex;align-items:center;gap:8px;">
             <div style="width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg,#e94e8e,#a06fd6);display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;"><i class="ri-notification-3-fill"></i></div>
             <div>
               <div style="font-size:13px;font-weight:700;">Notificações</div>
-              <div style="font-size:10px;color:var(--text-soft);">Alertas de vencimentos e mercadorias</div>
+              <div style="font-size:10px;color:var(--text-soft);">Apenas parcelas vencendo HOJE</div>
             </div>
           </div>
           <span id="notifStatusBadge" class="notif-status-off">DESLIGADO</span>
@@ -596,7 +609,31 @@ body.dark .nav-btn.active { color:var(--primary-2); }
           <i class="ri-time-line"></i> Salvar e agendar horários
         </button>
         <p style="font-size:10px;color:var(--text-soft);margin-top:8px;line-height:1.4;">
-          <i class="ri-information-line"></i> As notificações são agendadas no sistema Android e funcionam <strong>mesmo com o app fechado ou tela desligada</strong>.
+          <i class="ri-information-line"></i> As notificações mostram <strong>o nome do cliente e quantas parcelas vencem hoje</strong>. Funcionam mesmo com o app fechado ou tela desligada.
+        </p>
+      </div>
+
+      <!-- RELATÓRIO POR WHATSAPP -->
+      <div class="report-card">
+        <div class="head">
+          <div class="ico"><i class="ri-file-chart-line"></i></div>
+          <div style="flex:1;">
+            <div style="font-size:13px;font-weight:700;">Relatório no WhatsApp</div>
+            <div style="font-size:10px;color:var(--text-soft);">Envie o resumo completo para o número cadastrado</div>
+          </div>
+        </div>
+
+        <div style="margin-bottom:10px;">
+          <label style="font-size:12px;font-weight:600;color:var(--text-soft);">Número para receber o relatório</label>
+          <input type="text" id="reportPhoneInput" class="form-control" placeholder="(00) 00000-0000" oninput="formatPhone(this)">
+        </div>
+
+        <button class="btn-primary" style="background:linear-gradient(135deg,#5a8a5a,#6b8e6b);margin-bottom:8px;" onclick="sendReportWhatsApp()">
+          <i class="ri-whatsapp-line"></i> Enviar relatório agora
+        </button>
+
+        <p style="font-size:10px;color:var(--text-soft);line-height:1.4;">
+          <i class="ri-information-line"></i> O relatório inclui <strong>vendas do mês, valores recebidos, pendentes, atrasados, despesas, lucro, estoque e mercadorias a caminho</strong> — tudo organizado e pronto para enviar.
         </p>
       </div>
 
@@ -697,7 +734,6 @@ body.dark .nav-btn.active { color:var(--primary-2); }
   </div>
 </div>
 
-<!-- NOVO: Modal de edição de parcela -->
 <div id="editInstallmentModal" class="modal-overlay">
   <div class="modal">
     <div class="modal-handle"></div>
@@ -846,7 +882,7 @@ const BAKED_IMAGES = {
 
 // DATABASE
 const DB={
-  profile:{name:'Cláudia',image:null,storeName:'Cláudia Collection',dueDay:10,headerBg:null,notifEnabled:false,notifTimes:['09:00','14:00','19:00']},
+  profile:{name:'Cláudia',image:null,storeName:'Cláudia Collection',dueDay:10,headerBg:null,notifEnabled:false,notifTimes:['09:00','14:00','19:00'],reportPhone:''},
   clients:[],products:[],sales:[],installments:[],expenses:[],incoming:[],
   temp:{clientImage:null,editingClientId:null,editingProductId:null,editingIncomingId:null,currentPayment:null,currentClient:null,saleItemCount:0,editingInstallmentId:null},
   charts:{home:null,report:null},
@@ -994,9 +1030,10 @@ async function testNotification(){
   try{
     const perm=await LN.checkPermissions();
     if(perm.display!=='granted'){ toast('Ative a permissão primeiro!','warning'); return; }
+    const body = buildNotificationBody() || 'Tudo em ordem por hoje! ✨';
     await LN.schedule({notifications:[{
-      id:9999, title:'Cláudia Collection 💄',
-      body:'Esta é uma notificação de teste! Tudo funcionando perfeitamente ✨',
+      id:9999, title:'Cláudia Collection 💎',
+      body: body,
       schedule:{at:new Date(Date.now()+3000)}, sound:null,
       smallIcon:'ic_stat_icon_config_sample', iconColor:'#e94e8e'
     }]});
@@ -1004,16 +1041,38 @@ async function testNotification(){
   }catch(e){ console.error('Erro no teste:',e); toast('Erro ao enviar notificação de teste','error'); }
 }
 
+// ⭐ NOTIFICAÇÃO APENAS SOBRE PARCELAS VENCENDO HOJE
+// Mostra o nome dos clientes e a quantidade de parcelas.
+// Se não houver parcelas vencendo hoje, retorna null (não notifica).
 function buildNotificationBody(){
-  const today=todayStr();
-  const overCount=DB.installments.filter(i=>i.status!=='paid'&&i.dueDate<today).length;
-  const todayCount=DB.installments.filter(i=>i.status!=='paid'&&i.dueDate===today).length;
-  const incCount=DB.incoming.filter(i=>i.status==='pending').length;
-  const parts=[];
-  if(overCount>0)parts.push(`${overCount} parcela(s) atrasada(s)`);
-  if(todayCount>0)parts.push(`${todayCount} vencem hoje`);
-  if(incCount>0)parts.push(`${incCount} mercadoria(s) a caminho`);
-  return parts.length===0?'Tudo em ordem! ✨ Toque para abrir o app.':parts.join(' • ');
+  const today = todayStr();
+  const todayInst = DB.installments.filter(i => i.status !== 'paid' && i.dueDate === today);
+  if(todayInst.length === 0) return null;
+
+  // Agrupa por cliente
+  const porCliente = {};
+  todayInst.forEach(i => {
+    const c = DB.clients.find(x => x.id === i.clientId);
+    const nome = c ? c.name.split(' ')[0] : 'Cliente';
+    porCliente[nome] = (porCliente[nome] || 0) + 1;
+  });
+
+  const nomes = Object.keys(porCliente);
+  const total = todayInst.reduce((s,i) => s + Number(i.value), 0);
+
+  if(todayInst.length === 1){
+    // 1 parcela só
+    return `💎 ${nomes[0]} tem 1 parcela vencendo HOJE - ${fmtMoney(total)}. Toque para ver.`;
+  }
+
+  if(nomes.length === 1){
+    // várias parcelas do mesmo cliente
+    return `💎 ${nomes[0]} tem ${todayInst.length} parcelas vencendo HOJE - Total ${fmtMoney(total)}. Toque para ver.`;
+  }
+
+  // vários clientes
+  const resumo = nomes.map(n => `${n} (${porCliente[n]})`).join(', ');
+  return `💎 ${todayInst.length} parcelas vencendo HOJE: ${resumo} - Total ${fmtMoney(total)}.`;
 }
 
 async function scheduleAllNotifications(){
@@ -1025,8 +1084,11 @@ async function scheduleAllNotifications(){
     if(perm.display!=='granted')return;
   }catch(e){ return; }
   const times=DB.profile.notifTimes||['09:00','14:00','19:00'];
-  const body=buildNotificationBody();
+  const body = buildNotificationBody();
+  // Cancela notificações antigas
   try{ await LN.cancel({notifications:[{id:1001},{id:1002},{id:1003}]}); }catch(e){}
+  // ⭐ Se não há parcelas vencendo hoje, não agenda nada (silencioso)
+  if(!body){ console.log('Nenhuma parcela vencendo hoje. Notificações não agendadas.'); return; }
   const notifications=[];
   times.forEach((t,i)=>{
     if(!t)return;
@@ -1088,6 +1150,7 @@ function openProfileModal(){
   document.getElementById('profileNameInput').value=DB.profile.name||'';
   document.getElementById('storeNameInput').value=DB.profile.storeName||'Cláudia Collection';
   document.getElementById('dueDayInput').value=DB.profile.dueDay||10;
+  document.getElementById('reportPhoneInput').value=DB.profile.reportPhone||'';
   const prev=document.getElementById('profileImagePreview');
   prev.innerHTML=DB.profile.image
     ?`<img src="${DB.profile.image}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`
@@ -1180,6 +1243,7 @@ function saveProfile(){
   DB.profile.name=document.getElementById('profileNameInput').value.trim()||'Cláudia';
   DB.profile.storeName=document.getElementById('storeNameInput').value.trim()||'Cláudia Collection';
   DB.profile.dueDay=Number(document.getElementById('dueDayInput').value)||10;
+  DB.profile.reportPhone=document.getElementById('reportPhoneInput').value.trim();
   DB.profile.notifTimes=[
     document.getElementById('notifTime1').value||'09:00',
     document.getElementById('notifTime2').value||'14:00',
@@ -1197,6 +1261,157 @@ function saveProfile(){
     toast('Perfil atualizado, mas use imagens menores para salvar permanentemente.','warning');
   }
 }
+
+// ============================================================
+// ⭐ RELATÓRIO COMPLETO PARA WHATSAPP
+// ============================================================
+function buildReportMessage(){
+  const now = new Date();
+  const ms = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+  const me = new Date(now.getFullYear(), now.getMonth()+1, 0).toISOString().split('T')[0];
+  const mesNome = now.toLocaleDateString('pt-BR', { month: 'long' });
+  const anoAtual = now.getFullYear();
+
+  // VENDAS
+  const mS = DB.sales.filter(s => s.date >= ms && s.date <= me).sort((a,b)=>a.date.localeCompare(b.date));
+  const sold = mS.reduce((s,v) => s + Number(v.total), 0);
+
+  // RECEBIDOS
+  const mI = DB.installments.filter(i => i.status === 'paid' && i.paidDate >= ms && i.paidDate <= me);
+  const rI = mI.reduce((s,v) => s + Number(v.paidValue || v.value), 0);
+  const rV = mS.filter(s => s.paymentType === 'vista').reduce((s,v) => s + Number(v.total), 0);
+  const received = rI + rV;
+
+  // DESPESAS
+  const pE = DB.expenses.filter(e => e.date >= ms && e.date <= me).sort((a,b)=>a.date.localeCompare(b.date));
+  const exp = pE.reduce((s,v) => s + Number(v.value), 0);
+
+  // A RECEBER
+  const pend = DB.installments.filter(i => i.status !== 'paid');
+  const receiv = pend.reduce((s,v) => s + (Number(v.value) - Number(v.paidValue||0)), 0);
+  const today = todayStr();
+  const over = pend.filter(i => i.dueDate < today);
+  const overT = over.reduce((s,v) => s + (Number(v.value) - Number(v.paidValue||0)), 0);
+
+  // ESTOQUE
+  const inv = DB.products.reduce((s,p) => s + (Number(p.cost||0) * Number(p.stock||0)), 0);
+  const lowStock = DB.products.filter(p => p.stock > 0 && p.stock <= 5).length;
+  const outStock = DB.products.filter(p => p.stock === 0).length;
+
+  // MERCADORIAS
+  const incPend = DB.incoming.filter(i => i.status === 'pending');
+  const incValue = incPend.reduce((s,i) => s + Number(i.value||0), 0);
+  const incReceived = DB.incoming.filter(i => i.status === 'received').length;
+
+  // CLIENTES
+  const totalClientes = DB.clients.length;
+
+  const lucro = received - exp;
+
+  // MONTAGEM DA MENSAGEM
+  let msg = '';
+  msg += `📊 *RELATÓRIO ${(DB.profile.storeName||'Cláudia Collection').toUpperCase()}*\n`;
+  msg += `📅 ${mesNome.charAt(0).toUpperCase()+mesNome.slice(1)} / ${anoAtual}\n`;
+  msg += `━━━━━━━━━━━━━━━━━━\n\n`;
+
+  // VENDAS
+  msg += `🛍️ *VENDAS DO MÊS*\n`;
+  if(mS.length === 0){
+    msg += `• Nenhuma venda no período\n`;
+  } else {
+    mS.forEach(s => {
+      const c = DB.clients.find(x => x.id === s.clientId);
+      const nome = c ? c.name.split(' ')[0] : 'Cliente';
+      const tipo = s.paymentType === 'vista' ? 'à vista' : 'parcelado';
+      msg += `• ${fmtDateBR(s.date)} - ${nome} - ${fmtMoney(s.total)} (${tipo})\n`;
+    });
+    msg += `\n💵 *Total vendido:* ${fmtMoney(sold)}\n`;
+  }
+  msg += `\n`;
+
+  // RECEBIDOS
+  msg += `✅ *VALORES RECEBIDOS*\n`;
+  msg += `• Total recebido: ${fmtMoney(received)}\n`;
+  msg += `• (${mI.length} parcela(s) paga(s) + ${mS.filter(s=>s.paymentType==='vista').length} venda(s) à vista)\n`;
+  msg += `\n`;
+
+  // A RECEBER
+  msg += `⏳ *A RECEBER*\n`;
+  msg += `• Total pendente: ${fmtMoney(receiv)} (${pend.length} parcelas)\n`;
+  if(overT > 0){
+    msg += `• Total ATRASADO: ${fmtMoney(overT)} (${over.length} parcelas)\n`;
+  }
+  msg += `\n`;
+
+  // DESPESAS
+  msg += `💸 *DESPESAS DO MÊS*\n`;
+  if(pE.length === 0){
+    msg += `• Nenhuma despesa registrada\n`;
+  } else {
+    pE.forEach(e => {
+      msg += `• ${fmtDateBR(e.date)} - ${e.desc} - ${fmtMoney(e.value)}\n`;
+    });
+    msg += `\n💸 *Total despesas:* ${fmtMoney(exp)}\n`;
+  }
+  msg += `\n`;
+
+  // LUCRO
+  msg += `📈 *LUCRO LÍQUIDO*\n`;
+  msg += `• ${fmtMoney(lucro)}\n`;
+  msg += `\n`;
+
+  // ESTOQUE
+  msg += `📦 *ESTOQUE*\n`;
+  msg += `• Produtos cadastrados: ${DB.products.length}\n`;
+  msg += `• Valor investido: ${fmtMoney(inv)}\n`;
+  if(lowStock > 0) msg += `• Estoque baixo: ${lowStock} produto(s)\n`;
+  if(outStock > 0) msg += `• Esgotados: ${outStock} produto(s)\n`;
+  msg += `\n`;
+
+  // MERCADORIAS
+  msg += `🚚 *MERCADORIAS A RECEBER*\n`;
+  if(incPend.length === 0){
+    msg += `• Nenhuma mercadoria pendente\n`;
+  } else {
+    incPend.forEach(it => {
+      const valor = Number(it.value) > 0 ? ` - ${fmtMoney(it.value)}` : '';
+      const prev = it.expectedDate ? ` (previsão ${fmtDateBR(it.expectedDate)})` : '';
+      msg += `• ${it.desc} - Qtd ${it.qty}${valor}${prev}\n`;
+    });
+    if(incValue > 0) msg += `\n💰 *Valor total a caminho:* ${fmtMoney(incValue)}\n`;
+  }
+  if(incReceived > 0) msg += `• Já recebidas: ${incReceived}\n`;
+  msg += `\n`;
+
+  // CLIENTES
+  msg += `👥 *CLIENTES*\n`;
+  msg += `• Total cadastrados: ${totalClientes}\n`;
+  msg += `\n`;
+
+  msg += `━━━━━━━━━━━━━━━━━━\n`;
+  msg += `✨ _Relatório gerado automaticamente_`;
+  return msg;
+}
+
+function sendReportWhatsApp(){
+  const phone = onlyNumbers(DB.profile.reportPhone || '');
+  if(!phone){
+    toast('Cadastre o número para receber o relatório!','error');
+    return;
+  }
+  if(phone.length < 10){
+    toast('Número inválido! Use DDD + número.','error');
+    return;
+  }
+  // Salva o telefone antes de enviar
+  DB.profile.reportPhone = document.getElementById('reportPhoneInput').value.trim();
+  saveDB();
+
+  const msg = buildReportMessage();
+  window.open(`https://wa.me/55${phone}?text=${encodeURIComponent(msg)}`,'_blank');
+  toast('Abrindo WhatsApp com o relatório...','success');
+}
+// ============================================================
 
 function openModal(id){document.getElementById(id).classList.add('show');}
 function closeModal(id){document.getElementById(id).classList.remove('show');}
@@ -1293,9 +1508,6 @@ function renderHome(){
   </div>`);
   document.getElementById('dashboardAlerts').innerHTML=alerts.join('');
 
-  // ============================================================
-  // PRÓXIMOS VENCIMENTOS - agora com botão WhatsApp
-  // ============================================================
   const upc=pend.filter(i=>i.dueDate>=today).sort((a,b)=>a.dueDate.localeCompare(b.dueDate)).slice(0,4);
   const uEl=document.getElementById('upcomingList');
   if(upc.length===0){
@@ -1607,11 +1819,9 @@ function confirmPayment(){
   saveDB();
   closeModal('paymentModal');
   renderCurrentPage();
+  scheduleAllNotifications();
 }
 
-// ============================================================
-// NOVAS FUNÇÕES: editar/excluir parcelas e cancelar vendas
-// ============================================================
 function openEditInstallment(instId){
   const i=DB.installments.find(x=>x.id===instId);
   if(!i){ toast('Parcela não encontrada','error'); return; }
@@ -1655,7 +1865,6 @@ function deleteInstallment(instId){
     DB.installments=DB.installments.filter(x=>x.id!==instId);
     const restSaleInst=DB.installments.filter(x=>x.saleId===i.saleId);
     if(restSaleInst.length===0){
-      // última parcela removida — remove a venda também
       DB.sales=DB.sales.filter(x=>x.id!==i.saleId);
     }
     saveDB();
@@ -1671,7 +1880,6 @@ function cancelSale(saleId){
   if(!s){ toast('Venda não encontrada','error'); return; }
   const c=DB.clients.find(x=>x.id===s.clientId);
   if(confirm(`Cancelar a venda de ${fmtMoney(s.total)}${c?` para ${c.name}`:''}?\n\nTodas as parcelas serão removidas e o estoque dos produtos será devolvido.`)){
-    // Devolve estoque
     if(s.items){
       s.items.forEach(it=>{
         const p=DB.products.find(x=>x.id===it.productId);
@@ -1687,7 +1895,6 @@ function cancelSale(saleId){
     scheduleAllNotifications();
   }
 }
-// ============================================================
 
 function renderReceivable(){
   const today=todayStr();
@@ -1742,13 +1949,9 @@ function renderReceivable(){
   }).join('');
 }
 
-// ============================================================
-// VENDAS: parcelas a vencer no topo + histórico
-// ============================================================
 function renderSales(){
   const today=todayStr();
 
-  // ---- Seção: Parcelas a Vencer (ordenadas: atrasadas → hoje → próximas) ----
   const pend=DB.installments.filter(i=>i.status!=='paid').sort((a,b)=>{
     const aOvd=a.dueDate<today;
     const bOvd=b.dueDate<today;
@@ -1789,7 +1992,6 @@ function renderSales(){
     }).join('');
   }
 
-  // ---- Seção: Histórico de Vendas ----
   const el=document.getElementById('salesList');
   if(DB.sales.length===0){
     el.innerHTML=`<div class="empty-state"><i class="ri-shopping-cart-line"></i><p>Nenhuma venda registrada.</p></div>`;
@@ -2051,9 +2253,7 @@ function saveExpense(){
   renderCurrentPage();
 }
 
-// ============================================================
-// ========== BACKUP E RESTAURAÇÃO ==========
-// ============================================================
+// ========== BACKUP ==========
 function baixarViaNavegador(str, name){
   const blob=new Blob([str],{type:'application/json'});
   const url=URL.createObjectURL(blob);
@@ -2068,7 +2268,7 @@ function baixarViaNavegador(str, name){
 
 function montarBackupJSON(){
   return {
-    versao:2,
+    versao:3,
     app:'ClaudiaCollection',
     geradoEm:new Date().toISOString(),
     profile:DB.profile,
@@ -2220,7 +2420,6 @@ function renderReports(){
   }
 }
 
-// ==================== MERCADORIAS A RECEBER ====================
 function switchIncomingTab(tab){
   DB.incomingTab=tab;
   document.querySelectorAll('#incomingTabs .mini-tab').forEach(t=>t.classList.remove('active'));
@@ -2356,8 +2555,7 @@ function initApp(){
   updateAlertBadge();
   updateNotifBadgeUI();
   setTimeout(() => { scheduleAllNotifications(); }, 1500);
-  console.log('%cCláudia Collection Premium v2.4','color:#e94e8e;font-size:18px;font-weight:bold;');
-  console.log('%c💎 Imagens embutidas:','color:#a06fd6;font-weight:bold;', BAKED_IMAGES.profileImage ? 'Foto de perfil ✅' : 'Foto de perfil ❌', '|', BAKED_IMAGES.headerBg ? 'Papel de fundo ✅' : 'Papel de fundo ❌');
+  console.log('%cCláudia Collection Premium v2.5','color:#e94e8e;font-size:18px;font-weight:bold;');
 }
 </script>
 </body>

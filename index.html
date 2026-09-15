@@ -1,0 +1,1226 @@
+<html style="margin:0;padding:0;">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4/fonts/remixicon.css">
+<script>
+(function(){
+  var s = document.createElement('style');
+  s.textContent = `
+    :root{
+      --bg:#1a1216;
+      --bg-2:#22181d;
+      --card:#2a1d24;
+      --card-2:#33242d;
+      --text:#f5e6ea;
+      --muted:#b8a0a8;
+      --accent:#e8b4b8;
+      --accent-soft:rgba(232,180,184,.18);
+      --accent2:#d4af37;
+      --accent2-soft:rgba(212,175,55,.18);
+      --rose:#c98a9b;
+      --border:rgba(232,180,184,.15);
+      --gold:#c9a961;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:'Quicksand',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
+    .font-display{font-family:'Playfair Display',serif}
+    
+    /* Splash Screen */
+    #splash{
+      position:fixed;inset:0;z-index:9999;
+      background:radial-gradient(ellipse at 30% 20%, rgba(232,180,184,.15), transparent 50%),
+                 radial-gradient(ellipse at 70% 80%, rgba(212,175,55,.12), transparent 50%),
+                 linear-gradient(135deg,#1a1216 0%,#22181d 50%,#1a1216 100%);
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      transition:opacity .8s ease, visibility .8s ease;
+    }
+    #splash.hidden{opacity:0;visibility:hidden}
+    .splash-logo{
+      width:140px;height:140px;border-radius:50%;
+      background:linear-gradient(135deg,var(--accent),var(--gold));
+      display:flex;align-items:center;justify-content:center;
+      box-shadow:0 0 60px rgba(232,180,184,.4),0 0 120px rgba(212,175,55,.2);
+      animation:logoIn 1.2s cubic-bezier(.34,1.56,.64,1) forwards;
+      opacity:0;transform:scale(.5);
+    }
+    @keyframes logoIn{
+      to{opacity:1;transform:scale(1)}
+    }
+    .splash-logo-inner{
+      width:128px;height:128px;border-radius:50%;
+      background:var(--bg);
+      display:flex;align-items:center;justify-content:center;
+      flex-direction:column;
+    }
+    .splash-title{
+      font-family:'Playfair Display',serif;
+      font-size:24px;font-weight:600;
+      background:linear-gradient(135deg,var(--accent),var(--gold));
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+      margin-top:24px;opacity:0;animation:fadeUp .8s .4s forwards;
+      letter-spacing:.02em;
+    }
+    .splash-subtitle{
+      color:var(--muted);font-size:13px;letter-spacing:.3em;
+      margin-top:8px;text-transform:uppercase;
+      opacity:0;animation:fadeUp .8s .6s forwards;
+    }
+    .splash-tagline{
+      color:var(--accent);font-size:14px;
+      margin-top:32px;letter-spacing:.15em;
+      opacity:0;animation:fadeUp .8s .8s forwards;
+    }
+    .loader{
+      width:40px;height:40px;border-radius:50%;
+      border:2px solid transparent;
+      border-top-color:var(--accent);
+      border-right-color:var(--gold);
+      animation:spin 1s linear infinite;
+      margin-top:28px;opacity:0;animation:spin 1s linear infinite, fadeUp .8s 1s forwards;
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @keyframes fadeUp{
+      from{opacity:0;transform:translateY(15px)}
+      to{opacity:1;transform:translateY(0)}
+    }
+    
+    /* App Container */
+    .app-container{
+      max-width:430px;margin:0 auto;min-height:100%;
+      background:var(--bg);position:relative;
+    }
+    
+    /* Screen transitions */
+    .screen{display:none;animation:screenIn .35s ease}
+    .screen.active{display:block}
+    @keyframes screenIn{
+      from{opacity:0;transform:translateX(20px)}
+      to{opacity:1;transform:translateX(0)}
+    }
+    
+    /* Bottom Nav */
+    .bottom-nav{
+      position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+      width:100%;max-width:430px;
+      background:rgba(26,18,22,.95);
+      backdrop-filter:blur(20px);
+      border-top:1px solid var(--border);
+      display:flex;justify-content:space-around;
+      padding:10px 0 20px;z-index:100;
+    }
+    .nav-item{
+      display:flex;flex-direction:column;align-items:center;gap:4px;
+      padding:6px 14px;border-radius:12px;cursor:pointer;
+      color:var(--muted);transition:all .25s ease;
+      font-size:11px;font-weight:500;
+    }
+    .nav-item i{font-size:22px}
+    .nav-item.active{
+      color:var(--accent);
+      background:var(--accent-soft);
+    }
+    .nav-item.active i{
+      background:linear-gradient(135deg,var(--accent),var(--gold));
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+    }
+    
+    /* Cards */
+    .card{
+      background:var(--card);border:1px solid var(--border);
+      border-radius:20px;padding:18px;
+      transition:all .3s ease;
+    }
+    .card:hover{border-color:rgba(232,180,184,.3);transform:translateY(-2px)}
+    
+    /* Buttons */
+    .btn-primary{
+      background:linear-gradient(135deg,var(--accent),var(--rose));
+      color:#1a1216;font-weight:600;
+      padding:14px 24px;border-radius:14px;
+      border:none;cursor:pointer;width:100%;
+      font-size:15px;transition:all .25s ease;
+      box-shadow:0 4px 20px rgba(232,180,184,.25);
+    }
+    .btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 28px rgba(232,180,184,.35)}
+    .btn-secondary{
+      background:transparent;color:var(--text);
+      border:1px solid var(--border);font-weight:500;
+      padding:14px 24px;border-radius:14px;cursor:pointer;width:100%;
+      font-size:14px;transition:all .25s ease;
+    }
+    .btn-secondary:hover{border-color:var(--accent);color:var(--accent)}
+    .btn-gold{
+      background:linear-gradient(135deg,var(--gold),#e8c872);
+      color:#1a1216;font-weight:600;
+      padding:14px 24px;border-radius:14px;
+      border:none;cursor:pointer;width:100%;
+      font-size:15px;transition:all .25s ease;
+      box-shadow:0 4px 20px rgba(212,175,55,.25);
+    }
+    .btn-gold:hover{transform:translateY(-1px)}
+    
+    /* Status pills */
+    .pill{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:4px 12px;border-radius:20px;font-size:12px;font-weight:500;
+    }
+    .pill-confirmed{background:rgba(13,150,105,.15);color:#4ade80}
+    .pill-pending{background:rgba(212,175,55,.15);color:var(--gold)}
+    .pill-cancelled{background:rgba(220,38,38,.15);color:#f87171}
+    
+    /* Service card */
+    .service-card{
+      display:flex;align-items:center;gap:14px;
+      padding:14px;border-radius:16px;
+      background:var(--card);border:1px solid var(--border);
+      cursor:pointer;transition:all .25s ease;
+    }
+    .service-card:hover{border-color:var(--accent);background:var(--card-2)}
+    .service-icon{
+      width:48px;height:48px;border-radius:14px;
+      background:var(--accent-soft);
+      display:flex;align-items:center;justify-content:center;
+      color:var(--accent);font-size:22px;flex-shrink:0;
+    }
+    
+    /* Time slot */
+    .time-slot{
+      padding:10px 16px;border-radius:12px;
+      background:var(--card);border:1px solid var(--border);
+      text-align:center;cursor:pointer;transition:all .2s ease;
+      font-size:14px;font-weight:500;color:var(--text);
+    }
+    .time-slot:hover{border-color:var(--accent)}
+    .time-slot.selected{
+      background:linear-gradient(135deg,var(--accent),var(--rose));
+      color:#1a1216;border-color:transparent;font-weight:600;
+    }
+    .time-slot.disabled{opacity:.4;cursor:not-allowed}
+    
+    /* Day selector */
+    .day-item{
+      display:flex;flex-direction:column;align-items:center;
+      padding:10px 12px;border-radius:14px;cursor:pointer;
+      min-width:56px;transition:all .2s ease;
+      border:1px solid transparent;
+    }
+    .day-item:hover{background:var(--card)}
+    .day-item.selected{
+      background:linear-gradient(135deg,var(--accent),var(--rose));
+      color:#1a1216;border-color:transparent;
+    }
+    .day-item.selected .day-num{color:#1a1216}
+    .day-item.selected .day-name{color:rgba(26,18,22,.7)}
+    .day-name{font-size:11px;color:var(--muted);text-transform:uppercase;margin-bottom:4px}
+    .day-num{font-size:18px;font-weight:600;color:var(--text)}
+    
+    /* Scrollbar */
+    ::-webkit-scrollbar{width:4px}
+    ::-webkit-scrollbar-track{background:transparent}
+    ::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+    
+    /* Input */
+    .input-field{
+      width:100%;padding:14px 16px;border-radius:14px;
+      background:var(--bg-2);border:1px solid var(--border);
+      color:var(--text);font-size:14px;font-family:'Quicksand',sans-serif;
+      outline:none;transition:border-color .2s ease;
+    }
+    .input-field:focus{border-color:var(--accent)}
+    .input-field::placeholder{color:var(--muted)}
+    
+    /* Profile avatar */
+    .avatar{
+      width:80px;height:80px;border-radius:50%;
+      background:linear-gradient(135deg,var(--accent),var(--gold));
+      display:flex;align-items:center;justify-content:center;
+      font-size:32px;font-weight:600;color:#1a1216;
+      font-family:'Playfair Display',serif;
+    }
+    
+    /* Glow effect */
+    .glow-text{
+      background:linear-gradient(135deg,var(--accent),var(--gold));
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+    }
+    
+    /* Section spacing */
+    .section{padding:0 20px;margin-bottom:24px}
+    .section-title{
+      font-family:'Playfair Display',serif;
+      font-size:20px;font-weight:600;margin-bottom:14px;
+      display:flex;align-items:center;justify-content:space-between;
+    }
+    .section-title small{
+      font-family:'Quicksand',sans-serif;font-size:13px;
+      color:var(--accent);font-weight:500;cursor:pointer;
+    }
+    
+    /* Header */
+    .app-header{
+      padding:20px 20px 16px;display:flex;align-items:center;
+      justify-content:space-between;
+    }
+    .header-greeting h2{
+      font-family:'Playfair Display',serif;
+      font-size:22px;font-weight:600;margin:0;
+    }
+    .header-greeting p{color:var(--muted);font-size:13px;margin:4px 0 0}
+    .header-avatar{
+      width:44px;height:44px;border-radius:50%;
+      background:linear-gradient(135deg,var(--accent),var(--gold));
+      display:flex;align-items:center;justify-content:center;
+      color:#1a1216;font-weight:600;font-size:16px;
+      font-family:'Playfair Display',serif;cursor:pointer;
+    }
+    
+    /* WhatsApp modal */
+    .modal-overlay{
+      position:fixed;inset:0;background:rgba(0,0,0,.7);
+      backdrop-filter:blur(8px);z-index:1000;
+      display:none;align-items:center;justify-content:center;
+      padding:20px;
+    }
+    .modal-overlay.active{display:flex}
+    .modal{
+      background:var(--card);border:1px solid var(--border);
+      border-radius:24px;padding:28px;max-width:380px;width:100%;
+      animation:modalIn .3s ease;
+    }
+    @keyframes modalIn{
+      from{opacity:0;transform:scale(.9)}
+      to{opacity:1;transform:scale(1)}
+    }
+    
+    /* Notification toast */
+    .toast{
+      position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-100px);
+      background:var(--card);border:1px solid var(--accent);
+      border-radius:16px;padding:14px 20px;
+      box-shadow:0 10px 40px rgba(0,0,0,.4);
+      z-index:2000;transition:transform .4s cubic-bezier(.34,1.56,.64,1);
+      display:flex;align-items:center;gap:12px;max-width:360px;width:calc(100% - 40px);
+    }
+    .toast.show{transform:translateX(-50%) translateY(0)}
+    .toast-icon{
+      width:36px;height:36px;border-radius:12px;
+      background:var(--accent-soft);color:var(--accent);
+      display:flex;align-items:center;justify-content:center;font-size:18px;
+    }
+    
+    /* Content padding for bottom nav */
+    .content-area{padding-bottom:100px}
+    
+    /* Stat cards */
+    .stat-card{
+      text-align:center;padding:16px;
+      background:var(--card);border:1px solid var(--border);
+      border-radius:16px;flex:1;
+    }
+    .stat-num{
+      font-family:'Playfair Display',serif;
+      font-size:28px;font-weight:600;color:var(--accent);
+    }
+    .stat-label{font-size:12px;color:var(--muted);margin-top:4px}
+    
+    /* Hero banner */
+    .hero-banner{
+      margin:0 20px 24px;padding:24px;border-radius:24px;
+      background:linear-gradient(135deg,rgba(232,180,184,.12),rgba(212,175,55,.08)),var(--card);
+      border:1px solid var(--border);position:relative;overflow:hidden;
+    }
+    .hero-banner::before{
+      content:'';position:absolute;top:-40px;right:-40px;
+      width:140px;height:140px;border-radius:50%;
+      background:radial-gradient(circle,rgba(232,180,184,.2),transparent 70%);
+    }
+    
+    /* Quick actions */
+    .quick-action{
+      display:flex;flex-direction:column;align-items:center;gap:8px;
+      cursor:pointer;transition:transform .2s ease;
+    }
+    .quick-action:hover{transform:scale(1.05)}
+    .qa-icon{
+      width:56px;height:56px;border-radius:18px;
+      background:var(--accent-soft);
+      display:flex;align-items:center;justify-content:center;
+      color:var(--accent);font-size:24px;
+      border:1px solid var(--border);
+    }
+    .qa-label{font-size:12px;color:var(--muted);font-weight:500}
+  `;
+  document.head.appendChild(s);
+})();
+</script>
+
+<div style="background-color:transparent;box-sizing:border-box;">
+<div class="app-container">
+
+<!-- SPLASH SCREEN -->
+<div id="splash">
+  <div class="splash-logo">
+    <div class="splash-logo-inner">
+      <i class="ri-scissors-2-line" style="font-size:42px;background:linear-gradient(135deg,var(--accent),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent;"></i>
+    </div>
+  </div>
+  <div class="splash-title">Jucimara Cabeleireira</div>
+  <div class="splash-subtitle">Studio de Beleza</div>
+  <div class="splash-tagline">Beleza &bull; Autoestima &bull; Voc&ecirc;</div>
+  <div class="loader"></div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app" style="display:none;">
+
+  <!-- DASHBOARD SCREEN -->
+  <div id="screen-dashboard" class="screen active content-area">
+    <div class="app-header">
+      <div class="header-greeting">
+        <h2>Ol&aacute;, <span class="glow-text">Jucimara</span></h2>
+        <p><i class="ri-calendar-check-line" style="margin-right:4px;"></i><span id="today-date"></span></p>
+      </div>
+      <div class="header-avatar" onclick="showScreen('profile')">J</div>
+    </div>
+    
+    <!-- Hero Banner -->
+    <div class="hero-banner reveal">
+      <p style="color:var(--gold);font-size:12px;letter-spacing:.15em;text-transform:uppercase;margin:0 0 8px;font-weight:600;">
+        <i class="ri-vip-crown-line"></i> Hoje
+      </p>
+      <h3 style="font-family:'Playfair Display',serif;font-size:22px;font-weight:600;margin:0 0 6px;">
+        <span id="today-count">0</span> agendamentos
+      </h3>
+      <p style="color:var(--muted);font-size:13px;margin:0;">
+        Pr&oacute;ximo: <span id="next-appointment" style="color:var(--accent);font-weight:500;">Carregando...</span>
+      </p>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="section">
+      <div style="display:flex;justify-content:space-around;">
+        <div class="quick-action" onclick="showScreen('agenda')">
+          <div class="qa-icon"><i class="ri-calendar-schedule-line"></i></div>
+          <span class="qa-label">Agenda</span>
+        </div>
+        <div class="quick-action" onclick="showScreen('servicos')">
+          <div class="qa-icon"><i class="ri-scissors-2-line"></i></div>
+          <span class="qa-label">Servi&ccedil;os</span>
+        </div>
+        <div class="quick-action" onclick="newBooking()">
+          <div class="qa-icon" style="background:linear-gradient(135deg,var(--accent-soft),var(--accent2-soft));"><i class="ri-add-line"></i></div>
+          <span class="qa-label">Novo</span>
+        </div>
+        <div class="quick-action" onclick="showScreen('profile')">
+          <div class="qa-icon"><i class="ri-user-line"></i></div>
+          <span class="qa-label">Perfil</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Stats -->
+    <div class="section">
+      <div style="display:flex;gap:12px;">
+        <div class="stat-card">
+          <div class="stat-num" id="stat-week">0</div>
+          <div class="stat-label">Esta semana</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stat-month">0</div>
+          <div class="stat-label">Este m&ecirc;s</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" style="color:var(--gold);">R$<span id="stat-revenue">0</span></div>
+          <div class="stat-label">Receita</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Today's Appointments -->
+    <div class="section">
+      <div class="section-title">
+        <span>Hoje</span>
+        <small onclick="showScreen('agenda')">Ver tudo</small>
+      </div>
+      <div id="today-list" style="display:flex;flex-direction:column;gap:12px;"></div>
+    </div>
+    
+    <!-- Upcoming -->
+    <div class="section">
+      <div class="section-title">
+        <span>Pr&oacute;ximos</span>
+        <small onclick="showScreen('agenda')">Agenda</small>
+      </div>
+      <div id="upcoming-list" style="display:flex;flex-direction:column;gap:12px;"></div>
+    </div>
+  </div>
+
+  <!-- AGENDA SCREEN -->
+  <div id="screen-agenda" class="screen content-area">
+    <div class="app-header">
+      <div class="header-greeting">
+        <h2 class="font-display">Agenda</h2>
+        <p style="color:var(--muted);font-size:13px;margin:4px 0 0;">Gerencie seus hor&aacute;rios</p>
+      </div>
+      <div style="width:44px;height:44px;border-radius:50%;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;cursor:pointer;" onclick="newBooking()">
+        <i class="ri-add-line" style="color:var(--accent);font-size:22px;"></i>
+      </div>
+    </div>
+    
+    <!-- Day selector -->
+    <div class="section">
+      <div id="day-selector" style="display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;"></div>
+    </div>
+    
+    <!-- Filter tabs -->
+    <div class="section" style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="agenda-filter active" data-filter="all" style="padding:8px 16px;border-radius:20px;border:1px solid var(--accent);background:var(--accent-soft);color:var(--accent);font-size:13px;font-weight:500;cursor:pointer;">Todos</button>
+      <button class="agenda-filter" data-filter="confirmed" style="padding:8px 16px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:13px;font-weight:500;cursor:pointer;">Confirmados</button>
+      <button class="agenda-filter" data-filter="pending" style="padding:8px 16px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:13px;font-weight:500;cursor:pointer;">Pendentes</button>
+      <button class="agenda-filter" data-filter="cancelled" style="padding:8px 16px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:13px;font-weight:500;cursor:pointer;">Cancelados</button>
+    </div>
+    
+    <!-- Appointments list -->
+    <div class="section">
+      <div id="agenda-list" style="display:flex;flex-direction:column;gap:12px;"></div>
+    </div>
+  </div>
+
+  <!-- SERVICOS SCREEN -->
+  <div id="screen-servicos" class="screen content-area">
+    <div class="app-header">
+      <div class="header-greeting">
+        <h2 class="font-display">Servi&ccedil;os</h2>
+        <p style="color:var(--muted);font-size:13px;margin:4px 0 0;">Cat&aacute;logo completo</p>
+      </div>
+      <div style="width:44px;height:44px;border-radius:50%;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;cursor:pointer;">
+        <i class="ri-search-line" style="color:var(--accent);font-size:20px;"></i>
+      </div>
+    </div>
+    
+    <!-- Categories -->
+    <div class="section" style="display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;">
+      <button class="service-cat active" data-cat="all" style="padding:10px 18px;border-radius:14px;border:1px solid var(--accent);background:var(--accent-soft);color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">Todos</button>
+      <button class="service-cat" data-cat="cabelo" style="padding:10px 18px;border-radius:14px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;">Cabelo</button>
+      <button class="service-cat" data-cat="coloracao" style="padding:10px 18px;border-radius:14px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;">Colora&ccedil;&atilde;o</button>
+      <button class="service-cat" data-cat="tratamento" style="padding:10px 18px;border-radius:14px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;">Tratamentos</button>
+      <button class="service-cat" data-cat="penteado" style="padding:10px 18px;border-radius:14px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;">Penteados</button>
+    </div>
+    
+    <!-- Services list -->
+    <div class="section">
+      <div id="services-list" style="display:flex;flex-direction:column;gap:12px;"></div>
+    </div>
+  </div>
+
+  <!-- PERFIL SCREEN -->
+  <div id="screen-profile" class="screen content-area">
+    <div class="app-header">
+      <div class="header-greeting">
+        <h2 class="font-display">Perfil</h2>
+        <p style="color:var(--muted);font-size:13px;margin:4px 0 0;">Configura&ccedil;&otilde;es da conta</p>
+      </div>
+    </div>
+    
+    <!-- Profile info -->
+    <div class="section">
+      <div class="card" style="text-align:center;">
+        <div class="avatar" style="margin:0 auto 14px;">JC</div>
+        <h3 style="font-family:'Playfair Display',serif;font-size:20px;font-weight:600;margin:0;">Jucimara Cabeleireira</h3>
+        <p style="color:var(--muted);font-size:13px;margin:6px 0 0;">Studio de Beleza Premium</p>
+        <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;color:var(--gold);font-size:13px;">
+          <i class="ri-map-pin-2-fill"></i> Itamaraju, BA
+        </div>
+      </div>
+    </div>
+    
+    <!-- Contact -->
+    <div class="section">
+      <div class="section-title" style="font-size:16px;"><span>Contato</span></div>
+      <div class="card" style="display:flex;flex-direction:column;gap:14px;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:40px;height:40px;border-radius:12px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;color:var(--accent);"><i class="ri-whatsapp-line" style="font-size:20px;"></i></div>
+          <div>
+            <div style="font-size:12px;color:var(--muted);">WhatsApp</div>
+            <div style="font-weight:500;">(73) 99999-9999</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:40px;height:40px;border-radius:12px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;color:var(--accent);"><i class="ri-phone-line" style="font-size:20px;"></i></div>
+          <div>
+            <div style="font-size:12px;color:var(--muted);">Telefone</div>
+            <div style="font-weight:500;">(73) 3251-0000</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:40px;height:40px;border-radius:12px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;color:var(--accent);"><i class="ri-time-line" style="font-size:20px;"></i></div>
+          <div>
+            <div style="font-size:12px;color:var(--muted);">Hor&aacute;rio de atendimento</div>
+            <div style="font-weight:500;font-size:13px;">Ter &agrave; S&aacute;b &bull; 09:00 &agrave;s 19:00</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Settings -->
+    <div class="section">
+      <div class="section-title" style="font-size:16px;"><span>Configura&ccedil;&otilde;es</span></div>
+      <div class="card" style="padding:0;overflow:hidden;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--border);cursor:pointer;">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <i class="ri-notification-3-line" style="color:var(--accent);font-size:20px;"></i>
+            <span>Notifica&ccedil;&otilde;es</span>
+          </div>
+          <label class="switch" style="position:relative;width:44px;height:24px;display:inline-block;">
+            <input type="checkbox" id="notif-toggle" checked style="opacity:0;width:0;height:0;">
+            <span style="position:absolute;cursor:pointer;inset:0;background:var(--accent);border-radius:24px;transition:.3s;"></span>
+          </label>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--border);cursor:pointer;">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <i class="ri-bell-ring-line" style="color:var(--gold);font-size:20px;"></i>
+            <span>Lembretes por WhatsApp</span>
+          </div>
+          <label class="switch" style="position:relative;width:44px;height:24px;display:inline-block;">
+            <input type="checkbox" checked style="opacity:0;width:0;height:0;">
+            <span style="position:absolute;cursor:pointer;inset:0;background:var(--gold);border-radius:24px;transition:.3s;"></span>
+          </label>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 18px;cursor:pointer;">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <i class="ri-shield-check-line" style="color:var(--accent);font-size:20px;"></i>
+            <span>Privacidade</span>
+          </div>
+          <i class="ri-arrow-right-s-line" style="color:var(--muted);"></i>
+        </div>
+      </div>
+    </div>
+    
+    <!-- About -->
+    <div class="section">
+      <div class="card" style="text-align:center;padding:20px;">
+        <p style="color:var(--muted);font-size:12px;margin:0;">Jucimara Cabeleireira</p>
+        <p style="color:var(--muted);font-size:11px;margin:4px 0 0;">Vers&atilde;o 1.0.0 &bull; &copy; 2026</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- NEW BOOKING SCREEN -->
+  <div id="screen-booking" class="screen content-area">
+    <div class="app-header">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div onclick="showScreen('agenda')" style="width:40px;height:40px;border-radius:12px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;">
+          <i class="ri-arrow-left-line" style="font-size:20px;"></i>
+        </div>
+        <div>
+          <h2 class="font-display" style="font-size:20px;margin:0;">Novo Agendamento</h2>
+          <p style="color:var(--muted);font-size:12px;margin:2px 0 0;">Preencha os dados abaixo</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="section">
+      <label style="font-size:13px;color:var(--muted);display:block;margin-bottom:8px;font-weight:500;">Nome da cliente</label>
+      <input type="text" id="bk-cliente" class="input-field" placeholder="Nome completo">
+    </div>
+    
+    <div class="section">
+      <label style="font-size:13px;color:var(--muted);display:block;margin-bottom:8px;font-weight:500;">Telefone / WhatsApp</label>
+      <input type="tel" id="bk-telefone" class="input-field" placeholder="(00) 00000-0000">
+    </div>
+    
+    <div class="section">
+      <label style="font-size:13px;color:var(--muted);display:block;margin-bottom:8px;font-weight:500;">Selecione o servi&ccedil;o</label>
+      <div id="bk-services" style="display:flex;flex-direction:column;gap:10px;"></div>
+    </div>
+    
+    <div class="section">
+      <label style="font-size:13px;color:var(--muted);display:block;margin-bottom:8px;font-weight:500;">Data</label>
+      <div id="bk-days" style="display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;"></div>
+    </div>
+    
+    <div class="section">
+      <label style="font-size:13px;color:var(--muted);display:block;margin-bottom:8px;font-weight:500;">Hor&aacute;rio</label>
+      <div id="bk-times" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;"></div>
+    </div>
+    
+    <div class="section" style="padding-top:12px;">
+      <button class="btn-primary" onclick="confirmBooking()">
+        <i class="ri-check-line" style="margin-right:6px;"></i>Confirmar Agendamento
+      </button>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <div class="bottom-nav">
+    <div class="nav-item active" data-screen="dashboard" onclick="showScreen('dashboard')">
+      <i class="ri-home-5-line"></i>
+      <span>In&iacute;cio</span>
+    </div>
+    <div class="nav-item" data-screen="agenda" onclick="showScreen('agenda')">
+      <i class="ri-calendar-schedule-line"></i>
+      <span>Agenda</span>
+    </div>
+    <div class="nav-item" data-screen="servicos" onclick="showScreen('servicos')">
+      <i class="ri-scissors-2-line"></i>
+      <span>Servi&ccedil;os</span>
+    </div>
+    <div class="nav-item" data-screen="profile" onclick="showScreen('profile')">
+      <i class="ri-user-line"></i>
+      <span>Perfil</span>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<!-- WHATSAPP CONFIRMATION MODAL -->
+<div class="modal-overlay" id="whatsapp-modal">
+  <div class="modal">
+    <div style="text-align:center;margin-bottom:20px;">
+      <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#25D366,#128C7E);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">
+        <i class="ri-whatsapp-line" style="font-size:32px;color:#fff;"></i>
+      </div>
+      <h3 class="font-display" style="font-size:20px;margin:0 0 6px;">Confirmar via WhatsApp</h3>
+      <p style="color:var(--muted);font-size:13px;margin:0;line-height:1.5;">Enviar uma mensagem de confirma&ccedil;&atilde;o para a cliente?</p>
+    </div>
+    
+    <div id="modal-summary" style="background:var(--bg-2);border-radius:14px;padding:14px;margin-bottom:18px;font-size:13px;line-height:1.7;">
+      <!-- Summary injected by JS -->
+    </div>
+    
+    <div style="display:flex;gap:10px;">
+      <button class="btn-secondary" onclick="closeModal()" style="flex:1;">Cancelar</button>
+      <button class="btn-gold" onclick="sendWhatsApp()" style="flex:1;">
+        <i class="ri-whatsapp-line" style="margin-right:4px;"></i>Enviar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast notification -->
+<div class="toast" id="toast">
+  <div class="toast-icon"><i class="ri-notification-3-line"></i></div>
+  <div>
+    <div id="toast-title" style="font-weight:600;font-size:14px;">Notifica&ccedil;&atilde;o</div>
+    <div id="toast-msg" style="font-size:12px;color:var(--muted);">Mensagem</div>
+  </div>
+</div>
+
+</div><!-- /app-container -->
+</div><!-- /wrapper -->
+
+<script>
+(function(){
+  // ============ DATA ============
+  const services = [
+    {id:1, name:'Corte Feminino', cat:'cabelo', price:80, duration:'45 min', icon:'ri-scissors-2-line', desc:'Corte personalizado'},
+    {id:2, name:'Corte Masculino', cat:'cabelo', price:50, duration:'30 min', icon:'ri-user-line', desc:'Corte moderno'},
+    {id:3, name:'Escova Modeladora', cat:'cabelo', price:70, duration:'50 min', icon:'ri-windy-line', desc:'Escova completa'},
+    {id:4, name:'Progressiva', cat:'tratamento', price:250, duration:'2h', icon:'ri-magic-line', desc:'Alisamento premium'},
+    {id:5, name:'Hidrata&ccedil;&atilde;o Profunda', cat:'tratamento', price:120, duration:'1h', icon:'ri-drop-line', desc:'Restaura&ccedil;&atilde;o capilar'},
+    {id:6, name:'Colora&ccedil;&atilde;o Completa', cat:'coloracao', price:180, duration:'1h30', icon:'ri-palette-line', desc:'Cor completa'},
+    {id:7, name:'Luzes / Mechas', cat:'coloracao', price:220, duration:'2h30', icon:'ri-sun-line', desc:'Mechas iluminadas'},
+    {id:8, name:'Tonalizante', cat:'coloracao', price:100, duration:'45 min', icon:'ri-brush-line', desc:'Realce de cor'},
+    {id:9, name:'Penteado para Festa', cat:'penteado', price:150, duration:'1h30', icon:'ri-star-line', desc:'Penteado elegante'},
+    {id:10, name:'Penteado Noiva', cat:'penteado', price:350, duration:'3h', icon:'ri-vip-crown-line', desc:'Penteado exclusivo'},
+    {id:11, name:'Botox Capilar', cat:'tratamento', price:200, duration:'1h30', icon:'ri-medal-line', desc:'Reconstru&ccedil;&atilde;o'},
+    {id:12, name:'Corte + Escova', cat:'cabelo', price:130, duration:'1h15', icon:'ri-sparkling-line', desc:'Combo completo'},
+  ];
+  
+  // Sample appointments
+  let appointments = [
+    {id:1, cliente:'Maria Silva', telefone:'(73) 99123-4567', servico:'Corte Feminino', data:todayStr(), hora:'09:00', status:'confirmed', price:80},
+    {id:2, cliente:'Ana Costa', telefone:'(73) 99234-5678', servico:'Escova Modeladora', data:todayStr(), hora:'10:30', status:'confirmed', price:70},
+    {id:3, cliente:'Carla Souza', telefone:'(73) 99345-6789', servico:'Progressiva', data:todayStr(), hora:'14:00', status:'pending', price:250},
+    {id:4, cliente:'Juliana Lima', telefone:'(73) 99456-7890', servico:'Colora&ccedil;&atilde;o Completa', data:todayStr(), hora:'16:00', status:'confirmed', price:180},
+    {id:5, cliente:'Fernanda Alves', telefone:'(73) 99567-8901', servico:'Hidrata&ccedil;&atilde;o Profunda', data:addDays(1), hora:'10:00', status:'confirmed', price:120},
+    {id:6, cliente:'Patricia Rocha', telefone:'(73) 99678-9012', servico:'Luzes / Mechas', data:addDays(1), hora:'14:30', status:'pending', price:220},
+    {id:7, cliente:'Beatriz Mendes', telefone:'(73) 99789-0123', servico:'Penteado para Festa', data:addDays(2), hora:'15:00', status:'confirmed', price:150},
+    {id:8, cliente:'Luciana Dias', telefone:'(73) 99890-1234', servico:'Corte Masculino', data:addDays(3), hora:'11:00', status:'confirmed', price:50},
+    {id:9, cliente:'Renata Carvalho', telefone:'(73) 99901-2345', servico:'Corte + Escova', data:addDays(4), hora:'09:30', status:'cancelled', price:130},
+    {id:10, cliente:'Camila Nunes', telefone:'(73) 99012-3456', servico:'Tonalizante', data:addDays(5), hora:'13:00', status:'confirmed', price:100},
+  ];
+  
+  let selectedService = null;
+  let selectedDate = todayStr();
+  let selectedTime = null;
+  let currentFilter = 'all';
+  let currentServiceCat = 'all';
+  let pendingBooking = null;
+  
+  // ============ UTILITIES ============
+  function todayStr(){
+    const d = new Date();
+    return d.toISOString().split('T')[0];
+  }
+  function addDays(n){
+    const d = new Date();
+    d.setDate(d.getDate()+n);
+    return d.toISOString().split('T')[0];
+  }
+  function formatDateBR(dateStr){
+    const [y,m,d] = dateStr.split('-');
+    return `${d}/${m}/${y}`;
+  }
+  function getDayName(dateStr){
+    const days = ['DOM','SEG','TER','QUA','QUI','SEX','S&Aacute;B'];
+    return days[new Date(dateStr).getDay()];
+  }
+  function getDayNum(dateStr){
+    return parseInt(dateStr.split('-')[2]);
+  }
+  function getMonthName(){
+    const months = ['Janeiro','Fevereiro','Mar&ccedil;o','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+    return months[new Date().getMonth()];
+  }
+  
+  // ============ SPLASH ============
+  setTimeout(function(){
+    document.getElementById('splash').classList.add('hidden');
+    document.getElementById('app').style.display = 'block';
+    initApp();
+  }, 3000);
+  
+  // ============ INIT ============
+  function initApp(){
+    renderTodayDate();
+    renderDaySelector();
+    renderServices();
+    renderBookingServices();
+    renderBookingDays();
+    renderBookingTimes();
+    renderAgenda();
+    renderDashboard();
+    setupFilters();
+    setupServiceCats();
+    checkNotifications();
+  }
+  
+  function renderTodayDate(){
+    const d = new Date();
+    const days = ['Domingo','Segunda-feira','Ter&ccedil;a-feira','Quarta-feira','Quinta-feira','Sexta-feira','S&aacute;bado'];
+    document.getElementById('today-date').textContent = `${days[d.getDay()]}, ${d.getDate()} de ${getMonthName()}`;
+  }
+  
+  // ============ SCREEN NAVIGATION ============
+  window.showScreen = function(name){
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-'+name).classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    const nav = document.querySelector('.nav-item[data-screen="'+name+'"]');
+    if(nav) nav.classList.add('active');
+    window.scrollTo(0,0);
+    
+    if(name === 'agenda') renderAgenda();
+    if(name === 'dashboard') renderDashboard();
+    if(name === 'servicos') renderServices();
+  };
+  
+  // ============ DASHBOARD ============
+  function renderDashboard(){
+    const today = todayStr();
+    const todayApps = appointments.filter(a => a.data === today);
+    const upcoming = appointments.filter(a => a.data > today && a.status !== 'cancelled').slice(0,3);
+    
+    document.getElementById('today-count').textContent = todayApps.length;
+    
+    const next = todayApps.find(a => a.status !== 'cancelled');
+    document.getElementById('next-appointment').textContent = next ? `${next.hora} - ${next.cliente}` : 'Nenhum agendamento';
+    
+    // Stats
+    const weekAgo = addDays(-7);
+    const weekApps = appointments.filter(a => a.data >= weekAgo && a.status !== 'cancelled');
+    document.getElementById('stat-week').textContent = weekApps.length;
+    
+    const monthStart = new Date().toISOString().slice(0,8)+'01';
+    const monthApps = appointments.filter(a => a.data >= monthStart && a.status !== 'cancelled');
+    document.getElementById('stat-month').textContent = monthApps.length;
+    
+    const revenue = monthApps.reduce((s,a) => s + (a.price||0), 0);
+    document.getElementById('stat-revenue').textContent = revenue;
+    
+    // Today list
+    const todayList = document.getElementById('today-list');
+    if(todayApps.length === 0){
+      todayList.innerHTML = emptyState('Nenhum agendamento para hoje');
+    } else {
+      todayList.innerHTML = todayApps.slice(0,3).map(a => appointmentCard(a)).join('');
+    }
+    
+    // Upcoming list
+    const upList = document.getElementById('upcoming-list');
+    if(upcoming.length === 0){
+      upList.innerHTML = emptyState('Sem pr&oacute;ximos agendamentos');
+    } else {
+      upList.innerHTML = upcoming.map(a => appointmentCard(a, true)).join('');
+    }
+  }
+  
+  // ============ AGENDA ============
+  function renderDaySelector(){
+    const container = document.getElementById('day-selector');
+    let html = '';
+    for(let i=0;i<14;i++){
+      const date = addDays(i);
+      const isSel = date === selectedDate;
+      html += `<div class="day-item ${isSel?'selected':''}" onclick="selectDay('${date}')">
+        <span class="day-name">${getDayName(date)}</span>
+        <span class="day-num">${getDayNum(date)}</span>
+      </div>`;
+    }
+    container.innerHTML = html;
+  }
+  
+  window.selectDay = function(date){
+    selectedDate = date;
+    renderDaySelector();
+    renderAgenda();
+  };
+  
+  function renderAgenda(){
+    const list = document.getElementById('agenda-list');
+    let filtered = appointments.filter(a => a.data === selectedDate);
+    if(currentFilter !== 'all'){
+      filtered = filtered.filter(a => a.status === currentFilter);
+    }
+    
+    if(filtered.length === 0){
+      list.innerHTML = emptyState('Nenhum agendamento encontrado');
+      return;
+    }
+    
+    list.innerHTML = filtered.map(a => appointmentCard(a)).join('');
+  }
+  
+  function appointmentCard(a, showDate=false){
+    const statusMap = {
+      confirmed: {cls:'pill-confirmed', label:'Confirmado', icon:'ri-check-line'},
+      pending: {cls:'pill-pending', label:'Pendente', icon:'ri-time-line'},
+      cancelled: {cls:'pill-cancelled', label:'Cancelado', icon:'ri-close-line'}
+    };
+    const st = statusMap[a.status];
+    const service = services.find(s => s.name === a.servico);
+    const icon = service ? service.icon : 'ri-scissors-2-line';
+    
+    return `
+      <div class="card" style="padding:16px;">
+        <div style="display:flex;gap:14px;align-items:flex-start;">
+          <div style="text-align:center;min-width:56px;">
+            <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:600;color:var(--accent);line-height:1;">${a.hora}</div>
+            ${showDate ? `<div style="font-size:11px;color:var(--muted);margin-top:4px;">${formatDateBR(a.data)}</div>` : ''}
+          </div>
+          <div style="flex:1;min-width:0;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+              <div style="font-weight:600;font-size:15px;">${a.cliente}</div>
+              <span class="pill ${st.cls}"><i class="${st.icon}"></i>${st.label}</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;margin-bottom:4px;">
+              <i class="${icon}" style="color:var(--accent);"></i>${a.servico}
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;color:var(--muted);font-size:12px;margin-bottom:10px;">
+              <i class="ri-phone-line"></i>${a.telefone}
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              ${a.status !== 'cancelled' ? `<button onclick="openWhatsApp(${a.id})" style="padding:8px 14px;border-radius:10px;background:rgba(37,211,102,.15);color:#4ade80;border:none;font-size:12px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:4px;"><i class="ri-whatsapp-line"></i>WhatsApp</button>` : ''}
+              ${a.status === 'pending' ? `<button onclick="updateStatus(${a.id},'confirmed')" style="padding:8px 14px;border-radius:10px;background:var(--accent-soft);color:var(--accent);border:none;font-size:12px;font-weight:500;cursor:pointer;"><i class="ri-check-line"></i>Confirmar</button>` : ''}
+              ${a.status === 'confirmed' ? `<button onclick="updateStatus(${a.id},'cancelled')" style="padding:8px 14px;border-radius:10px;background:rgba(220,38,38,.12);color:#f87171;border:none;font-size:12px;font-weight:500;cursor:pointer;"><i class="ri-close-line"></i>Cancelar</button>` : ''}
+              <button onclick="deleteAppointment(${a.id})" style="padding:8px 10px;border-radius:10px;background:transparent;color:var(--muted);border:1px solid var(--border);font-size:12px;cursor:pointer;"><i class="ri-delete-bin-line"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  
+  window.updateStatus = function(id, status){
+    const a = appointments.find(x => x.id === id);
+    if(a){
+      a.status = status;
+      renderAgenda();
+      renderDashboard();
+      showToast(status === 'confirmed' ? 'Agendamento confirmado!' : 'Agendamento cancelado', 
+                status === 'confirmed' ? 'A cliente ser&aacute; notificada' : 'A cliente ser&aacute; avisada');
+    }
+  };
+  
+  window.deleteAppointment = function(id){
+    if(confirm('Deseja realmente excluir este agendamento?')){
+      appointments = appointments.filter(x => x.id !== id);
+      renderAgenda();
+      renderDashboard();
+      showToast('Agendamento exclu&iacute;do', 'Removido da agenda');
+    }
+  };
+  
+  function setupFilters(){
+    document.querySelectorAll('.agenda-filter').forEach(btn => {
+      btn.addEventListener('click', function(){
+        document.querySelectorAll('.agenda-filter').forEach(b => {
+          b.style.background = 'transparent';
+          b.style.color = 'var(--muted)';
+          b.style.borderColor = 'var(--border)';
+        });
+        this.style.background = 'var(--accent-soft)';
+        this.style.color = 'var(--accent)';
+        this.style.borderColor = 'var(--accent)';
+        currentFilter = this.dataset.filter;
+        renderAgenda();
+      });
+    });
+  }
+  
+  // ============ SERVICES ============
+  function renderServices(){
+    const list = document.getElementById('services-list');
+    let filtered = services;
+    if(currentServiceCat !== 'all'){
+      filtered = services.filter(s => s.cat === currentServiceCat);
+    }
+    
+    list.innerHTML = filtered.map(s => `
+      <div class="service-card" onclick="selectServiceForBooking(${s.id})">
+        <div class="service-icon"><i class="${s.icon}"></i></div>
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div style="font-weight:600;font-size:15px;">${s.name}</div>
+            <div style="font-family:'Playfair Display',serif;font-weight:600;color:var(--gold);">R$${s.price}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;margin-top:4px;">
+            <span style="font-size:12px;color:var(--muted);">${s.desc}</span>
+            <span style="font-size:12px;color:var(--accent);display:flex;align-items:center;gap:3px;"><i class="ri-time-line" style="font-size:14px;"></i>${s.duration}</span>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+  
+  function setupServiceCats(){
+    document.querySelectorAll('.service-cat').forEach(btn => {
+      btn.addEventListener('click', function(){
+        document.querySelectorAll('.service-cat').forEach(b => {
+          b.style.background = 'transparent';
+          b.style.color = 'var(--muted)';
+          b.style.borderColor = 'var(--border)';
+        });
+        this.style.background = 'var(--accent-soft)';
+        this.style.color = 'var(--accent)';
+        this.style.borderColor = 'var(--accent)';
+        currentServiceCat = this.dataset.cat;
+        renderServices();
+      });
+    });
+  }
+  
+  window.selectServiceForBooking = function(id){
+    selectedService = services.find(s => s.id === id);
+    showScreen('booking');
+    renderBookingServices();
+  };
+  
+  // ============ NEW BOOKING ============
+  window.newBooking = function(){
+    selectedService = null;
+    selectedDate = todayStr();
+    selectedTime = null;
+    document.getElementById('bk-cliente').value = '';
+    document.getElementById('bk-telefone').value = '';
+    renderBookingServices();
+    renderBookingDays();
+    renderBookingTimes();
+    showScreen('booking');
+  };
+  
+  function renderBookingServices(){
+    const container = document.getElementById('bk-services');
+    container.innerHTML = services.slice(0,6).map(s => `
+      <div class="service-card ${selectedService && selectedService.id === s.id ? 'selected' : ''}" 
+           onclick="selectBkService(${s.id})" 
+           style="${selectedService && selectedService.id === s.id ? 'border-color:var(--accent);background:var(--accent-soft);' : ''}">
+        <div class="service-icon"><i class="${s.icon}"></i></div>
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div style="font-weight:600;font-size:14px;">${s.name}</div>
+            <div style="font-weight:600;color:var(--gold);">R$${s.price}</div>
+          </div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px;">${s.duration}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+  
+  window.selectBkService = function(id){
+    selectedService = services.find(s => s.id === id);
+    renderBookingServices();
+  };
+  
+  function renderBookingDays(){
+    const container = document.getElementById('bk-days');
+    let html = '';
+    for(let i=0;i<10;i++){
+      const date = addDays(i);
+      const isSel = date === selectedDate;
+      html += `<div class="day-item ${isSel?'selected':''}" onclick="selectBkDay('${date}')">
+        <span class="day-name">${getDayName(date)}</span>
+        <span class="day-num">${getDayNum(date)}</span>
+      </div>`;
+    }
+    container.innerHTML = html;
+  }
+  
+  window.selectBkDay = function(date){
+    selectedDate = date;
+    renderBookingDays();
+  };
+  
+  function renderBookingTimes(){
+    const container = document.getElementById('bk-times');
+    const times = ['09:00','09:30','10:00','10:30','11:00','11:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00','18:30'];
+    const taken = appointments.filter(a => a.data === selectedDate && a.status !== 'cancelled').map(a => a.hora);
+    
+    container.innerHTML = times.map(t => {
+      const isTaken = taken.includes(t);
+      const isSel = selectedTime === t;
+      return `<div class="time-slot ${isSel?'selected':''} ${isTaken?'disabled':''}" 
+           onclick="${isTaken ? '' : `selectBkTime('${t}')`}">${t}</div>`;
+    }).join('');
+  }
+  
+  window.selectBkTime = function(t){
+    selectedTime = t;
+    renderBookingTimes();
+  };
+  
+  window.confirmBooking = function(){
+    const cliente = document.getElementById('bk-cliente').value.trim();
+    const telefone = document.getElementById('bk-telefone').value.trim();
+    
+    if(!cliente){ showToast('Aten&ccedil;&atilde;o','Informe o nome da cliente'); return; }
+    if(!telefone){ showToast('Aten&ccedil;&atilde;o','Informe o telefone'); return; }
+    if(!selectedService){ showToast('Aten&ccedil;&atilde;o','Selecione um servi&ccedil;o'); return; }
+    if(!selectedTime){ showToast('Aten&ccedil;&atilde;o','Selecione um hor&aacute;rio'); return; }
+    
+    pendingBooking = {
+      id: Date.now(),
+      cliente, telefone,
+      servico: selectedService.name,
+      data: selectedDate,
+      hora: selectedTime,
+      status: 'pending',
+      price: selectedService.price
+    };
+    
+    // Show WhatsApp modal
+    document.getElementById('modal-summary').innerHTML = `
+      <div><strong>Cliente:</strong> ${cliente}</div>
+      <div><strong>Servi&ccedil;o:</strong> ${selectedService.name}</div>
+      <div><strong>Data:</strong> ${formatDateBR(selectedDate)}</div>
+      <div><strong>Hor&aacute;rio:</strong> ${selectedTime}</div>
+      <div><strong>Valor:</strong> <span style="color:var(--gold);font-weight:600;">R$${selectedService.price}</span></div>
+    `;
+    document.getElementById('whatsapp-modal').classList.add('active');
+  };
+  
+  window.closeModal = function(){
+    document.getElementById('whatsapp-modal').classList.remove('active');
+  };
+  
+  window.sendWhatsApp = function(){
+    if(pendingBooking){
+      appointments.push(pendingBooking);
+      pendingBooking.status = 'confirmed';
+      closeModal();
+      showToast('Agendamento criado!', 'Confirma&ccedil;&atilde;o enviada via WhatsApp');
+      
+      // Schedule notification
+      scheduleNotification(pendingBooking);
+      
+      showScreen('agenda');
+      renderAgenda();
+      renderDashboard();
+    }
+  };
+  
+  // ============ NOTIFICATIONS ============
+  function checkNotifications(){
+    const toggle = document.getElementById('notif-toggle');
+    if(toggle){
+      toggle.addEventListener('change', function(){
+        if(this.checked){
+          showToast('Notifica&ccedil;&otilde;es ativadas', 'Voc&ecirc; receber&aacute; lembretes');
+          requestNotificationPermission();
+        } else {
+          showToast('Notifica&ccedil;&otilde;es desativadas', '');
+        }
+      });
+    }
+    requestNotificationPermission();
+  }
+  
+  function requestNotificationPermission(){
+    if('Notification' in window && Notification.permission === 'default'){
+      Notification.requestPermission();
+    }
+  }
+  
+  function scheduleNotification(booking){
+    // Show a demo notification after 2 seconds
+    setTimeout(function(){
+      showNotification('Novo agendamento!', `${booking.cliente} - ${booking.servico} &agrave;s ${booking.hora}`);
+    }, 2000);
+  }
+  
+  function showNotification(title, body){
+    if('Notification' in window && Notification.permission === 'granted'){
+      try {
+        new Notification(title, {body, icon:''});
+      } catch(e){}
+    }
+    showToast(title, body);
+  }
+  
+  window.openWhatsApp = function(id){
+    const a = appointments.find(x => x.id === id);
+    if(a){
+      pendingBooking = a;
+      document.getElementById('modal-summary').innerHTML = `
+        <div><strong>Cliente:</strong> ${a.cliente}</div>
+        <div><strong>Servi&ccedil;o:</strong> ${a.servico}</div>
+        <div><strong>Data:</strong> ${formatDateBR(a.data)}</div>
+        <div><strong>Hor&aacute;rio:</strong> ${a.hora}</div>
+        <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);color:var(--muted);font-size:12px;">
+          Mensagem: "Olá ${a.cliente.split(' ')[0]}! Estou confirmando seu agendamento de ${a.servico} para dia ${formatDateBR(a.data)} às ${a.hora}. Espero você! 💖"
+        </div>
+      `;
+      document.getElementById('whatsapp-modal').classList.add('active');
+    }
+  };
+  
+  // ============ TOAST ============
+  function showToast(title, msg){
+    const toast = document.getElementById('toast');
+    document.getElementById('toast-title').textContent = title;
+    document.getElementById('toast-msg').textContent = msg;
+    toast.classList.add('show');
+    setTimeout(function(){ toast.classList.remove('show'); }, 3500);
+  }
+  
+  // ============ EMPTY STATE ============
+  function emptyState(text){
+    return `<div style="text-align:center;padding:40px 20px;color:var(--muted);">
+      <i class="ri-calendar-line" style="font-size:40px;opacity:.4;display:block;margin-bottom:10px;"></i>
+      <div style="font-size:14px;">${text}</div>
+    </div>`;
+  }
+  
+  // Demo: schedule a reminder notification for the first appointment today
+  setTimeout(function(){
+    const todayApps = appointments.filter(a => a.data === todayStr() && a.status !== 'cancelled');
+    if(todayApps.length > 0){
+      const next = todayApps[0];
+      showNotification('Lembrete de agendamento', `${next.cliente} - ${next.hora}`);
+    }
+  }, 8000);
+  
+})();
+</script>
+</html>

@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Jucimaria</string>
-    <string name="title_activity_main">Jucimaria</string>
-    <string name="package_name">com.gestoriptv.jucimaria</string>
-    <string name="custom_url_scheme">com.gestoriptv.jucimaria</string>
+    <string name="app_name">Claudia Collection</string>
+    <string name="title_activity_main">Claudia Collection</string>
+    <string name="package_name">com.gestoriptv.claudiacollection</string>
+    <string name="custom_url_scheme">com.gestoriptv.claudiacollection</string>
 </resources>

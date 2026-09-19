@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>InkFinance - Gestão de Estúdio</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --surface-color: #1e1e1e;
+            --primary-color: #bb86fc;
+            --text-color: #ffffff;
+            --text-muted: #aaaaaa;
+            --success-color: #03dac6;
+            --danger-color: #cf6679;
+            --warning-color: #f6a192;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding-bottom: 80px;
+        }
+
+        header {
+            background-color: var(--surface-color);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 2px solid var(--primary-color);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        header h1 {
+            font-size: 24px;
+            color: var(--primary-color);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .container {
+            padding: 15px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Dashboard / Resumo */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background-color: var(--surface-color);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        .card.full { grid-column: span 2; }
+        .card h3 { font-size: 12px; color: var(--text-muted); margin-bottom: 5px; text-transform: uppercase; }
+        .card .value { font-size: 20px; font-weight: bold; }
+        .card.full .value { font-size: 28px; }
+
+        .text-success { color: var(--success-color); }
+        .text-danger { color: var(--danger-color); }
+        .text-warning { color: var(--warning-color); }
+
+        /* Formulário */
+        .form-section {
+            background-color: var(--surface-color);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .form-section h2 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            background-color: #2c2c2c;
+            color: white;
+            font-size: 16px;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        button.btn-add {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--primary-color);
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        button.btn-add:active { opacity: 0.8; }
+
+        /* Lista de Transações */
+        .history-section h2 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .transaction-list {
+            list-style: none;
+        }
+
+        .transaction-item {
+            background-color: var(--surface-color);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .transaction-info h4 { font-size: 16px; margin-bottom: 4px; }
+        .transaction-info p { font-size: 12px; color: var(--text-muted); }
+        .transaction-value { font-size: 16px; font-weight: bold; text-align: right; }
+        
+        .btn-delete {
+            background: none;
+            border: none;
+            color: var(--danger-color);
+            font-size: 20px;
+            padding: 5px 10px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>InkFinance</h1>
+    </header>
+
+    <div class="container">
+        <!-- Resumo -->
+        <div class="dashboard">
+            <div class="card full">
+                <h3>Saldo Atual (Líquido)</h3>
+                <div class="value text-success" id="saldo-total">R$ 0,00</div>
+            </div>
+            <div class="card">
+                <h3>Entradas (Bruto)</h3>
+                <div class="value text-success" id="total-entradas">R$ 0,00</div>
+            </div>
+            <div class="card">
+                <h3>Imposto Retido (6%)</h3>
+                <div class="value text-warning" id="total-imposto">R$ 0,00</div>
+            </div>
+            <div class="card">
+                <h3>Saídas (Despesas)</h3>
+                <div class="value text-danger" id="total-saidas">R$ 0,00</div>
+            </div>
+            <div class="card">
+                <h3>Pró-labore</h3>
+                <div class="value text-danger" id="total-prolabore">R$ 0,00</div>
+            </div>
+        </div>
+
+        <!-- Formulário -->
+        <div class="form-section">
+            <h2>Nova Transação</h2>
+            <form id="form-transacao">
+                <div class="input-group">
+                    <label>Tipo</label>
+                    <select id="tipo" required onchange="togglePagamento()">
+                        <option value="entrada">Entrada (Tatuagem/Produto)</option>
+                        <option value="saida">Saída (Despesa/Material)</option>
+                        <option value="prolabore">Pró-labore (Retirada)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Descrição</label>
+                    <input type="text" id="descricao" placeholder="Ex: Tatuagem Braço - Cliente X" required>
+                </div>
+                <div class="input-group">
+                    <label>Valor (R$)</label>
+                    <input type="number" id="valor" step="0.01" min="0.01" placeholder="0.00" required>
+                </div>
+                <div class="input-group" id="div-pagamento">
+                    <label>Forma de Pagamento</label>
+                    <select id="pagamento">
+                        <option value="Pix">Pix</option>
+                        <option value="Cartão">Cartão</option>
+                        <option value="Dinheiro">Dinheiro Físico</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-add">Registrar</button>
+            </form>
+        </div>
+
+        <!-- Histórico -->
+        <div class="history-section">
+            <h2>Histórico Recente</h2>
+            <ul class="transaction-list" id="lista-transacoes">
+                <!-- Itens injetados via JS -->
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Inicializa dados do LocalStorage ou array vazio
+        let transacoes = JSON.parse(localStorage.getItem('inkfinance_data')) || [];
+
+        // Elementos DOM
+        const form = document.getElementById('form-transacao');
+        const divPagamento = document.getElementById('div-pagamento');
+        const listaTransacoes = document.getElementById('lista-transacoes');
+
+        // Mostra/esconde forma de pagamento dependendo do tipo
+        function togglePagamento() {
+            const tipo = document.getElementById('tipo').value;
+            if (tipo === 'entrada') {
+                divPagamento.style.display = 'block';
+            } else {
+                divPagamento.style.display = 'none';
+            }
+        }
+
+        // Formata moeda
+        const formatarMoeda = (valor) => {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(valor);
+        };
+
+        // Formata data
+        const formatarData = (dataStr) => {
+            const data = new Date(dataStr);
+            return data.toLocaleDateString('pt-BR') + ' às ' + data.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+        };
+
+        // Atualiza Dashboard
+        function atualizarDashboard() {
+            let bruto = 0;
+            let saidas = 0;
+            let prolabore = 0;
+
+            transacoes.forEach(t => {
+                if (t.tipo === 'entrada') bruto += t.valor;
+                if (t.tipo === 'saida') saidas += t.valor;
+                if (t.tipo === 'prolabore') prolabore += t.valor;
+            });
+
+            const imposto = bruto * 0.06;
+            const liquido = bruto - imposto;
+            const saldoFinal = liquido - saidas - prolabore;
+
+            document.getElementById('total-entradas').innerText = formatarMoeda(bruto);
+            document.getElementById('total-imposto').innerText = formatarMoeda(imposto);
+            document.getElementById('total-saidas').innerText = formatarMoeda(saidas);
+            document.getElementById('total-prolabore').innerText = formatarMoeda(prolabore);
+            
+            const saldoEl = document.getElementById('saldo-total');
+            saldoEl.innerText = formatarMoeda(saldoFinal);
+            saldoEl.className = saldoFinal >= 0 ? 'value text-success' : 'value text-danger';
+        }
+
+        // Renderiza lista na tela
+        function renderizarLista() {
+            listaTransacoes.innerHTML = '';
+            
+            // Ordena da mais recente para a mais antiga
+            const transacoesOrdenadas = [...transacoes].sort((a, b) => new Date(b.data) - new Date(a.data));
+
+            transacoesOrdenadas.forEach(t => {
+                const li = document.createElement('li');
+                li.className = 'transaction-item';
+
+                let cor, sinal, infoExtra;
+                if (t.tipo === 'entrada') {
+                    cor = 'text-success';
+                    sinal = '+';
+                    infoExtra = ` | ${t.pagamento} (Retido 6%: ${formatarMoeda(t.valor * 0.06)})`;
+                } else if (t.tipo === 'saida') {
+                    cor = 'text-danger';
+                    sinal = '-';
+                    infoExtra = '';
+                } else {
+                    cor = 'text-warning';
+                    sinal = '-';
+                    infoExtra = ' | Pró-labore';
+                }
+
+                li.innerHTML = `
+                    <div class="transaction-info">
+                        <h4>${t.descricao}</h4>
+                        <p>${formatarData(t.data)}${infoExtra}</p>
+                    </div>
+                    <div style="display:flex; align-items:center;">
+                        <div class="transaction-value ${cor}">
+                            ${sinal} ${formatarMoeda(t.valor)}
+                        </div>
+                        <button class="btn-delete" onclick="deletarTransacao('${t.id}')">&times;</button>
+                    </div>
+                `;
+                listaTransacoes.appendChild(li);
+            });
+        }
+
+        // Adiciona nova transação
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const tipo = document.getElementById('tipo').value;
+            const descricao = document.getElementById('descricao').value;
+            const valor = parseFloat(document.getElementById('valor').value);
+            const pagamento = document.getElementById('pagamento').value;
+
+            const novaTransacao = {
+                id: Date.now().toString(),
+                tipo,
+                descricao,
+                valor,
+                pagamento: tipo === 'entrada' ? pagamento : null,
+                data: new Date().toISOString()
+            };
+
+            transacoes.push(novaTransacao);
+            salvarDados();
+            form.reset();
+            togglePagamento();
+        });
+
+        // Deleta transação
+        function deletarTransacao(id) {
+            if (confirm('Tem certeza que deseja apagar este registro?')) {
+                transacoes = transacoes.filter(t => t.id !== id);
+                salvarDados();
+            }
+        }
+
+        // Salva no LocalStorage e atualiza tela
+        function salvarDados() {
+            localStorage.setItem('inkfinance_data', JSON.stringify(transacoes));
+            atualizarDashboard();
+            renderizarLista();
+        }
+
+        // Inicialização
+        togglePagamento();
+        atualizarDashboard();
+        renderizarLista();
+
+    </script>
+</body>
+</html>

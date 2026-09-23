@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Meu Fiado</string>
-    <string name="title_activity_main">Meu Fiado</string>
-    <string name="package_name">com.gestoriptv.meufiado</string>
-    <string name="custom_url_scheme">com.gestoriptv.meufiado</string>
+    <string name="app_name">Vendas Pro</string>
+    <string name="title_activity_main">Vendas Pro</string>
+    <string name="package_name">com.gestoriptv.vendaspro</string>
+    <string name="custom_url_scheme">com.gestoriptv.vendaspro</string>
 </resources>

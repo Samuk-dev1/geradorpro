@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Vendas Pro</title>
+    <!-- Phosphor Icons para ícones offline/modernos -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        :root {
+            /* Cores baseadas no mockup fornecido */
+            --bg-dark: #09090b;
+            --bg-card: #18181b;
+            --bg-input: #27272a;
+            --text-main: #f4f4f5;
+            --text-muted: #a1a1aa;
+            
+            --brand-yellow: #f59e0b;
+            --color-blue: #3b82f6;
+            --color-green: #10b981;
+            --color-red: #ef4444;
+            
+            --border-radius: 16px;
+            --border-color: #27272a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            overflow-x: hidden;
+            padding-bottom: 80px; /* Espaço para o bottom nav */
+        }
+
+        /* Utilitários */
+        .flex { display: flex; }
+        .col { flex-direction: column; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .justify-center { justify-content: center; }
+        .gap-2 { gap: 8px; }
+        .gap-4 { gap: 16px; }
+        .p-4 { padding: 16px; }
+        .mt-4 { margin-top: 16px; }
+        .text-sm { font-size: 0.875rem; }
+        .text-xs { font-size: 0.75rem; }
+        .font-bold { font-weight: bold; }
+        .text-muted { color: var(--text-muted); }
+        .hidden { display: none !important; }
+
+        /* Typography */
+        h1 { font-size: 1.5rem; font-weight: 700; }
+        h2 { font-size: 1.25rem; font-weight: 600; margin-bottom: 12px; }
+
+        /* Header */
+        header {
+            padding: 20px 16px;
+            background: linear-gradient(180deg, rgba(24,24,27,1) 0%, rgba(9,9,11,1) 100%);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .logo {
+            color: var(--brand-yellow);
+            font-size: 1.5rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-style: italic;
+        }
+        .user-greeting {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 16px;
+        }
+        .avatar {
+            width: 48px;
+            height: 48px;
+            background-color: var(--bg-input);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--text-muted);
+        }
+
+        /* Dashboard Cards */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            padding: 16px;
+        }
+        .dash-card {
+            border-radius: var(--border-radius);
+            padding: 16px;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .dash-card.blue { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); }
+        .dash-card.green { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+        .dash-card.yellow { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #fff; }
+        .dash-card.red { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
+        .card-value { font-size: 1.25rem; font-weight: bold; }
+
+        /* Lists */
+        .section-title {
+            padding: 0 16px;
+            margin-top: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .list-container {
+            padding: 0 16px;
+            margin-top: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .list-item {
+            background-color: var(--bg-card);
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid var(--border-color);
+        }
+        .list-item-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .status-badge {
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: bold;
+        }
+        .status-hoje { background-color: rgba(245,158,11,0.2); color: var(--brand-yellow); }
+        .status-atrasado { background-color: rgba(239,68,68,0.2); color: var(--color-red); }
+        
+        .btn-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: rgba(16,185,129,0.1);
+            color: var(--color-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 16px;
+            padding: 0 16px;
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+        input, select, textarea {
+            width: 100%;
+            background-color: var(--bg-input);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        input:focus, select:focus {
+            border-color: var(--color-blue);
+        }
+        
+        /* Toggle Buttons (Forma Pagamento) */
+        .toggle-group {
+            display: flex;
+            background-color: var(--bg-input);
+            border-radius: 12px;
+            padding: 4px;
+            margin: 0 16px 16px 16px;
+        }
+        .toggle-btn {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            border-radius: 8px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .toggle-btn.active {
+            background-color: var(--color-blue);
+            color: #fff;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background-color: var(--color-green);
+            color: #fff;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: bold;
+            width: calc(100% - 32px);
+            margin: 16px auto;
+            display: block;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(16,185,129,0.3);
+            cursor: pointer;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: var(--bg-card);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            z-index: 1000;
+            padding-bottom: calc(12px + env(safe-area-inset-bottom));
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.7rem;
+            cursor: pointer;
+        }
+        .nav-item.active {
+            color: var(--brand-yellow);
+        }
+        .nav-item i {
+            font-size: 1.5rem;
+        }
+
+        /* Screens */
+        .screen {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .screen.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Toast */
+        #toast-container {
+            position: fixed;
+            bottom: 90px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .toast {
+            background-color: var(--color-green);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 24px;
+            font-size: 0.875rem;
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            animation: slideUp 0.3s ease forwards;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .product-list-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px;
+            background: var(--bg-input);
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TELA: INÍCIO (DASHBOARD) -->
+    <div id="screen-home" class="screen active">
+        <header>
+            <div class="flex justify-between items-center">
+                <div class="logo"><i class="ph ph-shopping-cart"></i> Vendas Pro</div>
+                <i class="ph ph-bell text-muted" style="font-size: 1.5rem;"></i>
+            </div>
+            <div class="user-greeting">
+                <div class="avatar"><i class="ph ph-user"></i></div>
+                <div>
+                    <div class="font-bold" style="font-size: 1.2rem;">Olá, Samuel!</div>
+                    <div class="text-sm text-muted">Tudo certo com suas vendas!</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="grid-2">
+            <div class="dash-card blue">
+                <div class="text-xs">Vendas hoje</div>
+                <div class="card-value" id="dash-vendas-hoje">R$ 0,00</div>
+                <div class="text-xs" id="dash-qtd-hoje">0 vendas</div>
+            </div>
+            <div class="dash-card green">
+                <div class="text-xs">Recebido (Mês)</div>
+                <div class="card-value" id="dash-recebido">R$ 0,00</div>
+                <div class="text-xs" id="dash-qtd-recebido">0 vendas</div>
+            </div>
+            <div class="dash-card yellow">
+                <div class="text-xs">Fiado em Aberto</div>
+                <div class="card-value" id="dash-fiado">R$ 0,00</div>
+                <div class="text-xs" id="dash-qtd-fiado">0 clientes</div>
+            </div>
+            <div class="dash-card red">
+                <div class="text-xs">Em Atraso</div>
+                <div class="card-value" id="dash-atraso">R$ 0,00</div>
+                <div class="text-xs" id="dash-qtd-atraso">0 clientes</div>
+            </div>
+        </div>
+
+        <div class="section-title">
+            <h2>Vencimentos Próximos</h2>
+            <span class="text-sm text-muted" onclick="navigate('fiados')">Ver todos</span>
+        </div>
+        <div class="list-container" id="list-vencimentos">
+            <!-- Renderizado via JS -->
+        </div>
+
+        <div class="section-title">
+            <h2>Em Atraso</h2>
+            <span class="text-sm text-muted" onclick="navigate('fiados')">Ver todos</span>
+        </div>
+        <div class="list-container" id="list-atrasados">
+            <!-- Renderizado via JS -->
+        </div>
+    </div>
+
+    <!-- TELA: NOVA VENDA -->
+    <div id="screen-new-sale" class="screen">
+        <header>
+            <div class="flex items-center gap-4">
+                <i class="ph ph-caret-left" style="font-size: 1.5rem;" onclick="navigate('home')"></i>
+                <h1>Nova Venda</h1>
+            </div>
+        </header>
+
+        <div class="mt-4">
+            <div class="form-group">
+                <label>Nome do Cliente</label>
+                <input type="text" id="nv-cliente" placeholder="Ex: Maria Silva" autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label>WhatsApp / Telefone</label>
+                <input type="tel" id="nv-telefone" placeholder="(11) 98765-4321" oninput="maskPhone(this)">
+            </div>
+            
+            <div class="form-group flex justify-between items-center mt-4">
+                <label style="margin:0;">Produtos</label>
+                <button onclick="addProdutoModal()" style="background:var(--color-blue); color:white; border:none; padding:4px 12px; border-radius:12px; font-size:0.8rem;">+ Adicionar</button>
+            </div>
+            
+            <div id="nv-produtos-lista" class="form-group" style="margin-bottom:0;">
+                <!-- Lista de produtos adicionados -->
+            </div>
+
+            <div class="form-group">
+                <div class="flex justify-between text-muted text-sm mt-2">
+                    <span>Subtotal</span>
+                    <span id="nv-subtotal">R$ 0,00</span>
+                </div>
+                <div class="flex justify-between font-bold mt-2" style="font-size: 1.2rem;">
+                    <span>Total</span>
+                    <span id="nv-total">R$ 0,00</span>
+                </div>
+            </div>
+
+            <label class="form-group" style="margin-bottom: 8px;">Forma de pagamento</label>
+            <div class="toggle-group">
+                <button class="toggle-btn active" id="btn-tipo-vista" onclick="setTipoVenda('vista')">À Vista</button>
+                <button class="toggle-btn" id="btn-tipo-fiado" onclick="setTipoVenda('fiado')">Fiado</button>
+            </div>
+
+            <div id="form-fiado" class="hidden">
+                <div class="form-group">
+                    <label>Data de Vencimento</label>
+                    <input type="date" id="nv-vencimento">
+                </div>
+            </div>
+            
+            <div id="form-vista">
+                <div class="form-group">
+                    <label>Método</label>
+                    <select id="nv-metodo">
+                        <option value="Pix">Pix</option>
+                        <option value="Dinheiro">Dinheiro</option>
+                        <option value="Cartão de Crédito">Cartão de Crédito</option>
+                        <option value="Cartão de Débito">Cartão de Débito</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Observações</label>
+                <textarea id="nv-obs" rows="2" placeholder="Ex: Produto reservado..."></textarea>
+            </div>
+
+            <button class="btn-primary" onclick="finalizarVenda()">Confirmar Venda</button>
+        </div>
+    </div>
+
+    <!-- TELA: FIADOS -->
+    <div id="screen-fiados" class="screen">
+        <header>
+            <h1>Fiados</h1>
+            <div class="form-group" style="padding:0; margin-top:12px;">
+                <input type="text" id="busca-fiados" placeholder="Pesquisar..." oninput="renderFiados()">
+            </div>
+        </header>
+        
+        <div class="toggle-group" style="margin-top:16px;">
+            <button class="toggle-btn active">Pendentes</button>
+            <button class="toggle-btn">Vencidos</button>
+        </div>
+
+        <div class="list-container" id="lista-tela-fiados" style="padding-bottom: 30px;">
+            <!-- Renderizado via JS -->
+        </div>
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <nav class="bottom-nav">
+        <div class="nav-item active" onclick="navigate('home')" id="nav-home">
+            <i class="ph ph-house"></i>
+            <span>Início</span>
+        </div>
+        <div class="nav-item" onclick="navigate('new-sale')" id="nav-new-sale">
+            <i class="ph ph-plus-circle"></i>
+            <span>Nova Venda</span>
+        </div>
+        <div class="nav-item" onclick="navigate('fiados')" id="nav-fiados">
+            <i class="ph ph-users"></i>
+            <span>Fiados</span>
+        </div>
+        <div class="nav-item" onclick="showToast('Relatórios em breve!')">
+            <i class="ph ph-chart-line-up"></i>
+            <span>Relatórios</span>
+        </div>
+        <div class="nav-item" onclick="showToast('Configurações em breve!')">
+            <i class="ph ph-gear"></i>
+            <span>Mais</span>
+        </div>
+    </nav>
+
+    <div id="toast-container"></div>
+
+    <script>
+        // ==========================================
+        // 1. CAPACITOR BRIDGE (NOTIFICAÇÕES NATIVAS)
+        // ==========================================
+        const NativeBridge = {
+            isCapacitor: () => typeof window !== 'undefined' && window.Capacitor !== undefined,
+            
+            async requestPermissions() {
+                if (this.isCapacitor() && window.Capacitor.Plugins.LocalNotifications) {
+                    await window.Capacitor.Plugins.LocalNotifications.requestPermissions();
+                }
+            },
+
+            async scheduleDueDateNotification(vendaId, clienteNome, valor, dataVencimentoStr) {
+                if (!this.isCapacitor() || !window.Capacitor.Plugins.LocalNotifications) {
+                    console.log(`[Web Fallback] Notificação agendada para ${clienteNome} no dia ${dataVencimentoStr}`);
+                    return;
+                }
+                
+                try {
+                    // Tenta agendar para as 09:00 do dia do vencimento
+                    const [ano, mes, dia] = dataVencimentoStr.split('-');
+                    const scheduleDate = new Date(ano, mes - 1, dia, 9, 0, 0);
+                    
+                    if (scheduleDate > new Date()) {
+                        await window.Capacitor.Plugins.LocalNotifications.schedule({
+                            notifications: [
+                                {
+                                    title: "Pagamento vencendo hoje!",
+                                    body: `${clienteNome} possui um pagamento de ${formatCurrency(valor)} vencendo hoje.`,
+                                    id: parseInt(vendaId),
+                                    schedule: { at: scheduleDate },
+                                    sound: null,
+                                    attachments: null,
+                                    actionTypeId: "",
+                                    extra: null
+                                }
+                            ]
+                        });
+                    }
+                } catch (e) {
+                    console.error("Erro ao agendar notificação:", e);
+                }
+            }
+        };
+
+        // ==========================================
+        // 2. BANCO DE DADOS (INDEXED DB)
+        // ==========================================
+        const DB_NAME = 'VendasProDB';
+        const DB_VERSION = 1;
+        let db;
+
+        function initDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+                
+                request.onupgradeneeded = (event) => {
+                    db = event.target.result;
+                    if (!db.objectStoreNames.contains('vendas')) {
+                        const vendasOS = db.createObjectStore('vendas', { keyPath: 'id', autoIncrement: true });
+                        vendasOS.createIndex('status', 'status', { unique: false });
+                        vendasOS.createIndex('dataVencimento', 'dataVencimento', { unique: false });
+                    }
+                };
+
+                request.onsuccess = (event) => {
+                    db = event.target.result;
+                    resolve(db);
+                };
+
+                request.onerror = (event) => reject(event.target.error);
+            });
+        }
+
+        // Funções de CRUD genéricas
+        async function saveRecord(storeName, data) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction([storeName], 'readwrite');
+                const store = transaction.objectStore(storeName);
+                const request = store.put(data);
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        async function getAllRecords(storeName) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction([storeName], 'readonly');
+                const store = transaction.objectStore(storeName);
+                const request = store.getAll();
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        // ==========================================
+        // 3. ESTADO E LÓGICA DE NEGÓCIO
+        // ==========================================
+        let currentVenda = {
+            produtos: [],
+            tipo: 'vista'
+        };
+
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            const [year, month, day] = dateStr.split('-');
+            return `${day}/${month}`;
+        }
+
+        function maskPhone(input) {
+            let v = input.value.replace(/\D/g, "");
+            if (v.length > 11) v = v.slice(0, 11);
+            if (v.length > 2) v = `(${v.substring(0, 2)}) ${v.substring(2)}`;
+            if (v.length > 9) v = `${v.substring(0, 10)}-${v.substring(10)}`;
+            input.value = v;
+        }
+
+        function getStatus(venda) {
+            if (venda.status === 'PAGO') return 'PAGO';
+            if (venda.tipo === 'vista') return 'PAGO';
+            
+            const hoje = new Date();
+            hoje.setHours(0,0,0,0);
+            
+            const [ano, mes, dia] = venda.dataVencimento.split('-');
+            const vencimento = new Date(ano, mes - 1, dia);
+            vencimento.setHours(0,0,0,0);
+
+            const diffTime = vencimento - hoje;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            if (diffDays < 0) return 'ATRASADO';
+            if (diffDays === 0) return 'HOJE';
+            if (diffDays === 1) return 'AMANHÃ';
+            return `EM ${diffDays} DIAS`;
+        }
+
+        // ==========================================
+        // 4. INTERFACE E NAVEGAÇÃO
+        // ==========================================
+        function navigate(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            
+            document.getElementById(`screen-${screenId}`).classList.add('active');
+            if(document.getElementById(`nav-${screenId}`)) {
+                document.getElementById(`nav-${screenId}`).classList.add('active');
+            }
+
+            if (screenId === 'home') loadDashboard();
+            if (screenId === 'fiados') renderFiados();
+            if (screenId === 'new-sale') resetNovaVenda();
+        }
+
+        function showToast(message) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerText = message;
+            container.appendChild(toast);
+            setTimeout(() => { toast.remove(); }, 3000);
+        }
+
+        // ==========================================
+        // 5. MÓDULO: DASHBOARD
+        // ==========================================
+        async function loadDashboard() {
+            const vendas = await getAllRecords('vendas');
+            
+            let totalHoje = 0, qtdHoje = 0;
+            let totalRecebido = 0, qtdRecebido = 0;
+            let totalFiado = 0, qtdFiado = 0;
+            let totalAtraso = 0, qtdAtraso = 0;
+
+            const hojeStr = new Date().toISOString().split('T')[0];
+
+            let vencimentos = [];
+            let atrasados = [];
+
+            vendas.forEach(v => {
+                if (v.dataVenda === hojeStr) {
+                    totalHoje += v.total;
+                    qtdHoje++;
+                }
+                if (v.status === 'PAGO' || v.tipo === 'vista') {
+                    totalRecebido += v.total;
+                    qtdRecebido++;
+                } else if (v.status === 'PENDENTE') {
+                    totalFiado += v.valorPendente;
+                    qtdFiado++;
+                    
+                    const statusText = getStatus(v);
+                    if (statusText === 'ATRASADO') {
+                        totalAtraso += v.valorPendente;
+                        qtdAtraso++;
+                        atrasados.push(v);
+                    } else {
+                        vencimentos.push(v);
+                    }
+                }
+            });
+
+            // Atualizar UI
+            document.getElementById('dash-vendas-hoje').innerText = formatCurrency(totalHoje);
+            document.getElementById('dash-qtd-hoje').innerText = `${qtdHoje} vendas`;
+            
+            document.getElementById('dash-recebido').innerText = formatCurrency(totalRecebido);
+            
+            document.getElementById('dash-fiado').innerText = formatCurrency(totalFiado);
+            document.getElementById('dash-qtd-fiado').innerText = `${qtdFiado} clientes`;
+            
+            document.getElementById('dash-atraso').innerText = formatCurrency(totalAtraso);
+            document.getElementById('dash-qtd-atraso').innerText = `${qtdAtraso} clientes`;
+
+            renderList('list-vencimentos', vencimentos.sort((a,b) => new Date(a.dataVencimento) - new Date(b.dataVencimento)).slice(0, 3));
+            renderList('list-atrasados', atrasados.slice(0, 3));
+        }
+
+        function renderList(containerId, data) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            
+            if(data.length === 0) {
+                container.innerHTML = '<div class="text-muted text-sm" style="text-align:center; padding: 12px;">Nenhum registro.</div>';
+                return;
+            }
+
+            data.forEach(v => {
+                const status = getStatus(v);
+                let badgeClass = '';
+                if(status === 'HOJE') badgeClass = 'status-hoje';
+                if(status === 'ATRASADO') badgeClass = 'status-atrasado';
+
+                const phoneNumbers = v.telefone.replace(/\D/g, '');
+                
+                container.innerHTML += `
+                    <div class="list-item">
+                        <div class="list-item-left">
+                            <div class="avatar" style="width:40px;height:40px;font-size:1.2rem;"><i class="ph ph-user"></i></div>
+                            <div>
+                                <div class="font-bold">${v.clienteNome}</div>
+                                <div class="text-xs text-muted flex gap-2 items-center">
+                                    <i class="ph ph-calendar-blank"></i> ${formatDate(v.dataVencimento)}
+                                    <span class="status-badge ${badgeClass}">${status}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="font-bold" style="color:var(--text-main);">${formatCurrency(v.valorPendente)}</div>
+                            <button class="btn-icon" onclick="abrirWhatsApp('${phoneNumbers}', '${v.clienteNome}', ${v.valorPendente}, '${v.dataVencimento}')">
+                                <i class="ph ph-whatsapp-logo"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // ==========================================
+        // 6. MÓDULO: NOVA VENDA
+        // ==========================================
+        function resetNovaVenda() {
+            document.getElementById('nv-cliente').value = '';
+            document.getElementById('nv-telefone').value = '';
+            document.getElementById('nv-obs').value = '';
+            document.getElementById('nv-vencimento').value = new Date().toISOString().split('T')[0];
+            currentVenda.produtos = [];
+            setTipoVenda('vista');
+            updateCartUI();
+        }
+
+        function setTipoVenda(tipo) {
+            currentVenda.tipo = tipo;
+            if (tipo === 'vista') {
+                document.getElementById('btn-tipo-vista').classList.add('active');
+                document.getElementById('btn-tipo-fiado').classList.remove('active');
+                document.getElementById('form-vista').classList.remove('hidden');
+                document.getElementById('form-fiado').classList.add('hidden');
+            } else {
+                document.getElementById('btn-tipo-fiado').classList.add('active');
+                document.getElementById('btn-tipo-vista').classList.remove('active');
+                document.getElementById('form-fiado').classList.remove('hidden');
+                document.getElementById('form-vista').classList.add('hidden');
+            }
+        }
+
+        function addProdutoModal() {
+            // Simplificado para exemplo: adicionando produto padrão da loja de acessórios
+            const nome = prompt("Nome do produto:", "Película de Vidro / Cabo USB");
+            if (!nome) return;
+            const valor = parseFloat(prompt("Valor unitário (ex: 25.00):", "25.00"));
+            if (isNaN(valor)) return showToast("Valor inválido");
+            const qtd = parseInt(prompt("Quantidade:", "1"));
+            
+            currentVenda.produtos.push({ nome, valor, qtd, subtotal: valor * qtd });
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const container = document.getElementById('nv-produtos-lista');
+            container.innerHTML = '';
+            let total = 0;
+            
+            currentVenda.produtos.forEach((p, index) => {
+                total += p.subtotal;
+                container.innerHTML += `
+                    <div class="product-list-item">
+                        <div>
+                            <div class="font-bold text-sm">${p.nome}</div>
+                            <div class="text-xs text-muted">Qtd: ${p.qtd} x ${formatCurrency(p.valor)}</div>
+                        </div>
+                        <div class="font-bold text-sm">${formatCurrency(p.subtotal)}</div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('nv-subtotal').innerText = formatCurrency(total);
+            document.getElementById('nv-total').innerText = formatCurrency(total);
+        }
+
+        async function finalizarVenda() {
+            const clienteNome = document.getElementById('nv-cliente').value.trim();
+            if (!clienteNome) return showToast("Preencha o nome do cliente.");
+            if (currentVenda.produtos.length === 0) return showToast("Adicione pelo menos um produto.");
+
+            const total = currentVenda.produtos.reduce((acc, p) => acc + p.subtotal, 0);
+            
+            const novaVenda = {
+                numeroVenda: `#${String(Date.now()).slice(-6)}`,
+                clienteNome,
+                telefone: document.getElementById('nv-telefone').value,
+                produtos: currentVenda.produtos,
+                total: total,
+                valorPago: currentVenda.tipo === 'vista' ? total : 0,
+                valorPendente: currentVenda.tipo === 'vista' ? 0 : total,
+                tipo: currentVenda.tipo,
+                status: currentVenda.tipo === 'vista' ? 'PAGO' : 'PENDENTE',
+                dataVenda: new Date().toISOString().split('T')[0],
+                dataVencimento: currentVenda.tipo === 'fiado' ? document.getElementById('nv-vencimento').value : null,
+                formaPagamento: currentVenda.tipo === 'vista' ? document.getElementById('nv-metodo').value : null,
+                observacao: document.getElementById('nv-obs').value
+            };
+
+            const id = await saveRecord('vendas', novaVenda);
+            
+            // Agendar Notificação se for fiado
+            if (novaVenda.tipo === 'fiado' && novaVenda.dataVencimento) {
+                NativeBridge.scheduleDueDateNotification(id, clienteNome, total, novaVenda.dataVencimento);
+            }
+
+            showToast("Venda registrada com sucesso!");
+            navigate('home');
+        }
+
+        // ==========================================
+        // 7. MÓDULO: FIADOS (LISTA)
+        // ==========================================
+        async function renderFiados() {
+            const vendas = await getAllRecords('vendas');
+            const search = document.getElementById('busca-fiados').value.toLowerCase();
+            
+            const pendentes = vendas.filter(v => 
+                v.status === 'PENDENTE' && 
+                v.clienteNome.toLowerCase().includes(search)
+            ).sort((a,b) => new Date(a.dataVencimento) - new Date(b.dataVencimento));
+
+            renderList('lista-tela-fiados', pendentes);
+        }
+
+        // ==========================================
+        // 8. WHATSAPP INTEGRAÇÃO
+        // ==========================================
+        function abrirWhatsApp(phone, nome, valor, dataVenc) {
+            if(!phone) {
+                showToast("Cliente não possui telefone cadastrado.");
+                return;
+            }
+            
+            const [ano, mes, dia] = dataVenc.split('-');
+            const dataFormatada = `${dia}/${mes}/${ano}`;
+            
+            let msg = `Olá, ${nome}! Tudo bem?
+Passando para lembrar referente ao pagamento da sua compra no valor de *${formatCurrency(valor)}* programado para o dia *${dataFormatada}*.
+
+Obrigado pela preferência!`;
+            
+            const url = `https://api.whatsapp.com/send?phone=55${phone}&text=${encodeURIComponent(msg)}`;
+            window.open(url, '_blank');
+        }
+
+        // Inicialização
+        window.onload = async () => {
+            try {
+                await initDB();
+                // Preparar dados iniciais para o usuário Samuel se o banco estiver vazio
+                const vendas = await getAllRecords('vendas');
+                if (vendas.length === 0) {
+                    await saveRecord('vendas', {
+                        numeroVenda: '#000001',
+                        clienteNome: 'Jucimária',
+                        telefone: '(73) 99999-9999',
+                        produtos: [{ nome: 'Controle PS4 Customizado', valor: 250, qtd: 1, subtotal: 250 }],
+                        total: 250,
+                        valorPago: 0,
+                        valorPendente: 250,
+                        tipo: 'fiado',
+                        status: 'PENDENTE',
+                        dataVenda: new Date().toISOString().split('T')[0],
+                        dataVencimento: new Date().toISOString().split('T')[0], // Vence hoje para demonstração
+                        observacao: 'Cliente do salão'
+                    });
+                }
+                
+                NativeBridge.requestPermissions();
+                loadDashboard();
+            } catch (error) {
+                console.error("Erro ao iniciar DB:", error);
+                showToast("Erro ao iniciar banco de dados local.");
+            }
+        };
+    </script>
+</body>
+</html>

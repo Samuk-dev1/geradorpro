@@ -1,0 +1,2044 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Davi Lucas — A Grande Aventura 3D</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; }
+html, body { width:100%; height:100%; overflow:hidden; background:#000; font-family: 'Trebuchet MS', 'Segoe UI', Arial, sans-serif; color:#fff; touch-action:none; }
+#game { position:fixed; inset:0; }
+canvas { display:block; width:100%; height:100%; }
+
+.screen { position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:20; background:linear-gradient(135deg, #0a1836 0%, #1a2a5c 45%, #2a1e5c 100%); padding:20px; text-align:center; }
+.screen.hidden, .hidden { display:none !important; }
+
+.title-main { font-size: clamp(28px, 6vmin, 62px); font-weight:900; letter-spacing:3px; background:linear-gradient(180deg,#ffe066,#ff9c33,#ff5a3c); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; text-shadow:0 6px 22px rgba(255,150,60,.35); margin-bottom:4px; }
+.title-sub { font-size: clamp(13px, 2.2vmin, 22px); font-weight:700; letter-spacing:5px; color:#8fd0ff; margin-bottom:28px; text-shadow:0 0 14px rgba(90,180,255,.6); }
+
+.menu-btn { display:block; width:min(78vw, 340px); margin:7px auto; padding:14px 18px; border-radius:14px; border:2px solid rgba(255,255,255,.25); background:linear-gradient(180deg, rgba(70,120,220,.85), rgba(30,60,140,.9)); color:#fff; font-size: clamp(14px, 2.4vmin, 20px); font-weight:800; letter-spacing:2px; cursor:pointer; transition:transform .12s, box-shadow .12s, background .12s; box-shadow: 0 6px 0 rgba(0,0,0,.35), 0 0 24px rgba(90,150,255,.25); }
+.menu-btn:hover { background:linear-gradient(180deg, rgba(90,150,240,.95), rgba(40,80,180,.95)); transform:translateY(-2px); box-shadow: 0 8px 0 rgba(0,0,0,.35), 0 0 30px rgba(120,180,255,.5); }
+.menu-btn:active { transform:translateY(3px); box-shadow: 0 2px 0 rgba(0,0,0,.35); }
+.menu-btn.accent { background:linear-gradient(180deg, #ffb03c, #e56b1f); border-color:rgba(255,220,150,.5); box-shadow:0 6px 0 rgba(120,50,0,.5), 0 0 32px rgba(255,160,60,.5); }
+.menu-btn.accent:hover { background:linear-gradient(180deg, #ffc95c, #f27b28); }
+
+.panel-title { font-size: clamp(22px, 4vmin, 40px); font-weight:900; letter-spacing:4px; color:#ffe066; margin-bottom:18px; text-shadow:0 0 20px rgba(255,200,60,.6); }
+
+.levels-grid { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px; width:min(94vw, 760px); max-height:70vh; overflow-y:auto; padding:6px; }
+@media (min-width:720px){ .levels-grid { grid-template-columns:repeat(3, minmax(0,1fr)); } }
+.level-card { padding:12px 12px; border-radius:12px; background:linear-gradient(180deg, rgba(50,90,180,.85), rgba(20,40,100,.9)); border:2px solid rgba(140,190,255,.35); cursor:pointer; transition:transform .12s, background .12s; text-align:left; position:relative; min-height:78px; }
+.level-card:hover { background:linear-gradient(180deg, rgba(70,120,220,.95), rgba(30,60,150,.95)); transform:translateY(-2px); }
+.level-card .num { font-size:12px; color:#8fd0ff; letter-spacing:2px; font-weight:800; }
+.level-card .name { font-size:13px; font-weight:900; letter-spacing:1px; margin-top:2px; }
+.level-card .stars { position:absolute; top:10px; right:10px; font-size:14px; color:#ffe066; text-shadow:0 0 8px rgba(255,220,80,.8); }
+.level-card.locked { opacity:.5; cursor:not-allowed; }
+.level-card.locked::after { content:'🔒'; position:absolute; right:12px; bottom:10px; font-size:18px; }
+
+.info-box { width:min(92vw, 720px); max-height:72vh; overflow-y:auto; padding:16px 20px; border-radius:14px; background:rgba(10,20,50,.75); border:2px solid rgba(140,190,255,.25); text-align:left; font-size: clamp(12px, 2vmin, 16px); line-height:1.6; }
+.info-box h3 { color:#8fd0ff; letter-spacing:2px; margin:14px 0 6px; font-size:1.05em; }
+.info-box h3:first-child { margin-top:0; }
+.info-box b { color:#ffe066; }
+.setting-row { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid rgba(140,190,255,.15); }
+.setting-row:last-child { border-bottom:none; }
+.toggle { padding:8px 16px; border-radius:20px; border:2px solid rgba(140,190,255,.4); background:rgba(60,100,200,.4); color:#fff; font-weight:800; cursor:pointer; letter-spacing:1px; min-width:90px; }
+.toggle.on { background:linear-gradient(180deg, #34c759, #1a8a3c); border-color:rgba(150,255,180,.5); }
+.toggle.off { background:rgba(120,40,40,.6); border-color:rgba(255,120,120,.4); }
+
+.back-btn { margin-top:20px; padding:10px 30px; border-radius:20px; background:rgba(255,255,255,.1); border:2px solid rgba(255,255,255,.3); color:#fff; font-weight:800; letter-spacing:2px; cursor:pointer; }
+
+#hud { position:fixed; inset:0; pointer-events:none; z-index:10; }
+#hud-top { position:absolute; top:0; left:0; right:0; display:flex; justify-content:space-between; align-items:flex-start; padding:12px 14px; font-weight:900; letter-spacing:1.5px; text-shadow:0 2px 8px rgba(0,0,0,.8); font-size: clamp(11px, 1.9vmin, 16px); }
+#hud-left, #hud-right { display:flex; gap:14px; align-items:center; }
+.hud-chip { background:rgba(0,0,0,.35); border:2px solid rgba(255,255,255,.2); padding:5px 12px; border-radius:20px; }
+#hud-coins { color:#ffe066; }
+#hud-score { color:#8fd0ff; }
+#btn-pause { pointer-events:auto; width:42px; height:42px; border-radius:50%; background:rgba(0,0,0,.4); border:2px solid rgba(255,255,255,.3); color:#fff; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+#hud-progress-wrap { position:absolute; bottom:14px; left:50%; transform:translateX(-50%); width:min(70vw, 460px); text-align:center; font-size:11px; letter-spacing:2px; color:#dfeaff; }
+#hud-progress-bar { width:100%; height:10px; border-radius:6px; background:rgba(0,0,0,.5); border:2px solid rgba(255,255,255,.25); margin-top:4px; overflow:hidden; position:relative; }
+#hud-progress-fill { position:absolute; left:0; top:0; bottom:0; background:linear-gradient(90deg, #4caf50, #8bc34a, #ffeb3b); width:0%; transition:width .2s; }
+#hud-progress-dot { position:absolute; top:-4px; width:16px; height:16px; border-radius:50%; background:#ffeb3b; box-shadow:0 0 12px #ffeb3b; transform:translateX(-50%); left:0%; transition:left .2s; }
+
+#mobile-controls { position:fixed; inset:0; pointer-events:none; z-index:15; }
+.mob-btn { position:absolute; bottom:8vh; width:20vmin; height:20vmin; max-width:120px; max-height:120px; min-width:80px; min-height:80px; border-radius:50%; border:3px solid rgba(255,255,255,.55); background:rgba(80,140,255,.35); color:#fff; font-weight:900; font-size: clamp(11px, 1.9vmin, 17px); letter-spacing:2px; pointer-events:auto; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); transition:transform .08s, background .1s; text-shadow:0 2px 6px rgba(0,0,0,.7); }
+.mob-btn:active, .mob-btn.pressed { transform:scale(.9); background:rgba(120,200,255,.7); }
+#btn-jump { right:5vw; background:rgba(60,200,110,.4); border-color:rgba(150,255,180,.7); }
+#btn-jump:active { background:rgba(120,255,160,.75); }
+#btn-dash { left:5vw; background:rgba(255,140,60,.4); border-color:rgba(255,200,150,.7); }
+#btn-dash:active { background:rgba(255,180,90,.75); }
+#btn-dash.cool { opacity:.4; }
+
+.overlay { position:fixed; inset:0; z-index:30; display:flex; flex-direction:column; align-items:center; justify-content:center; background:rgba(4,10,30,.78); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); padding:20px; text-align:center; }
+.overlay-title { font-size: clamp(26px, 5vmin, 52px); font-weight:900; letter-spacing:3px; margin-bottom:12px; text-shadow:0 0 24px rgba(255,180,80,.6); }
+.overlay-sub { font-size: clamp(13px, 2vmin, 18px); color:#dfeaff; margin-bottom:20px; letter-spacing:1.5px; }
+.danger-title { color:#ff5a5a; text-shadow:0 0 24px rgba(255,90,90,.7); }
+.victory-title { color:#ffe066; text-shadow:0 0 26px rgba(255,220,80,.8); }
+
+#story-overlay { background:rgba(2,8,26,.86); }
+#story-text { font-size: clamp(15px, 2.6vmin, 24px); max-width:min(90vw, 760px); line-height:1.5; color:#e6efff; font-weight:500; letter-spacing:.5px; }
+#story-speaker { font-size: clamp(13px, 2vmin, 18px); font-weight:900; color:#ffb84d; letter-spacing:3px; margin-bottom:12px; }
+#story-avatar { font-size:60px; margin-bottom:10px; }
+
+#end-names { font-size: clamp(16px, 3vmin, 26px); font-weight:900; letter-spacing:3px; margin-top:20px; color:#ffe066; text-shadow:0 0 20px rgba(255,220,80,.6); line-height:1.7; }
+#end-names span { display:block; }
+
+#rotate { display:none; position:fixed; inset:0; z-index:100; background:#0a1836; align-items:center; justify-content:center; flex-direction:column; font-size:22px; font-weight:900; letter-spacing:3px; text-align:center; padding:30px; }
+#rotate .icon { font-size:70px; margin-bottom:20px; animation: rotate 2s infinite ease-in-out; }
+@keyframes rotate { 0%,100%{transform:rotate(0)} 50%{transform:rotate(90deg)} }
+@media (orientation: portrait) and (max-width:900px) {
+  #rotate { display:flex; }
+}
+
+.star-row { font-size: clamp(34px, 7vmin, 60px); letter-spacing:14px; margin:12px 0; }
+.star-on { color:#ffe066; text-shadow:0 0 24px rgba(255,220,80,.9); }
+.star-off { color:#3a4468; }
+
+.fade-in { animation: fadeIn .35s ease-out; }
+@keyframes fadeIn { from { opacity:0; transform: translateY(8px);} to { opacity:1; transform:none; } }
+</style>
+</head>
+<body>
+
+<div id="game"></div>
+
+<div id="rotate"><div class="icon">📱</div>GIRE O CELULAR<br><span style="font-size:14px;color:#8fd0ff;margin-top:12px;display:block;">para jogar em modo paisagem</span></div>
+
+<!-- MENU -->
+<div id="menu" class="screen">
+  <div class="title-main">DAVI LUCAS</div>
+  <div class="title-sub">A GRANDE AVENTURA 3D</div>
+  <button class="menu-btn accent" data-action="play">▶ JOGAR</button>
+  <button class="menu-btn" data-action="levels">📋 SELECIONAR FASE</button>
+  <button class="menu-btn" data-action="howto">❓ COMO JOGAR</button>
+  <button class="menu-btn" data-action="settings">⚙ CONFIGURAÇÕES</button>
+  <button class="menu-btn" data-action="credits">ℹ CRÉDITOS</button>
+</div>
+
+<!-- LEVELS -->
+<div id="levels" class="screen hidden">
+  <div class="panel-title">SELECIONE A FASE</div>
+  <div class="levels-grid" id="levels-grid"></div>
+  <button class="back-btn" data-back>VOLTAR</button>
+</div>
+
+<!-- HOWTO -->
+<div id="howto" class="screen hidden">
+  <div class="panel-title">COMO JOGAR</div>
+  <div class="info-box">
+    <h3>🎮 OBJETIVO</h3>
+    Davi Lucas corre automaticamente para frente. Chegue ao portal no final da fase!
+    <h3>⌨ TECLADO (PC)</h3>
+    <b>ESPAÇO</b> / <b>W</b> / <b>↑</b> — Pular (pule 2x no ar para pulo duplo)<br>
+    <b>SHIFT</b> — Dash (avanço rápido)<br>
+    <b>A</b> / <b>D</b> — Movimento lateral<br>
+    <b>R</b> — Reiniciar fase<br>
+    <b>ESC</b> — Pausar
+    <h3>📱 MOBILE</h3>
+    Botão <b>PULAR</b> à direita, botão <b>DASH</b> à esquerda. Toque nas laterais para mover.
+    <h3>💰 MOEDAS</h3>
+    Colete moedas para ganhar pontos e estrelas.
+    <h3>🚩 CHECKPOINTS</h3>
+    Portais azuis brilhantes salvam seu progresso. Se Davi cair, ele volta ao último checkpoint.
+    <h3>⭐ ESTRELAS</h3>
+    1 ⭐ — Completar a fase<br>
+    2 ⭐ — Coletar 50% das moedas<br>
+    3 ⭐ — Coletar todas as moedas
+  </div>
+  <button class="back-btn" data-back>VOLTAR</button>
+</div>
+
+<!-- SETTINGS -->
+<div id="settings" class="screen hidden">
+  <div class="panel-title">CONFIGURAÇÕES</div>
+  <div class="info-box" style="width:min(92vw,560px);">
+    <div class="setting-row"><span>🔊 SOM</span><button class="toggle" id="set-sound">ON</button></div>
+    <div class="setting-row"><span>🎵 MÚSICA</span><button class="toggle" id="set-music">ON</button></div>
+    <div class="setting-row"><span>📳 VIBRAÇÃO</span><button class="toggle" id="set-vibrate">ON</button></div>
+    <div class="setting-row"><span>🎨 QUALIDADE GRÁFICA</span><button class="toggle" id="set-quality">MÉDIA</button></div>
+    <div class="setting-row"><span>🗑 RESETAR PROGRESSO</span><button class="toggle" id="set-reset">APAGAR</button></div>
+  </div>
+  <button class="back-btn" data-back>VOLTAR</button>
+</div>
+
+<!-- CREDITS -->
+<div id="credits" class="screen hidden">
+  <div class="panel-title">CRÉDITOS</div>
+  <div class="info-box">
+    <h3>🕹 JOGO</h3>
+    <b>Davi Lucas — A Grande Aventura 3D</b><br>
+    Desenvolvido em HTML5 + Three.js<br>
+    Protagonista: Davi Lucas (10 anos)<br>
+    Irmãos na história: Daniel Henrique e Ana Sofia
+    <h3>📚 BIBLIOTECAS</h3>
+    <b>Three.js</b> — Licença MIT<br>
+    threejs.org
+    <h3>🎨 ASSETS 3D</h3>
+    <b>Nenhum modelo 3D externo foi utilizado.</b><br>
+    Todos os personagens, cenários, inimigos, obstáculos e efeitos são gerados proceduralmente no código usando geometrias primitivas do Three.js (esferas, cilindros, caixas, torus, cones).<br>
+    Isso garante uso livre, funcionamento offline e licença totalmente permissiva.
+    <h3>🎵 ÁUDIO</h3>
+    Sons gerados via Web Audio API (osciladores sintetizados).
+    Nenhum arquivo de áudio externo utilizado.
+    <h3>🖼 TEXTURAS</h3>
+    Nenhuma textura externa utilizada. Materiais procedurais.
+    <h3>❤ AGRADECIMENTOS</h3>
+    A toda a família de Davi Lucas — uma aventura feita com carinho.
+  </div>
+  <button class="back-btn" data-back>VOLTAR</button>
+</div>
+
+<!-- HUD -->
+<div id="hud" class="hidden">
+  <div id="hud-top">
+    <div id="hud-left">
+      <div class="hud-chip" id="hud-level">FASE 01</div>
+      <div class="hud-chip" id="hud-coins">🪙 000</div>
+      <div class="hud-chip" id="hud-score">⭐ 00000</div>
+    </div>
+    <div id="hud-right">
+      <button id="btn-pause">⏸</button>
+    </div>
+  </div>
+  <div id="hud-progress-wrap">
+    <div>INÍCIO <span style="opacity:.6">━━━━━━━━━━</span> FINAL</div>
+    <div id="hud-progress-bar">
+      <div id="hud-progress-fill"></div>
+      <div id="hud-progress-dot"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Mobile controls -->
+<div id="mobile-controls" class="hidden">
+  <button class="mob-btn" id="btn-dash">⚡<br>DASH</button>
+  <button class="mob-btn" id="btn-jump">⬆<br>PULAR</button>
+</div>
+
+<!-- Pause -->
+<div id="pause" class="overlay hidden">
+  <div class="overlay-title">PAUSADO</div>
+  <button class="menu-btn accent" id="pause-resume">▶ CONTINUAR</button>
+  <button class="menu-btn" id="pause-restart">🔄 REINICIAR FASE</button>
+  <button class="menu-btn" id="pause-menu">🏠 MENU PRINCIPAL</button>
+</div>
+
+<!-- Death -->
+<div id="death" class="overlay hidden">
+  <div class="overlay-title danger-title">DAVI CAIU!</div>
+  <div class="overlay-sub" id="death-sub">Voltando ao checkpoint...</div>
+</div>
+
+<!-- Victory -->
+<div id="victory" class="overlay hidden">
+  <div class="overlay-title victory-title">FASE COMPLETA!</div>
+  <div class="star-row" id="victory-stars">
+    <span class="star-off">★</span><span class="star-off">★</span><span class="star-off">★</span>
+  </div>
+  <div class="overlay-sub" id="victory-info"></div>
+  <button class="menu-btn accent" id="vic-next">▶ PRÓXIMA FASE</button>
+  <button class="menu-btn" id="vic-retry">🔄 JOGAR DE NOVO</button>
+  <button class="menu-btn" id="vic-menu">🏠 MENU</button>
+</div>
+
+<!-- Story -->
+<div id="story-overlay" class="overlay hidden">
+  <div id="story-avatar">🧒</div>
+  <div id="story-speaker"></div>
+  <div id="story-text"></div>
+  <button class="back-btn" id="story-next" style="margin-top:28px;">CONTINUAR ▶</button>
+</div>
+
+<!-- End -->
+<div id="end" class="overlay hidden">
+  <div class="overlay-title victory-title">DAVI CONSEGUIU!</div>
+  <div class="overlay-sub">FIM DA AVENTURA</div>
+  <div id="end-names">
+    <span>DAVI LUCAS</span>
+    <span style="color:#8fd0ff;">DANIEL HENRIQUE</span>
+    <span style="color:#ff8ab8;">ANA SOFIA</span>
+  </div>
+  <button class="menu-btn accent" id="end-menu" style="margin-top:32px;">🏠 VOLTAR AO MENU</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+'use strict';
+
+if (typeof THREE === 'undefined') {
+  document.body.innerHTML = '<div style="color:#fff;padding:40px;font-family:Arial;text-align:center;"><h2>Erro ao carregar Three.js</h2><p>Verifique sua conexão com a internet.</p></div>';
+  return;
+}
+
+/* =========================================================
+   SAVE / PROGRESS
+========================================================= */
+const Save = {
+  key: 'davi_lucas_save_v1',
+  data: {
+    unlocked: 1,
+    coins: 0,
+    stars: {},
+    best: {},
+    sound: true,
+    music: true,
+    vibration: true,
+    quality: 'medium'
+  },
+  load() {
+    try {
+      const s = localStorage.getItem(this.key);
+      if (s) Object.assign(this.data, JSON.parse(s));
+    } catch(e){}
+  },
+  save() {
+    try { localStorage.setItem(this.key, JSON.stringify(this.data)); } catch(e){}
+  },
+  reset() {
+    this.data = { unlocked:1, coins:0, stars:{}, best:{}, sound:this.data.sound, music:this.data.music, vibration:this.data.vibration, quality:this.data.quality };
+    this.save();
+  }
+};
+Save.load();
+
+/* =========================================================
+   AUDIO
+========================================================= */
+const Sound = {
+  ctx: null, musicOn: false, musicNodes: null,
+  init() {
+    if (!this.ctx) {
+      try { this.ctx = new (window.AudioContext||window.webkitAudioContext)(); } catch(e){}
+    }
+    if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
+  },
+  tone(freq, dur, type, vol, slideTo) {
+    if (!Save.data.sound) return;
+    this.init(); if (!this.ctx) return;
+    const t = this.ctx.currentTime;
+    const o = this.ctx.createOscillator();
+    const g = this.ctx.createGain();
+    o.type = type || 'sine';
+    o.frequency.setValueAtTime(freq, t);
+    if (slideTo) o.frequency.exponentialRampToValueAtTime(slideTo, t + dur);
+    g.gain.setValueAtTime(vol || 0.08, t);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(this.ctx.destination);
+    o.start(t); o.stop(t + dur + 0.02);
+  },
+  noise(dur, vol) {
+    if (!Save.data.sound) return;
+    this.init(); if (!this.ctx) return;
+    const t = this.ctx.currentTime;
+    const buffer = this.ctx.createBuffer(1, this.ctx.sampleRate * dur, this.ctx.sampleRate);
+    const d = buffer.getChannelData(0);
+    for (let i=0;i<d.length;i++) d[i] = (Math.random()*2-1) * (1 - i/d.length);
+    const src = this.ctx.createBufferSource();
+    src.buffer = buffer;
+    const g = this.ctx.createGain();
+    g.gain.value = vol || 0.1;
+    src.connect(g); g.connect(this.ctx.destination);
+    src.start();
+  },
+  jump(){ this.tone(440, 0.14, 'square', 0.06, 880); },
+  land(){ this.tone(160, 0.09, 'sine', 0.07, 90); },
+  coin(){ this.tone(1050, 0.07, 'sine', 0.09); setTimeout(()=>this.tone(1570, 0.09, 'sine', 0.07), 55); },
+  checkpoint(){ this.tone(660, 0.1, 'triangle', 0.08); setTimeout(()=>this.tone(990, 0.16, 'triangle', 0.08), 90); },
+  dash(){ this.noise(0.15, 0.08); this.tone(300, 0.14, 'sawtooth', 0.05, 700); },
+  death(){ this.tone(220, 0.4, 'sawtooth', 0.1, 60); },
+  hurt(){ this.tone(180, 0.15, 'square', 0.08, 90); },
+  victory(){ const n=[523,659,784,1046]; n.forEach((f,i)=>setTimeout(()=>this.tone(f,0.22,'triangle',0.09), i*140)); },
+  button(){ this.tone(600, 0.06, 'square', 0.05); },
+  startMusic() {
+    if (!Save.data.music || !this.ctx) return;
+    if (this.musicOn) return;
+    this.musicOn = true;
+    const playLoop = () => {
+      if (!this.musicOn || !Save.data.music) return;
+      const notes = [261.63, 329.63, 392.00, 523.25, 392.00, 329.63];
+      notes.forEach((f, i) => {
+        if (!this.musicOn) return;
+        setTimeout(() => {
+          if (!this.musicOn) return;
+          this.tone(f, 0.5, 'sine', 0.025);
+        }, i * 380);
+      });
+      this.musicTimer = setTimeout(playLoop, notes.length * 380);
+    };
+    this.init();
+    playLoop();
+  },
+  stopMusic() { this.musicOn = false; if (this.musicTimer) clearTimeout(this.musicTimer); }
+};
+
+function vibrate(ms) {
+  if (Save.data.vibration && navigator.vibrate) {
+    try { navigator.vibrate(ms); } catch(e){}
+  }
+}
+
+/* =========================================================
+   THEMES
+========================================================= */
+const THEMES = [
+  { name:'PRIMEIROS PASSOS',  sky:0x87ceeb, ground:0x5cb85c, ground2:0x3d8b40, fog:0xbfe3ff, fogNear:50, fogFar:200, checkpoints:1, decor:'tree',  enemyRate:0.05, obstacleRate:0.25, gapRate:0.10, story:[
+      { sp:'Narrador', txt:'Davi Lucas tinha 10 anos, uma mochila laranja e um sonho enorme.' },
+      { sp:'Davi',     txt:'Hoje começa a maior aventura da minha vida!' }
+  ]},
+  { name:'FLORESTA ENCANTADA', sky:0x7fc4a0, ground:0x3d6b3a, ground2:0x2a4d28, fog:0xa8e0c0, fogNear:35, fogFar:160, checkpoints:2, decor:'tree',  enemyRate:0.15, obstacleRate:0.30, gapRate:0.14, story:[
+      { sp:'Daniel Henrique', txt:'Davi, cuidado com a floresta! Ela é bonita mas tem perigos!' },
+      { sp:'Ana Sofia',       txt:'Ache o caminho de casa, irmãozinho!' },
+      { sp:'Davi',            txt:'Podem contar comigo! Eu volto com uma história incrível!' }
+  ]},
+  { name:'MONTANHAS',         sky:0x9bb7d4, ground:0x8b8b8b, ground2:0x5a5a5a, fog:0xcfdce8, fogNear:40, fogFar:170, checkpoints:2, decor:'rock',  enemyRate:0.18, obstacleRate:0.35, gapRate:0.22, story:[
+      { sp:'Narrador', txt:'As montanhas eram altas e o vento soprava forte...' },
+      { sp:'Davi',     txt:'Uau! Preciso pular com cuidado entre os penhascos!' }
+  ]},
+  { name:'VALE DAS CACHOEIRAS', sky:0x8ad8e8, ground:0x4a7c3f, ground2:0x2f5a28, fog:0xc0eaf2, fogNear:35, fogFar:180, checkpoints:2, decor:'water', enemyRate:0.18, obstacleRate:0.32, gapRate:0.24, story:[
+      { sp:'Ana Sofia', txt:'Olha a água! Ela brilha como estrelinhas, Davi!' },
+      { sp:'Davi',      txt:'Vou atravessar com cuidado sobre as pedras!' }
+  ]},
+  { name:'DESERTO',           sky:0xf2c989, ground:0xe6c288, ground2:0xc9a566, fog:0xf0d5a0, fogNear:30, fogFar:150, checkpoints:3, decor:'cactus',enemyRate:0.20, obstacleRate:0.40, gapRate:0.22, story:[
+      { sp:'Daniel Henrique', txt:'O sol está forte! Não pare de correr, Davi!' },
+      { sp:'Davi',            txt:'Cuidado com os cactos e com a areia movediça!' }
+  ]},
+  { name:'RUÍNAS ANTIGAS',    sky:0x8d7b5c, ground:0x8b7355, ground2:0x5e4a32, fog:0xb0a080, fogNear:30, fogFar:150, checkpoints:3, decor:'pillar',enemyRate:0.28, obstacleRate:0.45, gapRate:0.20, story:[
+      { sp:'Narrador', txt:'Templos esquecidos guardavam segredos milenares...' },
+      { sp:'Davi',     txt:'Estátuas gigantes! E olha, tem lâminas nas paredes!' }
+  ]},
+  { name:'CIDADE',            sky:0x6e7b8b, ground:0x555555, ground2:0x333333, fog:0xa8b0bc, fogNear:45, fogFar:180, checkpoints:3, decor:'building',enemyRate:0.30, obstacleRate:0.42, gapRate:0.28, story:[
+      { sp:'Ana Sofia', txt:'Você está quase em casa, Davi! Corre pelos telhados!' },
+      { sp:'Davi',      txt:'Os drones estão me perseguindo! Preciso ser rápido!' }
+  ]},
+  { name:'VULCÃO',            sky:0x3a1a1a, ground:0x2a1a1a, ground2:0x1a0a0a, fog:0x5a2020, fogNear:25, fogFar:130, checkpoints:3, decor:'lava',  enemyRate:0.32, obstacleRate:0.50, gapRate:0.30, story:[
+      { sp:'Daniel Henrique', txt:'Davi, esse lugar é perigoso! A lava queima!' },
+      { sp:'Davi',            txt:'Vou pular de plataforma em plataforma. Sem medo!' }
+  ]},
+  { name:'FORTALEZA',         sky:0x5a5a6a, ground:0x4a4a4a, ground2:0x2a2a2a, fog:0x8a8a9a, fogNear:30, fogFar:150, checkpoints:4, decor:'wall',  enemyRate:0.38, obstacleRate:0.52, gapRate:0.26, story:[
+      { sp:'Narrador', txt:'A fortaleza guardava o último desafio antes do portal final.' },
+      { sp:'Davi',     txt:'Guardas por toda parte! Preciso desviar de tudo!' }
+  ]},
+  { name:'A GRANDE AVENTURA', sky:0x8a7fbf, ground:0x5c8a4a, ground2:0x3a5a2a, fog:0xc0b8e8, fogNear:40, fogFar:220, checkpoints:4, decor:'mixed', enemyRate:0.35, obstacleRate:0.55, gapRate:0.28, story:[
+      { sp:'Daniel Henrique', txt:'Davi, esse é o caminho final! Não desista agora!' },
+      { sp:'Ana Sofia',       txt:'Estamos esperando você em casa! Você consegue!' },
+      { sp:'Davi',            txt:'Vou atravessar o grande portal! Essa é a minha aventura!' }
+  ]}
+];
+
+/* =========================================================
+   THREE.JS SETUP
+========================================================= */
+const container = document.getElementById('game');
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 500);
+const renderer = new THREE.WebGLRenderer({ antialias:true, powerPreference:'high-performance' });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputEncoding = THREE.sRGBEncoding;
+container.appendChild(renderer.domElement);
+
+const hemi = new THREE.HemisphereLight(0xffffff, 0x445566, 0.7);
+scene.add(hemi);
+const sun = new THREE.DirectionalLight(0xfff3d6, 1.1);
+sun.position.set(-18, 32, -14);
+sun.castShadow = true;
+sun.shadow.mapSize.width = 1024;
+sun.shadow.mapSize.height = 1024;
+sun.shadow.camera.near = 1;
+sun.shadow.camera.far = 120;
+sun.shadow.camera.left = -22;
+sun.shadow.camera.right = 22;
+sun.shadow.camera.top = 22;
+sun.shadow.camera.bottom = -22;
+sun.shadow.bias = -0.0005;
+scene.add(sun);
+const ambient = new THREE.AmbientLight(0xffffff, 0.35);
+scene.add(ambient);
+
+const worldGroup = new THREE.Group();
+scene.add(worldGroup);
+const effectsGroup = new THREE.Group();
+scene.add(effectsGroup);
+
+function buildSky(colorHex) {
+  const geo = new THREE.SphereGeometry(280, 32, 16);
+  const mat = new THREE.ShaderMaterial({
+    uniforms: {
+      top: { value: new THREE.Color(colorHex).offsetHSL(0,0.05,-0.15) },
+      bottom: { value: new THREE.Color(colorHex).offsetHSL(0,0,0.08) },
+    },
+    vertexShader: `varying vec3 vPos; void main(){ vPos = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
+    fragmentShader: `uniform vec3 top; uniform vec3 bottom; varying vec3 vPos; void main(){ float h = normalize(vPos).y*0.5+0.5; gl_FragColor = vec4(mix(bottom, top, h),1.0); }`,
+    side: THREE.BackSide,
+    depthWrite: false
+  });
+  return new THREE.Mesh(geo, mat);
+}
+
+function makeCloud() {
+  const g = new THREE.Group();
+  const mat = new THREE.MeshStandardMaterial({ color: 0xffffff, transparent:true, opacity:0.85, roughness:1 });
+  for (let i=0;i<4;i++){
+    const s = 1 + Math.random()*1.2;
+    const m = new THREE.Mesh(new THREE.SphereGeometry(s, 8, 6), mat);
+    m.position.set((Math.random()-0.5)*3, Math.random()*0.6, (Math.random()-0.5)*2);
+    g.add(m);
+  }
+  return g;
+}
+
+/* =========================================================
+   CHARACTER — DAVI LUCAS
+========================================================= */
+const COLORS_DAVI = { skin:0xf2c39a, hair:0x3d2410, shirt:0x2a7fff, pants:0x1a2a6b, shoes:0xff4433, pack:0xffa726 };
+
+function makeArm(side, shirtMat, skinMat) {
+  const g = new THREE.Group();
+  g.position.set(side * 0.36, 1.42, 0);
+  const upper = new THREE.Mesh(new THREE.CylinderGeometry(0.072, 0.062, 0.34, 8), shirtMat);
+  upper.position.y = -0.17; upper.castShadow = true; g.add(upper);
+  const elbowG = new THREE.Group();
+  elbowG.position.y = -0.34; g.add(elbowG);
+  const fore = new THREE.Mesh(new THREE.CylinderGeometry(0.062, 0.052, 0.32, 8), skinMat);
+  fore.position.y = -0.16; fore.castShadow = true; elbowG.add(fore);
+  const hand = new THREE.Mesh(new THREE.SphereGeometry(0.072, 10, 8), skinMat);
+  hand.position.y = -0.36; hand.castShadow = true; elbowG.add(hand);
+  return { group:g, elbow:elbowG, upper };
+}
+
+function makeLeg(side, pantsMat, skinMat, shoeMat) {
+  const g = new THREE.Group();
+  g.position.set(side * 0.135, 0.78, 0);
+  const thigh = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.088, 0.4, 8), pantsMat);
+  thigh.position.y = -0.2; thigh.castShadow = true; g.add(thigh);
+  const kneeG = new THREE.Group();
+  kneeG.position.y = -0.4; g.add(kneeG);
+  const shin = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.07, 0.34, 8), pantsMat);
+  shin.position.y = -0.17; shin.castShadow = true; kneeG.add(shin);
+  const shoe = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.1, 0.26), shoeMat);
+  shoe.position.set(0, -0.36, 0.03); shoe.castShadow = true; kneeG.add(shoe);
+  const sole = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.03, 0.27), new THREE.MeshStandardMaterial({color:0xffffff, roughness:0.4}));
+  sole.position.set(0, -0.41, 0.03); kneeG.add(sole);
+  return { group:g, knee:kneeG, thigh, shin, shoe };
+}
+
+function createCharacter(colors, isGirl) {
+  const c = colors;
+  const skinMat = new THREE.MeshStandardMaterial({ color:c.skin, roughness:0.75 });
+  const hairMat = new THREE.MeshStandardMaterial({ color:c.hair, roughness:0.9 });
+  const shirtMat = new THREE.MeshStandardMaterial({ color:c.shirt, roughness:0.6 });
+  const pantsMat = new THREE.MeshStandardMaterial({ color:c.pants, roughness:0.7 });
+  const shoeMat = new THREE.MeshStandardMaterial({ color:c.shoes, roughness:0.5 });
+  const packMat = new THREE.MeshStandardMaterial({ color:c.pack, roughness:0.6 });
+  const eyeWMat = new THREE.MeshStandardMaterial({ color:0xffffff, roughness:0.2 });
+  const eyeBMat = new THREE.MeshStandardMaterial({ color:0x111111, roughness:0.2 });
+  const mouthMat = new THREE.MeshStandardMaterial({ color:0x8b3a2a, roughness:0.5 });
+  const blushMat = new THREE.MeshStandardMaterial({ color:0xff9c9c, roughness:0.8, transparent:true, opacity:0.55 });
+
+  const root = new THREE.Group();
+  const body = new THREE.Group();
+  root.add(body);
+
+  const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.31, 0.27, 0.72, 14), shirtMat);
+  torso.position.y = 1.14; torso.castShadow = true; torso.receiveShadow = true;
+  body.add(torso);
+
+  const collar = new THREE.Mesh(new THREE.TorusGeometry(0.16, 0.045, 8, 16), shirtMat);
+  collar.position.y = 1.5; collar.rotation.x = Math.PI/2;
+  body.add(collar);
+
+  const hips = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.26, 0.24, 12), pantsMat);
+  hips.position.y = 0.85; hips.castShadow = true;
+  body.add(hips);
+
+  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.085, 0.085, 0.11, 8), skinMat);
+  neck.position.y = 1.55; body.add(neck);
+
+  const headG = new THREE.Group();
+  headG.position.y = 1.82; body.add(headG);
+
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.28, 18, 18), skinMat);
+  head.scale.set(0.95, 1.02, 0.95); head.castShadow = true;
+  headG.add(head);
+
+  const earL = new THREE.Mesh(new THREE.SphereGeometry(0.055, 8, 8), skinMat);
+  earL.position.set(-0.26, 0, 0); headG.add(earL);
+  const earR = earL.clone(); earR.position.x = 0.26; headG.add(earR);
+
+  if (isGirl) {
+    const hairTop = new THREE.Mesh(new THREE.SphereGeometry(0.31, 18, 18, 0, Math.PI*2, 0, Math.PI*0.75), hairMat);
+    hairTop.position.y = 0.02; headG.add(hairTop);
+    const hairL = new THREE.Mesh(new THREE.CylinderGeometry(0.1,0.1,0.42,8), hairMat);
+    hairL.position.set(-0.26, -0.12, -0.02); headG.add(hairL);
+    const hairR = hairL.clone(); hairR.position.x = 0.26; headG.add(hairR);
+    const tailL = new THREE.Mesh(new THREE.SphereGeometry(0.13, 8, 8), hairMat);
+    tailL.position.set(-0.33, -0.28, -0.15); headG.add(tailL);
+    const tailR = tailL.clone(); tailR.position.x = 0.33; headG.add(tailR);
+    const bow = new THREE.Mesh(new THREE.SphereGeometry(0.08, 8, 8), new THREE.MeshStandardMaterial({color:0xff5aa8, roughness:0.5}));
+    bow.position.set(0, 0.28, -0.05); headG.add(bow);
+  } else {
+    const hairTop = new THREE.Mesh(new THREE.SphereGeometry(0.3, 18, 18, 0, Math.PI*2, 0, Math.PI*0.58), hairMat);
+    hairTop.position.y = 0.03; headG.add(hairTop);
+    const fringe = new THREE.Mesh(new THREE.BoxGeometry(0.48, 0.11, 0.16), hairMat);
+    fringe.position.set(0, 0.18, 0.22); headG.add(fringe);
+    const sbL = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.16, 0.16), hairMat);
+    sbL.position.set(-0.25, 0.02, 0.14); headG.add(sbL);
+    const sbR = sbL.clone(); sbR.position.x = 0.25; headG.add(sbR);
+  }
+
+  const eyeL = new THREE.Mesh(new THREE.SphereGeometry(0.058, 10, 10), eyeWMat);
+  eyeL.position.set(-0.1, 0.02, 0.25); headG.add(eyeL);
+  const eyeR = eyeL.clone(); eyeR.position.x = 0.1; headG.add(eyeR);
+  const pupL = new THREE.Mesh(new THREE.SphereGeometry(0.032, 8, 8), eyeBMat);
+  pupL.position.set(-0.1, 0.02, 0.29); headG.add(pupL);
+  const pupR = pupL.clone(); pupR.position.x = 0.1; headG.add(pupR);
+  const browL = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.02, 0.02), hairMat);
+  browL.position.set(-0.1, 0.11, 0.27); headG.add(browL);
+  const browR = browL.clone(); browR.position.x = 0.1; headG.add(browR);
+
+  const nose = new THREE.Mesh(new THREE.SphereGeometry(0.035, 8, 8), skinMat);
+  nose.position.set(0, -0.03, 0.28); headG.add(nose);
+
+  const mouth = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.026, 0.02), mouthMat);
+  mouth.position.set(0, -0.13, 0.265); headG.add(mouth);
+
+  const blushL = new THREE.Mesh(new THREE.CircleGeometry(0.045, 10), blushMat);
+  blushL.position.set(-0.16, -0.05, 0.24); blushL.rotation.y = 0.3; headG.add(blushL);
+  const blushR = blushL.clone(); blushR.position.x = 0.16; blushR.rotation.y = -0.3; headG.add(blushR);
+
+  const armL = makeArm(-1, shirtMat, skinMat); body.add(armL.group);
+  const armR = makeArm(1, shirtMat, skinMat); body.add(armR.group);
+
+  const legL = makeLeg(-1, pantsMat, skinMat, shoeMat); root.add(legL.group);
+  const legR = makeLeg(1, pantsMat, skinMat, shoeMat); root.add(legR.group);
+
+  const pack = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.5, 0.2), packMat);
+  pack.position.set(0, 1.15, -0.34); pack.castShadow = true; body.add(pack);
+  const packPocket = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.2, 0.06), new THREE.MeshStandardMaterial({color:c.pack, roughness:0.4, emissive:new THREE.Color(c.pack).multiplyScalar(0.15)}));
+  packPocket.position.set(0, 1.05, -0.45); body.add(packPocket);
+  const strapMat = new THREE.MeshStandardMaterial({color:0x2a2a2a, roughness:0.7});
+  const strapL = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.7, 0.03), strapMat);
+  strapL.position.set(-0.14, 1.2, 0.22); body.add(strapL);
+  const strapR = strapL.clone(); strapR.position.x = 0.14; body.add(strapR);
+
+  return { root, body, headG, armL, armR, legL, legR, torso, hips, isGirl };
+}
+
+/* =========================================================
+   CHARACTER ANIMATIONS
+========================================================= */
+const Anim = {
+  time: 0,
+  apply(character, state, dt, extra) {
+    this.time += dt;
+    const t = this.time;
+    const c = character;
+    const runSpeed = (extra && extra.runSpeed) || 8;
+
+    c.body.rotation.set(0,0,0);
+    c.body.position.set(0,0,0);
+    c.headG.rotation.set(0,0,0);
+    c.armL.group.rotation.set(0,0,0);
+    c.armR.group.rotation.set(0,0,0);
+    c.armL.elbow.rotation.set(0,0,0);
+    c.armR.elbow.rotation.set(0,0,0);
+    c.legL.group.rotation.set(0,0,0);
+    c.legR.group.rotation.set(0,0,0);
+    c.legL.knee.rotation.set(0,0,0);
+    c.legR.knee.rotation.set(0,0,0);
+
+    if (state === 'idle') {
+      const b = Math.sin(t*1.8) * 0.02;
+      c.body.position.y = b;
+      c.armL.group.rotation.x = Math.sin(t*1.8) * 0.06;
+      c.armR.group.rotation.x = -Math.sin(t*1.8) * 0.06;
+      c.armL.elbow.rotation.x = -0.15;
+      c.armR.elbow.rotation.x = -0.15;
+      c.legL.group.rotation.x = 0.05;
+      c.legR.group.rotation.x = -0.05;
+      c.headG.rotation.y = Math.sin(t*0.6)*0.15;
+    } else if (state === 'run') {
+      const cycle = t * (4 + runSpeed * 0.35);
+      const sw = Math.sin(cycle);
+      const swR = Math.sin(cycle + Math.PI);
+
+      c.legL.group.rotation.x = sw * 0.85;
+      c.legR.group.rotation.x = swR * 0.85;
+      c.legL.knee.rotation.x = Math.max(0, -sw) * 1.35 + 0.05;
+      c.legR.knee.rotation.x = Math.max(0, -swR) * 1.35 + 0.05;
+
+      c.armL.group.rotation.x = -swR * 0.75;
+      c.armR.group.rotation.x = -sw * 0.75;
+      c.armL.elbow.rotation.x = -0.55 - Math.max(0, swR) * 0.7;
+      c.armR.elbow.rotation.x = -0.55 - Math.max(0, sw) * 0.7;
+
+      c.body.position.y = Math.abs(Math.sin(cycle)) * 0.055;
+      c.body.rotation.x = 0.12;
+      c.body.rotation.z = Math.sin(cycle) * 0.035;
+      c.headG.rotation.x = -0.08;
+    } else if (state === 'jump') {
+      c.body.rotation.x = -0.15;
+      c.legL.group.rotation.x = -0.8; c.legL.knee.rotation.x = 1.2;
+      c.legR.group.rotation.x = 0.4;  c.legR.knee.rotation.x = 0.5;
+      c.armL.group.rotation.x = -2.2; c.armL.group.rotation.z = 0.3;
+      c.armR.group.rotation.x = -2.2; c.armR.group.rotation.z = -0.3;
+      c.armL.elbow.rotation.x = -0.4;
+      c.armR.elbow.rotation.x = -0.4;
+    } else if (state === 'doublejump') {
+      c.body.rotation.x = -0.25;
+      c.legL.group.rotation.x = 0.6; c.legL.knee.rotation.x = 0.9;
+      c.legR.group.rotation.x = -0.6; c.legR.knee.rotation.x = 0.9;
+      c.armL.group.rotation.x = -2.6; c.armR.group.rotation.x = -2.6;
+      c.armL.group.rotation.z = 0.6; c.armR.group.rotation.z = -0.6;
+    } else if (state === 'fall') {
+      c.body.rotation.x = 0.2;
+      c.legL.group.rotation.x = 0.3; c.legL.knee.rotation.x = 0.4;
+      c.legR.group.rotation.x = -0.4; c.legR.knee.rotation.x = 0.3;
+      c.armL.group.rotation.x = -1.4; c.armL.group.rotation.z = 0.5;
+      c.armR.group.rotation.x = -1.4; c.armR.group.rotation.z = -0.5;
+    } else if (state === 'land') {
+      c.body.position.y = -0.15;
+      c.body.rotation.x = 0.25;
+      c.legL.group.rotation.x = 0.5; c.legL.knee.rotation.x = 0.9;
+      c.legR.group.rotation.x = -0.5; c.legR.knee.rotation.x = 0.9;
+      c.armL.group.rotation.x = 0.5; c.armR.group.rotation.x = 0.5;
+    } else if (state === 'dash') {
+      c.body.rotation.x = 0.4;
+      c.armL.group.rotation.x = -1.8; c.armL.group.rotation.z = 0.8;
+      c.armR.group.rotation.x = -1.8; c.armR.group.rotation.z = -0.8;
+      c.legL.group.rotation.x = 0.6; c.legL.knee.rotation.x = 1.3;
+      c.legR.group.rotation.x = -0.7; c.legR.knee.rotation.x = 0.3;
+    } else if (state === 'hurt') {
+      c.body.rotation.x = -0.4;
+      c.armL.group.rotation.x = -2; c.armR.group.rotation.x = -2;
+      c.legL.group.rotation.x = -0.5; c.legR.group.rotation.x = 0.5;
+    } else if (state === 'death') {
+      const p = Math.min(1, (extra && extra.deathT || 0) / 1.2);
+      c.body.rotation.x = -Math.PI/2 * p;
+      c.armL.group.rotation.x = -1.5 * p;
+      c.armR.group.rotation.x = -1.5 * p;
+      c.legL.group.rotation.x = -0.6 * p; c.legR.group.rotation.x = 0.6 * p;
+    } else if (state === 'victory') {
+      c.body.position.y = Math.abs(Math.sin(t*3.5)) * 0.18;
+      c.armL.group.rotation.x = -Math.PI + Math.sin(t*4)*0.15;
+      c.armR.group.rotation.x = -Math.PI - Math.sin(t*4)*0.15;
+      c.armL.group.rotation.z = 0.25;
+      c.armR.group.rotation.z = -0.25;
+      c.legL.group.rotation.x = Math.sin(t*4)*0.15;
+      c.legR.group.rotation.x = -Math.sin(t*4)*0.15;
+      c.headG.rotation.x = -0.1;
+    }
+  }
+};
+
+/* =========================================================
+   LEVEL / WORLD GENERATION
+========================================================= */
+function disposeGroup(g) {
+  while (g.children.length) {
+    const c = g.children[0];
+    g.remove(c);
+    if (c.traverse) c.traverse(o => {
+      if (o.geometry) o.geometry.dispose();
+      if (o.material) {
+        if (Array.isArray(o.material)) o.material.forEach(m => m.dispose());
+        else o.material.dispose();
+      }
+    });
+  }
+}
+
+const Deco = {
+  tree(theme) {
+    const g = new THREE.Group();
+    const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.24, 1.6, 6), new THREE.MeshStandardMaterial({color:0x6b4a2a, roughness:0.9}));
+    trunk.position.y = 0.8; trunk.castShadow = true; g.add(trunk);
+    const leafColor = theme.decor === 'tree' ? 0x3a8c3a : 0x4a9a4a;
+    for (let i=0;i<3;i++){
+      const r = 1.1 - i*0.25;
+      const l = new THREE.Mesh(new THREE.SphereGeometry(r, 8, 6), new THREE.MeshStandardMaterial({color:leafColor + i*0x0a0a0a, roughness:0.85}));
+      l.position.y = 1.7 + i*0.55; l.castShadow = true; g.add(l);
+    }
+    return g;
+  },
+  rock(theme) {
+    const g = new THREE.Group();
+    const c = theme.decor === 'lava' ? 0x3a2020 : 0x7a7a7a;
+    const m = new THREE.MeshStandardMaterial({color:c, roughness:0.95, flatShading:true});
+    for (let i=0;i<2;i++){
+      const s = 0.5 + Math.random()*0.5;
+      const r = new THREE.Mesh(new THREE.DodecahedronGeometry(s, 0), m);
+      r.position.set((Math.random()-0.5)*0.6, s*0.5, (Math.random()-0.5)*0.6);
+      r.rotation.set(Math.random(), Math.random(), Math.random());
+      r.castShadow = true; g.add(r);
+    }
+    return g;
+  },
+  cactus() {
+    const g = new THREE.Group();
+    const m = new THREE.MeshStandardMaterial({color:0x2a7a3a, roughness:0.85});
+    const main = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.2, 1.4, 8), m);
+    main.position.y = 0.7; main.castShadow = true; g.add(main);
+    const armL = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.5, 6), m);
+    armL.position.set(-0.32, 0.85, 0); armL.rotation.z = Math.PI/2.5; armL.castShadow = true; g.add(armL);
+    const armL2 = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 0.4, 6), m);
+    armL2.position.set(-0.45, 1.1, 0); armL2.castShadow = true; g.add(armL2);
+    const armR = armL.clone(); armR.position.set(0.32, 0.6, 0); armR.rotation.z = -Math.PI/2.5; g.add(armR);
+    const armR2 = armL2.clone(); armR2.position.set(0.45, 0.8, 0); g.add(armR2);
+    return g;
+  },
+  pillar() {
+    const g = new THREE.Group();
+    const m = new THREE.MeshStandardMaterial({color:0xb0a080, roughness:0.9});
+    const base = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.3, 0.8), m); base.position.y = 0.15; base.castShadow = true; g.add(base);
+    const col = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.32, 2.4, 10), m); col.position.y = 1.5; col.castShadow = true; g.add(col);
+    const cap = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.3, 0.8), m); cap.position.y = 2.85; cap.castShadow = true; g.add(cap);
+    return g;
+  },
+  building() {
+    const g = new THREE.Group();
+    const h = 3 + Math.random()*4;
+    const m = new THREE.MeshStandardMaterial({color:0x8894a4, roughness:0.85});
+    const b = new THREE.Mesh(new THREE.BoxGeometry(1.6, h, 1.6), m); b.position.y = h/2; b.castShadow = true; g.add(b);
+    const winMat = new THREE.MeshStandardMaterial({color:0xffe066, emissive:0xffe066, emissiveIntensity:0.5, roughness:0.3});
+    for (let i=0;i<Math.floor(h/0.8);i++){
+      for (let j=0;j<2;j++){
+        const w = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.22, 0.05), winMat);
+        w.position.set(-0.4 + j*0.8, 0.6 + i*0.8, 0.81); g.add(w);
+        const w2 = w.clone(); w2.position.z = -0.81; g.add(w2);
+      }
+    }
+    return g;
+  },
+  wall() {
+    const g = new THREE.Group();
+    const m = new THREE.MeshStandardMaterial({color:0x555a62, roughness:0.9, flatShading:true});
+    const base = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.4, 1.8), m); base.position.y = 0.2; base.castShadow = true; g.add(base);
+    const body = new THREE.Mesh(new THREE.BoxGeometry(1.4, 2.2, 1.4), m); body.position.y = 1.5; body.castShadow = true; g.add(body);
+    for (let i=0;i<3;i++){
+      const b = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.35, 1.4), m);
+      b.position.set(-0.45 + i*0.45, 2.78, 0); b.castShadow = true; g.add(b);
+    }
+    return g;
+  },
+  lava() {
+    const g = new THREE.Group();
+    const m = new THREE.MeshStandardMaterial({color:0x2a1a1a, roughness:0.9, flatShading:true});
+    for (let i=0;i<3;i++){
+      const s = 0.4 + Math.random()*0.5;
+      const r = new THREE.Mesh(new THREE.DodecahedronGeometry(s, 0), m);
+      r.position.set((Math.random()-0.5)*0.8, s*0.5, (Math.random()-0.5)*0.8);
+      r.rotation.set(Math.random()*3, Math.random()*3, Math.random()*3);
+      r.castShadow = true; g.add(r);
+    }
+    const glow = new THREE.Mesh(new THREE.SphereGeometry(0.5, 8, 6), new THREE.MeshBasicMaterial({color:0xff5522, transparent:true, opacity:0.35}));
+    glow.position.y = 0.3; g.add(glow);
+    return g;
+  },
+  water() {
+    const g = new THREE.Group();
+    const m = new THREE.MeshStandardMaterial({color:0x8a8a8a, roughness:0.9, flatShading:true});
+    const r = new THREE.Mesh(new THREE.DodecahedronGeometry(0.9, 0), m);
+    r.position.y = 0.5; r.castShadow = true; g.add(r);
+    return g;
+  }
+};
+
+const Game = {
+  state: 'menu',
+  level: 1,
+  data: null,
+  davi: null,
+  pos: { x:0, y:0, z:0 },
+  vy: 0,
+  onGround: true,
+  jumpsLeft: 2,
+  isDashing: false,
+  dashTimer: 0,
+  dashCd: 0,
+  coins: 0,
+  score: 0,
+  totalCoins: 0,
+  startTime: 0,
+  elapsed: 0,
+  checkpoint: { x:0, y:0, z:0 },
+  checkpointIndex: -1,
+  runSpeed: 9,
+  keys: {},
+  deathTimer: 0,
+  landTimer: 0,
+  hurtTimer: 0,
+  victoryTimer: 0,
+  particles: [],
+  enemies: [],
+  obstacles: [],
+  coinsMeshes: [],
+  checkpoints: [],
+  finishPortal: null,
+  finishReached: false,
+  quality: 'medium'
+};
+
+function generateLevelData(levelNum) {
+  const theme = THEMES[levelNum-1];
+  const segLen = 6;
+  const segCount = 42 + levelNum * 3;
+  const length = segCount * segLen;
+  const gapRate = theme.gapRate;
+  const obsRate = theme.obstacleRate;
+  const eneRate = theme.enemyRate;
+
+  const platforms = [];
+  const obstacles = [];
+  const coins = [];
+  const checkpoints = [];
+  const enemies = [];
+  const decos = [];
+
+  let z = -segLen * 3;
+  for (let i = 0; i < segCount + 6; i++) {
+    const isStart = i < 3;
+    const isEnd = i > segCount;
+    const isGap = !isStart && !isEnd && Math.random() < gapRate;
+
+    if (!isGap) {
+      const w = 10 + Math.random() * 2;
+      platforms.push({ x:0, z: z + segLen/2, w, l: segLen, y: 0 });
+
+      if (!isStart && Math.random() < obsRate) {
+        const types = ['rock','box','spike','log'];
+        if (levelNum >= 3) types.push('rolling');
+        if (levelNum >= 5) types.push('moving');
+        if (levelNum >= 6) types.push('blade');
+        if (levelNum >= 8) types.push('lava');
+        const type = types[Math.floor(Math.random()*types.length)];
+        const ox = (Math.random()-0.5) * 4;
+        obstacles.push({ type, x:ox, z: z + segLen/2, y:0, baseX:ox, baseZ:z+segLen/2, phase: Math.random()*Math.PI*2, axis: Math.random()<0.5?'x':'z' });
+      }
+
+      if (Math.random() < 0.55) {
+        const count = 3 + Math.floor(Math.random()*3);
+        const cx = (Math.random()-0.5) * 3;
+        const arc = Math.random() < 0.5;
+        for (let c=0;c<count;c++){
+          const cy = arc ? 1.2 + Math.sin((c/(count-1))*Math.PI)*1.4 : 1.2;
+          coins.push({ x: cx, y: cy, z: z + 0.8 + c * 1.2, taken:false });
+        }
+      }
+
+      if (!isStart && Math.random() < eneRate) {
+        const etypes = ['robot'];
+        if (levelNum >= 2) etypes.push('monster');
+        if (levelNum >= 4) etypes.push('drone');
+        if (levelNum >= 8) etypes.push('guardian');
+        const type = etypes[Math.floor(Math.random()*etypes.length)];
+        enemies.push({ type, x: (Math.random()-0.5)*4, z: z + segLen/2, baseX:(Math.random()-0.5)*4, baseZ:z+segLen/2, phase: Math.random()*Math.PI*2, alive:true });
+      }
+
+      const decoCount = theme.decor === 'building' ? 2 : 3;
+      for (let d=0; d<decoCount; d++){
+        const side = Math.random() < 0.5 ? -1 : 1;
+        const dx = side * (6 + Math.random()*3);
+        const dz = z + Math.random()*segLen;
+        decos.push({ type: theme.decor, x: dx, z: dz, y: 0, scale: 0.7 + Math.random()*0.6, rot: Math.random()*Math.PI*2 });
+      }
+    }
+
+    z += segLen;
+  }
+
+  const cpCount = theme.checkpoints;
+  for (let i = 1; i <= cpCount; i++) {
+    const cpZ = (length / (cpCount + 1)) * i;
+    checkpoints.push({ x:0, y:0, z: cpZ, activated:false });
+  }
+
+  const finishZ = length + segLen * 3;
+
+  return { platforms, obstacles, coins, checkpoints, enemies, decos, length, finishZ, theme, levelNum };
+}
+
+function buildLevelMeshes(data) {
+  const theme = data.theme;
+
+  const sky = buildSky(theme.sky);
+  worldGroup.add(sky);
+
+  if (Game.quality !== 'low') {
+    const cloudCount = Game.quality === 'high' ? 22 : 14;
+    for (let i=0;i<cloudCount;i++){
+      const c = makeCloud();
+      c.position.set((Math.random()-0.5)*200, 30 + Math.random()*25, (Math.random()-0.5)*200);
+      c.scale.setScalar(1.5 + Math.random()*2);
+      worldGroup.add(c);
+    }
+  }
+
+  const groundMat = new THREE.MeshStandardMaterial({ color: theme.ground, roughness: 0.9 });
+  const groundMat2 = new THREE.MeshStandardMaterial({ color: theme.ground2, roughness: 0.95 });
+  for (const p of data.platforms) {
+    const top = new THREE.Mesh(new THREE.BoxGeometry(p.w, 0.4, p.l), groundMat);
+    top.position.set(p.x, p.y - 0.2, p.z);
+    top.receiveShadow = true;
+    worldGroup.add(top);
+    const bot = new THREE.Mesh(new THREE.BoxGeometry(p.w * 0.95, 1.2, p.l * 0.95), groundMat2);
+    bot.position.set(p.x, p.y - 1.0, p.z);
+    bot.receiveShadow = true;
+    worldGroup.add(bot);
+    if (Game.quality !== 'low') {
+      const trim = new THREE.Mesh(new THREE.BoxGeometry(p.w + 0.08, 0.1, p.l + 0.08), new THREE.MeshStandardMaterial({color: new THREE.Color(theme.ground).offsetHSL(0,-0.05,0.1), roughness:0.85}));
+      trim.position.set(p.x, p.y - 0.42, p.z);
+      worldGroup.add(trim);
+    }
+  }
+
+  data.obstacles.forEach(o => {
+    const group = new THREE.Group();
+    if (o.type === 'rock') {
+      const m = new THREE.MeshStandardMaterial({color:0x6a6a6a, roughness:0.95, flatShading:true});
+      const r = new THREE.Mesh(new THREE.DodecahedronGeometry(0.55, 0), m);
+      r.position.y = 0.55; r.rotation.set(Math.random()*3,Math.random()*3,Math.random()*3);
+      r.castShadow = true; group.add(r);
+      group.userData.hitW = 1.1; group.userData.hitH = 1.1; group.userData.hitD = 1.1;
+    } else if (o.type === 'box') {
+      const m = new THREE.MeshStandardMaterial({color:0xb0702a, roughness:0.7});
+      const b = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.9, 0.9), m);
+      b.position.y = 0.45; b.castShadow = true; group.add(b);
+      const edge = new THREE.Mesh(new THREE.BoxGeometry(0.92, 0.94, 0.05), new THREE.MeshStandardMaterial({color:0x6a4010, roughness:0.8}));
+      edge.position.set(0,0.45,0.46); group.add(edge);
+      const edge2 = edge.clone(); edge2.position.z = -0.46; group.add(edge2);
+      group.userData.hitW = 0.9; group.userData.hitH = 0.9; group.userData.hitD = 0.9;
+    } else if (o.type === 'spike') {
+      const m = new THREE.MeshStandardMaterial({color:0xd0d0d0, metalness:0.6, roughness:0.4});
+      for (let i=0;i<3;i++){
+        const s = new THREE.Mesh(new THREE.ConeGeometry(0.15, 0.7, 6), m);
+        s.position.set(-0.25 + i*0.25, 0.35, 0); s.castShadow = true; group.add(s);
+      }
+      group.userData.hitW = 0.9; group.userData.hitH = 0.7; group.userData.hitD = 0.6;
+    } else if (o.type === 'log') {
+      const m = new THREE.MeshStandardMaterial({color:0x6a4020, roughness:0.9});
+      const l = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 1.3, 10), m);
+      l.rotation.z = Math.PI/2; l.position.y = 0.3; l.castShadow = true; group.add(l);
+      group.userData.hitW = 1.3; group.userData.hitH = 0.6; group.userData.hitD = 0.6;
+    } else if (o.type === 'rolling') {
+      const m = new THREE.MeshStandardMaterial({color:0x7a6a55, roughness:0.9, flatShading:true});
+      const r = new THREE.Mesh(new THREE.IcosahedronGeometry(0.55, 0), m);
+      r.position.y = 0.55; r.castShadow = true; group.add(r);
+      group.userData.hitW = 1.1; group.userData.hitH = 1.1; group.userData.hitD = 1.1;
+      group.userData.rolling = true;
+    } else if (o.type === 'moving') {
+      const m = new THREE.MeshStandardMaterial({color:0xa04080, emissive:0x400030, roughness:0.5});
+      const b = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.9, 0.9), m);
+      b.position.y = 0.45; b.castShadow = true; group.add(b);
+      const glow = new THREE.Mesh(new THREE.SphereGeometry(0.7, 8, 6), new THREE.MeshBasicMaterial({color:0xff60a0, transparent:true, opacity:0.2}));
+      glow.position.y = 0.5; group.add(glow);
+      group.userData.hitW = 0.9; group.userData.hitH = 0.9; group.userData.hitD = 0.9;
+      group.userData.moving = true;
+    } else if (o.type === 'blade') {
+      const m = new THREE.MeshStandardMaterial({color:0xcccccc, metalness:0.8, roughness:0.25});
+      const b = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.1, 0.15), m);
+      b.position.y = 0.6; b.castShadow = true; group.add(b);
+      const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 0.35, 8), new THREE.MeshStandardMaterial({color:0x333333, metalness:0.7}));
+      hub.position.y = 0.6; group.add(hub);
+      group.userData.hitW = 2.2; group.userData.hitH = 0.4; group.userData.hitD = 0.4;
+      group.userData.blade = true;
+    } else if (o.type === 'lava') {
+      const m = new THREE.MeshStandardMaterial({color:0xff5522, emissive:0xff2200, emissiveIntensity:1.2, roughness:0.6, transparent:true, opacity:0.9});
+      const b = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.25, 1.4), m);
+      b.position.y = 0.05; group.add(b);
+      const glow = new THREE.Mesh(new THREE.SphereGeometry(1.1, 10, 8), new THREE.MeshBasicMaterial({color:0xff6622, transparent:true, opacity:0.2}));
+      glow.position.y = 0.3; group.add(glow);
+      group.userData.hitW = 1.4; group.userData.hitH = 0.5; group.userData.hitD = 1.4;
+    }
+    group.position.set(o.x, 0, o.z);
+    group.userData.obstacle = o;
+    o.mesh = group;
+    worldGroup.add(group);
+  });
+
+  const coinMat = new THREE.MeshStandardMaterial({ color:0xffd54a, metalness:0.85, roughness:0.25, emissive:0x6a4400 });
+  const coinGeom = new THREE.CylinderGeometry(0.25, 0.25, 0.07, 16);
+  data.coins.forEach(c => {
+    const m = new THREE.Mesh(coinGeom, coinMat);
+    m.position.set(c.x, c.y, c.z);
+    m.rotation.x = Math.PI/2;
+    m.castShadow = true;
+    const g = new THREE.Group();
+    g.add(m);
+    const glow = new THREE.Mesh(new THREE.SphereGeometry(0.4, 8, 6), new THREE.MeshBasicMaterial({color:0xffdd66, transparent:true, opacity:0.22}));
+    g.add(glow);
+    g.userData.coin = c;
+    c.mesh = g;
+    worldGroup.add(g);
+    Game.coinsMeshes.push(g);
+  });
+
+  data.checkpoints.forEach((cp, i) => {
+    const g = new THREE.Group();
+    const ringMat = new THREE.MeshStandardMaterial({ color:0x33bbff, emissive:0x2288ff, emissiveIntensity:1.2, transparent:true, opacity:0.9 });
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(0.9, 0.13, 12, 24), ringMat);
+    ring.position.y = 1.4;
+    g.add(ring);
+    const ring2 = new THREE.Mesh(new THREE.TorusGeometry(0.7, 0.07, 10, 20), ringMat);
+    ring2.position.y = 1.4; ring2.rotation.x = Math.PI/2; g.add(ring2);
+    const core = new THREE.Mesh(new THREE.SphereGeometry(0.35, 12, 10), new THREE.MeshBasicMaterial({color:0x88ddff, transparent:true, opacity:0.4}));
+    core.position.y = 1.4; g.add(core);
+    const base = new THREE.Mesh(new THREE.CylinderGeometry(0.6, 0.7, 0.2, 12), new THREE.MeshStandardMaterial({color:0x224466, roughness:0.5, metalness:0.5}));
+    base.position.y = 0.1; base.receiveShadow = true; g.add(base);
+    const light = new THREE.PointLight(0x44aaff, 1.0, 8);
+    light.position.y = 1.4;
+    g.add(light);
+    g.position.set(cp.x, 0, cp.z);
+    g.userData.checkpoint = cp;
+    g.userData.index = i;
+    cp.mesh = g;
+    cp.ring = ring;
+    cp.ring2 = ring2;
+    worldGroup.add(g);
+    Game.checkpoints.push(g);
+  });
+
+  const portal = new THREE.Group();
+  const pMat = new THREE.MeshStandardMaterial({ color:0xffcc44, emissive:0xffaa22, emissiveIntensity:1.3, transparent:true, opacity:0.9 });
+  const outer = new THREE.Mesh(new THREE.TorusGeometry(1.8, 0.22, 14, 32), pMat);
+  outer.position.y = 2.2; portal.add(outer);
+  const inner = new THREE.Mesh(new THREE.TorusGeometry(1.5, 0.1, 12, 28), pMat);
+  inner.position.y = 2.2; inner.rotation.x = Math.PI/2; portal.add(inner);
+  const disc = new THREE.Mesh(new THREE.CircleGeometry(1.5, 24), new THREE.MeshBasicMaterial({color:0xfff2b0, transparent:true, opacity:0.5, side:THREE.DoubleSide}));
+  disc.position.y = 2.2; portal.add(disc);
+  const pLight = new THREE.PointLight(0xffbb44, 1.5, 14);
+  pLight.position.y = 2.2; portal.add(pLight);
+  portal.position.set(0, 0, data.finishZ);
+  portal.userData.portal = true;
+  data.finishPortal = portal;
+  worldGroup.add(portal);
+
+  data.enemies.forEach(e => {
+    const g = new THREE.Group();
+    if (e.type === 'robot') {
+      const bodyM = new THREE.MeshStandardMaterial({color:0x8899aa, metalness:0.6, roughness:0.4});
+      const body = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.8, 0.5), bodyM);
+      body.position.y = 0.6; body.castShadow = true; g.add(body);
+      const head = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.4, 0.4), bodyM);
+      head.position.y = 1.2; head.castShadow = true; g.add(head);
+      const eyeMat = new THREE.MeshBasicMaterial({color:0xff3344});
+      const eye = new THREE.Mesh(new THREE.SphereGeometry(0.08, 8, 8), eyeMat);
+      eye.position.set(0, 1.2, 0.22); g.add(eye);
+      const eye2 = eye.clone(); eye2.position.x = -0.15; g.add(eye2);
+      const eye3 = eye.clone(); eye3.position.x = 0.15; g.add(eye3);
+      for (let i=0;i<2;i++){
+        const leg = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.4, 0.15), bodyM);
+        leg.position.set(-0.15 + i*0.3, 0.2, 0); leg.castShadow = true; g.add(leg);
+      }
+      g.userData.hitW = 0.9; g.userData.hitH = 1.4; g.userData.hitD = 0.6;
+    } else if (e.type === 'monster') {
+      const bodyM = new THREE.MeshStandardMaterial({color:0x8a3aff, roughness:0.7});
+      const body = new THREE.Mesh(new THREE.SphereGeometry(0.55, 12, 10), bodyM);
+      body.scale.set(1, 0.9, 1);
+      body.position.y = 0.65; body.castShadow = true; g.add(body);
+      const eye = new THREE.Mesh(new THREE.SphereGeometry(0.1, 8, 8), new THREE.MeshBasicMaterial({color:0xffee00}));
+      eye.position.set(-0.18, 0.75, 0.45); g.add(eye);
+      const eye2 = eye.clone(); eye2.position.x = 0.18; g.add(eye2);
+      const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.05, 8, 8), new THREE.MeshBasicMaterial({color:0x111}));
+      pupil.position.set(-0.18, 0.75, 0.53); g.add(pupil);
+      const pupil2 = pupil.clone(); pupil2.position.x = 0.18; g.add(pupil2);
+      const mouth = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.06, 0.05), new THREE.MeshBasicMaterial({color:0x111}));
+      mouth.position.set(0, 0.45, 0.5); g.add(mouth);
+      g.userData.hitW = 1.1; g.userData.hitH = 1.2; g.userData.hitD = 1.1;
+    } else if (e.type === 'drone') {
+      const bodyM = new THREE.MeshStandardMaterial({color:0x334455, metalness:0.7, roughness:0.4});
+      const body = new THREE.Mesh(new THREE.SphereGeometry(0.4, 12, 10), bodyM);
+      body.scale.set(1, 0.5, 1);
+      body.castShadow = true; g.add(body);
+      const eye = new THREE.Mesh(new THREE.SphereGeometry(0.12, 8, 8), new THREE.MeshBasicMaterial({color:0xff2244}));
+      eye.position.set(0, 0, 0.32); g.add(eye);
+      const rotorM = new THREE.MeshStandardMaterial({color:0x222, metalness:0.8});
+      for (let i=0;i<4;i++){
+        const arm = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.05, 0.5), bodyM);
+        arm.position.set(0, 0.05, 0); arm.rotation.y = (Math.PI/2) * i; g.add(arm);
+        const rotor = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.02, 10), rotorM);
+        rotor.position.set(Math.cos(Math.PI/2*i)*0.4, 0.1, Math.sin(Math.PI/2*i)*0.4);
+        g.add(rotor);
+      }
+      g.userData.hitW = 0.9; g.userData.hitH = 0.5; g.userData.hitD = 0.9;
+      g.userData.flying = true;
+    } else if (e.type === 'guardian') {
+      const bodyM = new THREE.MeshStandardMaterial({color:0xaa2222, metalness:0.5, roughness:0.5, emissive:0x330000});
+      const body = new THREE.Mesh(new THREE.BoxGeometry(1.4, 1.8, 1.0), bodyM);
+      body.position.y = 1.2; body.castShadow = true; g.add(body);
+      const head = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.7, 0.8), bodyM);
+      head.position.y = 2.5; head.castShadow = true; g.add(head);
+      const eye = new THREE.Mesh(new THREE.SphereGeometry(0.13, 8, 8), new THREE.MeshBasicMaterial({color:0xff8800}));
+      eye.position.set(-0.22, 2.5, 0.45); g.add(eye);
+      const eye2 = eye.clone(); eye2.position.x = 0.22; g.add(eye2);
+      const armM = new THREE.MeshStandardMaterial({color:0x771111, metalness:0.5});
+      const armL = new THREE.Mesh(new THREE.BoxGeometry(0.35, 1.4, 0.35), armM);
+      armL.position.set(-0.95, 1.1, 0); armL.castShadow = true; g.add(armL);
+      const armR = armL.clone(); armR.position.x = 0.95; g.add(armR);
+      const legM = new THREE.MeshStandardMaterial({color:0x551111, metalness:0.4});
+      const legL = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.7, 0.5), legM);
+      legL.position.set(-0.3, 0.35, 0); legL.castShadow = true; g.add(legL);
+      const legR = legL.clone(); legR.position.x = 0.3; g.add(legR);
+      g.userData.hitW = 1.7; g.userData.hitH = 2.9; g.userData.hitD = 1.2;
+    }
+    g.position.set(e.x, e.flying ? 1.5 : 0, e.z);
+    g.userData.enemy = e;
+    e.mesh = g;
+    worldGroup.add(g);
+    Game.enemies.push(g);
+  });
+
+  data.decos.forEach(d => {
+    let mesh;
+    const t = d.type;
+    if (t === 'tree') mesh = Deco.tree(theme);
+    else if (t === 'rock') mesh = Deco.rock(theme);
+    else if (t === 'cactus') mesh = Deco.cactus();
+    else if (t === 'pillar') mesh = Deco.pillar();
+    else if (t === 'building') mesh = Deco.building();
+    else if (t === 'wall') mesh = Deco.wall();
+    else if (t === 'lava') mesh = Deco.lava();
+    else if (t === 'water') mesh = Deco.water();
+    else if (t === 'mixed') {
+      const opts = [Deco.tree(theme), Deco.rock(theme), Deco.pillar(), Deco.wall()];
+      mesh = opts[Math.floor(Math.random()*opts.length)];
+    }
+    else mesh = Deco.tree(theme);
+    mesh.position.set(d.x, d.y, d.z);
+    mesh.scale.setScalar(d.scale);
+    mesh.rotation.y = d.rot;
+    mesh.traverse(o => { if (o.isMesh){ o.castShadow = true; } });
+    worldGroup.add(mesh);
+  });
+
+  if (Game.quality !== 'low') {
+    const mtnMat = new THREE.MeshStandardMaterial({color: new THREE.Color(theme.sky).offsetHSL(0,-0.1,-0.25), roughness:1, flatShading:true});
+    for (let i=0;i<10;i++){
+      const r = 20 + Math.random()*15;
+      const m = new THREE.Mesh(new THREE.ConeGeometry(r, 15 + Math.random()*15, 5), mtnMat);
+      m.position.set((Math.random()-0.5)*260, -1, 30 + Math.random()*200);
+      m.rotation.y = Math.random()*Math.PI;
+      worldGroup.add(m);
+    }
+  }
+}
+
+/* =========================================================
+   PARTICLES
+========================================================= */
+function spawnParticles(x, y, z, count, color, speed, size, life) {
+  const geom = new THREE.SphereGeometry(size || 0.08, 6, 4);
+  for (let i=0;i<count;i++){
+    const mat = new THREE.MeshBasicMaterial({ color, transparent:true, opacity:1 });
+    const m = new THREE.Mesh(geom.clone(), mat);
+    m.position.set(x, y, z);
+    const vx = (Math.random()-0.5) * speed;
+    const vy = Math.random() * speed;
+    const vz = (Math.random()-0.5) * speed;
+    m.userData = { vx, vy, vz, life: life || 0.8, maxLife: life || 0.8 };
+    effectsGroup.add(m);
+    Game.particles.push(m);
+  }
+}
+
+function updateParticles(dt) {
+  for (let i = Game.particles.length - 1; i >= 0; i--) {
+    const p = Game.particles[i];
+    p.userData.life -= dt;
+    if (p.userData.life <= 0) {
+      effectsGroup.remove(p);
+      if (p.geometry) p.geometry.dispose();
+      if (p.material) p.material.dispose();
+      Game.particles.splice(i, 1);
+      continue;
+    }
+    p.position.x += p.userData.vx * dt;
+    p.position.y += p.userData.vy * dt;
+    p.position.z += p.userData.vz * dt;
+    p.userData.vy -= 9 * dt;
+    if (p.material) p.material.opacity = p.userData.life / p.userData.maxLife;
+    p.scale.setScalar(Math.max(0.01, p.userData.life / p.userData.maxLife));
+  }
+}
+
+/* =========================================================
+   COLLISION & GAMEPLAY
+========================================================= */
+function findGroundY(x, z) {
+  let best = -Infinity;
+  const P = Game.data.platforms;
+  for (let i=0;i<P.length;i++){
+    const p = P[i];
+    if (Math.abs(x - p.x) <= p.w/2 && Math.abs(z - p.z) <= p.l/2) {
+      if (p.y > best) best = p.y;
+    }
+  }
+  return best;
+}
+
+function checkObstacles() {
+  const px = Game.pos.x, py = Game.pos.y, pz = Game.pos.z;
+  const dw = 0.5, dh = 1.7, dd = 0.4;
+  for (const o of Game.obstacles) {
+    if (!o.mesh) continue;
+    const ox = o.mesh.position.x, oy = o.mesh.position.y, oz = o.mesh.position.z;
+    const ow = (o.mesh.userData.hitW||1)/2, oh = (o.mesh.userData.hitH||1), od = (o.mesh.userData.hitD||1)/2;
+    if (Math.abs(px - ox) < (dw + ow) && Math.abs(pz - oz) < (dd + od)) {
+      if (py < oy + oh && py + dh > oy) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+function checkEnemies() {
+  const px = Game.pos.x, py = Game.pos.y, pz = Game.pos.z;
+  const dw = 0.45, dh = 1.7, dd = 0.4;
+  for (const e of Game.enemies) {
+    const en = e.userData.enemy;
+    if (!en.alive) continue;
+    const ex = e.position.x, ey = e.position.y, ez = e.position.z;
+    const ow = (e.userData.hitW||1)/2, oh = e.userData.hitH||1, od = e.userData.hitD||1;
+    if (Math.abs(px - ex) < (dw + ow) && Math.abs(pz - ez) < (dd + od)) {
+      if (py < ey + oh && py + dh > ey) return true;
+    }
+  }
+  return false;
+}
+
+function checkCoins() {
+  const px = Game.pos.x, py = Game.pos.y, pz = Game.pos.z;
+  for (const cm of Game.coinsMeshes) {
+    const c = cm.userData.coin;
+    if (c.taken) continue;
+    const dx = px - cm.position.x, dy = (py + 0.9) - cm.position.y, dz = pz - cm.position.z;
+    if (dx*dx + dy*dy + dz*dz < 1.2) {
+      c.taken = true;
+      cm.visible = false;
+      Game.coins++;
+      Game.score += 10;
+      Sound.coin();
+      vibrate(15);
+      spawnParticles(cm.position.x, cm.position.y, cm.position.z, 8, 0xffdd55, 3, 0.07, 0.6);
+      updateHUD();
+    }
+  }
+}
+
+function checkCheckpoints() {
+  const pz = Game.pos.z;
+  for (let i=0;i<Game.checkpoints.length;i++){
+    const g = Game.checkpoints[i];
+    const cp = g.userData.checkpoint;
+    if (!cp.activated && Math.abs(pz - cp.z) < 1.5) {
+      cp.activated = true;
+      Game.checkpoint = { x:0, y:0, z: cp.z + 2 };
+      Game.checkpointIndex = i;
+      Game.score += 100;
+      Sound.checkpoint();
+      vibrate(60);
+      g.userData.flash = 1;
+      spawnParticles(0, 1.4, cp.z, 20, 0x66ddff, 5, 0.1, 1.2);
+      showToast('CHECKPOINT ATIVADO!');
+      updateHUD();
+    }
+  }
+}
+
+function checkFinish() {
+  if (Game.finishReached) return;
+  const pz = Game.pos.z;
+  if (pz >= Game.data.finishZ - 1.5) {
+    Game.finishReached = true;
+    finishLevel();
+  }
+}
+
+let toastTimeout = null;
+function showToast(msg) {
+  let el = document.getElementById('toast');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'toast';
+    el.style.cssText = 'position:fixed;top:20%;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.7);color:#8fd0ff;padding:12px 22px;border-radius:14px;font-weight:900;letter-spacing:2px;z-index:25;border:2px solid #33bbff;box-shadow:0 0 24px rgba(80,180,255,.6);pointer-events:none;transition:opacity .3s;font-size:clamp(12px,2vmin,16px);';
+    document.body.appendChild(el);
+  }
+  el.textContent = msg;
+  el.style.opacity = '1';
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => { el.style.opacity = '0'; }, 1400);
+}
+
+function die(reason) {
+  if (Game.state !== 'playing') return;
+  Game.state = 'dying';
+  Game.deathTimer = 0;
+  Sound.death();
+  vibrate([50, 40, 80]);
+  spawnParticles(Game.pos.x, Game.pos.y + 0.8, Game.pos.z, 20, 0xff4444, 6, 0.1, 1.2);
+  document.getElementById('death-sub').textContent = reason || 'Voltando ao checkpoint...';
+  document.getElementById('death').classList.remove('hidden');
+}
+
+function respawn() {
+  Game.pos.x = Game.checkpoint.x;
+  Game.pos.y = Game.checkpoint.y;
+  Game.pos.z = Game.checkpoint.z;
+  Game.vy = 0;
+  Game.onGround = true;
+  Game.jumpsLeft = 2;
+  Game.isDashing = false;
+  Game.dashTimer = 0;
+  Game.deathTimer = 0;
+  Game.hurtTimer = 0;
+  Game.state = 'playing';
+  document.getElementById('death').classList.add('hidden');
+  camera.position.set(Game.pos.x, Game.pos.y + 2.5, Game.pos.z - 6);
+}
+
+function finishLevel() {
+  Game.state = 'victory';
+  Game.victoryTimer = 0;
+  Sound.victory();
+  vibrate([100, 60, 100, 60, 200]);
+  const total = Game.data.coins.length;
+  const collected = Game.coins;
+  const pct = total > 0 ? collected / total : 1;
+  let stars = 1;
+  if (pct >= 0.5) stars = 2;
+  if (pct >= 0.95) stars = 3;
+
+  const prev = Save.data.stars[Game.level] || 0;
+  if (stars > prev) Save.data.stars[Game.level] = stars;
+  if (!Save.data.best[Game.level] || Game.score > Save.data.best[Game.level]) {
+    Save.data.best[Game.level] = Game.score;
+  }
+  Save.data.coins += collected;
+  if (Game.level === Save.data.unlocked && Game.level < 10) {
+    Save.data.unlocked = Game.level + 1;
+  }
+  Save.save();
+
+  const starRow = document.getElementById('victory-stars');
+  starRow.innerHTML = '';
+  for (let i=0;i<3;i++){
+    const s = document.createElement('span');
+    s.textContent = '★';
+    s.className = i < stars ? 'star-on' : 'star-off';
+    starRow.appendChild(s);
+  }
+  document.getElementById('victory-info').innerHTML =
+    `Moedas: <b style="color:#ffe066">${collected}/${total}</b> &nbsp;•&nbsp; Pontos: <b style="color:#8fd0ff">${Game.score}</b><br>Tempo: ${Game.elapsed.toFixed(1)}s`;
+  document.getElementById('vic-next').style.display = Game.level < 10 ? 'block' : 'none';
+  document.getElementById('victory').classList.remove('hidden');
+}
+
+function nextLevel() {
+  document.getElementById('victory').classList.add('hidden');
+  if (Game.level >= 10) {
+    showEnding();
+    return;
+  }
+  const next = Game.level + 1;
+  if (next <= Save.data.unlocked) {
+    startLevel(next);
+  } else {
+    Save.data.unlocked = next;
+    Save.save();
+    startLevel(next);
+  }
+}
+
+function showEnding() {
+  document.getElementById('end').classList.remove('hidden');
+}
+
+function updateHUD() {
+  const lvl = document.getElementById('hud-level');
+  if (lvl) lvl.textContent = 'FASE ' + String(Game.level).padStart(2, '0');
+  const c = document.getElementById('hud-coins');
+  if (c) c.textContent = '🪙 ' + String(Game.coins).padStart(3, '0');
+  const s = document.getElementById('hud-score');
+  if (s) s.textContent = '⭐ ' + String(Game.score).padStart(5, '0');
+  const total = Game.data ? Game.data.finishZ : 1;
+  const progress = Math.min(1, Math.max(0, (Game.pos.z + 18) / (total + 18)));
+  const fill = document.getElementById('hud-progress-fill');
+  const dot = document.getElementById('hud-progress-dot');
+  if (fill) fill.style.width = (progress * 100) + '%';
+  if (dot) dot.style.left = (progress * 100) + '%';
+}
+
+/* =========================================================
+   INPUT
+========================================================= */
+function tryJump() {
+  if (Game.state !== 'playing') return;
+  if (Game.onGround) {
+    Game.vy = 12;
+    Game.onGround = false;
+    Game.jumpsLeft = 1;
+    Sound.jump();
+    vibrate(20);
+    spawnParticles(Game.pos.x, Game.pos.y + 0.1, Game.pos.z, 6, 0xffffff, 2, 0.06, 0.5);
+  } else if (Game.jumpsLeft > 0) {
+    Game.vy = 10.5;
+    Game.jumpsLeft = 0;
+    Sound.jump();
+    vibrate(20);
+    const ring = new THREE.Mesh(
+      new THREE.TorusGeometry(0.5, 0.05, 6, 16),
+      new THREE.MeshBasicMaterial({ color:0x88ddff, transparent:true, opacity:0.9 })
+    );
+    ring.position.set(Game.pos.x, Game.pos.y + 0.5, Game.pos.z);
+    ring.rotation.x = Math.PI/2;
+    effectsGroup.add(ring);
+    ring.userData = { vx:0, vy:0, vz:0, life:0.5, maxLife:0.5, isRing:true };
+    Game.particles.push(ring);
+  }
+}
+
+function tryDash() {
+  if (Game.state !== 'playing') return;
+  if (Game.dashCd > 0) return;
+  Game.isDashing = true;
+  Game.dashTimer = 0.35;
+  Game.dashCd = 2.5;
+  Sound.dash();
+  vibrate(30);
+  for (let i=0;i<10;i++){
+    spawnParticles(Game.pos.x, Game.pos.y + 0.8, Game.pos.z + 0.5, 2, 0x88ddff, 4, 0.08, 0.5);
+  }
+}
+
+window.addEventListener('keydown', e => {
+  if (['Space','ArrowUp','KeyW','ArrowDown','ArrowLeft','ArrowRight','KeyA','KeyD','ShiftLeft','ShiftRight','KeyR','Escape'].includes(e.code)) e.preventDefault();
+  Game.keys[e.code] = true;
+  if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') {
+    if (Game.state === 'menu') { Sound.init(); } else tryJump();
+  }
+  if (e.code === 'ShiftLeft' || e.code === 'ShiftRight') tryDash();
+  if (e.code === 'KeyR' && Game.state === 'playing') restartLevel();
+  if (e.code === 'Escape') {
+    if (Game.state === 'playing') pauseGame();
+    else if (Game.state === 'paused') resumeGame();
+  }
+});
+window.addEventListener('keyup', e => { Game.keys[e.code] = false; });
+
+function bindBtn(id, onPress) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  let pressed = false;
+  const down = e => {
+    e.preventDefault();
+    if (pressed) return;
+    pressed = true;
+    el.classList.add('pressed');
+    onPress();
+  };
+  const up = () => { pressed = false; el.classList.remove('pressed'); };
+  el.addEventListener('touchstart', down, { passive:false });
+  el.addEventListener('touchend', up, { passive:false });
+  el.addEventListener('touchcancel', up, { passive:false });
+  el.addEventListener('mousedown', down);
+  el.addEventListener('mouseup', up);
+  el.addEventListener('mouseleave', up);
+}
+bindBtn('btn-jump', tryJump);
+bindBtn('btn-dash', tryDash);
+
+let tapZone = null;
+renderer.domElement.addEventListener('touchstart', e => {
+  if (Game.state !== 'playing') return;
+  const t = e.touches[0];
+  if (!t) return;
+  const w = window.innerWidth;
+  if (t.clientX < w * 0.2) tapZone = -1;
+  else if (t.clientX > w * 0.8) tapZone = 1;
+  else tapZone = 0;
+});
+renderer.domElement.addEventListener('touchend', () => { tapZone = null; });
+
+/* =========================================================
+   GAME LOOP
+========================================================= */
+const clock = new THREE.Clock();
+
+function updateGame(dt) {
+  let lat = 0;
+  if (Game.keys['KeyA'] || Game.keys['ArrowLeft']) lat -= 1;
+  if (Game.keys['KeyD'] || Game.keys['ArrowRight']) lat += 1;
+  if (tapZone) lat += tapZone * 0.6;
+  if (lat !== 0) {
+    Game.pos.x += lat * 10 * dt;
+    if (Game.pos.x > 4) Game.pos.x = 4;
+    if (Game.pos.x < -4) Game.pos.x = -4;
+  } else {
+    Game.pos.x *= (1 - 2*dt);
+  }
+
+  let speed = Game.runSpeed;
+  if (Game.isDashing) {
+    speed *= 2.2;
+    Game.dashTimer -= dt;
+    if (Game.dashTimer <= 0) Game.isDashing = false;
+  }
+  Game.pos.z += speed * dt;
+
+  if (Game.dashCd > 0) {
+    Game.dashCd -= dt;
+    const b = document.getElementById('btn-dash');
+    if (b) b.classList.toggle('cool', Game.dashCd > 0);
+  }
+
+  const groundY = findGroundY(Game.pos.x, Game.pos.z);
+  if (groundY !== -Infinity && Game.pos.y <= groundY + 0.02 && Game.vy <= 0) {
+    if (!Game.onGround && Game.vy < -3) {
+      Sound.land();
+      vibrate(15);
+      spawnParticles(Game.pos.x, Game.pos.y, Game.pos.z, 6, 0xffffff, 2, 0.05, 0.4);
+    }
+    Game.pos.y = groundY;
+    Game.vy = 0;
+    Game.onGround = true;
+    Game.jumpsLeft = 2;
+  } else {
+    Game.vy -= 34 * dt;
+    Game.pos.y += Game.vy * dt;
+    if (Game.onGround && Game.vy < 0) Game.onGround = false;
+  }
+
+  if (Game.pos.y < -10) {
+    die('Davi caiu!');
+    return;
+  }
+
+  Game.davi.root.position.set(Game.pos.x, Game.pos.y, Game.pos.z);
+
+  let animState = 'idle';
+  const isAirborne = !Game.onGround;
+  if (Game.isDashing) animState = 'dash';
+  else if (isAirborne) {
+    if (Game.vy > 2) animState = Game.jumpsLeft === 0 ? 'doublejump' : 'jump';
+    else animState = 'fall';
+  } else animState = 'run';
+  Anim.apply(Game.davi, animState, dt, { runSpeed: speed });
+
+  Game.davi.root.rotation.y = lat * 0.3;
+
+  const camTargetX = Game.pos.x * 0.6;
+  const camTargetY = Game.pos.y + 2.6;
+  const camTargetZ = Game.pos.z - 6.5;
+  const lerpF = 1 - Math.pow(0.0008, dt);
+  camera.position.x += (camTargetX - camera.position.x) * lerpF;
+  camera.position.y += (camTargetY - camera.position.y) * lerpF;
+  camera.position.z += (camTargetZ - camera.position.z) * lerpF;
+  const lookY = Game.pos.y + 1.2;
+  camera.lookAt(Game.pos.x * 0.6, lookY, Game.pos.z + 2.5);
+
+  sun.position.set(Game.pos.x - 18, Game.pos.y + 32, Game.pos.z - 14);
+  sun.target.position.set(Game.pos.x, Game.pos.y, Game.pos.z);
+  if (!sun.target.parent) scene.add(sun.target);
+
+  for (const cm of Game.coinsMeshes) {
+    if (cm.userData.coin.taken) continue;
+    cm.rotation.y += dt * 3;
+    cm.position.y = cm.userData.coin.y + Math.sin(performance.now()*0.004 + cm.userData.coin.z) * 0.06;
+  }
+
+  for (const g of Game.checkpoints) {
+    const cp = g.userData.checkpoint;
+    if (cp.ring) cp.ring.rotation.z += dt * 0.8;
+    if (cp.ring2) cp.ring2.rotation.y += dt * 1.2;
+    if (g.userData.flash) {
+      g.userData.flash -= dt * 1.5;
+      const s = 1 + g.userData.flash * 0.5;
+      g.scale.setScalar(s);
+      if (g.userData.flash <= 0) { g.userData.flash = 0; g.scale.setScalar(1); }
+    }
+  }
+
+  if (Game.data.finishPortal) {
+    Game.data.finishPortal.rotation.y += dt * 0.9;
+    Game.data.finishPortal.children.forEach(c => { if (c.geometry && c.geometry.type === 'TorusGeometry') c.rotation.z += dt*0.5; });
+  }
+
+  for (const o of Game.obstacles) {
+    if (!o.mesh) continue;
+    if (o.mesh.userData.moving) {
+      o.phase += dt * 1.5;
+      o.mesh.position.x = o.baseX + Math.sin(o.phase) * 2;
+    }
+    if (o.mesh.userData.rolling) {
+      o.phase += dt * 2;
+      o.mesh.position.x = o.baseX + Math.sin(o.phase) * 1.5;
+      o.mesh.rotation.x -= dt * 4;
+      o.mesh.rotation.z -= dt * 2;
+    }
+    if (o.mesh.userData.blade) {
+      o.mesh.rotation.y += dt * 3;
+    }
+  }
+
+  for (const e of Game.enemies) {
+    const en = e.userData.enemy;
+    if (!en.alive) continue;
+    en.phase += dt * 1.2;
+    if (en.type === 'robot') {
+      e.rotation.y = Math.sin(en.phase * 0.4) * 0.4;
+      e.position.x = en.baseX + Math.sin(en.phase * 0.6) * 1.2;
+    } else if (en.type === 'monster') {
+      e.position.x = en.baseX + Math.sin(en.phase) * 1.5;
+      e.rotation.y = Math.cos(en.phase) * 0.4;
+      e.position.y = 0.05 + Math.sin(en.phase * 2) * 0.05;
+    } else if (en.type === 'drone') {
+      e.position.y = 1.5 + Math.sin(en.phase * 1.5) * 0.6;
+      e.position.x = en.baseX + Math.sin(en.phase * 0.8) * 2;
+      e.rotation.y += dt * 3;
+    } else if (en.type === 'guardian') {
+      e.position.x = en.baseX + Math.sin(en.phase * 0.5) * 2.2;
+      e.rotation.y = Math.cos(en.phase * 0.5) * 0.3;
+    }
+  }
+
+  if (checkObstacles() || checkEnemies()) {
+    die('Davi bateu!');
+    return;
+  }
+  checkCoins();
+  checkCheckpoints();
+  checkFinish();
+
+  Game.elapsed += dt;
+  updateHUD();
+}
+
+function updateDying(dt) {
+  Game.deathTimer += dt;
+  Anim.apply(Game.davi, 'death', dt, { deathT: Game.deathTimer });
+  Game.pos.y = Math.max(-3, Game.pos.y + Game.vy * dt);
+  Game.vy -= 15 * dt;
+  Game.davi.root.position.set(Game.pos.x, Game.pos.y, Game.pos.z);
+  updateParticles(dt);
+  if (Game.deathTimer > 1.6) {
+    respawn();
+  }
+}
+
+function updateVictory(dt) {
+  Game.victoryTimer += dt;
+  Anim.apply(Game.davi, 'victory', dt, {});
+  updateParticles(dt);
+}
+
+function animate() {
+  requestAnimationFrame(animate);
+  const dt = Math.min(0.05, clock.getDelta());
+  if (Game.state === 'playing') updateGame(dt);
+  else if (Game.state === 'dying') updateDying(dt);
+  else if (Game.state === 'victory') updateVictory(dt);
+  updateParticles(dt);
+  renderer.render(scene, camera);
+}
+
+/* =========================================================
+   LEVEL LOADING
+========================================================= */
+function startLevel(n) {
+  hideAllScreens();
+  Game.level = n;
+  Game.state = 'loading';
+
+  disposeGroup(worldGroup);
+  disposeGroup(effectsGroup);
+  Game.particles = [];
+  Game.coinsMeshes = [];
+  Game.checkpoints = [];
+  Game.enemies = [];
+  Game.obstacles = [];
+
+  Game.data = generateLevelData(n);
+  Game.obstacles = Game.data.obstacles;
+  buildLevelMeshes(Game.data);
+
+  Game.pos = { x:0, y:0, z: -10 };
+  Game.vy = 0;
+  Game.onGround = true;
+  Game.jumpsLeft = 2;
+  Game.isDashing = false;
+  Game.dashTimer = 0;
+  Game.dashCd = 0;
+  Game.coins = 0;
+  Game.score = 0;
+  Game.totalCoins = Game.data.coins.length;
+  Game.elapsed = 0;
+  Game.finishReached = false;
+  Game.checkpoint = { x:0, y:0, z: -10 };
+  Game.checkpointIndex = -1;
+
+  if (!Game.davi) {
+    Game.davi = createCharacter(COLORS_DAVI, false);
+    scene.add(Game.davi.root);
+  }
+  Game.davi.root.position.set(Game.pos.x, Game.pos.y, Game.pos.z);
+  Game.davi.root.rotation.y = 0;
+
+  camera.position.set(0, 3, -16);
+  camera.lookAt(0, 1.2, -8);
+
+  scene.background = new THREE.Color(Game.data.theme.sky);
+  scene.fog = new THREE.Fog(Game.data.theme.fog, Game.data.theme.fogNear, Game.data.theme.fogFar);
+
+  updateHUD();
+
+  showStory(n, () => {
+    Game.state = 'playing';
+    Game.startTime = performance.now();
+    document.getElementById('hud').classList.remove('hidden');
+    document.getElementById('mobile-controls').classList.remove('hidden');
+    if (Save.data.music) Sound.startMusic();
+  });
+}
+
+/* =========================================================
+   STORY
+========================================================= */
+let storyQueue = [];
+let storyCallback = null;
+function showStory(levelNum, cb) {
+  storyQueue = THEMES[levelNum-1].story.slice();
+  storyCallback = cb;
+  if (storyQueue.length === 0) { cb(); return; }
+  const overlay = document.getElementById('story-overlay');
+  overlay.classList.remove('hidden');
+  document.getElementById('hud').classList.add('hidden');
+  document.getElementById('mobile-controls').classList.add('hidden');
+  nextStory();
+}
+function nextStory() {
+  if (storyQueue.length === 0) {
+    document.getElementById('story-overlay').classList.add('hidden');
+    const cb = storyCallback;
+    storyCallback = null;
+    if (cb) cb();
+    return;
+  }
+  const s = storyQueue.shift();
+  document.getElementById('story-speaker').textContent = s.sp;
+  document.getElementById('story-text').textContent = s.txt;
+  const avatar = document.getElementById('story-avatar');
+  if (s.sp === 'Davi') avatar.textContent = '🧒';
+  else if (s.sp === 'Daniel Henrique') avatar.textContent = '👦';
+  else if (s.sp === 'Ana Sofia') avatar.textContent = '👧';
+  else avatar.textContent = '📖';
+}
+document.getElementById('story-next').addEventListener('click', () => { Sound.button(); nextStory(); });
+
+/* =========================================================
+   MENU / SCREEN LOGIC
+========================================================= */
+const menuEl = document.getElementById('menu');
+const levelsEl = document.getElementById('levels');
+const howtoEl = document.getElementById('howto');
+const settingsEl = document.getElementById('settings');
+const creditsEl = document.getElementById('credits');
+const hudEl = document.getElementById('hud');
+const controlsEl = document.getElementById('mobile-controls');
+const pauseEl = document.getElementById('pause');
+const deathEl = document.getElementById('death');
+const victoryEl = document.getElementById('victory');
+const endEl = document.getElementById('end');
+
+function hideAllScreens() {
+  [menuEl, levelsEl, howtoEl, settingsEl, creditsEl].forEach(e => { if (e) e.classList.add('hidden'); });
+  hudEl.classList.add('hidden');
+  controlsEl.classList.add('hidden');
+  pauseEl.classList.add('hidden');
+  deathEl.classList.add('hidden');
+  victoryEl.classList.add('hidden');
+  endEl.classList.add('hidden');
+  document.getElementById('story-overlay').classList.add('hidden');
+}
+function showMenu() {
+  hideAllScreens();
+  menuEl.classList.remove('hidden');
+  Game.state = 'menu';
+  scene.background = new THREE.Color(0x0a1836);
+  scene.fog = null;
+  Sound.stopMusic();
+}
+function showLevels() {
+  hideAllScreens();
+  levelsEl.classList.remove('hidden');
+  buildLevelCards();
+}
+function buildLevelCards() {
+  const grid = document.getElementById('levels-grid');
+  grid.innerHTML = '';
+  THEMES.forEach((t, i) => {
+    const n = i + 1;
+    const unlocked = n <= Save.data.unlocked;
+    const stars = Save.data.stars[n] || 0;
+    const card = document.createElement('div');
+    card.className = 'level-card' + (unlocked ? '' : ' locked');
+    card.innerHTML = `
+      <div class="num">${String(n).padStart(2,'0')}</div>
+      <div class="name">${t.name}</div>
+      <div class="stars">${'★'.repeat(stars)}${'☆'.repeat(3-stars)}</div>
+    `;
+    if (unlocked) {
+      card.addEventListener('click', () => { Sound.button(); startLevel(n); });
+    }
+    grid.appendChild(card);
+  });
+}
+function showHowto() { hideAllScreens(); howtoEl.classList.remove('hidden'); }
+function showSettings() { hideAllScreens(); settingsEl.classList.remove('hidden'); refreshSettings(); }
+function showCredits() { hideAllScreens(); creditsEl.classList.remove('hidden'); }
+
+function refreshSettings() {
+  const s = document.getElementById('set-sound');
+  s.textContent = Save.data.sound ? 'ON' : 'OFF';
+  s.classList.toggle('on', Save.data.sound);
+  s.classList.toggle('off', !Save.data.sound);
+  const m = document.getElementById('set-music');
+  m.textContent = Save.data.music ? 'ON' : 'OFF';
+  m.classList.toggle('on', Save.data.music);
+  m.classList.toggle('off', !Save.data.music);
+  const v = document.getElementById('set-vibrate');
+  v.textContent = Save.data.vibration ? 'ON' : 'OFF';
+  v.classList.toggle('on', Save.data.vibration);
+  v.classList.toggle('off', !Save.data.vibration);
+  const q = document.getElementById('set-quality');
+  const map = { low:'BAIXA', medium:'MÉDIA', high:'ALTA' };
+  q.textContent = map[Save.data.quality];
+  q.classList.toggle('on', Save.data.quality === 'high');
+  q.classList.toggle('off', Save.data.quality === 'low');
+}
+
+document.querySelectorAll('[data-action]').forEach(b => {
+  b.addEventListener('click', () => {
+    Sound.init();
+    Sound.button();
+    const a = b.dataset.action;
+    if (a === 'play') startLevel(1);
+    else if (a === 'levels') showLevels();
+    else if (a === 'howto') showHowto();
+    else if (a === 'settings') showSettings();
+    else if (a === 'credits') showCredits();
+  });
+});
+document.querySelectorAll('[data-back]').forEach(b => {
+  b.addEventListener('click', () => { Sound.button(); showMenu(); });
+});
+
+document.getElementById('set-sound').addEventListener('click', () => {
+  Save.data.sound = !Save.data.sound; Save.save(); refreshSettings(); Sound.button();
+});
+document.getElementById('set-music').addEventListener('click', () => {
+  Save.data.music = !Save.data.music; Save.save(); refreshSettings();
+  if (Save.data.music && Game.state === 'playing') Sound.startMusic();
+  else Sound.stopMusic();
+  Sound.button();
+});
+document.getElementById('set-vibrate').addEventListener('click', () => {
+  Save.data.vibration = !Save.data.vibration; Save.save(); refreshSettings(); vibrate(30); Sound.button();
+});
+document.getElementById('set-quality').addEventListener('click', () => {
+  const order = ['low','medium','high'];
+  const i = order.indexOf(Save.data.quality);
+  Save.data.quality = order[(i+1)%3];
+  Save.save(); refreshSettings();
+  applyQuality();
+  Sound.button();
+});
+document.getElementById('set-reset').addEventListener('click', () => {
+  if (confirm('Apagar todo o progresso?')) {
+    Save.reset();
+    Save.save();
+    alert('Progresso apagado!');
+    refreshSettings();
+  }
+});
+
+function applyQuality() {
+  const q = Save.data.quality;
+  Game.quality = q;
+  if (q === 'low') {
+    renderer.shadowMap.enabled = false;
+    renderer.setPixelRatio(1);
+  } else if (q === 'medium') {
+    renderer.shadowMap.enabled = true;
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+  } else {
+    renderer.shadowMap.enabled = true;
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  }
+}
+
+function pauseGame() {
+  if (Game.state !== 'playing') return;
+  Game.state = 'paused';
+  pauseEl.classList.remove('hidden');
+  Sound.stopMusic();
+}
+function resumeGame() {
+  if (Game.state !== 'paused') return;
+  Game.state = 'playing';
+  pauseEl.classList.add('hidden');
+  if (Save.data.music) Sound.startMusic();
+}
+function restartLevel() {
+  document.getElementById('pause').classList.add('hidden');
+  document.getElementById('victory').classList.add('hidden');
+  document.getElementById('death').classList.add('hidden');
+  startLevel(Game.level);
+}
+
+document.getElementById('btn-pause').addEventListener('click', pauseGame);
+document.getElementById('pause-resume').addEventListener('click', resumeGame);
+document.getElementById('pause-restart').addEventListener('click', restartLevel);
+document.getElementById('pause-menu').addEventListener('click', showMenu);
+document.getElementById('vic-next').addEventListener('click', nextLevel);
+document.getElementById('vic-retry').addEventListener('click', restartLevel);
+document.getElementById('vic-menu').addEventListener('click', showMenu);
+document.getElementById('end-menu').addEventListener('click', showMenu);
+
+/* =========================================================
+   RESIZE
+========================================================= */
+function resize() {
+  const w = window.innerWidth, h = window.innerHeight;
+  renderer.setSize(w, h, false);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+}
+window.addEventListener('resize', resize);
+window.addEventListener('orientationchange', () => setTimeout(resize, 200));
+resize();
+
+/* =========================================================
+   BOOT
+========================================================= */
+applyQuality();
+showMenu();
+animate();
+
+document.addEventListener('touchstart', function once() {
+  Sound.init();
+  if (Save.data.music) Sound.startMusic();
+  document.removeEventListener('touchstart', once);
+}, { once:true });
+document.addEventListener('click', function once() {
+  Sound.init();
+  if (Save.data.music) Sound.startMusic();
+  document.removeEventListener('click', once);
+}, { once:true });
+
+})();
+</script>
+</body>
+</html>

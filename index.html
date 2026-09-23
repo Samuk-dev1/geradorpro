@@ -1,0 +1,3813 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#4f46e5">
+<meta name="format-detection" content="telephone=no">
+<title>VendasPro — Controle de Vendas</title>
+<style>
+/* ============================================================
+   TEMAS
+============================================================ */
+:root{
+  --bg:#eef2f8;
+  --surface:#ffffff;
+  --surface-2:#f6f8fc;
+  --surface-3:#eef2f9;
+  --text:#0f172a;
+  --text-2:#3b475c;
+  --muted:#7b889d;
+  --border:#e4eaf3;
+  --primary:#4f46e5;
+  --primary-2:#6366f1;
+  --primary-soft:#eef2ff;
+  --on-primary:#ffffff;
+  --green:#059669;
+  --green-soft:#e6f7f0;
+  --red:#dc2626;
+  --red-soft:#fdecec;
+  --amber:#c2740a;
+  --amber-soft:#fdf3e3;
+  --blue:#2563eb;
+  --blue-soft:#e8f0fe;
+  --gray-soft:#eef1f6;
+  --shadow-sm:0 1px 2px rgba(15,23,42,.06);
+  --shadow:0 2px 8px rgba(15,23,42,.05), 0 14px 32px -14px rgba(15,23,42,.18);
+  --shadow-lg:0 24px 60px -18px rgba(15,23,42,.35);
+  --radius:18px;
+  --radius-sm:12px;
+  --radius-xs:10px;
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+}
+html[data-theme="dark"]{
+  --bg:#070b16;
+  --surface:#131a2b;
+  --surface-2:#1a2236;
+  --surface-3:#222c45;
+  --text:#eef2fb;
+  --text-2:#c3cddf;
+  --muted:#8b97ad;
+  --border:#25304b;
+  --primary:#6366f1;
+  --primary-2:#818cf8;
+  --primary-soft:#1d2444;
+  --on-primary:#ffffff;
+  --green:#34d399;
+  --green-soft:#0e2b25;
+  --red:#f87171;
+  --red-soft:#301719;
+  --amber:#fbbf24;
+  --amber-soft:#2e2410;
+  --blue:#60a5fa;
+  --blue-soft:#132340;
+  --gray-soft:#1e2739;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.5);
+  --shadow:0 2px 8px rgba(0,0,0,.4), 0 14px 32px -14px rgba(0,0,0,.7);
+  --shadow-lg:0 24px 60px -18px rgba(0,0,0,.85);
+}
+
+/* ============================================================
+   BASE
+============================================================ */
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;margin:0;padding:0;}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Inter','Helvetica Neue',Arial,sans-serif;
+  background:var(--bg);color:var(--text);
+  -webkit-font-smoothing:antialiased;
+  overscroll-behavior-y:none;
+  font-size:15px;line-height:1.45;
+}
+input,select,textarea,button{font-family:inherit;font-size:inherit;color:inherit;}
+button{cursor:pointer;border:none;background:none;}
+::-webkit-scrollbar{width:0;height:0;}
+.ic{width:20px;height:20px;flex:0 0 auto;display:block;}
+
+/* ============================================================
+   LAYOUT
+============================================================ */
+#app{
+  display:flex;flex-direction:column;
+  height:100vh;height:100dvh;
+  max-width:760px;margin:0 auto;position:relative;
+  background:var(--bg);
+}
+.appbar{
+  padding:calc(var(--safe-top) + 12px) 16px 12px;
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:12px;
+  position:sticky;top:0;z-index:30;
+  min-height:58px;
+}
+.appbar h1{font-size:17px;font-weight:700;margin:0;letter-spacing:-.3px;flex:1;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.appbar .sub{font-size:11.5px;color:var(--muted);font-weight:500;margin-top:1px;}
+.appbar-left{display:flex;align-items:center;gap:12px;flex:1;min-width:0;}
+.appbar-actions{display:flex;gap:6px;align-items:center;}
+.views{
+  flex:1;overflow-y:auto;overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+  padding:16px 16px calc(110px + var(--safe-bottom));
+  scroll-behavior:smooth;
+}
+
+/* ============================================================
+   BOTTOM NAV
+============================================================ */
+.bottomnav{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:760px;
+  background:var(--surface);
+  border-top:1px solid var(--border);
+  display:grid;grid-template-columns:repeat(6,1fr);
+  padding:8px 4px calc(8px + var(--safe-bottom));
+  z-index:40;
+  box-shadow:0 -6px 24px -12px rgba(15,23,42,.18);
+}
+html[data-theme="dark"] .bottomnav{box-shadow:0 -6px 24px -12px rgba(0,0,0,.8);}
+.nav-btn{
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:5px 2px;border-radius:12px;
+  color:var(--muted);font-size:9.5px;font-weight:600;letter-spacing:-.2px;
+  transition:color .18s ease, transform .18s ease;
+  min-height:48px;justify-content:center;
+}
+.nav-btn .ic{width:21px;height:21px;}
+.nav-btn:active{transform:scale(.92);}
+.nav-btn.active{color:var(--primary);}
+.nav-btn.active .ic{stroke-width:2.2;}
+.nav-fab{
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+  color:var(--muted);font-size:9.5px;font-weight:600;
+}
+.nav-fab .fabc{
+  width:38px;height:38px;border-radius:50%;
+  background:linear-gradient(135deg,var(--primary),var(--primary-2));
+  color:#fff;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 8px 18px -6px rgba(79,70,229,.75);
+  transition:transform .18s ease;
+  margin-top:-14px;border:3px solid var(--surface);
+}
+.nav-fab:active .fabc{transform:scale(.9);}
+.nav-fab .fabc .ic{width:20px;height:20px;stroke-width:2.6;}
+
+/* ============================================================
+   COMPONENTES GERAIS
+============================================================ */
+.card{
+  background:var(--surface);border-radius:var(--radius);
+  padding:16px;box-shadow:var(--shadow);border:1px solid var(--border);
+  margin-bottom:14px;
+}
+.section-title{
+  display:flex;align-items:center;justify-content:space-between;
+  margin:20px 2px 10px;gap:10px;
+}
+.section-title h2{font-size:14.5px;font-weight:700;margin:0;letter-spacing:-.2px;}
+.section-title .link{font-size:12.5px;color:var(--primary);font-weight:600;}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:13px 18px;border-radius:14px;font-weight:650;font-size:14.5px;
+  transition:transform .12s ease, filter .18s ease, background .18s ease;
+  min-height:48px;letter-spacing:-.2px;
+}
+.btn:active{transform:scale(.97);}
+.btn.primary{background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff;
+  box-shadow:0 10px 24px -10px rgba(79,70,229,.85);}
+.btn.success{background:linear-gradient(135deg,#059669,#10b981);color:#fff;
+  box-shadow:0 10px 24px -10px rgba(16,185,129,.8);}
+.btn.danger{background:var(--red);color:#fff;}
+.btn.ghost{background:var(--surface-3);color:var(--text-2);}
+.btn.outline{background:transparent;border:1.5px solid var(--border);color:var(--text-2);}
+.btn.wa{background:linear-gradient(135deg,#128C7E,#25D366);color:#fff;
+  box-shadow:0 10px 24px -10px rgba(37,211,102,.8);}
+.btn.block{width:100%;}
+.btn.sm{padding:9px 13px;font-size:13px;border-radius:11px;min-height:40px;}
+.btn.xs{padding:7px 10px;font-size:12px;border-radius:10px;min-height:34px;gap:5px;}
+.btn.xs .ic{width:15px;height:15px;}
+.btn:disabled{opacity:.5;pointer-events:none;}
+
+.icon-btn{
+  width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+  color:var(--text-2);background:var(--surface-3);transition:transform .12s ease;
+  flex:0 0 auto;
+}
+.icon-btn:active{transform:scale(.9);}
+.icon-btn.plain{background:transparent;}
+.icon-btn.danger{color:var(--red);background:var(--red-soft);}
+.icon-btn.wa{color:#25D366;background:var(--green-soft);}
+.icon-btn.sm{width:34px;height:34px;border-radius:10px;}
+.icon-btn.sm .ic{width:17px;height:17px;}
+
+/* Inputs */
+.inp, .sel, .txa{
+  width:100%;background:var(--surface-2);border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);padding:12px 13px;font-size:15px;
+  outline:none;transition:border-color .18s ease, background .18s ease;
+  min-height:48px;color:var(--text);
+}
+.inp:focus,.sel:focus,.txa:focus{border-color:var(--primary);background:var(--surface);}
+.txa{min-height:88px;resize:vertical;line-height:1.5;}
+.field{margin-bottom:13px;}
+.field > label{
+  display:block;font-size:12px;font-weight:650;color:var(--muted);
+  margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px;
+}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.field-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.hint{font-size:11.5px;color:var(--muted);margin-top:5px;}
+
+/* Chips */
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0 4px;margin:0 -2px;}
+.chips::-webkit-scrollbar{display:none;}
+.chip{
+  padding:9px 15px;border-radius:999px;background:var(--surface);
+  border:1.5px solid var(--border);font-size:13px;font-weight:600;
+  color:var(--text-2);white-space:nowrap;transition:all .18s ease;flex:0 0 auto;
+}
+.chip:active{transform:scale(.95);}
+.chip.active{background:var(--primary);border-color:var(--primary);color:#fff;
+  box-shadow:0 6px 16px -8px rgba(79,70,229,.9);}
+.chip.opt{display:flex;align-items:center;gap:7px;}
+.chip.opt .ic{width:16px;height:16px;}
+
+/* Badges */
+.badge{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:4px 9px;border-radius:8px;font-size:10.5px;font-weight:750;
+  letter-spacing:.3px;text-transform:uppercase;
+}
+.badge.green{background:var(--green-soft);color:var(--green);}
+.badge.red{background:var(--red-soft);color:var(--red);}
+.badge.amber{background:var(--amber-soft);color:var(--amber);}
+.badge.blue{background:var(--blue-soft);color:var(--blue);}
+.badge.gray{background:var(--gray-soft);color:var(--muted);}
+.badge.purple{background:var(--primary-soft);color:var(--primary);}
+
+/* Empty state */
+.empty{
+  text-align:center;padding:44px 20px;color:var(--muted);
+}
+.empty .eico{
+  width:74px;height:74px;border-radius:24px;background:var(--surface-3);
+  display:flex;align-items:center;justify-content:center;margin:0 auto 16px;
+  color:var(--muted);
+}
+.empty .eico .ic{width:34px;height:34px;stroke-width:1.6;}
+.empty h3{margin:0 0 6px;font-size:15.5px;color:var(--text);font-weight:700;}
+.empty p{margin:0 0 16px;font-size:13.5px;line-height:1.5;}
+
+/* Stat cards */
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px;}
+@media(min-width:600px){.stats-grid{grid-template-columns:repeat(3,1fr);}}
+.stat{
+  background:var(--surface);border-radius:var(--radius);padding:14px;
+  border:1px solid var(--border);box-shadow:var(--shadow-sm);
+  position:relative;overflow:hidden;
+  animation:pop .32s cubic-bezier(.2,.9,.3,1) both;
+}
+.stat .s-ico{
+  width:34px;height:34px;border-radius:11px;display:flex;align-items:center;justify-content:center;
+  margin-bottom:10px;
+}
+.stat .s-ico .ic{width:18px;height:18px;}
+.stat .s-lbl{font-size:11px;color:var(--muted);font-weight:650;letter-spacing:.2px;text-transform:uppercase;}
+.stat .s-val{font-size:19px;font-weight:800;letter-spacing:-.6px;margin-top:3px;line-height:1.15;}
+.stat .s-sub{font-size:11px;color:var(--muted);margin-top:3px;font-weight:500;}
+.s-ico.p{background:var(--primary-soft);color:var(--primary);}
+.s-ico.g{background:var(--green-soft);color:var(--green);}
+.s-ico.r{background:var(--red-soft);color:var(--red);}
+.s-ico.a{background:var(--amber-soft);color:var(--amber);}
+.s-ico.b{background:var(--blue-soft);color:var(--blue);}
+
+/* List items (sales / fiados) */
+.item{
+  background:var(--surface);border-radius:var(--radius);padding:14px;
+  border:1px solid var(--border);box-shadow:var(--shadow-sm);
+  margin-bottom:11px;animation:fadeUp .28s ease both;
+  position:relative;overflow:hidden;
+}
+.item::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:4px;
+  background:var(--muted);
+}
+.item.t-red::before{background:var(--red);}
+.item.t-amber::before{background:var(--amber);}
+.item.t-blue::before{background:var(--blue);}
+.item.t-green::before{background:var(--green);}
+.item.t-gray::before{background:var(--muted);}
+.item-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:8px;}
+.item-name{font-weight:700;font-size:15.5px;letter-spacing:-.2px;line-height:1.25;}
+.item-meta{font-size:12px;color:var(--muted);margin-top:2px;display:flex;align-items:center;gap:5px;flex-wrap:wrap;}
+.item-meta .ic{width:13px;height:13px;}
+.item-vals{display:flex;gap:16px;flex-wrap:wrap;margin:9px 0 10px;}
+.vblock .v-lbl{font-size:10.5px;color:var(--muted);text-transform:uppercase;font-weight:650;letter-spacing:.3px;}
+.vblock .v-num{font-size:15px;font-weight:750;letter-spacing:-.3px;}
+.vblock .v-num.red{color:var(--red);}
+.vblock .v-num.green{color:var(--green);}
+.item-actions{display:flex;gap:7px;flex-wrap:wrap;padding-top:10px;border-top:1px solid var(--border);}
+.prod-line{font-size:12.5px;color:var(--text-2);display:flex;justify-content:space-between;gap:10px;padding:3px 0;}
+
+/* Sale form */
+.prod-row{
+  background:var(--surface-2);border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);padding:11px;margin-bottom:10px;
+  animation:fadeUp .25s ease both;
+}
+.prod-main{display:flex;gap:8px;align-items:center;margin-bottom:9px;}
+.prod-main .inp{background:var(--surface);}
+.prod-grid{display:grid;grid-template-columns:70px 1fr 1fr;gap:8px;align-items:end;}
+.mini{display:flex;flex-direction:column;gap:4px;}
+.mini > span{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;}
+.mini .inp{padding:10px;min-height:42px;font-size:14px;background:var(--surface);}
+.subtotal{
+  min-height:42px;display:flex;align-items:center;justify-content:flex-end;
+  font-weight:750;font-size:14.5px;color:var(--primary);padding:0 4px;
+}
+.totals-box{
+  background:var(--surface-2);border-radius:var(--radius-sm);padding:14px;
+  border:1.5px dashed var(--border);
+}
+.total-line{display:flex;justify-content:space-between;padding:5px 0;font-size:13.5px;color:var(--text-2);}
+.total-line.big{font-size:19px;font-weight:800;color:var(--text);letter-spacing:-.6px;
+  border-top:1.5px solid var(--border);margin-top:6px;padding-top:11px;}
+.total-line .g{color:var(--green);font-weight:700;}
+.total-line .r{color:var(--red);font-weight:700;}
+
+/* Segmented */
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px;}
+.seg-btn{
+  padding:15px 12px;border-radius:15px;border:2px solid var(--border);
+  background:var(--surface-2);font-weight:700;font-size:14px;color:var(--text-2);
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  transition:all .18s ease;
+}
+.seg-btn .ic{width:22px;height:22px;}
+.seg-btn:active{transform:scale(.97);}
+.seg-btn.active{
+  border-color:var(--primary);background:var(--primary-soft);color:var(--primary);
+  box-shadow:0 8px 20px -12px rgba(79,70,229,.9);
+}
+
+/* Menu list */
+.menu-list{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);
+  overflow:hidden;box-shadow:var(--shadow-sm);margin-bottom:14px;}
+.menu-item{
+  display:flex;align-items:center;gap:13px;padding:15px 15px;width:100%;
+  border-bottom:1px solid var(--border);text-align:left;transition:background .15s ease;
+}
+.menu-item:last-child{border-bottom:none;}
+.menu-item:active{background:var(--surface-3);}
+.menu-item .mi-ico{
+  width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+  background:var(--surface-3);color:var(--primary);flex:0 0 auto;
+}
+.menu-item .mi-ico .ic{width:19px;height:19px;}
+.menu-item .mi-txt{flex:1;min-width:0;}
+.menu-item .mi-t{font-weight:650;font-size:14.5px;letter-spacing:-.2px;}
+.menu-item .mi-s{font-size:12px;color:var(--muted);margin-top:1px;}
+.menu-item .ic.chev{width:18px;height:18px;color:var(--muted);}
+
+/* Modal */
+#modal-root{position:fixed;inset:0;z-index:200;pointer-events:none;}
+.modal-backdrop{
+  position:absolute;inset:0;background:rgba(8,12,24,.55);backdrop-filter:blur(4px);
+  display:flex;align-items:flex-end;justify-content:center;
+  opacity:0;transition:opacity .22s ease;pointer-events:auto;
+  padding:0;
+}
+.modal-backdrop.show{opacity:1;}
+.modal{
+  background:var(--surface);width:100%;max-width:760px;
+  border-radius:24px 24px 0 0;max-height:92vh;overflow-y:auto;
+  transform:translateY(26px) scale(.99);opacity:0;
+  transition:transform .28s cubic-bezier(.2,.9,.3,1), opacity .28s ease;
+  padding-bottom:calc(16px + var(--safe-bottom));
+  box-shadow:var(--shadow-lg);
+}
+.modal-backdrop.show .modal{transform:translateY(0) scale(1);opacity:1;}
+@media(min-width:700px){
+  .modal-backdrop{align-items:center;padding:24px;}
+  .modal{border-radius:24px;max-width:560px;}
+}
+.modal-head{
+  padding:20px 20px 12px;display:flex;align-items:flex-start;gap:12px;
+  position:sticky;top:0;background:var(--surface);z-index:2;
+  border-radius:24px 24px 0 0;
+}
+.modal-head h3{margin:0;font-size:17.5px;font-weight:750;letter-spacing:-.4px;flex:1;}
+.modal-body{padding:0 20px 8px;}
+.modal-foot{
+  padding:14px 20px calc(6px + var(--safe-bottom));display:flex;gap:10px;
+  position:sticky;bottom:0;background:var(--surface);z-index:2;
+}
+.modal-foot .btn{flex:1;}
+.modal-msg{color:var(--text-2);font-size:14px;line-height:1.6;margin:0 0 8px;}
+.grabber{width:38px;height:4px;border-radius:99px;background:var(--border);margin:9px auto 0;}
+
+/* Summary rows */
+.sum-row{display:flex;justify-content:space-between;gap:12px;padding:9px 0;
+  border-bottom:1px solid var(--border);font-size:14px;}
+.sum-row:last-child{border-bottom:none;}
+.sum-row .k{color:var(--muted);font-weight:600;font-size:12.5px;text-transform:uppercase;letter-spacing:.3px;}
+.sum-row .v{font-weight:650;text-align:right;}
+.sum-row .v.red{color:var(--red);}
+.sum-row .v.green{color:var(--green);}
+.sum-box{background:var(--surface-2);border-radius:var(--radius-sm);padding:6px 14px;margin-bottom:14px;}
+
+/* Toast */
+.toast-root{position:fixed;left:50%;transform:translateX(-50%);
+  bottom:calc(96px + var(--safe-bottom));z-index:300;
+  display:flex;flex-direction:column;gap:8px;width:calc(100% - 32px);max-width:440px;pointer-events:none;}
+.toast{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:14px;padding:13px 15px;display:flex;align-items:center;gap:11px;
+  box-shadow:var(--shadow-lg);font-size:13.8px;font-weight:600;
+  transform:translateY(18px);opacity:0;transition:all .3s cubic-bezier(.2,.9,.3,1);
+  pointer-events:auto;
+}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast .ti{width:28px;height:28px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+.toast .ti .ic{width:16px;height:16px;stroke-width:2.4;}
+.toast.success .ti{background:var(--green-soft);color:var(--green);}
+.toast.error .ti{background:var(--red-soft);color:var(--red);}
+.toast.info .ti{background:var(--blue-soft);color:var(--blue);}
+
+/* Charts */
+.chart{display:flex;align-items:flex-end;gap:6px;height:140px;padding:8px 0 0;}
+.cbar{flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end;gap:6px;}
+.cbar-track{width:100%;flex:1;display:flex;align-items:flex-end;background:var(--surface-3);border-radius:8px;overflow:hidden;}
+.cbar-fill{width:100%;background:linear-gradient(180deg,var(--primary-2),var(--primary));
+  border-radius:8px;transition:height .5s cubic-bezier(.2,.9,.3,1);min-height:3px;}
+.cbar-lbl{font-size:9.5px;color:var(--muted);font-weight:650;text-transform:uppercase;}
+.cbar-val{font-size:9.5px;color:var(--text-2);font-weight:700;}
+
+.hbar{margin-bottom:11px;}
+.hbar-top{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:5px;font-weight:600;}
+.hbar-top .lbl{color:var(--text-2);}
+.hbar-top .val{color:var(--text);font-weight:700;}
+.hbar-track{height:9px;background:var(--surface-3);border-radius:99px;overflow:hidden;}
+.hbar-fill{height:100%;border-radius:99px;transition:width .5s cubic-bezier(.2,.9,.3,1);}
+
+/* Switch */
+.switch{position:relative;width:50px;height:29px;flex:0 0 auto;}
+.switch input{opacity:0;width:0;height:0;position:absolute;}
+.switch .track{
+  position:absolute;inset:0;background:var(--surface-3);border-radius:99px;
+  transition:background .22s ease;border:1px solid var(--border);
+}
+.switch .knob{
+  position:absolute;top:3px;left:3px;width:23px;height:23px;border-radius:50%;
+  background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.25);
+  transition:transform .22s cubic-bezier(.2,.9,.3,1);
+}
+.switch input:checked + .track{background:var(--primary);border-color:var(--primary);}
+.switch input:checked + .track + .knob{transform:translateX(21px);}
+
+/* Misc */
+.divider{height:1px;background:var(--border);margin:16px 0;}
+.pill-row{display:flex;gap:8px;flex-wrap:wrap;}
+.mono{font-variant-numeric:tabular-nums;}
+.center{text-align:center;}
+.mt8{margin-top:8px;}.mt12{margin-top:12px;}.mt16{margin-top:16px;}
+.mb0{margin-bottom:0;}.mb8{margin-bottom:8px;}
+.muted{color:var(--muted);}
+.small{font-size:12.5px;}
+.bold{font-weight:700;}
+.flex{display:flex;}.between{justify-content:space-between;}
+.items-center{align-items:center;}
+.gap8{gap:8px;}.gap12{gap:12px;}
+.hidden{display:none !important;}
+.search-wrap{position:relative;margin-bottom:12px;}
+.search-wrap .ic{position:absolute;left:13px;top:50%;transform:translateY(-50%);
+  width:18px;height:18px;color:var(--muted);pointer-events:none;}
+.search-wrap .inp{padding-left:42px;}
+.logo-prev{width:74px;height:74px;border-radius:20px;object-fit:cover;background:var(--surface-3);
+  display:flex;align-items:center;justify-content:center;color:var(--muted);overflow:hidden;
+  border:1.5px solid var(--border);}
+.logo-prev img{width:100%;height:100%;object-fit:cover;}
+.status-line{display:flex;align-items:center;justify-content:space-between;
+  padding:14px 0;border-bottom:1px solid var(--border);}
+.status-line:last-child{border-bottom:none;}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:7px;}
+.dot.on{background:var(--green);box-shadow:0 0 0 4px var(--green-soft);}
+.dot.off{background:var(--muted);box-shadow:0 0 0 4px var(--gray-soft);}
+
+@keyframes pop{from{opacity:0;transform:scale(.94) translateY(8px);}to{opacity:1;transform:none;}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+@keyframes slideIn{from{opacity:0;transform:translateX(14px);}to{opacity:1;transform:none;}}
+.view-enter{animation:fadeUp .26s ease both;}
+</style>
+</head>
+<body>
+<div id="app">
+  <header id="appbar" class="appbar"></header>
+  <main id="views" class="views"></main>
+  <nav id="bottomnav" class="bottomnav"></nav>
+</div>
+<div id="modal-root"></div>
+<div id="toast-root" class="toast-root"></div>
+
+<script>
+/* ============================================================================
+   VENDASPRO — Aplicativo de Controle de Vendas
+   Arquitetura interna:
+   Utils · Icons · Store (IndexedDB) · State · NativeBridge · Notifications
+   · Data · WhatsApp · UI · Views · Actions · Boot
+============================================================================ */
+
+/* ============================== UTILS ============================== */
+const $  = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => Array.prototype.slice.call(el.querySelectorAll(s));
+
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+
+const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({
+  '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+}[c]));
+
+/* ---- Dinheiro: armazenado internamente em CENTAVOS (inteiro) ---- */
+function fmtMoney(cents) {
+  const v = (Number(cents) || 0) / 100;
+  return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+}
+function fmtMoneyShort(cents) {
+  const v = (Number(cents) || 0) / 100;
+  if (Math.abs(v) >= 1000) return 'R$ ' + (v / 1000).toFixed(1).replace('.', ',') + 'k';
+  return 'R$ ' + v.toFixed(0);
+}
+function parseMoney(str) {
+  if (typeof str === 'number') return Math.round(str * 100);
+  let s = String(str == null ? '' : str).replace(/[^\d,.-]/g, '').trim();
+  if (!s) return 0;
+  if (s.indexOf(',') > -1) {
+    s = s.replace(/\./g, '').replace(',', '.');
+  }
+  const n = parseFloat(s);
+  if (isNaN(n)) return 0;
+  return Math.round(n * 100);
+}
+function centsToInput(cents) {
+  const v = (Number(cents) || 0) / 100;
+  return v.toFixed(2).replace('.', ',');
+}
+
+/* ---- Datas: formato interno AAAA-MM-DD (fuso local Brasil) ---- */
+function isoOf(d) {
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+function todayISO() { return isoOf(new Date()); }
+function parseISO(iso) {
+  if (!iso) return null;
+  const p = String(iso).split('-');
+  if (p.length !== 3) return null;
+  return new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2]), 12, 0, 0, 0);
+}
+function fmtDate(iso) {
+  const d = parseISO(iso);
+  if (!d) return '—';
+  return String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0') + '/' + d.getFullYear();
+}
+function fmtDateShort(iso) {
+  const d = parseISO(iso);
+  if (!d) return '—';
+  return String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0');
+}
+function fmtDateTime(ts) {
+  const d = new Date(ts);
+  return String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0') + '/' +
+    d.getFullYear() + ' às ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+}
+function addDaysISO(iso, n) {
+  const d = parseISO(iso);
+  if (!d) return null;
+  d.setDate(d.getDate() + n);
+  return isoOf(d);
+}
+/* Diferença em dias inteiros: b - a (positivo => b no futuro) */
+function diffDays(aISO, bISO) {
+  const a = parseISO(aISO), b = parseISO(bISO);
+  if (!a || !b) return 0;
+  return Math.round((b.getTime() - a.getTime()) / 86400000);
+}
+function monthKey(iso) { return (iso || '').slice(0, 7); }
+function todayMonthKey() { return todayISO().slice(0, 7); }
+
+/* ---- Telefone ---- */
+function maskPhone(v) {
+  let d = String(v || '').replace(/\D/g, '');
+  if (d.startsWith('55') && d.length > 11) d = d.slice(2);
+  d = d.slice(0, 11);
+  if (!d) return '';
+  if (d.length <= 2) return '(' + d;
+  if (d.length <= 6) return '(' + d.slice(0, 2) + ') ' + d.slice(2);
+  if (d.length <= 10) return '(' + d.slice(0, 2) + ') ' + d.slice(2, 6) + '-' + d.slice(6);
+  return '(' + d.slice(0, 2) + ') ' + d.slice(2, 7) + '-' + d.slice(7);
+}
+function normalizePhone(p) {
+  let d = String(p || '').replace(/\D/g, '');
+  if (d.startsWith('55') && d.length > 11) d = d.slice(2);
+  if (!d) return '';
+  return '55' + d;
+}
+function phoneDigits(p) { return String(p || '').replace(/\D/g, ''); }
+
+/* ---- Texto ---- */
+function normText(s) {
+  return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+function includesQuery(hay, q) { return normText(hay).indexOf(normText(q)) > -1; }
+function truncate(s, n) { s = String(s || ''); return s.length > n ? s.slice(0, n - 1) + '…' : s; }
+
+/* ---- Debounce ---- */
+function debounce(fn, ms) {
+  let t; return function () { const a = arguments, c = this; clearTimeout(t); t = setTimeout(() => fn.apply(c, a), ms); };
+}
+
+/* ============================== ÍCONES ============================== */
+const ICONS = {
+  home: '<path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V21h13V9.5"/><path d="M9.5 21v-6h5v6"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  book: '<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H19v18H6.5A2.5 2.5 0 0 1 4 18.5z"/><path d="M8 3v18"/>',
+  receipt: '<path d="M5 3h14v18l-2.5-1.6L14 21l-2-1.6L10 21l-2.5-1.6L5 21z"/><path d="M9 8h6M9 12h6M9 16h3"/>',
+  chart: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+  more: '<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>',
+  search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/>',
+  edit: '<path d="M4 20h4L20 8l-4-4L4 16z"/><path d="m14.5 5.5 4 4"/>',
+  trash: '<path d="M4 7h16M10 11v6M14 11v6"/><path d="M6 7l1 13h10l1-13"/><path d="M9 7V4h6v3"/>',
+  check: '<path d="m4 12.5 5.5 5.5L20 6.5"/>',
+  x: '<path d="M6 6l12 12M18 6 6 18"/>',
+  info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',
+  calendar: '<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  cash: '<rect x="2" y="6" width="20" height="12" rx="3"/><circle cx="12" cy="12" r="2.6"/><path d="M6 10v4M18 10v4"/>',
+  user: '<circle cx="12" cy="8" r="4"/><path d="M4.5 21a7.5 7.5 0 0 1 15 0"/>',
+  phone: '<path d="M6.5 3h3l1.5 4-2 1.4a12 12 0 0 0 6.6 6.6L17 13l4 1.5v3a2 2 0 0 1-2.2 2A17 17 0 0 1 4 5.2 2 2 0 0 1 6 3z"/>',
+  archive: '<rect x="3" y="4" width="18" height="4.5" rx="1.6"/><path d="M5 8.5V20h14V8.5"/><path d="M10 12.5h4"/>',
+  unarchive: '<rect x="3" y="4" width="18" height="4.5" rx="1.6"/><path d="M5 8.5V20h14V8.5"/><path d="M12 17v-5M9.5 14.5 12 12l2.5 2.5"/>',
+  arrowLeft: '<path d="M19 12H5M11 18l-6-6 6-6"/>',
+  chevronRight: '<path d="m9 6 6 6-6 6"/>',
+  chevronDown: '<path d="m6 9 6 6 6-6"/>',
+  download: '<path d="M12 3v12M7.5 10.5 12 15l4.5-4.5"/><path d="M4 17v2.5A1.5 1.5 0 0 0 5.5 21h13a1.5 1.5 0 0 0 1.5-1.5V17"/>',
+  upload: '<path d="M12 15V3M7.5 7.5 12 3l4.5 4.5"/><path d="M4 17v2.5A1.5 1.5 0 0 0 5.5 21h13a1.5 1.5 0 0 0 1.5-1.5V17"/>',
+  settings: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-2.87 1.2V21a2 2 0 1 1-4 0v-.1A1.7 1.7 0 0 0 7.2 19.3l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 3 13.6H3a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 4.7 7.2l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 10.4 3V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 2.87 1.2l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 21 10.4h.1a2 2 0 1 1 0 4H21a1.7 1.7 0 0 0-1.6 1.2z"/>',
+  store: '<path d="M3 9.5 5 4h14l2 5.5"/><path d="M4 9.5h16V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="M9 21v-6h6v6"/>',
+  bell: '<path d="M18 8a6 6 0 1 0-12 0c0 6-2 7-2 7h16s-2-1-2-7"/><path d="M10.3 20a2 2 0 0 0 3.4 0"/>',
+  message: '<path d="M21 12a8 8 0 0 1-8 8H8l-5 3 1.2-4.4A8 8 0 1 1 21 12z"/>',
+  palette: '<path d="M12 21a9 9 0 1 1 9-9c0 2.5-2 3-3.5 3H16a2 2 0 0 0-1.4 3.4A1.8 1.8 0 0 1 12 21z"/><circle cx="7.5" cy="12" r="1.2"/><circle cx="10" cy="8" r="1.2"/><circle cx="15" cy="8.5" r="1.2"/>',
+  database: '<ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6"/><path d="M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/>',
+  alert: '<path d="M10.3 3.9 1.9 18a2 2 0 0 0 1.7 3h16.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  card: '<rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/>',
+  pix: '<path d="m12 3 4.2 4.2a2.5 2.5 0 0 0 3.6 0L21 6"/><path d="m12 21 4.2-4.2a2.5 2.5 0 0 1 3.6 0L21 18"/><path d="M3 12l4.2-4.2a2.5 2.5 0 0 1 3.6 0L15 12l-4.2 4.2a2.5 2.5 0 0 1-3.6 0z"/>',
+  share: '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 10.5 6.8-4M8.6 13.5l6.8 4"/>',
+  filter: '<path d="M3 5h18l-7 8v6l-4 2v-8z"/>',
+  box: '<path d="m12 2 9 5v10l-9 5-9-5V7z"/><path d="m3 7 9 5 9-5M12 12v10"/>',
+  users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16.5 5.2a3.5 3.5 0 0 1 0 6.6M17.5 20a6.5 6.5 0 0 0-1.6-4.3"/>',
+  trend: '<path d="m3 17 6-6 4 4 8-8"/><path d="M15 7h6v6"/>',
+  wallet: '<path d="M3 7.5A2.5 2.5 0 0 1 5.5 5H18v3"/><rect x="3" y="7.5" width="18" height="12" rx="2.5"/><circle cx="16.5" cy="13.5" r="1.3"/>',
+  undo: '<path d="M4 9h10a5 5 0 0 1 0 10H9"/><path d="m8 5-4 4 4 4"/>',
+  refresh: '<path d="M21 12a9 9 0 1 1-2.6-6.3"/><path d="M21 4v5h-5"/>',
+  print: '<path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 17h10v4H7z"/>',
+  tag: '<path d="M20.6 13.6 13 21.2a2 2 0 0 1-2.8 0L3 13.8V3h10.8l6.8 6.8a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.4"/>',
+  logout: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/>',
+  shield: '<path d="M12 22s8-3.5 8-10V5l-8-3-8 3v7c0 6.5 8 10 8 10z"/>',
+  sparkles: '<path d="m12 3 1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.9 2.3L22 18l-2.1.7L19 21l-.9-2.3L16 18l2.1-.7z"/>'
+};
+function icon(name, cls) {
+  const p = ICONS[name] || '';
+  return '<svg class="ic ' + (cls || '') + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round">' + p + '</svg>';
+}
+const WA_PATH = 'M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z';
+function waIcon(cls) {
+  return '<svg class="ic ' + (cls || '') + '" viewBox="0 0 24 24" fill="currentColor" stroke="none">' + '<path d="' + WA_PATH + '"/>' + '</svg>';
+}
+
+/* ============================== STORE (IndexedDB) ============================== */
+const DB_NAME = 'vendaspro_db';
+const DB_VER = 1;
+const STORES = ['customers', 'sales', 'payments', 'products', 'settings', 'meta'];
+const LS_KEY = 'vendaspro_ls_v1';
+
+const Store = {
+  mode: 'idb',
+  db: null,
+  ls: { customers: [], sales: [], payments: [], products: [], settings: {}, meta: {} },
+
+  async init() {
+    try {
+      await new Promise((resolve, reject) => {
+        const req = indexedDB.open(DB_NAME, DB_VER);
+        req.onupgradeneeded = (e) => {
+          const d = e.target.result;
+          STORES.forEach((s) => { if (!d.objectStoreNames.contains(s)) d.createObjectStore(s, { keyPath: 'id' }); });
+        };
+        req.onsuccess = (e) => { Store.db = e.target.result; resolve(); };
+        req.onerror = () => reject(req.error || new Error('idb error'));
+        req.onblocked = () => reject(new Error('idb blocked'));
+        setTimeout(() => { if (!Store.db) reject(new Error('idb timeout')); }, 3000);
+      });
+      this.mode = 'idb';
+    } catch (err) {
+      console.warn('[VendasPro] IndexedDB indisponível, usando localStorage.', err);
+      this.mode = 'ls';
+      try {
+        const raw = localStorage.getItem(LS_KEY);
+        if (raw) this.ls = Object.assign(this.ls, JSON.parse(raw));
+      } catch (e) { /* ignore */ }
+    }
+    // settings vive com chave fixa 'app'
+    if (this.mode === 'ls' && !this.ls.settings) this.ls.settings = {};
+    if (this.mode === 'ls' && !this.ls.meta) this.ls.meta = {};
+  },
+
+  _persistLS() {
+    try { localStorage.setItem(LS_KEY, JSON.stringify(this.ls)); } catch (e) { console.warn('LS cheio', e); }
+  },
+
+  _tx(store, mode) {
+    return this.db.transaction(store, mode).objectStore(store);
+  },
+
+  put(store, value) {
+    if (this.mode === 'ls') {
+      const arr = this.ls[store];
+      if (Array.isArray(arr)) {
+        const i = arr.findIndex((x) => x.id === value.id);
+        if (i > -1) arr[i] = value; else arr.push(value);
+      } else {
+        arr[value.id] = value;
+      }
+      this._persistLS();
+      return Promise.resolve(value);
+    }
+    return new Promise((res, rej) => {
+      const r = this._tx(store, 'readwrite').put(value);
+      r.onsuccess = () => res(value);
+      r.onerror = () => rej(r.error);
+    });
+  },
+
+  getAll(store) {
+    if (this.mode === 'ls') {
+      const v = this.ls[store];
+      if (Array.isArray(v)) return Promise.resolve(v.slice());
+      return Promise.resolve(Object.values(v || {}));
+    }
+    return new Promise((res, rej) => {
+      const r = this._tx(store, 'readonly').getAll();
+      r.onsuccess = () => res(r.result || []);
+      r.onerror = () => rej(r.error);
+    });
+  },
+
+  get(store, key) {
+    if (this.mode === 'ls') {
+      const v = this.ls[store];
+      if (Array.isArray(v)) return Promise.resolve(v.find((x) => x.id === key));
+      return Promise.resolve((v || {})[key]);
+    }
+    return new Promise((res, rej) => {
+      const r = this._tx(store, 'readonly').get(key);
+      r.onsuccess = () => res(r.result);
+      r.onerror = () => rej(r.error);
+    });
+  },
+
+  del(store, key) {
+    if (this.mode === 'ls') {
+      const v = this.ls[store];
+      if (Array.isArray(v)) this.ls[store] = v.filter((x) => x.id !== key);
+      else delete v[key];
+      this._persistLS();
+      return Promise.resolve();
+    }
+    return new Promise((res, rej) => {
+      const r = this._tx(store, 'readwrite').delete(key);
+      r.onsuccess = () => res();
+      r.onerror = () => rej(r.error);
+    });
+  },
+
+  clear(store) {
+    if (this.mode === 'ls') {
+      this.ls[store] = Array.isArray(this.ls[store]) ? [] : {};
+      this._persistLS();
+      return Promise.resolve();
+    }
+    return new Promise((res, rej) => {
+      const r = this._tx(store, 'readwrite').clear();
+      r.onsuccess = () => res();
+      r.onerror = () => rej(r.error);
+    });
+  },
+
+  async clearAll() {
+    for (const s of STORES) await this.clear(s);
+  }
+};
+
+/* ============================== CONFIGURAÇÕES PADRÃO ============================== */
+function defaultMessages() {
+  return {
+    confirmacao:
+      'Olá, {cliente}! Tudo bem?\n\n' +
+      'Segue o registro da sua compra:\n\n' +
+      '{produto}\n\n' +
+      'Total: {valor}\n' +
+      'Valor pago: {valor_pago}\n' +
+      'Valor pendente: {valor_pendente}\n\n' +
+      'Data da compra: {data_venda}\n' +
+      'Data combinada para pagamento: {data_vencimento}\n\n' +
+      'Obrigado pela preferência!',
+    lembrete:
+      'Olá, {cliente}!\n\n' +
+      'Passando para lembrar que o pagamento da sua compra no valor de {valor_pendente} está programado para hoje, {data_vencimento}.\n\n' +
+      'Caso queira realizar o pagamento via Pix:\n' +
+      'Chave Pix: {pix}\n\n' +
+      'Obrigado!',
+    atraso:
+      'Olá, {cliente}!\n\n' +
+      'Identificamos que o pagamento referente à sua compra no valor de {valor_pendente} está em atraso.\n\n' +
+      'A data combinada para pagamento era {data_vencimento}.\n\n' +
+      'Caso queira realizar o pagamento via Pix:\n' +
+      'Chave Pix: {pix}\n\n' +
+      'Se precisar combinar uma nova data, entre em contato conosco.\n\n' +
+      'Obrigado!',
+    pagamento:
+      'Olá, {cliente}!\n\n' +
+      'Recebemos o seu pagamento de {valor}.\n\n' +
+      'Muito obrigado pela preferência! Qualquer coisa estamos à disposição. 🙂'
+  };
+}
+
+function defaultSettings() {
+  return {
+    loja: { nome: 'Minha Loja', responsavel: '', telefone: '', whatsapp: '', endereco: '', logo: '' },
+    pix: { chave: '', tipo: 'CPF' },
+    notificacoes: { ativadas: false, quando: '0', horario: '09:00', som: true },
+    mensagens: defaultMessages(),
+    tema: 'auto',
+    onboardingFeito: false,
+    criadoEm: Date.now()
+  };
+}
+
+function deepMerge(base, over) {
+  const out = Array.isArray(base) ? base.slice() : Object.assign({}, base);
+  if (!over || typeof over !== 'object') return out;
+  Object.keys(over).forEach((k) => {
+    const bv = out[k], ov = over[k];
+    if (bv && typeof bv === 'object' && !Array.isArray(bv) && ov && typeof ov === 'object' && !Array.isArray(ov)) {
+      out[k] = deepMerge(bv, ov);
+    } else if (ov !== undefined && ov !== null) {
+      out[k] = ov;
+    }
+  });
+  return out;
+}
+
+/* ============================== ESTADO GLOBAL ============================== */
+const State = {
+  customers: [],
+  sales: [],
+  payments: [],
+  products: [],
+  settings: defaultSettings(),
+  counter: 0,
+  view: 'dashboard',
+  params: {},
+  ui: {
+    fiadosFilter: 'todos',
+    fiadosSearch: '',
+    salesFilter: 'todos',
+    salesSearch: '',
+    reportPeriod: 'mes',
+    reportFrom: '',
+    reportTo: ''
+  },
+  form: null
+};
+
+/* ============================== NATIVE BRIDGE ============================== */
+const NativeBridge = {
+  capacitor() { return window.Capacitor || null; },
+  isNative() {
+    const c = this.capacitor();
+    if (!c) return false;
+    try {
+      if (typeof c.isNativePlatform === 'function') return !!c.isNativePlatform();
+      return c.platform === 'android' || c.platform === 'ios';
+    } catch (e) { return false; }
+  },
+  platform() {
+    const c = this.capacitor();
+    return (c && c.platform) ? c.platform : 'web';
+  },
+  plugin(name) {
+    const c = this.capacitor();
+    return (c && c.Plugins && c.Plugins[name]) ? c.Plugins[name] : null;
+  },
+  localNotifications() { return this.plugin('LocalNotifications'); },
+  hasLocalNotifications() { return !!this.localNotifications(); },
+  async share(payload) {
+    const S = this.plugin('Share');
+    if (S && S.share) { try { await S.share(payload); return true; } catch (e) { return false; } }
+    if (navigator.share) {
+      try { await navigator.share(payload); return true; } catch (e) { return false; }
+    }
+    return false;
+  },
+  async openUrl(url) {
+    const B = this.plugin('Browser');
+    if (B && B.open) { try { await B.open({ url }); return; } catch (e) { /* fallback */ } }
+    window.open(url, '_blank', 'noopener');
+  }
+};
+
+/* ============================== NOTIFICAÇÕES ============================== */
+/* ATENÇÃO: esta camada está preparada para o plugin @capacitor/local-notifications.
+   No navegador o agendamento real NÃO acontece com o app fechado — quem garante
+   isso é o serviço nativo do Android dentro do APK. Aqui apenas integramos. */
+const Notif = {
+  CHANNEL_ID: 'vendaspro_vencimentos',
+
+  notifIdFor(saleId) {
+    let h = 0;
+    const s = String(saleId);
+    for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
+    return (Math.abs(h) % 2147483000) + 1;
+  },
+
+  async checkPermission() {
+    const LN = NativeBridge.localNotifications();
+    if (LN && LN.checkPermissions) {
+      try { const r = await LN.checkPermissions(); return r.display || 'prompt'; }
+      catch (e) { return 'unsupported'; }
+    }
+    if (typeof Notification !== 'undefined') return Notification.permission;
+    return 'unsupported';
+  },
+
+  async requestNotificationPermission() {
+    const LN = NativeBridge.localNotifications();
+    if (LN && LN.requestPermissions) {
+      try { const r = await LN.requestPermissions(); return r.display || 'denied'; }
+      catch (e) { return 'denied'; }
+    }
+    if (typeof Notification !== 'undefined' && Notification.requestPermission) {
+      try { return await Notification.requestPermission(); } catch (e) { return 'denied'; }
+    }
+    return 'unsupported';
+  },
+
+  async createChannel() {
+    const LN = NativeBridge.localNotifications();
+    if (!LN || !LN.createChannel) return false;
+    try {
+      await LN.createChannel({
+        id: this.CHANNEL_ID,
+        name: 'Lembretes de vencimento',
+        description: 'Avisos de pagamentos fiados próximos do vencimento',
+        importance: 5,
+        visibility: 1,
+        sound: 'default',
+        vibration: true,
+        lights: true,
+        lightColor: '#4F46E5'
+      });
+      return true;
+    } catch (e) { console.warn('createChannel', e); return false; }
+  },
+
+  buildBody(sale, daysBefore) {
+    const val = fmtMoney(sale.valorPendente);
+    if (daysBefore === 0) return sale.clienteNome + ' possui um pagamento de ' + val + ' vencendo hoje.';
+    if (daysBefore === 1) return sale.clienteNome + ' possui um pagamento de ' + val + ' vencendo amanhã.';
+    return sale.clienteNome + ' possui um pagamento de ' + val + ' vencendo em ' + daysBefore + ' dias.';
+  },
+
+  async scheduleDueDateNotification(sale) {
+    if (!sale) return;
+    if (sale.tipoVenda !== 'fiado') return;
+    if (!sale.valorPendente || sale.valorPendente <= 0) return;
+    if (!sale.dataVencimento) return;
+    if (sale.arquivado) return;
+
+    const cfg = State.settings.notificacoes || {};
+    if (!cfg.ativadas) return;
+
+    const LN = NativeBridge.localNotifications();
+    if (!LN || !LN.schedule) return; // No navegador não há agendamento real em background
+
+    await this.createChannel();
+    await this.cancelDueDateNotification(sale.id);
+
+    const daysBefore = Math.max(0, parseInt(cfg.quando, 10) || 0);
+    const parts = String(cfg.horario || '09:00').split(':');
+    const hh = parseInt(parts[0], 10) || 9;
+    const mm = parseInt(parts[1], 10) || 0;
+
+    const dt = parseISO(sale.dataVencimento);
+    if (!dt) return;
+    dt.setDate(dt.getDate() - daysBefore);
+    dt.setHours(hh, mm, 0, 0);
+    if (dt.getTime() <= Date.now()) return; // não agenda no passado
+
+    try {
+      await LN.schedule({
+        notifications: [{
+          id: this.notifIdFor(sale.id),
+          title: 'Pagamento vencendo',
+          body: this.buildBody(sale, daysBefore),
+          schedule: { at: dt, allowWhileIdle: true },
+          channelId: this.CHANNEL_ID,
+          smallIcon: 'ic_stat_icon_config_sample',
+          iconColor: '#4F46E5',
+          sound: cfg.som ? 'default' : null,
+          ongoing: false,
+          autoCancel: true,
+          extra: { saleId: sale.id, tipo: 'vencimento' }
+        }]
+      });
+    } catch (e) { console.warn('schedule notification', e); }
+  },
+
+  async cancelDueDateNotification(saleId) {
+    const LN = NativeBridge.localNotifications();
+    if (!LN || !LN.cancel) return;
+    try { await LN.cancel({ notifications: [{ id: this.notifIdFor(saleId) }] }); }
+    catch (e) { /* ignore */ }
+  },
+
+  async rescheduleNotifications() {
+    const LN = NativeBridge.localNotifications();
+    if (!LN) return;
+    try {
+      const pend = await LN.getPending();
+      if (pend && pend.notifications && pend.notifications.length) {
+        await LN.cancel({ notifications: pend.notifications.map((n) => ({ id: n.id })) });
+      }
+    } catch (e) { /* ignore */ }
+
+    if (!State.settings.notificacoes.ativadas) return;
+    const list = State.sales.filter((s) => s.tipoVenda === 'fiado' && s.valorPendente > 0 && !s.arquivado && s.dataVencimento);
+    for (const s of list) await this.scheduleDueDateNotification(s);
+  },
+
+  async testNotification() {
+    const LN = NativeBridge.localNotifications();
+    const title = 'VendasPro — Teste';
+    const body = 'Se você está vendo isso, as notificações estão funcionando perfeitamente. 🎉';
+
+    if (LN && LN.schedule) {
+      await this.createChannel();
+      try {
+        await LN.schedule({
+          notifications: [{
+            id: 999999,
+            title,
+            body,
+            schedule: { at: new Date(Date.now() + 4000) },
+            channelId: this.CHANNEL_ID,
+            smallIcon: 'ic_stat_icon_config_sample',
+            sound: State.settings.notificacoes.som ? 'default' : null
+          }]
+        });
+        return 'native';
+      } catch (e) { console.warn(e); }
+    }
+
+    if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+      try { new Notification(title, { body }); return 'web'; } catch (e) { /* ignore */ }
+    }
+    return 'none';
+  },
+
+  isNativeAvailable() { return NativeBridge.hasLocalNotifications(); }
+};
+
+/* ============================== CAMADA DE DADOS ============================== */
+const Data = {
+  customerById(id) { return State.customers.find((c) => c.id === id) || null; },
+  saleById(id) { return State.sales.find((s) => s.id === id) || null; },
+  paymentsOf(saleId) { return State.payments.filter((p) => p.vendaId === saleId).sort((a, b) => b.data - a.data); },
+  salesOfCustomer(name, phone) {
+    const n = normText(name), d = phoneDigits(phone);
+    return State.sales.filter((s) => {
+      if (s.excluida) return false;
+      const sameName = n && normText(s.clienteNome) === n;
+      const samePhone = d && phoneDigits(s.clienteTelefone) === d;
+      return sameName || samePhone;
+    }).sort((a, b) => (a.criadoEm || 0) - (b.criadoEm || 0));
+  },
+  productByName(name) {
+    const n = normText(name);
+    return State.products.find((p) => normText(p.nome) === n) || null;
+  }
+};
+
+/* ============================== STATUS / PRIORIDADE ============================== */
+function statusInfo(sale) {
+  if (!sale) return { key: 'PENDENTE', label: '—', tone: 'gray' };
+  if (sale.valorPendente <= 0) return { key: 'PAGO', label: 'Pago', tone: 'green', days: null };
+  if (!sale.dataVencimento) return { key: 'PENDENTE', label: 'Sem vencimento', tone: 'gray', days: null };
+  const d = diffDays(todayISO(), sale.dataVencimento); // >0 futuro, 0 hoje, <0 atrasado
+  if (d < 0) return { key: 'ATRASADO', label: 'Atrasado há ' + Math.abs(d) + (Math.abs(d) === 1 ? ' dia' : ' dias'), tone: 'red', days: d };
+  if (d === 0) return { key: 'VENCE HOJE', label: 'Vence hoje', tone: 'amber', days: 0 };
+  if (d === 1) return { key: 'VENCE AMANHÃ', label: 'Vence amanhã', tone: 'blue', days: 1 };
+  return { key: 'A VENCER', label: 'Vence em ' + d + ' dias', tone: 'blue', days: d };
+}
+
+function saleStatusLabel(sale) {
+  if (sale.arquivado) return { key: 'ARQUIVADO', label: 'Arquivado', tone: 'gray' };
+  return statusInfo(sale);
+}
+
+function fiadoPriority(sale) {
+  const st = statusInfo(sale);
+  if (st.key === 'ATRASADO') return 0;
+  if (st.key === 'VENCE HOJE') return 1;
+  if (st.key === 'VENCE AMANHÃ') return 2;
+  if (st.key === 'A VENCER') return 3;
+  return 4;
+}
+
+function sortFiados(list) {
+  return list.slice().sort((a, b) => {
+    const pa = fiadoPriority(a), pb = fiadoPriority(b);
+    if (pa !== pb) return pa - pb;
+    const da = a.dataVencimento || '9999-99-99';
+    const db = b.dataVencimento || '9999-99-99';
+    if (da !== db) return da < db ? -1 : 1;
+    return (b.criadoEm || 0) - (a.criadoEm || 0);
+  });
+}
+
+/* ============================== WHATSAPP ============================== */
+function renderTemplate(tpl, vars) {
+  return String(tpl || '').replace(/\{(\w+)\}/g, (m, k) => {
+    return (vars[k] !== undefined && vars[k] !== null) ? String(vars[k]) : '';
+  });
+}
+
+function pixBlock() {
+  const chave = (State.settings.pix && State.settings.pix.chave) ? State.settings.pix.chave : '';
+  return chave;
+}
+
+function buildVars(sale, extra) {
+  const cfg = State.settings;
+  const produtosTxt = (sale.produtos || []).map((p) =>
+    '• ' + p.qtd + 'x ' + p.nome + ' — ' + fmtMoney((p.qtd || 0) * (p.valor || 0))
+  ).join('\n');
+  return Object.assign({
+    cliente: sale.clienteNome || 'Cliente',
+    valor: fmtMoney(sale.total),
+    valor_pago: fmtMoney(sale.valorPago),
+    valor_pendente: fmtMoney(sale.valorPendente),
+    produto: produtosTxt,
+    data_venda: fmtDate(sale.dataVenda),
+    data_vencimento: sale.dataVencimento ? fmtDate(sale.dataVencimento) : 'a combinar',
+    pix: pixBlock() || '(não cadastrada)',
+    loja: (cfg.loja && cfg.loja.nome) || 'Minha Loja',
+    telefone_loja: (cfg.loja && cfg.loja.telefone) || ''
+  }, extra || {});
+}
+
+function openWhatsApp(phone, message) {
+  const num = normalizePhone(phone);
+  if (!num || num === '55') {
+    toast('Telefone do cliente não informado.', 'error');
+    return;
+  }
+  const url = 'https://wa.me/' + num + '?text=' + encodeURIComponent(message || '');
+  NativeBridge.openUrl(url);
+}
+
+function waSaleMessage(sale, tipo) {
+  const msgs = State.settings.mensagens || defaultMessages();
+  const vars = buildVars(sale);
+  let tpl;
+  if (tipo === 'atraso') tpl = msgs.atraso;
+  else if (tipo === 'lembrete') tpl = msgs.lembrete;
+  else if (tipo === 'pagamento') tpl = msgs.pagamento;
+  else tpl = msgs.confirmacao;
+  let txt = renderTemplate(tpl, vars);
+  const chave = pixBlock();
+  if (chave && txt.indexOf('{pix}') === -1 && txt.indexOf(chave) === -1 && tipo !== 'pagamento') {
+    txt += '\n\nSe preferir pagar via Pix:\nChave Pix: ' + chave + '\n\nObrigado!';
+  }
+  return txt;
+}
+
+/* ============================== UI PRIMITIVAS ============================== */
+function toast(msg, type) {
+  type = type || 'success';
+  const root = $('#toast-root');
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  const ico = type === 'success' ? 'check' : (type === 'error' ? 'alert' : 'info');
+  el.innerHTML = '<span class="ti">' + icon(ico) + '</span><span>' + esc(msg) + '</span>';
+  root.appendChild(el);
+  requestAnimationFrame(() => el.classList.add('show'));
+  setTimeout(() => {
+    el.classList.remove('show');
+    setTimeout(() => el.remove(), 320);
+  }, 2700);
+}
+
+function openModal(html, opts) {
+  opts = opts || {};
+  const root = $('#modal-root');
+  root.innerHTML =
+    '<div class="modal-backdrop" data-backdrop="1">' +
+      '<div class="modal">' +
+        '<div class="grabber"></div>' +
+        html +
+      '</div>' +
+    '</div>';
+  const bd = root.querySelector('.modal-backdrop');
+  requestAnimationFrame(() => bd.classList.add('show'));
+  if (opts.dismissable !== false) {
+    bd.addEventListener('click', (e) => { if (e.target === bd) closeModal(); });
+  }
+}
+
+function closeModal() {
+  const root = $('#modal-root');
+  const bd = root.querySelector('.modal-backdrop');
+  if (!bd) { root.innerHTML = ''; return; }
+  bd.classList.remove('show');
+  setTimeout(() => { root.innerHTML = ''; }, 230);
+}
+
+function modalHeader(title) {
+  return '<div class="modal-head"><h3>' + esc(title) + '</h3>' +
+    '<button class="icon-btn plain" data-act="closeModal">' + icon('x') + '</button></div>';
+}
+
+function confirmDlg(opts) {
+  return new Promise((resolve) => {
+    const danger = !!opts.danger;
+    openModal(
+      modalHeader(opts.title || 'Confirmar') +
+      '<div class="modal-body"><p class="modal-msg">' + (opts.html || esc(opts.message || '')) + '</p></div>' +
+      '<div class="modal-foot">' +
+        '<button class="btn ghost" id="dlg-cancel">' + esc(opts.cancelText || 'Cancelar') + '</button>' +
+        '<button class="btn ' + (danger ? 'danger' : 'primary') + '" id="dlg-ok">' + esc(opts.confirmText || 'Confirmar') + '</button>' +
+      '</div>',
+      { dismissable: true }
+    );
+    const ok = $('#dlg-ok'), cancel = $('#dlg-cancel');
+    if (ok) ok.onclick = () => { closeModal(); resolve(true); };
+    if (cancel) cancel.onclick = () => { closeModal(); resolve(false); };
+  });
+}
+
+function promptDlg(opts) {
+  return new Promise((resolve) => {
+    openModal(
+      modalHeader(opts.title || '') +
+      '<div class="modal-body">' +
+        '<div class="field"><label>' + esc(opts.label || '') + '</label>' +
+        '<input class="inp" id="dlg-input" type="' + (opts.type || 'text') + '" inputmode="' + (opts.inputmode || 'text') + '" value="' + esc(opts.value || '') + '" placeholder="' + esc(opts.placeholder || '') + '"></div>' +
+        (opts.hint ? '<p class="hint">' + esc(opts.hint) + '</p>' : '') +
+      '</div>' +
+      '<div class="modal-foot">' +
+        '<button class="btn ghost" id="dlg-cancel">Cancelar</button>' +
+        '<button class="btn primary" id="dlg-ok">' + esc(opts.confirmText || 'Confirmar') + '</button>' +
+      '</div>'
+    );
+    const inp = $('#dlg-input');
+    if (inp) { inp.focus(); try { inp.setSelectionRange(inp.value.length, inp.value.length); } catch (e) {} }
+    $('#dlg-ok').onclick = () => { const v = inp ? inp.value : ''; closeModal(); resolve(v); };
+    $('#dlg-cancel').onclick = () => { closeModal(); resolve(null); };
+    if (inp) inp.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); $('#dlg-ok').click(); }
+    });
+  });
+}
+
+/* ============================== NAVEGAÇÃO ============================== */
+const VIEW_META = {
+  dashboard:   { title: 'Início',      nav: 'dashboard',  root: true },
+  newsale:     { title: 'Nova Venda',  nav: 'newsale',    root: true },
+  fiados:      { title: 'Fiados',      nav: 'fiados',     root: true },
+  sales:       { title: 'Vendas',      nav: 'sales',      root: true },
+  reports:     { title: 'Relatórios',  nav: 'reports',    root: true },
+  more:        { title: 'Mais',        nav: 'more',       root: true },
+  saledetail:  { title: 'Detalhes da venda', back: true },
+  editsale:    { title: 'Editar venda', back: true },
+  customer:    { title: 'Cliente',     back: true },
+  archived:    { title: 'Clientes arquivados', back: true },
+  products:    { title: 'Produtos',    back: true },
+  storesettings:{ title: 'Minha loja', back: true },
+  notifsettings:{ title: 'Notificações', back: true },
+  msgs:        { title: 'Mensagens',   back: true },
+  appearance:  { title: 'Aparência',   back: true },
+  backup:      { title: 'Backup e dados', back: true },
+  trash:       { title: 'Lixeira',     back: true },
+  about:       { title: 'Sobre',       back: true }
+};
+
+const NAV_ITEMS = [
+  { id: 'dashboard', label: 'Início', ico: 'home' },
+  { id: 'fiados',    label: 'Fiados', ico: 'book' },
+  { id: 'newsale',   label: 'Nova',   ico: 'plus', fab: true },
+  { id: 'sales',     label: 'Vendas', ico: 'receipt' },
+  { id: 'reports',   label: 'Relatórios', ico: 'chart' },
+  { id: 'more',      label: 'Mais',   ico: 'more' }
+];
+
+function go(view, params) {
+  State.view = view;
+  State.params = params || {};
+  render();
+  const v = $('#views');
+  if (v) v.scrollTop = 0;
+}
+
+function updateNav() {
+  const meta = VIEW_META[State.view] || {};
+  const active = meta.nav || '';
+  const nav = $('#bottomnav');
+  nav.innerHTML = NAV_ITEMS.map((it) => {
+    if (it.fab) {
+      return '<button class="nav-fab" data-act="nav" data-id="' + it.id + '">' +
+        '<span class="fabc">' + icon('plus') + '</span><span>Nova</span></button>';
+    }
+    return '<button class="nav-btn ' + (active === it.id ? 'active' : '') + '" data-act="nav" data-id="' + it.id + '">' +
+      icon(it.ico) + '<span>' + it.label + '</span></button>';
+  }).join('');
+}
+
+function renderAppbar() {
+  const meta = VIEW_META[State.view] || { title: 'VendasPro' };
+  const bar = $('#appbar');
+  const store = (State.settings.loja && State.settings.loja.nome) || 'Minha Loja';
+
+  if (meta.back) {
+    bar.innerHTML =
+      '<div class="appbar-left">' +
+        '<button class="icon-btn plain" data-act="back">' + icon('arrowLeft') + '</button>' +
+        '<div><h1>' + esc(meta.title) + '</h1></div>' +
+      '</div>' +
+      '<div class="appbar-actions">' + (meta.actions || '') + '</div>';
+  } else if (State.view === 'dashboard') {
+    bar.innerHTML =
+      '<div class="appbar-left">' +
+        '<div style="width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--primary),var(--primary-2));display:flex;align-items:center;justify-content:center;color:#fff;flex:0 0 auto;">' + icon('store') + '</div>' +
+        '<div style="min-width:0"><h1>' + esc(store) + '</h1><div class="sub">' + esc(saudacao()) + '</div></div>' +
+      '</div>' +
+      '<div class="appbar-actions">' +
+        '<button class="icon-btn plain" data-act="goSearch">' + icon('search') + '</button>' +
+        '<button class="icon-btn plain" data-act="nav" data-id="more">' + icon('settings') + '</button>' +
+      '</div>';
+  } else {
+    bar.innerHTML =
+      '<div class="appbar-left"><div><h1>' + esc(meta.title) + '</h1></div></div>' +
+      '<div class="appbar-actions">' + (meta.actions || '') + '</div>';
+  }
+}
+
+function saudacao() {
+  const h = new Date().getHours();
+  if (h < 12) return 'Bom dia! Vamos vender 🚀';
+  if (h < 18) return 'Boa tarde! Tudo em ordem?';
+  return 'Boa noite! Confira seus fiados';
+}
+
+function render() {
+  renderAppbar();
+  updateNav();
+  const v = Views[State.view] || Views.dashboard;
+  const el = $('#views');
+  el.innerHTML = '<div class="view-enter">' + v() + '</div>';
+}
+
+function refreshList(containerId, htmlFn) {
+  const el = document.getElementById(containerId);
+  if (el) el.innerHTML = htmlFn();
+}
+
+/* ============================== HELPERS DE ESTATÍSTICA ============================== */
+function salesInRange(fromISO, toISO) {
+  return State.sales.filter((s) => !s.excluida && !s.arquivado && s.dataVenda >= fromISO && s.dataVenda <= toISO);
+}
+function sum(arr, fn) { return arr.reduce((a, b) => a + (fn ? fn(b) : b), 0); }
+
+function dashboardStats() {
+  const today = todayISO();
+  const mk = todayMonthKey();
+  const all = State.sales.filter((s) => !s.excluida);
+
+  const vendasHoje = all.filter((s) => s.dataVenda === today && !s.arquivado);
+  const vendasMes = all.filter((s) => monthKey(s.dataVenda) === mk && !s.arquivado);
+
+  const totalHoje = sum(vendasHoje, (s) => s.total);
+  const totalMes = sum(vendasMes, (s) => s.total);
+
+  const recebidoTotal = sum(all.filter((s) => !s.arquivado), (s) => s.valorPago);
+  const recebidoHoje = sum(vendasHoje, (s) => s.valorPago);
+
+  const fiadosAbertos = all.filter((s) => !s.arquivado && s.tipoVenda === 'fiado' && s.valorPendente > 0);
+  const totalFiado = sum(fiadosAbertos, (s) => s.valorPendente);
+
+  const atrasados = fiadosAbertos.filter((s) => statusInfo(s).key === 'ATRASADO');
+  const totalAtraso = sum(atrasados, (s) => s.valorPendente);
+
+  const venceHoje = fiadosAbertos.filter((s) => statusInfo(s).key === 'VENCE HOJE');
+  const totalVenceHoje = sum(venceHoje, (s) => s.valorPendente);
+
+  const proximos = all.filter((s) => {
+    if (s.arquivado || s.valorPendente <= 0 || !s.dataVencimento) return false;
+    const d = diffDays(today, s.dataVencimento);
+    return d >= 0 && d <= 7;
+  });
+
+  return {
+    totalHoje, totalMes, recebidoTotal, recebidoHoje, totalFiado, totalAtraso, totalVenceHoje,
+    qtdHoje: vendasHoje.length,
+    qtdMes: vendasMes.length,
+    qtdClientes: State.customers.filter((c) => !c.arquivado).length,
+    qtdPendentes: fiadosAbertos.length,
+    qtdAtrasados: atrasados.length,
+    clientesUnicos: new Set(all.map((s) => normText(s.clienteNome))).size,
+    fiadosAbertos, atrasados, venceHoje, proximos,
+    ticketMedio: vendasMes.length ? Math.round(totalMes / vendasMes.length) : 0
+  };
+}
+
+/* ============================== VIEWS ============================== */
+const Views = {};
+
+/* ---------- DASHBOARD ---------- */
+Views.dashboard = function () {
+  const st = dashboardStats();
+  const mesNome = new Date().toLocaleDateString('pt-BR', { month: 'long' });
+
+  let html = '';
+
+  html += '<div class="stats-grid">';
+  html += statCard('Vendas hoje', fmtMoney(st.totalHoje), st.qtdHoje + ' venda' + (st.qtdHoje === 1 ? '' : 's'), 'wallet', 'p');
+  html += statCard('Vendas no mês', fmtMoney(st.totalMes), capitalizar(mesNome) + ' · ' + st.qtdMes + ' vendas', 'trend', 'b');
+  html += statCard('Recebido', fmtMoney(st.recebidoTotal), 'Hoje: ' + fmtMoney(st.recebidoHoje), 'check', 'g');
+  html += statCard('Fiado em aberto', fmtMoney(st.totalFiado), st.qtdPendentes + ' pendente' + (st.qtdPendentes === 1 ? '' : 's'), 'book', 'a');
+  html += statCard('Em atraso', fmtMoney(st.totalAtraso), st.qtdAtrasados + ' cliente' + (st.qtdAtrasados === 1 ? '' : 's'), 'alert', 'r');
+  html += statCard('Vencendo hoje', fmtMoney(st.totalVenceHoje), st.venceHoje.length + ' a receber', 'calendar', 'p');
+  html += '</div>';
+
+  /* Vencimentos próximos */
+  const prox = st.proximos.slice().sort((a, b) => (a.dataVencimento < b.dataVencimento ? -1 : 1)).slice(0, 5);
+  html += '<div class="section-title"><h2>Vencimentos próximos</h2>' +
+    (prox.length ? '<button class="link" data-act="nav" data-id="fiados">Ver todos</button>' : '') + '</div>';
+  if (!prox.length) {
+    html += emptyMini('Nenhum vencimento nos próximos 7 dias.', 'calendar');
+  } else {
+    prox.forEach((s) => { html += miniFiadoCard(s); });
+  }
+
+  /* Em atraso */
+  const atr = sortFiados(st.atrasados).slice(0, 5);
+  html += '<div class="section-title"><h2>Em atraso</h2>' +
+    (atr.length ? '<button class="link" data-act="nav" data-id="fiados">Ver todos</button>' : '') + '</div>';
+  if (!atr.length) {
+    html += emptyMini('Nenhum pagamento atrasado. Ótimo trabalho! 🎉', 'check');
+  } else {
+    atr.forEach((s) => { html += miniFiadoCard(s); });
+  }
+
+  /* Ações rápidas */
+  html += '<div class="section-title"><h2>Ações rápidas</h2></div>';
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:14px;">' +
+    quickAction('Nova venda', 'plus', 'newsale') +
+    quickAction('Fiados', 'book', 'fiados') +
+    quickAction('Relatórios', 'chart', 'reports') +
+    quickAction('Produtos', 'box', 'products') +
+    '</div>';
+
+  if (!State.sales.length) {
+    html += '<div class="card" style="text-align:center;">' +
+      '<div class="empty" style="padding:24px 10px;">' +
+        '<div class="eico">' + icon('receipt') + '</div>' +
+        '<h3>Você ainda não possui vendas.</h3>' +
+        '<p>Comece registrando sua primeira venda agora mesmo.</p>' +
+        '<button class="btn primary" data-act="nav" data-id="newsale">' + icon('plus') + ' Registrar primeira venda</button>' +
+      '</div></div>';
+  }
+
+  return html;
+};
+
+function statCard(label, value, sub, ico, tone) {
+  return '<div class="stat">' +
+    '<div class="s-ico ' + tone + '">' + icon(ico) + '</div>' +
+    '<div class="s-lbl">' + esc(label) + '</div>' +
+    '<div class="s-val mono">' + esc(value) + '</div>' +
+    '<div class="s-sub">' + esc(sub) + '</div>' +
+  '</div>';
+}
+function quickAction(label, ico, view) {
+  return '<button class="btn ghost" style="justify-content:flex-start;padding:15px 14px;" data-act="nav" data-id="' + view + '">' +
+    '<span style="width:32px;height:32px;border-radius:10px;background:var(--surface);display:flex;align-items:center;justify-content:center;color:var(--primary);">' + icon(ico) + '</span>' +
+    '<span style="font-size:13.5px;">' + esc(label) + '</span></button>';
+}
+function emptyMini(text, ico) {
+  return '<div class="card" style="padding:20px;text-align:center;color:var(--muted);font-size:13px;display:flex;align-items:center;justify-content:center;gap:9px;">' +
+    '<span style="color:var(--muted);">' + icon(ico) + '</span>' + esc(text) + '</div>';
+}
+function capitalizar(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
+
+function miniFiadoCard(s) {
+  const st = statusInfo(s);
+  return '<div class="item t-' + st.tone + '" style="cursor:pointer;" data-act="openSale" data-id="' + s.id + '">' +
+    '<div class="item-head">' +
+      '<div style="min-width:0;">' +
+        '<div class="item-name">' + esc(s.clienteNome) + '</div>' +
+        '<div class="item-meta">' + icon('calendar') + esc(fmtDate(s.dataVencimento)) +
+          ' · Venda ' + esc(s.numeroVenda) + '</div>' +
+      '</div>' +
+      '<span class="badge ' + st.tone + '">' + esc(st.label) + '</span>' +
+    '</div>' +
+    '<div class="item-vals" style="margin-bottom:0;">' +
+      '<div class="vblock"><div class="v-lbl">Pendente</div><div class="v-num red mono">' + fmtMoney(s.valorPendente) + '</div></div>' +
+      '<div class="vblock"><div class="v-lbl">Total</div><div class="v-num mono">' + fmtMoney(s.total) + '</div></div>' +
+    '</div>' +
+  '</div>';
+}
+
+/* ---------- NOVA VENDA / EDITAR ---------- */
+function newFormObject(sale) {
+  if (sale) {
+    return {
+      id: sale.id,
+      editing: true,
+      numeroVenda: sale.numeroVenda,
+      clienteNome: sale.clienteNome || '',
+      clienteTelefone: sale.clienteTelefone || '',
+      products: (sale.produtos || []).map((p) => ({ nome: p.nome, codigo: p.codigo || '', qtd: p.qtd, valor: p.valor })),
+      desconto: sale.desconto || 0,
+      subtotal: sale.subtotal || 0,
+      total: sale.total || 0,
+      tipoVenda: sale.tipoVenda || 'vista',
+      formaPagamento: sale.formaPagamento || 'Dinheiro',
+      entrada: sale.tipoVenda === 'fiado' ? (sale.valorPago || 0) : 0,
+      pendente: sale.valorPendente || 0,
+      dataVenda: sale.dataVenda || todayISO(),
+      dataVencimento: sale.dataVencimento || '',
+      observacao: sale.observacao || '',
+      formaCombinada: sale.formaCombinada || ''
+    };
+  }
+  return {
+    id: null,
+    editing: false,
+    numeroVenda: null,
+    clienteNome: '',
+    clienteTelefone: '',
+    products: [{ nome: '', codigo: '', qtd: 1, valor: 0 }],
+    desconto: 0,
+    subtotal: 0,
+    total: 0,
+    tipoVenda: 'vista',
+    formaPagamento: 'Dinheiro',
+    entrada: 0,
+    pendente: 0,
+    dataVenda: todayISO(),
+    dataVencimento: '',
+    observacao: '',
+    formaCombinada: ''
+  };
+}
+
+Views.newsale = function () {
+  if (!State.form || State.form.editing) State.form = newFormObject(null);
+  return saleFormHTML(State.form, false);
+};
+Views.editsale = function () {
+  const sale = Data.saleById(State.params.id);
+  if (!sale) return '<div class="empty"><h3>Venda não encontrada</h3></div>';
+  if (!State.form || !State.form.editing || State.form.id !== sale.id) {
+    State.form = newFormObject(sale);
+  }
+  return saleFormHTML(State.form, true);
+};
+
+function saleFormHTML(f, isEdit) {
+  const clientesOpts = State.customers.map((c) => '<option value="' + esc(c.nome) + '">').join('');
+  const produtosOpts = State.products.map((p) => '<option value="' + esc(p.nome) + '">').join('');
+
+  let html = '';
+
+  /* CLIENTE */
+  html += '<div class="card">';
+  html += '<div class="section-title" style="margin-top:0;"><h2>' + icon('user') + ' Cliente</h2></div>';
+  html += '<div class="field"><label>Nome do cliente</label>' +
+    '<input class="inp" id="f-cliente" list="lista-clientes" placeholder="Ex: João Silva" value="' + esc(f.clienteNome) + '" autocomplete="off">' +
+    '<datalist id="lista-clientes">' + clientesOpts + '</datalist></div>';
+  html += '<div class="field" style="margin-bottom:0;"><label>WhatsApp / Telefone</label>' +
+    '<input class="inp" id="f-telefone" type="tel" inputmode="numeric" placeholder="(11) 91234-5678" value="' + esc(maskPhone(f.clienteTelefone)) + '">' +
+    '<div class="hint">Prefixo +55 é adicionado automaticamente no envio.</div></div>';
+  html += '</div>';
+
+  /* PRODUTOS */
+  html += '<div class="card">';
+  html += '<div class="section-title" style="margin-top:0;"><h2>' + icon('box') + ' Produtos</h2>' +
+    '<button class="link" data-act="addProd">+ Adicionar</button></div>';
+  html += '<div id="produtos-wrap">' + productsHTML(f) + '</div>';
+  html += '<datalist id="lista-produtos">' + produtosOpts + '</datalist>';
+  html += '</div>';
+
+  /* VALORES */
+  html += '<div class="card">';
+  html += '<div class="totals-box">' +
+    '<div class="total-line"><span>Subtotal</span><span class="mono" id="f-subtotal-view">' + fmtMoney(f.subtotal) + '</span></div>' +
+    '<div class="total-line" style="align-items:center;">' +
+      '<span>Desconto (R$)</span>' +
+      '<input class="inp" id="f-desconto" inputmode="decimal" style="max-width:120px;text-align:right;min-height:40px;padding:8px 10px;" value="' + centsToInput(f.desconto) + '">' +
+    '</div>' +
+    '<div class="total-line big"><span>Total</span><span class="mono" id="f-total-view">' + fmtMoney(f.total) + '</span></div>' +
+  '</div>';
+  html += '</div>';
+
+  /* PAGAMENTO */
+  html += '<div class="card">';
+  html += '<div class="section-title" style="margin-top:0;"><h2>' + icon('wallet') + ' Forma de pagamento</h2></div>';
+  html += '<div class="seg">' +
+    '<button class="seg-btn ' + (f.tipoVenda === 'vista' ? 'active' : '') + '" data-act="setTipo" data-id="vista">' + icon('cash') + 'À VISTA</button>' +
+    '<button class="seg-btn ' + (f.tipoVenda === 'fiado' ? 'active' : '') + '" data-act="setTipo" data-id="fiado">' + icon('book') + 'FIADO</button>' +
+  '</div>';
+
+  if (f.tipoVenda === 'vista') {
+    html += '<div class="field" style="margin-bottom:0;"><label>Como o cliente pagou</label>' +
+      '<div class="chips" style="flex-wrap:wrap;overflow:visible;">' +
+        ['Dinheiro', 'Pix', 'Cartão de crédito', 'Cartão de débito', 'Outra forma'].map((m) =>
+          '<button class="chip ' + (f.formaPagamento === m ? 'active' : '') + '" data-act="setForma" data-id="' + esc(m) + '">' + esc(m) + '</button>'
+        ).join('') +
+      '</div></div>';
+  } else {
+    html += '<div class="field-row">' +
+      '<div class="field"><label>Entrada (opcional)</label>' +
+        '<input class="inp" id="f-entrada" inputmode="decimal" value="' + centsToInput(f.entrada) + '" placeholder="0,00"></div>' +
+      '<div class="field"><label>Valor restante</label>' +
+        '<div class="inp" style="display:flex;align-items:center;font-weight:750;color:var(--red);background:var(--red-soft);border-color:transparent;" id="f-pendente-view" class="mono">' + fmtMoney(f.pendente) + '</div></div>' +
+    '</div>';
+
+    html += '<div class="field"><label>Data de vencimento</label>' +
+      '<div class="chips" style="flex-wrap:wrap;overflow:visible;">' +
+        '<button class="chip" data-act="setVenc" data-id="hoje">Hoje</button>' +
+        '<button class="chip" data-act="setVenc" data-id="amanha">Amanhã</button>' +
+        '<button class="chip" data-act="setVenc" data-id="7">Em 7 dias</button>' +
+        '<button class="chip" data-act="setVenc" data-id="30">Em 30 dias</button>' +
+      '</div>' +
+      '<input class="inp" type="date" id="f-vencimento" style="margin-top:10px;" value="' + esc(f.dataVencimento) + '">' +
+    '</div>';
+
+    html += '<div class="field"><label>Forma combinada (opcional)</label>' +
+      '<input class="inp" id="f-formacomb" placeholder="Ex: Pix ou dinheiro no dia" value="' + esc(f.formaCombinada) + '"></div>';
+  }
+  html += '</div>';
+
+  /* OBSERVAÇÃO */
+  html += '<div class="card">';
+  html += '<div class="section-title" style="margin-top:0;"><h2>' + icon('message') + ' Observações</h2></div>';
+  html += '<textarea class="txa" id="f-obs" placeholder="Ex: Produto reservado, cliente vai buscar depois, pagamento combinado...">' + esc(f.observacao) + '</textarea>';
+  html += '<div class="field" style="margin-top:12px;margin-bottom:0;"><label>Data da venda</label>' +
+    '<input class="inp" type="date" id="f-datavenda" value="' + esc(f.dataVenda) + '"></div>';
+  html += '</div>';
+
+  html += '<button class="btn primary block" style="margin-top:6px;" data-act="finalizarVenda">' +
+    icon('check') + (isEdit ? 'Salvar alterações' : 'Finalizar venda') + '</button>';
+
+  return html;
+}
+
+function productsHTML(f) {
+  if (!f.products.length) {
+    return '<div class="empty" style="padding:22px;"><p style="margin:0;">Nenhum produto adicionado.</p></div>';
+  }
+  return f.products.map((p, i) => {
+    return '<div class="prod-row" data-idx="' + i + '">' +
+      '<div class="prod-main">' +
+        '<input class="inp" list="lista-produtos" data-pf="nome" placeholder="Nome do produto" value="' + esc(p.nome) + '">' +
+        '<button class="icon-btn danger sm" data-act="removeProd" data-id="' + i + '">' + icon('trash') + '</button>' +
+      '</div>' +
+      '<div class="prod-grid">' +
+        '<div class="mini"><span>Qtd</span><input class="inp" type="number" inputmode="numeric" min="1" step="1" data-pf="qtd" value="' + (p.qtd || 1) + '"></div>' +
+        '<div class="mini"><span>Valor unit.</span><input class="inp" inputmode="decimal" data-pf="valor" value="' + centsToInput(p.valor) + '"></div>' +
+        '<div class="mini"><span>Subtotal</span><div class="subtotal mono">' + fmtMoney((p.qtd || 0) * (p.valor || 0)) + '</div></div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function syncFormFromDOM() {
+  const f = State.form;
+  if (!f) return;
+  const cli = $('#f-cliente'); if (cli) f.clienteNome = cli.value.trim();
+  const tel = $('#f-telefone'); if (tel) f.clienteTelefone = phoneDigits(tel.value);
+  const desc = $('#f-desconto'); if (desc) f.desconto = parseMoney(desc.value);
+  const obs = $('#f-obs'); if (obs) f.observacao = obs.value;
+  const dv = $('#f-datavenda'); if (dv && dv.value) f.dataVenda = dv.value;
+  const venc = $('#f-vencimento'); if (venc) f.dataVencimento = venc.value;
+  const ent = $('#f-entrada'); if (ent) f.entrada = parseMoney(ent.value);
+  const fc = $('#f-formacomb'); if (fc) f.formaCombinada = fc.value.trim();
+  $$('#produtos-wrap .prod-row').forEach((row) => {
+    const i = parseInt(row.dataset.idx, 10);
+    const p = f.products[i];
+    if (!p) return;
+    const nome = row.querySelector('[data-pf="nome"]');
+    const qtd = row.querySelector('[data-pf="qtd"]');
+    const val = row.querySelector('[data-pf="valor"]');
+    if (nome) p.nome = nome.value.trim();
+    if (qtd) p.qtd = Math.max(1, parseInt(qtd.value, 10) || 1);
+    if (val) p.valor = parseMoney(val.value);
+  });
+  recalcTotals(false);
+}
+
+function recalcTotals(updateInputs) {
+  const f = State.form;
+  if (!f) return;
+  const subtotal = f.products.reduce((s, p) => s + (p.qtd || 0) * (p.valor || 0), 0);
+  f.subtotal = subtotal;
+  f.total = Math.max(0, subtotal - (f.desconto || 0));
+
+  const sv = $('#f-subtotal-view'); if (sv) sv.textContent = fmtMoney(f.subtotal);
+  const tv = $('#f-total-view'); if (tv) tv.textContent = fmtMoney(f.total);
+
+  if (f.tipoVenda === 'fiado') {
+    const ent = Math.min(f.entrada || 0, f.total);
+    f.entrada = ent;
+    f.pendente = f.total - ent;
+    const pv = $('#f-pendente-view'); if (pv) pv.textContent = fmtMoney(f.pendente);
+  } else {
+    f.pendente = 0;
+  }
+  if (updateInputs !== false) { /* reservado */ }
+}
+
+/* ---------- FIADOS ---------- */
+Views.fiados = function () {
+  const meta = VIEW_META.fiados;
+  let html = '';
+  html += '<div class="search-wrap">' + icon('search') +
+    '<input class="inp" id="search-fiados" placeholder="Pesquisar cliente, telefone, produto..." value="' + esc(State.ui.fiadosSearch) + '">' +
+    '</div>';
+  html += '<div class="chips" id="fiados-chips">' + fiadosChips() + '</div>';
+  html += '<div id="fiados-list">' + fiadosListHTML() + '</div>';
+  return html;
+};
+
+function fiadosChips() {
+  const f = State.ui.fiadosFilter;
+  const items = [
+    ['todos', 'Todos'],
+    ['vencendohoje', 'Vence hoje'],
+    ['atrasados', 'Em atraso'],
+    ['avencer', 'A vencer'],
+    ['pagos', 'Pagos'],
+    ['arquivados', 'Arquivados']
+  ];
+  return items.map((it) =>
+    '<button class="chip ' + (f === it[0] ? 'active' : '') + '" data-act="fiadosFilter" data-id="' + it[0] + '">' + it[1] + '</button>'
+  ).join('');
+}
+
+function filteredFiados() {
+  const f = State.ui.fiadosFilter;
+  const q = State.ui.fiadosSearch;
+  let list = State.sales.filter((s) => !s.excluida);
+
+  if (f === 'arquivados') {
+    list = list.filter((s) => s.arquivado);
+  } else {
+    list = list.filter((s) => !s.arquivado && s.tipoVenda === 'fiado');
+  }
+
+  if (f === 'vencendohoje') list = list.filter((s) => s.valorPendente > 0 && statusInfo(s).key === 'VENCE HOJE');
+  else if (f === 'atrasados') list = list.filter((s) => s.valorPendente > 0 && statusInfo(s).key === 'ATRASADO');
+  else if (f === 'avencer') list = list.filter((s) => s.valorPendente > 0 && ['A VENCER', 'VENCE AMANHÃ', 'PENDENTE'].indexOf(statusInfo(s).key) > -1);
+  else if (f === 'pagos') list = list.filter((s) => s.valorPendente <= 0);
+  else if (f === 'todos') list = list.filter((s) => s.valorPendente > 0 || s.arquivado);
+
+  if (q && q.trim()) {
+    const query = q.trim();
+    list = list.filter((s) => {
+      if (includesQuery(s.clienteNome, query)) return true;
+      if (includesQuery(s.clienteTelefone, query)) return true;
+      if (includesQuery(s.numeroVenda, query)) return true;
+      if (includesQuery(String(s.total / 100), query)) return true;
+      if ((s.produtos || []).some((p) => includesQuery(p.nome, query))) return true;
+      if (includesQuery(fmtDate(s.dataVencimento), query)) return true;
+      if (includesQuery(fmtDate(s.dataVenda), query)) return true;
+      return false;
+    });
+  }
+
+  return sortFiados(list);
+}
+
+function fiadosListHTML() {
+  const list = filteredFiados();
+  if (!list.length) {
+    const f = State.ui.fiadosFilter;
+    const map = {
+      arquivados: ['Nenhum cliente arquivado', 'Clientes arquivados aparecerão aqui.', 'archive'],
+      pagos: ['Nenhum fiado quitado', 'Os fiados pagos aparecerão aqui.', 'check'],
+      atrasados: ['Nenhum pagamento atrasado', 'Continue assim! 🎉', 'check'],
+      vencendohoje: ['Nada vencendo hoje', 'Nenhum pagamento com vencimento para hoje.', 'calendar']
+    };
+    const m = map[f] || ['Nenhum fiado em aberto', 'Você não possui pagamentos pendentes.', 'book'];
+    return '<div class="card"><div class="empty">' +
+      '<div class="eico">' + icon(m[2]) + '</div>' +
+      '<h3>' + esc(m[0]) + '</h3><p>' + esc(m[1]) + '</p>' +
+      (f === 'todos' ? '<button class="btn primary" data-act="nav" data-id="newsale">' + icon('plus') + ' Nova venda fiada</button>' : '') +
+      '</div></div>';
+  }
+  return list.map(fiadoCard).join('');
+}
+
+function fiadoCard(s) {
+  const st = statusInfo(s);
+  const pay = Data.paymentsOf(s.id);
+  return '<div class="item t-' + st.tone + '">' +
+    '<div class="item-head" data-act="openSale" data-id="' + s.id + '" style="cursor:pointer;">' +
+      '<div style="min-width:0;flex:1;">' +
+        '<div class="item-name">' + esc(s.clienteNome || 'Cliente') + '</div>' +
+        '<div class="item-meta">' +
+          (s.clienteTelefone ? icon('phone') + esc(maskPhone(s.clienteTelefone)) + ' · ' : '') +
+          icon('receipt') + esc(s.numeroVenda) +
+        '</div>' +
+      '</div>' +
+      '<span class="badge ' + st.tone + '">' + esc(st.label) + '</span>' +
+    '</div>' +
+    '<div class="item-vals">' +
+      '<div class="vblock"><div class="v-lbl">Pendente</div><div class="v-num red mono">' + fmtMoney(s.valorPendente) + '</div></div>' +
+      '<div class="vblock"><div class="v-lbl">Total</div><div class="v-num mono">' + fmtMoney(s.total) + '</div></div>' +
+      '<div class="vblock"><div class="v-lbl">Vencimento</div><div class="v-num mono" style="font-size:13.5px;">' + fmtDate(s.dataVencimento) + '</div></div>' +
+      (pay.length ? '<div class="vblock"><div class="v-lbl">Pago</div><div class="v-num green mono" style="font-size:13.5px;">' + fmtMoney(s.valorPago) + '</div></div>' : '') +
+    '</div>' +
+    '<div class="item-actions">' +
+      '<button class="btn xs wa" data-act="waCobrar" data-id="' + s.id + '">' + waIcon() + ' Cobrar</button>' +
+      '<button class="btn xs success" data-act="registrarPagamento" data-id="' + s.id + '">' + icon('cash') + ' Pagamento</button>' +
+      '<button class="btn xs ghost" data-act="openSale" data-id="' + s.id + '">' + icon('edit') + ' Detalhes</button>' +
+      (s.arquivado
+        ? '<button class="btn xs outline" data-act="desarquivar" data-id="' + s.id + '">' + icon('unarchive') + ' Restaurar</button>'
+        : '<button class="btn xs outline" data-act="arquivar" data-id="' + s.id + '">' + icon('archive') + ' Arquivar</button>') +
+    '</div>' +
+  '</div>';
+}
+
+/* ---------- VENDAS ---------- */
+Views.sales = function () {
+  let html = '';
+  html += '<div class="search-wrap">' + icon('search') +
+    '<input class="inp" id="search-sales" placeholder="Pesquisar por cliente, nº da venda, produto..." value="' + esc(State.ui.salesSearch) + '">' +
+    '</div>';
+  html += '<div class="chips" id="sales-chips">' + salesChips() + '</div>';
+  html += '<div id="sales-list">' + salesListHTML() + '</div>';
+  return html;
+};
+
+function salesChips() {
+  const f = State.ui.salesFilter;
+  const items = [
+    ['todos', 'Todas'],
+    ['hoje', 'Hoje'],
+    ['ontem', 'Ontem'],
+    ['7', 'Últimos 7 dias'],
+    ['mes', 'Este mês'],
+    ['mesanterior', 'Mês anterior'],
+    ['vista', 'À vista'],
+    ['fiado', 'Fiado'],
+    ['pago', 'Pago'],
+    ['pendente', 'Pendente'],
+    ['atrasado', 'Atrasado']
+  ];
+  return items.map((it) =>
+    '<button class="chip ' + (f === it[0] ? 'active' : '') + '" data-act="salesFilter" data-id="' + it[0] + '">' + it[1] + '</button>'
+  ).join('');
+}
+
+function filteredSales() {
+  const f = State.ui.salesFilter;
+  const q = State.ui.salesSearch;
+  const today = todayISO();
+  let list = State.sales.filter((s) => !s.excluida);
+
+  if (f === 'hoje') list = list.filter((s) => s.dataVenda === today);
+  else if (f === 'ontem') list = list.filter((s) => s.dataVenda === addDaysISO(today, -1));
+  else if (f === '7') list = list.filter((s) => diffDays(s.dataVenda, today) <= 6 && diffDays(s.dataVenda, today) >= 0);
+  else if (f === 'mes') list = list.filter((s) => monthKey(s.dataVenda) === todayMonthKey());
+  else if (f === 'mesanterior') {
+    const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - 1);
+    const mk = isoOf(d).slice(0, 7);
+    list = list.filter((s) => monthKey(s.dataVenda) === mk);
+  }
+  else if (f === 'vista') list = list.filter((s) => s.tipoVenda === 'vista');
+  else if (f === 'fiado') list = list.filter((s) => s.tipoVenda === 'fiado');
+  else if (f === 'pago') list = list.filter((s) => s.valorPendente <= 0);
+  else if (f === 'pendente') list = list.filter((s) => s.valorPendente > 0 && statusInfo(s).key !== 'ATRASADO');
+  else if (f === 'atrasado') list = list.filter((s) => s.valorPendente > 0 && statusInfo(s).key === 'ATRASADO');
+
+  if (q && q.trim()) {
+    const query = q.trim();
+    list = list.filter((s) => {
+      if (includesQuery(s.clienteNome, query)) return true;
+      if (includesQuery(s.clienteTelefone, query)) return true;
+      if (includesQuery(s.numeroVenda, query)) return true;
+      if (includesQuery(fmtDate(s.dataVenda), query)) return true;
+      if ((s.produtos || []).some((p) => includesQuery(p.nome, query))) return true;
+      return false;
+    });
+  }
+
+  return list.sort((a, b) => (b.criadoEm || 0) - (a.criadoEm || 0));
+}
+
+function salesListHTML() {
+  const list = filteredSales();
+  if (!list.length) {
+    return '<div class="card"><div class="empty">' +
+      '<div class="eico">' + icon('receipt') + '</div>' +
+      '<h3>Nenhuma venda encontrada</h3>' +
+      '<p>Ajuste os filtros ou registre uma nova venda.</p>' +
+      '<button class="btn primary" data-act="nav" data-id="newsale">' + icon('plus') + ' Nova venda</button>' +
+      '</div></div>';
+  }
+  return list.map(saleCard).join('');
+}
+
+function saleCard(s) {
+  const st = s.valorPendente > 0 ? statusInfo(s) : { key: 'PAGO', label: 'Pago', tone: 'green' };
+  return '<div class="item t-' + st.tone + '" data-act="openSale" data-id="' + s.id + '" style="cursor:pointer;">' +
+    '<div class="item-head">' +
+      '<div style="min-width:0;flex:1;">' +
+        '<div class="item-name">' + esc(s.clienteNome || 'Cliente') + '</div>' +
+        '<div class="item-meta">' +
+          icon('receipt') + esc(s.numeroVenda) + ' · ' + icon('calendar') + esc(fmtDate(s.dataVenda)) +
+        '</div>' +
+      '</div>' +
+      '<span class="badge ' + st.tone + '">' + esc(s.tipoVenda === 'fiado' ? 'Fiado' : 'À vista') + '</span>' +
+    '</div>' +
+    '<div class="item-vals" style="margin-bottom:0;">' +
+      '<div class="vblock"><div class="v-lbl">Total</div><div class="v-num mono">' + fmtMoney(s.total) + '</div></div>' +
+      (s.valorPendente > 0
+        ? '<div class="vblock"><div class="v-lbl">Pendente</div><div class="v-num red mono">' + fmtMoney(s.valorPendente) + '</div></div>'
+        : '<div class="vblock"><div class="v-lbl">Pago</div><div class="v-num green mono">' + fmtMoney(s.valorPago) + '</div></div>') +
+      '<div class="vblock"><div class="v-lbl">Pagamento</div><div class="v-num mono" style="font-size:13px;">' + esc(s.formaPagamento || '—') + '</div></div>' +
+    '</div>' +
+  '</div>';
+}
+
+/* ---------- DETALHE DA VENDA ---------- */
+Views.saledetail = function () {
+  const s = Data.saleById(State.params.id);
+  if (!s) return '<div class="card"><div class="empty"><h3>Venda não encontrada</h3></div></div>';
+  const st = s.valorPendente > 0 ? statusInfo(s) : { key: 'PAGO', label: 'Pago', tone: 'green' };
+  const pay = Data.paymentsOf(s.id);
+
+  let html = '';
+  html += '<div class="card">';
+  html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px;">' +
+    '<div><div style="font-size:12px;color:var(--muted);font-weight:700;letter-spacing:.4px;">VENDA</div>' +
+    '<div style="font-size:24px;font-weight:800;letter-spacing:-1px;">' + esc(s.numeroVenda) + '</div></div>' +
+    '<span class="badge ' + st.tone + '">' + esc(st.label) + '</span></div>';
+
+  html += sumRow('Cliente', esc(s.clienteNome || '—'));
+  html += sumRow('Telefone', s.clienteTelefone ? esc(maskPhone(s.clienteTelefone)) : '—');
+  html += sumRow('Tipo', s.tipoVenda === 'fiado' ? 'Fiado' : 'À vista');
+  html += sumRow('Forma de pagamento', esc(s.formaPagamento || '—'));
+  if (s.formaCombinada) html += sumRow('Combinado', esc(s.formaCombinada));
+  html += sumRow('Data da venda', esc(fmtDate(s.dataVenda)));
+  html += sumRow('Vencimento', s.dataVencimento ? esc(fmtDate(s.dataVencimento)) : '—');
+  html += '</div>';
+
+  html += '<div class="card">';
+  html += '<div class="section-title" style="margin-top:0;"><h2>Produtos</h2></div>';
+  if ((s.produtos || []).length) {
+    s.produtos.forEach((p) => {
+      html += '<div class="prod-line"><span>' + esc(p.nome) + ' <span class="muted">× ' + p.qtd + '</span></span>' +
+        '<span class="mono bold">' + fmtMoney((p.qtd || 0) * (p.valor || 0)) + '</span></div>';
+    });
+  } else {
+    html += '<p class="muted small">Nenhum produto registrado.</p>';
+  }
+  html += '<div class="divider"></div>';
+  html += '<div class="total-line"><span>Subtotal</span><span class="mono">' + fmtMoney(s.subtotal) + '</span></div>';
+  if (s.desconto) html += '<div class="total-line"><span>Desconto</span><span class="mono">- ' + fmtMoney(s.desconto) + '</span></div>';
+  html += '<div class="total-line big"><span>Total</span><span class="mono">' + fmtMoney(s.total) + '</span></div>';
+  html += '<div class="total-line"><span>Pago</span><span class="g mono">' + fmtMoney(s.valorPago) + '</span></div>';
+  if (s.valorPendente > 0) html += '<div class="total-line"><span>Pendente</span><span class="r mono">' + fmtMoney(s.valorPendente) + '</span></div>';
+  html += '</div>';
+
+  if (pay.length) {
+    html += '<div class="card">';
+    html += '<div class="section-title" style="margin-top:0;"><h2>Histórico de pagamentos</h2></div>';
+    pay.forEach((p) => {
+      html += '<div class="sum-row"><span class="k">' + esc(fmtDateTime(p.data)) + '</span>' +
+        '<span class="v">' + fmtMoney(p.valor) + ' <span class="muted small">· ' + esc(p.formaPagamento || '—') + '</span></span></div>';
+    });
+    html += '</div>';
+  }
+
+  if (s.observacao) {
+    html += '<div class="card"><div class="section-title" style="margin-top:0;"><h2>Observações</h2></div>' +
+      '<p style="margin:0;color:var(--text-2);font-size:14px;white-space:pre-wrap;">' + esc(s.observacao) + '</p></div>';
+  }
+
+  if (s.historico && s.historico.length) {
+    html += '<div class="card"><div class="section-title" style="margin-top:0;"><h2>Histórico</h2></div>';
+    s.historico.slice().reverse().forEach((h) => {
+      html += '<div class="sum-row"><span class="k">' + esc(fmtDateTime(h.data)) + '</span><span class="v small">' + esc(h.texto) + '</span></div>';
+    });
+    html += '</div>';
+  }
+
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">';
+  html += '<button class="btn wa" data-act="waComprovante" data-id="' + s.id + '">' + waIcon() + ' WhatsApp</button>';
+  html += '<button class="btn success" data-act="registrarPagamento" data-id="' + s.id + '" ' + (s.valorPendente <= 0 ? 'disabled' : '') + '>' + icon('cash') + ' Pagamento</button>';
+  html += '<button class="btn ghost" data-act="editarVenda" data-id="' + s.id + '">' + icon('edit') + ' Editar</button>';
+  html += '<button class="btn ghost" data-act="alterarVencimento" data-id="' + s.id + '" ' + (s.tipoVenda !== 'fiado' ? 'disabled' : '') + '>' + icon('calendar') + ' Vencimento</button>';
+  html += '<button class="btn ghost" data-act="compartilharVenda" data-id="' + s.id + '">' + icon('share') + ' Compartilhar</button>';
+  html += '<button class="btn ghost" data-act="arquivar" data-id="' + s.id + '">' + icon(s.arquivado ? 'unarchive' : 'archive') + (s.arquivado ? ' Restaurar' : ' Arquivar') + '</button>';
+  html += '</div>';
+  html += '<button class="btn danger block" style="margin-top:10px;" data-act="excluirVenda" data-id="' + s.id + '">' + icon('trash') + ' Excluir venda</button>';
+
+  return html;
+};
+
+function sumRow(k, v) {
+  return '<div class="sum-row"><span class="k">' + esc(k) + '</span><span class="v">' + v + '</span></div>';
+}
+
+/* ---------- CLIENTE ---------- */
+Views.customer = function () {
+  const nome = State.params.nome || '';
+  const tel = State.params.telefone || '';
+  const vendas = Data.salesOfCustomer(nome, tel);
+  if (!vendas.length) return '<div class="card"><div class="empty"><h3>Cliente não encontrado</h3></div></div>';
+
+  const total = sum(vendas, (s) => s.total);
+  const pago = sum(vendas, (s) => s.valorPago);
+  const pend = sum(vendas, (s) => s.valorPendente);
+  const atraso = sum(vendas.filter((s) => s.valorPendente > 0 && statusInfo(s).key === 'ATRASADO'), (s) => s.valorPendente);
+  const nomeExib = vendas[vendas.length - 1].clienteNome || nome;
+  const telExib = tel || vendas[vendas.length - 1].clienteTelefone || '';
+  const cust = State.customers.find((c) => normText(c.nome) === normText(nomeExib));
+
+  let html = '';
+  html += '<div class="card">';
+  html += '<div style="display:flex;gap:13px;align-items:center;margin-bottom:14px;">' +
+    '<div style="width:52px;height:52px;border-radius:17px;background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;flex:0 0 auto;">' +
+      esc((nomeExib || '?').charAt(0).toUpperCase()) + '</div>' +
+    '<div style="min-width:0;"><div style="font-weight:750;font-size:17px;letter-spacing:-.3px;">' + esc(nomeExib) + '</div>' +
+    '<div class="muted small">' + (telExib ? esc(maskPhone(telExib)) : 'Sem telefone') + '</div></div></div>';
+
+  html += '<div class="stats-grid" style="grid-template-columns:1fr 1fr;">' +
+    statMini('Total comprado', fmtMoney(total), 'b') +
+    statMini('Total pago', fmtMoney(pago), 'g') +
+    statMini('Pendente', fmtMoney(pend), 'a') +
+    statMini('Em atraso', fmtMoney(atraso), 'r') +
+  '</div>';
+  html += '</div>';
+
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">' +
+    '<button class="btn wa" data-act="waCliente" data-id="' + esc(telExib) + '">' + waIcon() + ' WhatsApp</button>' +
+    '<button class="btn ghost" data-act="editarCliente" data-id="' + esc(nomeExib) + '">' + icon('edit') + ' Editar</button>' +
+    '</div>';
+
+  html += '<div class="section-title"><h2>Histórico de compras (' + vendas.length + ')</h2></div>';
+  vendas.slice().reverse().forEach((s) => {
+    const st = s.valorPendente > 0 ? statusInfo(s) : { label: 'Pago', tone: 'green' };
+    html += '<div class="item t-' + st.tone + '" data-act="openSale" data-id="' + s.id + '" style="cursor:pointer;">' +
+      '<div class="item-head">' +
+        '<div style="min-width:0;flex:1;"><div class="item-name" style="font-size:14.5px;">' + esc(s.numeroVenda) + ' · ' + fmtMoney(s.total) + '</div>' +
+        '<div class="item-meta">' + icon('calendar') + esc(fmtDate(s.dataVenda)) + ' · ' + esc(s.formaPagamento || '—') +
+        (s.dataVencimento ? ' · venc. ' + esc(fmtDate(s.dataVencimento)) : '') + '</div></div>' +
+        '<span class="badge ' + st.tone + '">' + esc(st.label) + '</span>' +
+      '</div>' +
+      ((s.produtos || []).length ? '<div style="margin-top:6px;">' + s.produtos.map((p) =>
+        '<div class="prod-line"><span>' + esc(p.nome) + ' × ' + p.qtd + '</span><span class="mono">' + fmtMoney((p.qtd || 0) * (p.valor || 0)) + '</span></div>'
+      ).join('') + '</div>' : '') +
+    '</div>';
+  });
+
+  return html;
+};
+
+function statMini(label, value, tone) {
+  const map = { g: 'g', r: 'r', a: 'a', b: 'b' };
+  return '<div style="background:var(--surface-2);border-radius:13px;padding:11px;">' +
+    '<div class="s-lbl" style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;">' + esc(label) + '</div>' +
+    '<div class="mono" style="font-size:16px;font-weight:800;margin-top:3px;letter-spacing:-.4px;color:var(--' + (tone === 'g' ? 'green' : tone === 'r' ? 'red' : tone === 'a' ? 'amber' : 'blue') + ');">' + esc(value) + '</div>' +
+  '</div>';
+}
+
+/* ---------- ARQUIVADOS ---------- */
+Views.archived = function () {
+  const list = sortFiados(State.sales.filter((s) => !s.excluida && s.arquivado));
+  let html = '';
+  html += '<div class="card" style="background:var(--amber-soft);border-color:transparent;">' +
+    '<div style="display:flex;gap:11px;align-items:flex-start;color:var(--amber);">' + icon('info') +
+    '<div style="font-size:13px;line-height:1.55;color:var(--text-2);">Clientes arquivados permanecem com todo o histórico preservado. Nada foi excluído.</div></div></div>';
+
+  if (!list.length) {
+    html += '<div class="card"><div class="empty"><div class="eico">' + icon('archive') + '</div>' +
+      '<h3>Nenhum cliente arquivado</h3><p>Os clientes que você arquivar aparecerão aqui.</p></div></div>';
+    return html;
+  }
+  list.forEach((s) => { html += fiadoCard(s); });
+  return html;
+};
+
+/* ---------- PRODUTOS ---------- */
+Views.products = function () {
+  let html = '';
+  html += '<button class="btn primary block" data-act="novoProduto" style="margin-bottom:14px;">' + icon('plus') + ' Cadastrar produto</button>';
+  if (!State.products.length) {
+    html += '<div class="card"><div class="empty"><div class="eico">' + icon('box') + '</div>' +
+      '<h3>Nenhum produto cadastrado</h3><p>O cadastro é opcional — você pode digitar os produtos direto na venda.</p></div></div>';
+    return html;
+  }
+  State.products.sort((a, b) => a.nome.localeCompare(b.nome)).forEach((p) => {
+    const baixo = p.estoque !== null && p.estoque !== undefined && p.estoqueMinimo != null && p.estoque <= p.estoqueMinimo;
+    html += '<div class="item t-' + (baixo ? 'amber' : 'blue') + '">' +
+      '<div class="item-head">' +
+        '<div style="min-width:0;flex:1;"><div class="item-name">' + esc(p.nome) + '</div>' +
+        '<div class="item-meta">' + (p.codigo ? 'Cód. ' + esc(p.codigo) + ' · ' : '') + esc(p.categoria || 'Sem categoria') + '</div></div>' +
+        '<div class="mono bold">' + fmtMoney(p.preco) + '</div>' +
+      '</div>' +
+      (p.estoque !== null && p.estoque !== undefined && p.estoque !== ''
+        ? '<div class="item-vals" style="margin:8px 0 0;"><div class="vblock"><div class="v-lbl">Estoque</div>' +
+          '<div class="v-num ' + (baixo ? 'red' : '') + '">' + p.estoque + '</div></div>' +
+          '<div class="vblock"><div class="v-lbl">Mínimo</div><div class="v-num" style="font-size:13px;">' + (p.estoqueMinimo || 0) + '</div></div></div>' : '') +
+      '<div class="item-actions">' +
+        '<button class="btn xs ghost" data-act="editarProduto" data-id="' + p.id + '">' + icon('edit') + ' Editar</button>' +
+        '<button class="btn xs outline" data-act="ajusteEstoque" data-id="' + p.id + '">' + icon('refresh') + ' Estoque</button>' +
+        '<button class="btn xs danger" data-act="excluirProduto" data-id="' + p.id + '">' + icon('trash') + '</button>' +
+      '</div>' +
+    '</div>';
+  });
+  return html;
+};
+
+/* ---------- RELATÓRIOS ---------- */
+Views.reports = function () {
+  const period = State.ui.reportPeriod;
+  const range = reportRange(period);
+  const list = State.sales.filter((s) => !s.excluida && !s.arquivado && s.dataVenda >= range.from && s.dataVenda <= range.to);
+
+  const bruto = sum(list, (s) => s.subtotal);
+  const descontos = sum(list, (s) => s.desconto);
+  const liquido = sum(list, (s) => s.total);
+  const recebido = sum(list, (s) => s.valorPago);
+  const pendente = sum(list, (s) => s.valorPendente);
+  const atrasado = sum(list.filter((s) => s.valorPendente > 0 && statusInfo(s).key === 'ATRASADO'), (s) => s.valorPendente);
+  const vista = sum(list.filter((s) => s.tipoVenda === 'vista'), (s) => s.total);
+  const fiado = sum(list.filter((s) => s.tipoVenda === 'fiado'), (s) => s.total);
+  const ticket = list.length ? Math.round(liquido / list.length) : 0;
+
+  let html = '';
+
+  html += '<div class="chips">' + [
+    ['hoje', 'Hoje'], ['7', '7 dias'], ['mes', 'Este mês'], ['mesanterior', 'Mês anterior'],
+    ['ano', 'Este ano'], ['tudo', 'Tudo'], ['custom', 'Personalizado']
+  ].map((it) => '<button class="chip ' + (period === it[0] ? 'active' : '') + '" data-act="reportPeriod" data-id="' + it[0] + '">' + it[1] + '</button>').join('') + '</div>';
+
+  if (period === 'custom') {
+    html += '<div class="card" style="margin-top:12px;"><div class="field-row">' +
+      '<div class="field" style="margin-bottom:0;"><label>Data inicial</label><input class="inp" type="date" id="rep-from" value="' + esc(State.ui.reportFrom) + '"></div>' +
+      '<div class="field" style="margin-bottom:0;"><label>Data final</label><input class="inp" type="date" id="rep-to" value="' + esc(State.ui.reportTo) + '"></div>' +
+      '</div><button class="btn primary block mt12" data-act="applyCustomRange">Aplicar período</button></div>';
+  }
+
+  html += '<div class="card" style="margin-top:12px;">';
+  html += '<div class="section-title" style="margin-top:0;"><h2>' + icon('trend') + ' Resumo financeiro</h2></div>';
+  html += '<div class="stats-grid" style="grid-template-columns:1fr 1fr;">' +
+    statMini('Faturamento bruto', fmtMoney(bruto), 'b') +
+    statMini('Descontos', fmtMoney(descontos), 'a') +
+    statMini('Valor líquido', fmtMoney(liquido), 'g') +
+    statMini('Recebido', fmtMoney(recebido), 'g') +
+    statMini('Pendente', fmtMoney(pendente), 'a') +
+    statMini('Em atraso', fmtMoney(atrasado), 'r') +
+  '</div>';
+  html += '<div class="divider"></div>';
+  html += '<div class="total-line"><span>Quantidade de vendas</span><span class="mono bold">' + list.length + '</span></div>';
+  html += '<div class="total-line"><span>Ticket médio</span><span class="mono bold">' + fmtMoney(ticket) + '</span></div>';
+  html += '<div class="total-line"><span>Vendas à vista</span><span class="mono bold">' + fmtMoney(vista) + '</span></div>';
+  html += '<div class="total-line"><span>Vendas fiadas</span><span class="mono bold">' + fmtMoney(fiado) + '</span></div>';
+  html += '</div>';
+
+  /* Gráfico últimos 7 dias */
+  const dias = [];
+  for (let i = 6; i >= 0; i--) {
+    const iso = addDaysISO(todayISO(), -i);
+    const d = parseISO(iso);
+    const val = sum(State.sales.filter((s) => !s.excluida && !s.arquivado && s.dataVenda === iso), (s) => s.total);
+    dias.push({ label: ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'][d.getDay()], value: val });
+  }
+  html += '<div class="card">';
+  html += '<div class="section-title" style="margin-top:0;"><h2>' + icon('chart') + ' Últimos 7 dias</h2></div>';
+  html += barChart(dias);
+  html += '</div>';
+
+  /* Formas de pagamento */
+  const formas = {};
+  list.forEach((s) => {
+    const k = s.formaPagamento || 'Outra';
+    formas[k] = (formas[k] || 0) + s.valorPago;
+  });
+  const formaArr = Object.keys(formas).map((k) => ({ label: k, value: formas[k] })).sort((a, b) => b.value - a.value);
+  if (formaArr.length) {
+    html += '<div class="card">';
+    html += '<div class="section-title" style="margin-top:0;"><h2>' + icon('wallet') + ' Formas de pagamento</h2></div>';
+    html += hBarList(formaArr);
+    html += '</div>';
+  }
+
+  /* Fiados em aberto */
+  const abertos = State.sales.filter((s) => !s.excluida && !s.arquivado && s.valorPendente > 0);
+  const totalAberto = sum(abertos, (s) => s.valorPendente);
+  const vencido = sum(abertos.filter((s) => statusInfo(s).key === 'ATRASADO'), (s) => s.valorPendente);
+  const aVencer = totalAberto - vencido;
+  const maior = abertos.slice().sort((a, b) => b.valorPendente - a.valorPendente)[0];
+  const devedores = new Set(abertos.map((s) => normText(s.clienteNome))).size;
+
+  html += '<div class="card">';
+  html += '<div class="section-title" style="margin-top:0;"><h2>' + icon('book') + ' Relatório de fiados</h2></div>';
+  html += '<div class="stats-grid" style="grid-template-columns:1fr 1fr;">' +
+    statMini('Total em aberto', fmtMoney(totalAberto), 'b') +
+    statMini('Total vencido', fmtMoney(vencido), 'r') +
+    statMini('Total a vencer', fmtMoney(aVencer), 'g') +
+    statMini('Clientes devedores', String(devedores), 'a') +
+  '</div>';
+  if (maior) {
+    html += '<div class="divider"></div>';
+    html += '<div class="sum-row"><span class="k">Maior dívida</span><span class="v">' + esc(maior.clienteNome) + ' · ' + fmtMoney(maior.valorPendente) + '</span></div>';
+  }
+  html += '</div>';
+
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">' +
+    '<button class="btn ghost" data-act="exportCSV">' + icon('download') + ' Exportar CSV</button>' +
+    '<button class="btn ghost" data-act="exportJSON">' + icon('share') + ' Exportar JSON</button>' +
+    '</div>';
+
+  return html;
+};
+
+function reportRange(period) {
+  const today = todayISO();
+  if (period === 'hoje') return { from: today, to: today };
+  if (period === '7') return { from: addDaysISO(today, -6), to: today };
+  if (period === 'mes') return { from: todayMonthKey() + '-01', to: today };
+  if (period === 'mesanterior') {
+    const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - 1);
+    const from = isoOf(d);
+    const last = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+    return { from, to: isoOf(last) };
+  }
+  if (period === 'ano') return { from: today.slice(0, 4) + '-01-01', to: today };
+  if (period === 'custom') {
+    return { from: State.ui.reportFrom || '1900-01-01', to: State.ui.reportTo || '2999-12-31' };
+  }
+  return { from: '1900-01-01', to: '2999-12-31' };
+}
+
+function barChart(data) {
+  const max = Math.max.apply(null, data.map((d) => d.value).concat([1]));
+  return '<div class="chart">' + data.map((d) =>
+    '<div class="cbar">' +
+      '<div class="cbar-val">' + (d.value > 0 ? fmtMoneyShort(d.value) : '') + '</div>' +
+      '<div class="cbar-track"><div class="cbar-fill" style="height:' + Math.max(3, Math.round(d.value / max * 100)) + '%"></div></div>' +
+      '<div class="cbar-lbl">' + esc(d.label) + '</div>' +
+    '</div>'
+  ).join('') + '</div>';
+}
+
+function hBarList(arr) {
+  const max = Math.max.apply(null, arr.map((a) => a.value).concat([1]));
+  const colors = ['var(--primary)', 'var(--green)', 'var(--blue)', 'var(--amber)', 'var(--red)'];
+  return arr.map((a, i) =>
+    '<div class="hbar">' +
+      '<div class="hbar-top"><span class="lbl">' + esc(a.label) + '</span><span class="val mono">' + fmtMoney(a.value) + '</span></div>' +
+      '<div class="hbar-track"><div class="hbar-fill" style="width:' + Math.max(2, Math.round(a.value / max * 100)) + '%;background:' + colors[i % colors.length] + ';"></div></div>' +
+    '</div>'
+  ).join('');
+}
+
+/* ---------- MAIS ---------- */
+Views.more = function () {
+  const cfg = State.settings;
+  const notifOn = cfg.notificacoes.ativadas;
+  const totalClientes = State.customers.filter((c) => !c.arquivado).length;
+  const arquivados = State.sales.filter((s) => !s.excluida && s.arquivado).length;
+  const lixeira = State.sales.filter((s) => s.excluida).length;
+
+  let html = '';
+  html += '<div class="card" style="display:flex;gap:14px;align-items:center;">' +
+    '<div style="width:52px;height:52px;border-radius:17px;background:linear-gradient(135deg,var(--primary),var(--primary-2));display:flex;align-items:center;justify-content:center;color:#fff;flex:0 0 auto;overflow:hidden;">' +
+      (cfg.loja.logo ? '<img src="' + esc(cfg.loja.logo) + '" style="width:100%;height:100%;object-fit:cover;">' : icon('store')) +
+    '</div>' +
+    '<div style="min-width:0;flex:1;"><div style="font-weight:750;font-size:16px;letter-spacing:-.3px;">' + esc(cfg.loja.nome || 'Minha Loja') + '</div>' +
+    '<div class="muted small">' + esc(cfg.loja.responsavel || 'Responsável não informado') + '</div></div>' +
+    '<button class="icon-btn" data-act="nav" data-id="storesettings">' + icon('chevronRight') + '</button>' +
+  '</div>';
+
+  html += '<div class="section-title"><h2>Gestão</h2></div>';
+  html += '<div class="menu-list">' +
+    menuItem('box', 'Produtos', 'Cadastro e estoque opcional', 'products') +
+    menuItem('users', 'Clientes arquivados', arquivados + ' cliente' + (arquivados === 1 ? '' : 's'), 'archived') +
+    menuItem('trash', 'Lixeira', lixeira + ' venda' + (lixeira === 1 ? '' : 's') + ' removida' + (lixeira === 1 ? '' : 's'), 'trash') +
+  '</div>';
+
+  html += '<div class="section-title"><h2>Configurações</h2></div>';
+  html += '<div class="menu-list">' +
+    menuItem('store', 'Minha loja', 'Nome, WhatsApp, Pix e logo', 'storesettings') +
+    menuItem('bell', 'Notificações', notifOn ? 'Ativadas' : 'Desativadas', 'notifsettings', notifOn ? 'green' : 'gray') +
+    menuItem('message', 'Mensagens', 'Modelos do WhatsApp', 'msgs') +
+    menuItem('palette', 'Aparência', temaLabel(cfg.tema), 'appearance') +
+    menuItem('database', 'Backup e dados', 'Exportar, importar e apagar', 'backup') +
+    menuItem('info', 'Sobre', 'Versão e informações', 'about') +
+  '</div>';
+
+  html += '<div class="card" style="text-align:center;color:var(--muted);font-size:12px;">' +
+    'VendasPro · ' + totalClientes + ' clientes · ' + State.sales.filter((s) => !s.excluida).length + ' vendas<br>' +
+    '<span style="opacity:.7;">Armazenamento: ' + (Store.mode === 'idb' ? 'IndexedDB' : 'LocalStorage') +
+    ' · ' + (NativeBridge.isNative() ? 'App nativo' : 'Navegador') + '</span></div>';
+
+  return html;
+};
+
+function menuItem(ico, title, sub, view, tone) {
+  return '<button class="menu-item" data-act="nav" data-id="' + view + '">' +
+    '<span class="mi-ico" ' + (tone === 'green' ? 'style="color:var(--green);background:var(--green-soft);"' : tone === 'gray' ? 'style="color:var(--muted);background:var(--gray-soft);"' : '') + '>' + icon(ico) + '</span>' +
+    '<span class="mi-txt"><span class="mi-t">' + esc(title) + '</span><span class="mi-s">' + esc(sub) + '</span></span>' +
+    icon('chevronRight', 'chev') + '</button>';
+}
+
+function temaLabel(t) {
+  if (t === 'dark') return 'Escuro';
+  if (t === 'light') return 'Claro';
+  return 'Automático';
+}
+
+/* ---------- MINHA LOJA ---------- */
+Views.storesettings = function () {
+  const l = State.settings.loja;
+  const p = State.settings.pix;
+  let html = '';
+  html += '<div class="card">';
+  html += '<div style="display:flex;gap:14px;align-items:center;margin-bottom:16px;">' +
+    '<div class="logo-prev" id="logo-prev">' + (l.logo ? '<img src="' + esc(l.logo) + '">' : icon('store')) + '</div>' +
+    '<div><button class="btn ghost sm" data-act="pickLogo">' + icon('upload') + ' Escolher logo</button>' +
+    (l.logo ? '<button class="btn ghost sm" style="margin-top:6px;" data-act="removeLogo">' + icon('trash') + ' Remover</button>' : '') +
+    '</div></div>';
+
+  html += '<div class="field"><label>Nome da loja</label><input class="inp" id="s-nome" value="' + esc(l.nome) + '"></div>';
+  html += '<div class="field"><label>Nome do responsável</label><input class="inp" id="s-resp" value="' + esc(l.responsavel) + '"></div>';
+  html += '<div class="field-row">' +
+    '<div class="field"><label>Telefone</label><input class="inp" id="s-tel" type="tel" inputmode="numeric" value="' + esc(maskPhone(l.telefone)) + '"></div>' +
+    '<div class="field"><label>WhatsApp</label><input class="inp" id="s-wa" type="tel" inputmode="numeric" value="' + esc(maskPhone(l.whatsapp)) + '"></div>' +
+  '</div>';
+  html += '<div class="field"><label>Endereço</label><input class="inp" id="s-end" value="' + esc(l.endereco) + '"></div>';
+  html += '</div>';
+
+  html += '<div class="card">';
+  html += '<div class="section-title" style="margin-top:0;"><h2>' + icon('pix') + ' Chave Pix</h2></div>';
+  html += '<div class="field"><label>Tipo de chave</label><select class="sel" id="s-pixtipo">' +
+    ['CPF', 'CNPJ', 'Telefone', 'E-mail', 'Chave aleatória'].map((t) =>
+      '<option ' + (p.tipo === t ? 'selected' : '') + '>' + t + '</option>').join('') +
+    '</select></div>';
+  html += '<div class="field" style="margin-bottom:0;"><label>Chave Pix</label><input class="inp" id="s-pix" value="' + esc(p.chave) + '" placeholder="Sua chave Pix"></div>';
+  html += '<p class="hint">A chave Pix será incluída automaticamente nas mensagens do WhatsApp.</p>';
+  html += '</div>';
+
+  html += '<button class="btn primary block" data-act="saveStore">' + icon('check') + ' Salvar configurações</button>';
+  return html;
+};
+
+/* ---------- NOTIFICAÇÕES ---------- */
+Views.notifsettings = function () {
+  const n = State.settings.notificacoes;
+  const nativeOk = Notif.isNativeAvailable();
+  let html = '';
+
+  html += '<div class="card" style="background:' + (nativeOk ? 'var(--green-soft)' : 'var(--amber-soft)') + ';border-color:transparent;">' +
+    '<div style="display:flex;gap:11px;align-items:flex-start;">' +
+    '<span style="color:' + (nativeOk ? 'var(--green)' : 'var(--amber)') + ';">' + icon(nativeOk ? 'check' : 'info') + '</span>' +
+    '<div style="font-size:13px;line-height:1.55;color:var(--text-2);">' +
+    (nativeOk
+      ? 'As notificações nativas do Android estão disponíveis neste dispositivo.'
+      : 'Você está no navegador. As notificações reais do Android funcionarão quando o app for instalado como APK (Capacitor + Local Notifications).') +
+    '</div></div></div>';
+
+  html += '<div class="card">';
+  html += '<div class="status-line"><div><div class="bold">Notificações</div>' +
+    '<div class="muted small"><span class="dot ' + (n.ativadas ? 'on' : 'off') + '"></span>' + (n.ativadas ? 'Ativadas' : 'Desativadas') + '</div></div>' +
+    '<label class="switch"><input type="checkbox" id="n-ativas" ' + (n.ativadas ? 'checked' : '') + '><span class="track"></span><span class="knob"></span></label>' +
+    '</div>';
+
+  html += '<div class="field" style="margin-top:16px;"><label>Quando avisar</label>' +
+    '<select class="sel" id="n-quando">' +
+    [['0', 'No dia do vencimento'], ['1', '1 dia antes'], ['2', '2 dias antes'], ['3', '3 dias antes'], ['custom', 'Personalizado']]
+      .map((o) => '<option value="' + o[0] + '" ' + (String(n.quando) === o[0] ? 'selected' : '') + '>' + o[1] + '</option>').join('') +
+    '</select></div>';
+
+  html += '<div class="field-row">' +
+    '<div class="field"><label>Horário</label><input class="inp" type="time" id="n-hora" value="' + esc(n.horario || '09:00') + '"></div>' +
+    '<div class="field"><label>Som</label><select class="sel" id="n-som">' +
+      '<option value="1" ' + (n.som ? 'selected' : '') + '>Ativado</option>' +
+      '<option value="0" ' + (!n.som ? 'selected' : '') + '>Silencioso</option></select></div>' +
+  '</div>';
+
+  html += '<button class="btn primary block" data-act="saveNotif">' + icon('check') + ' Salvar preferências</button>';
+  html += '</div>';
+
+  html += '<div class="card">';
+  html += '<div class="section-title" style="margin-top:0;"><h2>' + icon('bell') + ' Permissão e testes</h2></div>';
+  html += '<button class="btn ghost block" style="margin-bottom:10px;" data-act="requestNotifPermission">' + icon('shield') + ' Solicitar permissão</button>';
+  html += '<button class="btn ghost block" style="margin-bottom:10px;" data-act="testNotif">' + icon('bell') + ' Testar notificação</button>';
+  html += '<button class="btn ghost block" data-act="rescheduleNotifs">' + icon('refresh') + ' Reagendar lembretes</button>';
+  html += '<p class="hint">Os lembretes são agendados automaticamente ao criar uma venda fiada ou alterar o vencimento.</p>';
+  html += '</div>';
+  return html;
+};
+
+/* ---------- MENSAGENS ---------- */
+Views.msgs = function () {
+  const m = State.settings.mensagens;
+  const vars = '<div class="card" style="background:var(--primary-soft);border-color:transparent;">' +
+    '<div style="font-size:12.5px;color:var(--text-2);line-height:1.7;">' +
+    '<b>Variáveis disponíveis:</b><br>' +
+    ['{cliente}', '{valor}', '{valor_pago}', '{valor_pendente}', '{produto}', '{data_venda}', '{data_vencimento}', '{pix}', '{loja}']
+      .map((v) => '<code style="background:var(--surface);padding:2px 6px;border-radius:6px;font-size:11.5px;display:inline-block;margin:2px 3px 2px 0;">' + v + '</code>').join('') +
+    '</div></div>';
+
+  let html = vars;
+  const campos = [
+    ['confirmacao', 'Confirmação da venda', 'Enviada após finalizar uma venda'],
+    ['lembrete', 'Lembrete de vencimento', 'Enviada no dia do vencimento'],
+    ['atraso', 'Mensagem de atraso', 'Enviada para pagamentos vencidos'],
+    ['pagamento', 'Pagamento recebido', 'Enviada ao registrar um pagamento']
+  ];
+  campos.forEach((c) => {
+    html += '<div class="card"><div class="section-title" style="margin-top:0;"><h2>' + esc(c[1]) + '</h2></div>' +
+      '<p class="hint" style="margin-top:-6px;margin-bottom:10px;">' + esc(c[2]) + '</p>' +
+      '<textarea class="txa" id="m-' + c[0] + '" style="min-height:150px;font-size:13.5px;">' + esc(m[c[0]] || '') + '</textarea></div>';
+  });
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">' +
+    '<button class="btn primary" data-act="saveMessages">' + icon('check') + ' Salvar</button>' +
+    '<button class="btn ghost" data-act="resetMessages">' + icon('undo') + ' Restaurar padrão</button>' +
+    '</div>';
+  return html;
+};
+
+/* ---------- APARÊNCIA ---------- */
+Views.appearance = function () {
+  const t = State.settings.tema;
+  let html = '<div class="card">';
+  html += '<div class="section-title" style="margin-top:0;"><h2>Tema do aplicativo</h2></div>';
+  html += '<div style="display:grid;gap:10px;">' +
+    temaOpt('light', 'Claro', 'Interface clara e luminosa', '☀️') +
+    temaOpt('dark', 'Escuro', 'Ideal para ambientes com pouca luz', '🌙') +
+    temaOpt('auto', 'Automático', 'Segue o tema do sistema', '⚙️') +
+    '</div>';
+  html += '<p class="hint">A alteração é aplicada imediatamente.</p>';
+  html += '</div>';
+  return html;
+};
+
+function temaOpt(val, title, sub, emoji) {
+  const active = State.settings.tema === val;
+  return '<button class="menu-item" data-act="setTema" data-id="' + val + '" style="border-radius:14px;border:1.5px solid ' + (active ? 'var(--primary)' : 'var(--border)') + ';background:' + (active ? 'var(--primary-soft)' : 'var(--surface)') + ';">' +
+    '<span class="mi-ico" style="background:' + (active ? 'var(--surface)' : 'var(--surface-3)') + ';font-size:19px;">' + emoji + '</span>' +
+    '<span class="mi-txt"><span class="mi-t">' + esc(title) + '</span><span class="mi-s">' + esc(sub) + '</span></span>' +
+    (active ? '<span style="color:var(--primary);">' + icon('check') + '</span>' : '') +
+  '</button>';
+}
+
+/* ---------- BACKUP ---------- */
+Views.backup = function () {
+  const nSales = State.sales.length;
+  const nCust = State.customers.length;
+  const nPay = State.payments.length;
+  const nProd = State.products.length;
+
+  let html = '';
+  html += '<div class="card">';
+  html += '<div class="section-title" style="margin-top:0;"><h2>' + icon('database') + ' Seus dados</h2></div>';
+  html += '<div class="stats-grid" style="grid-template-columns:1fr 1fr;">' +
+    statMini('Vendas', String(nSales), 'b') +
+    statMini('Clientes', String(nCust), 'g') +
+    statMini('Pagamentos', String(nPay), 'a') +
+    statMini('Produtos', String(nProd), 'r') +
+  '</div></div>';
+
+  html += '<div class="card">';
+  html += '<div class="section-title" style="margin-top:0;"><h2>Backup</h2></div>';
+  html += '<button class="btn primary block" style="margin-bottom:10px;" data-act="exportBackup">' + icon('download') + ' Exportar backup (JSON)</button>';
+  html += '<button class="btn ghost block" style="margin-bottom:10px;" data-act="importBackup">' + icon('upload') + ' Importar backup</button>';
+  html += '<button class="btn ghost block" data-act="shareBackup">' + icon('share') + ' Compartilhar backup</button>';
+  html += '<p class="hint">O backup inclui clientes, vendas, pagamentos, produtos e configurações. Guarde em local seguro.</p>';
+  html += '</div>';
+
+  html += '<div class="card" style="border-color:var(--red);border-width:1.5px;">';
+  html += '<div class="section-title" style="margin-top:0;"><h2 style="color:var(--red);">' + icon('alert') + ' Zona de risco</h2></div>';
+  html += '<button class="btn danger block" data-act="wipeData">' + icon('trash') + ' Apagar todos os dados</button>';
+  html += '<p class="hint">Esta ação remove permanentemente todos os registros do aplicativo.</p>';
+  html += '</div>';
+  return html;
+};
+
+/* ---------- LIXEIRA ---------- */
+Views.trash = function () {
+  const list = State.sales.filter((s) => s.excluida).sort((a, b) => (b.excluidaEm || 0) - (a.excluidaEm || 0));
+  let html = '';
+  if (!list.length) {
+    html += '<div class="card"><div class="empty"><div class="eico">' + icon('trash') + '</div>' +
+      '<h3>Lixeira vazia</h3><p>Vendas excluídas ficam aqui e podem ser restauradas.</p></div></div>';
+    return html;
+  }
+  list.forEach((s) => {
+    html += '<div class="item t-gray">' +
+      '<div class="item-head"><div style="min-width:0;flex:1;">' +
+      '<div class="item-name">' + esc(s.clienteNome || 'Cliente') + '</div>' +
+      '<div class="item-meta">' + icon('receipt') + esc(s.numeroVenda) + ' · ' + fmtDate(s.dataVenda) + ' · ' + fmtMoney(s.total) + '</div>' +
+      '</div></div>' +
+      '<div class="item-actions">' +
+        '<button class="btn xs success" data-act="restaurarVenda" data-id="' + s.id + '">' + icon('undo') + ' Restaurar</button>' +
+        '<button class="btn xs danger" data-act="apagarDefinitivo" data-id="' + s.id + '">' + icon('trash') + ' Apagar</button>' +
+      '</div></div>';
+  });
+  html += '<button class="btn ghost block" style="margin-top:6px;" data-act="esvaziarLixeira">' + icon('trash') + ' Esvaziar lixeira</button>';
+  return html;
+};
+
+/* ---------- SOBRE ---------- */
+Views.about = function () {
+  let html = '';
+  html += '<div class="card" style="text-align:center;padding:30px 20px;">' +
+    '<div style="width:80px;height:80px;border-radius:26px;background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 16px 34px -14px rgba(79,70,229,.9);">' + icon('store', '') + '</div>' +
+    '<h2 style="margin:0;font-size:21px;font-weight:800;letter-spacing:-.6px;">VendasPro</h2>' +
+    '<p class="muted small" style="margin:6px 0 0;">Controle de vendas e fiados</p>' +
+    '<p class="muted small" style="margin:4px 0 0;">Versão 1.0.0</p>' +
+  '</div>';
+
+  html += '<div class="card">' +
+    '<div class="sum-row"><span class="k">Armazenamento</span><span class="v">' + (Store.mode === 'idb' ? 'IndexedDB (local)' : 'LocalStorage') + '</span></div>' +
+    '<div class="sum-row"><span class="k">Plataforma</span><span class="v">' + (NativeBridge.isNative() ? 'Aplicativo nativo' : 'Navegador web') + '</span></div>' +
+    '<div class="sum-row"><span class="k">Notificações nativas</span><span class="v">' + (Notif.isNativeAvailable() ? 'Disponíveis' : 'Indisponíveis') + '</span></div>' +
+    '<div class="sum-row"><span class="k">Funciona offline</span><span class="v green">Sim</span></div>' +
+  '</div>';
+
+  html += '<div class="card" style="display:flex;gap:11px;align-items:flex-start;background:var(--primary-soft);border-color:transparent;">' +
+    '<span style="color:var(--primary);">' + icon('shield') + '</span>' +
+    '<div style="font-size:13px;line-height:1.6;color:var(--text-2);">Todos os seus dados ficam armazenados apenas neste dispositivo. Nada é enviado para servidores externos.</div>' +
+  '</div>';
+
+  html += '<button class="btn ghost block" data-act="exportBackup">' + icon('download') + ' Fazer backup agora</button>';
+  return html;
+};
+
+/* ============================== AÇÕES ============================== */
+const Actions = {
+
+  closeModal() { closeModal(); },
+  back() {
+    const meta = VIEW_META[State.view];
+    if (State.view === 'editsale') { State.form = null; go('sales'); return; }
+    if (State.view === 'saledetail') { go('fiados'); return; }
+    go('dashboard');
+  },
+  nav(id) {
+    if (id === 'newsale') { State.form = newFormObject(null); }
+    if (id === 'reports' && State.ui.reportPeriod === 'custom' && !State.ui.reportFrom) {
+      State.ui.reportFrom = addDaysISO(todayISO(), -30);
+      State.ui.reportTo = todayISO();
+    }
+    go(id);
+  },
+  goSearch() { go('sales'); setTimeout(() => { const el = $('#search-sales'); if (el) el.focus(); }, 120); },
+
+  /* ---------- Formulário de venda ---------- */
+  addProd() {
+    syncFormFromDOM();
+    State.form.products.push({ nome: '', codigo: '', qtd: 1, valor: 0 });
+    refreshList('produtos-wrap', () => productsHTML(State.form));
+    recalcTotals();
+    const rows = $$('#produtos-wrap .prod-row');
+    const last = rows[rows.length - 1];
+    if (last) { const inp = last.querySelector('[data-pf="nome"]'); if (inp) inp.focus(); }
+  },
+
+  removeProd(idx) {
+    syncFormFromDOM();
+    State.form.products.splice(Number(idx), 1);
+    if (!State.form.products.length) State.form.products.push({ nome: '', codigo: '', qtd: 1, valor: 0 });
+    refreshList('produtos-wrap', () => productsHTML(State.form));
+    recalcTotals();
+  },
+
+  setTipo(tipo) {
+    syncFormFromDOM();
+    State.form.tipoVenda = tipo;
+    if (tipo === 'fiado') {
+      if (!State.form.dataVencimento) State.form.dataVencimento = addDaysISO(todayISO(), 7);
+      State.form.pendente = State.form.total - (State.form.entrada || 0);
+    } else {
+      State.form.pendente = 0;
+    }
+    render();
+  },
+
+  setForma(forma) {
+    syncFormFromDOM();
+    State.form.formaPagamento = forma;
+    render();
+  },
+
+  setVenc(op) {
+    syncFormFromDOM();
+    let iso;
+    if (op === 'hoje') iso = todayISO();
+    else if (op === 'amanha') iso = addDaysISO(todayISO(), 1);
+    else iso = addDaysISO(todayISO(), parseInt(op, 10) || 7);
+    State.form.dataVencimento = iso;
+    const inp = $('#f-vencimento');
+    if (inp) inp.value = iso;
+    toast('Vencimento: ' + fmtDate(iso), 'info');
+  },
+
+  finalizarVenda() {
+    syncFormFromDOM();
+    const f = State.form;
+    const prods = f.products.filter((p) => (p.nome || '').trim() && p.qtd > 0);
+    if (!f.clienteNome) { toast('Informe o nome do cliente.', 'error'); return; }
+    if (!prods.length) { toast('Adicione pelo menos um produto.', 'error'); return; }
+    if (f.total <= 0) { toast('O valor total precisa ser maior que zero.', 'error'); return; }
+    if (f.tipoVenda === 'fiado' && !f.dataVencimento) { toast('Escolha a data de vencimento.', 'error'); return; }
+
+    f.products = prods;
+
+    const vista = f.tipoVenda === 'vista';
+    const valorPago = vista ? f.total : Math.min(f.entrada || 0, f.total);
+    const valorPendente = f.total - valorPago;
+
+    let html = '<div class="modal-body">';
+    html += '<div class="sum-box">';
+    html += '<div class="sum-row"><span class="k">Cliente</span><span class="v">' + esc(f.clienteNome) + '</span></div>';
+    if (f.clienteTelefone) html += '<div class="sum-row"><span class="k">Telefone</span><span class="v">' + esc(maskPhone(f.clienteTelefone)) + '</span></div>';
+    html += '</div>';
+
+    html += '<div class="sum-box">';
+    f.products.forEach((p) => {
+      html += '<div class="sum-row"><span class="k">' + p.qtd + '× ' + esc(truncate(p.nome, 22)) + '</span>' +
+        '<span class="v">' + fmtMoney(p.qtd * p.valor) + '</span></div>';
+    });
+    html += '</div>';
+
+    html += '<div class="sum-box">';
+    html += '<div class="sum-row"><span class="k">Subtotal</span><span class="v">' + fmtMoney(f.subtotal) + '</span></div>';
+    if (f.desconto) html += '<div class="sum-row"><span class="k">Desconto</span><span class="v">- ' + fmtMoney(f.desconto) + '</span></div>';
+    html += '<div class="sum-row"><span class="k">Total</span><span class="v">' + fmtMoney(f.total) + '</span></div>';
+    html += '<div class="sum-row"><span class="k">Valor pago</span><span class="v green">' + fmtMoney(valorPago) + '</span></div>';
+    if (valorPendente > 0) html += '<div class="sum-row"><span class="k">Valor pendente</span><span class="v red">' + fmtMoney(valorPendente) + '</span></div>';
+    html += '</div>';
+
+    html += '<div class="sum-box">';
+    html += '<div class="sum-row"><span class="k">Forma</span><span class="v">' + esc(vista ? f.formaPagamento : 'Fiado') + '</span></div>';
+    html += '<div class="sum-row"><span class="k">Data da venda</span><span class="v">' + esc(fmtDate(f.dataVenda)) + '</span></div>';
+    if (!vista) html += '<div class="sum-row"><span class="k">Vencimento</span><span class="v">' + esc(fmtDate(f.dataVencimento)) + '</span></div>';
+    if (f.observacao) html += '<div class="sum-row"><span class="k">Observações</span><span class="v" style="max-width:60%;white-space:pre-wrap;">' + esc(f.observacao) + '</span></div>';
+    html += '</div>';
+    html += '</div>';
+
+    html += '<div class="modal-foot">' +
+      '<button class="btn ghost" data-act="closeModal">Voltar</button>' +
+      '<button class="btn primary" data-act="confirmarVenda">' + icon('check') + ' Confirmar venda</button>' +
+      '</div>';
+
+    openModal(modalHeader(f.editing ? 'Confirmar alterações' : 'Resumo da venda') + html);
+  },
+
+  async confirmarVenda() {
+    const f = State.form;
+    const vista = f.tipoVenda === 'vista';
+    const valorPago = vista ? f.total : Math.min(f.entrada || 0, f.total);
+    const valorPendente = f.total - valorPago;
+
+    const existing = f.editing ? Data.saleById(f.id) : null;
+    const historico = existing && existing.historico ? existing.historico.slice() : [];
+
+    let numeroVenda = f.numeroVenda;
+    let numero = existing ? existing.numero : null;
+
+    if (!existing) {
+      numero = await nextSaleNumber();
+      numeroVenda = '#' + String(numero).padStart(6, '0');
+    }
+
+    const sale = {
+      id: existing ? existing.id : uid(),
+      numero: numero,
+      numeroVenda: numeroVenda,
+      clienteId: null,
+      clienteNome: f.clienteNome,
+      clienteTelefone: f.clienteTelefone || '',
+      produtos: f.products.map((p) => ({ nome: p.nome, codigo: p.codigo || '', qtd: p.qtd, valor: p.valor })),
+      subtotal: f.subtotal,
+      desconto: f.desconto || 0,
+      total: f.total,
+      valorPago: valorPago,
+      valorPendente: valorPendente,
+      formaPagamento: vista ? f.formaPagamento : 'Fiado',
+      formaCombinada: f.formaCombinada || '',
+      tipoVenda: f.tipoVenda,
+      dataVenda: f.dataVenda,
+      dataVencimento: vista ? null : f.dataVencimento,
+      observacao: f.observacao || '',
+      arquivado: existing ? existing.arquivado : false,
+      excluida: false,
+      historico: historico,
+      criadoEm: existing ? existing.criadoEm : Date.now(),
+      atualizadoEm: Date.now()
+    };
+
+    if (existing) {
+      if (existing.dataVencimento !== sale.dataVencimento) {
+        sale.historico.push({
+          data: Date.now(),
+          texto: 'Vencimento alterado de ' + fmtDate(existing.dataVencimento) + ' para ' + fmtDate(sale.dataVencimento)
+        });
+      }
+      if (existing.total !== sale.total) {
+        sale.historico.push({ data: Date.now(), texto: 'Valor total alterado de ' + fmtMoney(existing.total) + ' para ' + fmtMoney(sale.total) });
+      }
+      sale.historico.push({ data: Date.now(), texto: 'Venda editada' });
+    } else {
+      sale.historico.push({ data: Date.now(), texto: 'Venda criada' });
+    }
+
+    await Store.put('sales', sale);
+
+    // Registra entrada como pagamento (fiado com entrada)
+    if (!existing && !vista && valorPago > 0) {
+      await Store.put('payments', {
+        id: uid(), vendaId: sale.id, valor: valorPago, data: Date.now(),
+        formaPagamento: f.formaPagamento || 'Dinheiro', observacao: 'Entrada'
+      });
+    }
+    if (existing && valorPago > 0 && !vista) {
+      const jaPago = existing.valorPago;
+      if (valorPago > jaPago) {
+        await Store.put('payments', {
+          id: uid(), vendaId: sale.id, valor: valorPago - jaPago, data: Date.now(),
+          formaPagamento: f.formaPagamento || 'Dinheiro', observacao: 'Entrada complementar'
+        });
+      }
+    }
+
+    // Cliente
+    await upsertCustomer(sale.clienteNome, sale.clienteTelefone);
+
+    // Estoque
+    if (!existing) {
+      for (const p of sale.produtos) {
+        const prod = Data.productByName(p.nome);
+        if (prod && prod.estoque !== null && prod.estoque !== undefined && prod.estoque !== '') {
+          prod.estoque = Number(prod.estoque) - Number(p.qtd);
+          await Store.put('products', prod);
+        }
+      }
+    }
+
+    // Notificação
+    if (sale.tipoVenda === 'fiado' && sale.valorPendente > 0) {
+      await Notif.scheduleDueDateNotification(sale);
+    } else {
+      await Notif.cancelDueDateNotification(sale.id);
+    }
+
+    await reloadData();
+    closeModal();
+    State.form = newFormObject(null);
+
+    toast(existing ? 'Venda atualizada com sucesso!' : 'Venda salva com sucesso!', 'success');
+    showSaleSuccess(sale, !existing);
+  },
+
+  openSale(id) { go('saledetail', { id: id }); },
+
+  editarVenda(id) {
+    const sale = Data.saleById(id);
+    if (!sale) return;
+    State.form = newFormObject(sale);
+    go('editsale', { id: id });
+  },
+
+  async excluirVenda(id) {
+    const ok = await confirmDlg({
+      title: 'Excluir venda',
+      message: 'Tem certeza que deseja excluir esta venda? Ela irá para a lixeira e poderá ser restaurada.',
+      confirmText: 'Excluir',
+      danger: true
+    });
+    if (!ok) return;
+    const sale = Data.saleById(id);
+    if (!sale) return;
+    sale.excluida = true;
+    sale.excluidaEm = Date.now();
+    await Store.put('sales', sale);
+    await Notif.cancelDueDateNotification(id);
+    await reloadData();
+    toast('Venda movida para a lixeira.', 'info');
+    go('sales');
+  },
+
+  async restaurarVenda(id) {
+    const sale = Data.saleById(id);
+    if (!sale) return;
+    sale.excluida = false;
+    delete sale.excluidaEm;
+    await Store.put('sales', sale);
+    if (sale.tipoVenda === 'fiado' && sale.valorPendente > 0) await Notif.scheduleDueDateNotification(sale);
+    await reloadData();
+    toast('Venda restaurada!', 'success');
+  },
+
+  async apagarDefinitivo(id) {
+    const ok = await confirmDlg({
+      title: 'Apagar definitivamente',
+      message: 'Esta ação é permanente e não pode ser desfeita. Deseja continuar?',
+      confirmText: 'Apagar',
+      danger: true
+    });
+    if (!ok) return;
+    await Store.del('sales', id);
+    await Notif.cancelDueDateNotification(id);
+    await reloadData();
+    toast('Venda apagada.', 'info');
+  },
+
+  async esvaziarLixeira() {
+    const ok = await confirmDlg({
+      title: 'Esvaziar lixeira',
+      message: 'Todas as vendas da lixeira serão apagadas permanentemente.',
+      confirmText: 'Esvaziar',
+      danger: true
+    });
+    if (!ok) return;
+    const list = State.sales.filter((s) => s.excluida);
+    for (const s of list) await Store.del('sales', s.id);
+    await reloadData();
+    toast('Lixeira esvaziada.', 'info');
+  },
+
+  async arquivar(id) {
+    const sale = Data.saleById(id);
+    if (!sale) return;
+    if (sale.arquivado) { return Actions.desarquivar(id); }
+    const ok = await confirmDlg({
+      title: 'Arquivar cliente?',
+      html: 'Este cliente possui pagamento pendente. Ele será movido para a área de arquivados, mas <b>todos os dados serão preservados</b>.',
+      confirmText: 'Arquivar'
+    });
+    if (!ok) return;
+    sale.arquivado = true;
+    sale.historico = sale.historico || [];
+    sale.historico.push({ data: Date.now(), texto: 'Venda arquivada' });
+    await Store.put('sales', sale);
+    await Notif.cancelDueDateNotification(id);
+    await reloadData();
+    toast('Cliente arquivado.', 'info');
+    if (State.view === 'saledetail') go('fiados');
+  },
+
+  async desarquivar(id) {
+    const sale = Data.saleById(id);
+    if (!sale) return;
+    sale.arquivado = false;
+    sale.historico = sale.historico || [];
+    sale.historico.push({ data: Date.now(), texto: 'Venda desarquivada' });
+    await Store.put('sales', sale);
+    if (sale.tipoVenda === 'fiado' && sale.valorPendente > 0) await Notif.scheduleDueDateNotification(sale);
+    await reloadData();
+    toast('Cliente restaurado!', 'success');
+  },
+
+  async alterarVencimento(id) {
+    const sale = Data.saleById(id);
+    if (!sale) return;
+    const novo = await promptDlg({
+      title: 'Alterar vencimento',
+      label: 'Nova data (AAAA-MM-DD)',
+      type: 'date',
+      value: sale.dataVencimento || todayISO(),
+      confirmText: 'Salvar'
+    });
+    if (!novo) return;
+    const antigo = sale.dataVencimento;
+    sale.dataVencimento = novo;
+    sale.historico = sale.historico || [];
+    sale.historico.push({ data: Date.now(), texto: 'Vencimento alterado de ' + fmtDate(antigo) + ' para ' + fmtDate(novo) });
+    sale.atualizadoEm = Date.now();
+    await Store.put('sales', sale);
+    await Notif.cancelDueDateNotification(id);
+    await Notif.scheduleDueDateNotification(sale);
+    await reloadData();
+    toast('Vencimento atualizado para ' + fmtDate(novo), 'success');
+    render();
+  },
+
+  /* ---------- Pagamentos ---------- */
+  registrarPagamento(id) {
+    const sale = Data.saleById(id);
+    if (!sale) return;
+    if (sale.valorPendente <= 0) { toast('Esta venda já está totalmente paga.', 'info'); return; }
+
+    const formas = ['Dinheiro', 'Pix', 'Cartão de crédito', 'Cartão de débito', 'Outra forma'];
+    let html = modalHeader('Registrar pagamento');
+    html += '<div class="modal-body">';
+    html += '<div class="sum-box">' +
+      '<div class="sum-row"><span class="k">Cliente</span><span class="v">' + esc(sale.clienteNome) + '</span></div>' +
+      '<div class="sum-row"><span class="k">Valor pendente</span><span class="v red">' + fmtMoney(sale.valorPendente) + '</span></div>' +
+      '</div>';
+
+    html += '<div class="field"><label>Valor do pagamento</label>' +
+      '<input class="inp" id="pg-valor" inputmode="decimal" value="' + centsToInput(sale.valorPendente) + '">' +
+      '<div class="chips" style="margin-top:9px;flex-wrap:wrap;overflow:visible;">' +
+        '<button class="chip" data-act="pgFull">Quitar total</button>' +
+        '<button class="chip" data-act="pgHalf">Metade</button>' +
+      '</div></div>';
+
+    html += '<div class="field"><label>Forma de pagamento</label><div class="chips" style="flex-wrap:wrap;overflow:visible;">' +
+      formas.map((f, i) => '<button class="chip ' + (i === 0 ? 'active' : '') + '" data-act="pgForma" data-id="' + esc(f) + '">' + esc(f) + '</button>').join('') +
+      '</div></div>';
+
+    html += '<div class="field" style="margin-bottom:0;"><label>Observação (opcional)</label>' +
+      '<input class="inp" id="pg-obs" placeholder="Ex: pagou parte em dinheiro"></div>';
+    html += '</div>';
+    html += '<div class="modal-foot">' +
+      '<button class="btn ghost" data-act="closeModal">Cancelar</button>' +
+      '<button class="btn success" data-act="confirmarPagamento" data-id="' + id + '">' + icon('check') + ' Confirmar</button>' +
+      '</div>';
+
+    openModal(html);
+    State.params._pgForma = 'Dinheiro';
+  },
+
+  pgFull() {
+    const sale = Data.saleById(State.params.id);
+    if (sale) { const el = $('#pg-valor'); if (el) el.value = centsToInput(sale.valorPendente); }
+  },
+  pgHalf() {
+    const sale = Data.saleById(State.params.id);
+    if (sale) { const el = $('#pg-valor'); if (el) el.value = centsToInput(Math.round(sale.valorPendente / 2)); }
+  },
+  pgForma(f) {
+    State.params._pgForma = f;
+    $$('[data-act="pgForma"]').forEach((b) => b.classList.toggle('active', b.dataset.id === f));
+  },
+
+  async confirmarPagamento(id) {
+    const sale = Data.saleById(id);
+    if (!sale) return;
+    const valor = parseMoney($('#pg-valor') ? $('#pg-valor').value : 0);
+    if (valor <= 0) { toast('Informe um valor válido.', 'error'); return; }
+    if (valor > sale.valorPendente) { toast('O valor é maior que o pendente.', 'error'); return; }
+
+    const forma = State.params._pgForma || 'Dinheiro';
+    const obs = $('#pg-obs') ? $('#pg-obs').value.trim() : '';
+
+    await Store.put('payments', {
+      id: uid(), vendaId: sale.id, valor: valor, data: Date.now(),
+      formaPagamento: forma, observacao: obs
+    });
+
+    sale.valorPago = (sale.valorPago || 0) + valor;
+    sale.valorPendente = Math.max(0, sale.total - sale.valorPago);
+    sale.historico = sale.historico || [];
+    sale.historico.push({
+      data: Date.now(),
+      texto: 'Pagamento de ' + fmtMoney(valor) + ' (' + forma + ')' +
+        (sale.valorPendente > 0 ? ' · Restante ' + fmtMoney(sale.valorPendente) : ' · Venda quitada')
+    });
+    sale.atualizadoEm = Date.now();
+
+    if (sale.valorPendente <= 0) {
+      sale.formaPagamento = forma;
+      await Notif.cancelDueDateNotification(sale.id);
+    }
+
+    await Store.put('sales', sale);
+    await reloadData();
+    closeModal();
+    toast(sale.valorPendente <= 0 ? 'Venda quitada! 🎉' : 'Pagamento registrado!', 'success');
+
+    if (sale.valorPendente <= 0) {
+      const ok = await confirmDlg({
+        title: 'Pagamento recebido',
+        message: 'Deseja enviar uma mensagem de agradecimento pelo WhatsApp?',
+        confirmText: 'Enviar'
+      });
+      if (ok) {
+        openWhatsApp(sale.clienteTelefone, waSaleMessage(sale, 'pagamento'));
+      }
+    }
+    render();
+  },
+
+  /* ---------- WhatsApp ---------- */
+  waComprovante(id) {
+    const sale = Data.saleById(id);
+    if (!sale) return;
+    openWhatsApp(sale.clienteTelefone, waSaleMessage(sale, 'confirmacao'));
+  },
+  waCobrar(id) {
+    const sale = Data.saleById(id);
+    if (!sale) return;
+    const st = statusInfo(sale);
+    const tipo = st.key === 'ATRASADO' ? 'atraso' : 'lembrete';
+    openWhatsApp(sale.clienteTelefone, waSaleMessage(sale, tipo));
+  },
+  waCliente(telefone) {
+    openWhatsApp(telefone, 'Olá! Tudo bem?');
+  },
+
+  async compartilharVenda(id) {
+    const sale = Data.saleById(id);
+    if (!sale) return;
+    const texto = waSaleMessage(sale, 'confirmacao');
+    const ok = await NativeBridge.share({ title: 'Venda ' + sale.numeroVenda, text: texto });
+    if (!ok) {
+      try {
+        await navigator.clipboard.writeText(texto);
+        toast('Texto copiado para a área de transferência.', 'success');
+      } catch (e) {
+        toast('Não foi possível compartilhar.', 'error');
+      }
+    }
+  },
+
+  /* ---------- Cliente ---------- */
+  openCustomer(nome, tel) {
+    go('customer', { nome: nome, telefone: tel });
+  },
+
+  async editarCliente(nome) {
+    const cust = State.customers.find((c) => normText(c.nome) === normText(nome));
+    const vendas = Data.salesOfCustomer(nome, '');
+    const atual = cust || { nome: nome, telefone: vendas.length ? vendas[vendas.length - 1].clienteTelefone : '', observacao: '' };
+
+    let html = modalHeader('Editar cliente');
+    html += '<div class="modal-body">' +
+      '<div class="field"><label>Nome</label><input class="inp" id="c-nome" value="' + esc(atual.nome) + '"></div>' +
+      '<div class="field"><label>Telefone</label><input class="inp" id="c-tel" type="tel" inputmode="numeric" value="' + esc(maskPhone(atual.telefone)) + '"></div>' +
+      '<div class="field" style="margin-bottom:0;"><label>Observações</label><textarea class="txa" id="c-obs">' + esc(atual.observacao || '') + '</textarea></div>' +
+      '</div>' +
+      '<div class="modal-foot">' +
+        '<button class="btn ghost" data-act="closeModal">Cancelar</button>' +
+        '<button class="btn primary" data-act="salvarCliente" data-id="' + esc(nome) + '">' + icon('check') + ' Salvar</button>' +
+      '</div>';
+    openModal(html);
+  },
+
+  async salvarCliente(nomeAntigo) {
+    const nome = $('#c-nome').value.trim();
+    const tel = phoneDigits($('#c-tel').value);
+    const obs = $('#c-obs').value.trim();
+    if (!nome) { toast('Informe o nome.', 'error'); return; }
+
+    let cust = State.customers.find((c) => normText(c.nome) === normText(nomeAntigo));
+    if (!cust) {
+      cust = { id: uid(), nome: nome, telefone: tel, observacao: obs, dataCriacao: Date.now(), arquivado: false };
+    } else {
+      cust.nome = nome;
+      cust.telefone = tel;
+      cust.observacao = obs;
+    }
+    await Store.put('customers', cust);
+
+    // Atualiza vendas vinculadas
+    const antigoNorm = normText(nomeAntigo);
+    for (const s of State.sales) {
+      if (normText(s.clienteNome) === antigoNorm) {
+        s.clienteNome = nome;
+        s.clienteTelefone = tel;
+        s.historico = s.historico || [];
+        s.historico.push({ data: Date.now(), texto: 'Dados do cliente atualizados' });
+        await Store.put('sales', s);
+      }
+    }
+
+    await reloadData();
+    closeModal();
+    toast('Cliente atualizado!', 'success');
+    if (State.view === 'customer') go('customer', { nome: nome, telefone: tel });
+    else render();
+  },
+
+  /* ---------- Filtros ---------- */
+  fiadosFilter(f) {
+    State.ui.fiadosFilter = f;
+    refreshList('fiados-chips', fiadosChips);
+    refreshList('fiados-list', fiadosListHTML);
+  },
+  salesFilter(f) {
+    State.ui.salesFilter = f;
+    refreshList('sales-chips', salesChips);
+    refreshList('sales-list', salesListHTML);
+  },
+  reportPeriod(p) {
+    State.ui.reportPeriod = p;
+    if (p === 'custom' && !State.ui.reportFrom) {
+      State.ui.reportFrom = addDaysISO(todayISO(), -30);
+      State.ui.reportTo = todayISO();
+    }
+    render();
+  },
+  applyCustomRange() {
+    const f = $('#rep-from'), t = $('#rep-to');
+    if (f) State.ui.reportFrom = f.value;
+    if (t) State.ui.reportTo = t.value;
+    render();
+  },
+
+  /* ---------- Produtos ---------- */
+  novoProduto() { productModal(null); },
+  editarProduto(id) {
+    const p = State.products.find((x) => x.id === id);
+    if (p) productModal(p);
+  },
+  async salvarProduto(id) {
+    const nome = $('#p-nome').value.trim();
+    if (!nome) { toast('Informe o nome do produto.', 'error'); return; }
+    const preco = parseMoney($('#p-preco').value);
+    const estoqueRaw = $('#p-estoque').value.trim();
+    const prod = {
+      id: id || uid(),
+      nome: nome,
+      codigo: $('#p-codigo').value.trim(),
+      categoria: $('#p-categoria').value.trim(),
+      preco: preco,
+      estoque: estoqueRaw === '' ? null : Number(estoqueRaw),
+      estoqueMinimo: Number($('#p-minimo').value) || 0
+    };
+    await Store.put('products', prod);
+    await reloadData();
+    closeModal();
+    toast(id ? 'Produto atualizado!' : 'Produto cadastrado!', 'success');
+    render();
+  },
+  async excluirProduto(id) {
+    const ok = await confirmDlg({ title: 'Excluir produto', message: 'Deseja excluir este produto?', confirmText: 'Excluir', danger: true });
+    if (!ok) return;
+    await Store.del('products', id);
+    await reloadData();
+    toast('Produto excluído.', 'info');
+    render();
+  },
+  async ajusteEstoque(id) {
+    const p = State.products.find((x) => x.id === id);
+    if (!p) return;
+    let html = modalHeader('Ajustar estoque');
+    html += '<div class="modal-body">' +
+      '<p class="modal-msg">Produto: <b>' + esc(p.nome) + '</b></p>' +
+      '<div class="field"><label>Novo estoque atual</label>' +
+      '<input class="inp" id="e-qtd" type="number" inputmode="numeric" value="' + (p.estoque === null || p.estoque === undefined ? 0 : p.estoque) + '"></div>' +
+      '</div>' +
+      '<div class="modal-foot">' +
+      '<button class="btn ghost" data-act="closeModal">Cancelar</button>' +
+      '<button class="btn primary" data-act="confirmarEstoque" data-id="' + id + '">Salvar</button></div>';
+    openModal(html);
+  },
+  async confirmarEstoque(id) {
+    const p = State.products.find((x) => x.id === id);
+    if (!p) return;
+    p.estoque = Number($('#e-qtd').value) || 0;
+    await Store.put('products', p);
+    await reloadData();
+    closeModal();
+    toast('Estoque atualizado!', 'success');
+    render();
+  },
+
+  /* ---------- Configurações ---------- */
+  async saveStore() {
+    const l = State.settings.loja;
+    l.nome = $('#s-nome').value.trim() || 'Minha Loja';
+    l.responsavel = $('#s-resp').value.trim();
+    l.telefone = phoneDigits($('#s-tel').value);
+    l.whatsapp = phoneDigits($('#s-wa').value);
+    l.endereco = $('#s-end').value.trim();
+    State.settings.pix.tipo = $('#s-pixtipo').value;
+    State.settings.pix.chave = $('#s-pix').value.trim();
+    await saveSettings();
+    toast('Configurações salvas!', 'success');
+    render();
+  },
+
+  pickLogo() {
+    const inp = document.createElement('input');
+    inp.type = 'file';
+    inp.accept = 'image/*';
+    inp.onchange = () => {
+      const file = inp.files && inp.files[0];
+      if (!file) return;
+      if (file.size > 900000) { toast('Imagem muito grande (máx. ~900KB).', 'error'); return; }
+      const reader = new FileReader();
+      reader.onload = async () => {
+        State.settings.loja.logo = reader.result;
+        await saveSettings();
+        toast('Logo atualizada!', 'success');
+        render();
+      };
+      reader.readAsDataURL(file);
+    };
+    inp.click();
+  },
+  async removeLogo() {
+    State.settings.loja.logo = '';
+    await saveSettings();
+    render();
+  },
+
+  async saveNotif() {
+    const n = State.settings.notificacoes;
+    n.ativadas = $('#n-ativas').checked;
+    n.quando = $('#n-quando').value;
+    n.horario = $('#n-hora').value || '09:00';
+    n.som = $('#n-som').value === '1';
+    await saveSettings();
+
+    if (n.ativadas) {
+      const perm = await Notif.checkPermission();
+      if (perm === 'prompt' || perm === 'default') await Notif.requestNotificationPermission();
+    }
+    await Notif.rescheduleNotifications();
+    toast('Preferências de notificação salvas!', 'success');
+    render();
+  },
+
+  async requestNotifPermission() {
+    const r = await Notif.requestNotificationPermission();
+    if (r === 'granted') {
+      toast('Permissão concedida!', 'success');
+      State.settings.notificacoes.ativadas = true;
+      await saveSettings();
+      await Notif.rescheduleNotifications();
+    } else if (r === 'unsupported') {
+      toast('Recurso indisponível neste ambiente.', 'info');
+    } else {
+      toast('Permissão negada. Abra as configurações do Android para ativar.', 'error');
+    }
+    render();
+  },
+
+  async testNotif() {
+    const r = await Notif.testNotification();
+    if (r === 'native') toast('Notificação de teste agendada (4s).', 'success');
+    else if (r === 'web') toast('Notificação de teste enviada.', 'success');
+    else toast('Notificações indisponíveis neste ambiente.', 'error');
+  },
+
+  async rescheduleNotifs() {
+    await Notif.rescheduleNotifications();
+    toast('Lembretes reagendados!', 'success');
+  },
+
+  async saveMessages() {
+    const m = State.settings.mensagens;
+    ['confirmacao', 'lembrete', 'atraso', 'pagamento'].forEach((k) => {
+      const el = $('#m-' + k);
+      if (el) m[k] = el.value;
+    });
+    await saveSettings();
+    toast('Modelos salvos!', 'success');
+  },
+
+  async resetMessages() {
+    const ok = await confirmDlg({ title: 'Restaurar modelos', message: 'Deseja restaurar os modelos padrão de mensagem?', confirmText: 'Restaurar' });
+    if (!ok) return;
+    State.settings.mensagens = defaultMessages();
+    await saveSettings();
+    toast('Modelos restaurados.', 'success');
+    render();
+  },
+
+  async setTema(t) {
+    State.settings.tema = t;
+    await saveSettings();
+    applyTheme();
+    render();
+  },
+
+  /* ---------- Backup ---------- */
+  buildBackup() {
+    return {
+      app: 'VendasPro',
+      versao: 1,
+      exportadoEm: new Date().toISOString(),
+      dados: {
+        customers: State.customers,
+        sales: State.sales,
+        payments: State.payments,
+        products: State.products,
+        settings: State.settings,
+        counter: State.counter
+      }
+    };
+  },
+
+  exportBackup() {
+    const backup = Actions.buildBackup();
+    const nome = 'vendaspro-backup-' + todayISO() + '.json';
+    downloadFile(nome, JSON.stringify(backup, null, 2), 'application/json');
+    toast('Backup exportado!', 'success');
+  },
+
+  async shareBackup() {
+    const backup = Actions.buildBackup();
+    const txt = JSON.stringify(backup);
+    const ok = await NativeBridge.share({ title: 'Backup VendasPro', text: txt });
+    if (!ok) {
+      try { await navigator.clipboard.writeText(txt); toast('Backup copiado!', 'success'); }
+      catch (e) { toast('Não foi possível compartilhar.', 'error'); }
+    }
+  },
+
+  importBackup() {
+    const inp = document.createElement('input');
+    inp.type = 'file';
+    inp.accept = '.json,application/json';
+    inp.onchange = () => {
+      const file = inp.files && inp.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = async () => {
+        try {
+          const data = JSON.parse(reader.result);
+          if (!data || !data.dados || !Array.isArray(data.dados.sales)) {
+            toast('Arquivo de backup inválido.', 'error');
+            return;
+          }
+          const ok = await confirmDlg({
+            title: 'Restaurar backup',
+            message: 'Os dados atuais serão substituídos pelos dados do arquivo. Deseja continuar?',
+            confirmText: 'Restaurar'
+          });
+          if (!ok) return;
+
+          await Store.clearAll();
+          const d = data.dados;
+          for (const c of (d.customers || [])) await Store.put('customers', c);
+          for (const s of (d.sales || [])) await Store.put('sales', s);
+          for (const p of (d.payments || [])) await Store.put('payments', p);
+          for (const p of (d.products || [])) await Store.put('products', p);
+          if (d.settings) await Store.put('settings', { id: 'app', data: d.settings });
+          if (typeof d.counter === 'number') await Store.put('meta', { id: 'saleCounter', value: d.counter });
+
+          await reloadData();
+          applyTheme();
+          await Notif.rescheduleNotifications();
+          toast('Backup restaurado com sucesso!', 'success');
+          go('dashboard');
+        } catch (e) {
+          console.error(e);
+          toast('Arquivo de backup inválido.', 'error');
+        }
+      };
+      reader.readAsText(file);
+    };
+    inp.click();
+  },
+
+  async wipeData() {
+    const ok1 = await confirmDlg({
+      title: 'Apagar todos os dados',
+      message: 'Todos os clientes, vendas, pagamentos e configurações serão removidos permanentemente. Deseja continuar?',
+      confirmText: 'Continuar',
+      danger: true
+    });
+    if (!ok1) return;
+    const ok2 = await confirmDlg({
+      title: 'Confirmação final',
+      message: 'Esta ação NÃO pode ser desfeita. Tem absoluta certeza?',
+      confirmText: 'Apagar tudo',
+      danger: true
+    });
+    if (!ok2) return;
+
+    const pend = State.sales.map((s) => s.id);
+    for (const id of pend) await Notif.cancelDueDateNotification(id);
+
+    await Store.clearAll();
+    State.settings = defaultSettings();
+    await saveSettings();
+    await reloadData();
+    applyTheme();
+    toast('Todos os dados foram apagados.', 'info');
+    go('dashboard');
+    setTimeout(showOnboarding, 500);
+  },
+
+  /* ---------- Relatórios ---------- */
+  exportCSV() {
+    const range = reportRange(State.ui.reportPeriod);
+    const list = State.sales.filter((s) => !s.excluida && s.dataVenda >= range.from && s.dataVenda <= range.to);
+    const rows = [['Numero', 'Data', 'Cliente', 'Telefone', 'Tipo', 'Forma', 'Subtotal', 'Desconto', 'Total', 'Pago', 'Pendente', 'Vencimento', 'Status']];
+    list.forEach((s) => {
+      const st = s.valorPendente > 0 ? statusInfo(s) : { label: 'Pago' };
+      rows.push([
+        s.numeroVenda,
+        fmtDate(s.dataVenda),
+        s.clienteNome,
+        maskPhone(s.clienteTelefone),
+        s.tipoVenda === 'fiado' ? 'Fiado' : 'À vista',
+        s.formaPagamento || '',
+        (s.subtotal / 100).toFixed(2).replace('.', ','),
+        (s.desconto / 100).toFixed(2).replace('.', ','),
+        (s.total / 100).toFixed(2).replace('.', ','),
+        (s.valorPago / 100).toFixed(2).replace('.', ','),
+        (s.valorPendente / 100).toFixed(2).replace('.', ','),
+        s.dataVencimento ? fmtDate(s.dataVencimento) : '',
+        st.label
+      ]);
+    });
+    const csv = rows.map((r) => r.map((c) => '"' + String(c).replace(/"/g, '""') + '"').join(';')).join('\n');
+    downloadFile('vendaspro-relatorio-' + todayISO() + '.csv', '\ufeff' + csv, 'text/csv');
+    toast('CSV exportado!', 'success');
+  },
+
+  exportJSON() {
+    const range = reportRange(State.ui.reportPeriod);
+    const list = State.sales.filter((s) => !s.excluida && s.dataVenda >= range.from && s.dataVenda <= range.to);
+    downloadFile('vendaspro-vendas-' + todayISO() + '.json', JSON.stringify(list, null, 2), 'application/json');
+    toast('JSON exportado!', 'success');
+  }
+};
+
+/* ============================== MODAIS AUXILIARES ============================== */
+function productModal(p) {
+  const edit = !!p;
+  let html = modalHeader(edit ? 'Editar produto' : 'Novo produto');
+  html += '<div class="modal-body">' +
+    '<div class="field"><label>Nome do produto</label><input class="inp" id="p-nome" value="' + esc(p ? p.nome : '') + '" placeholder="Ex: Película de vidro"></div>' +
+    '<div class="field-row">' +
+      '<div class="field"><label>Código</label><input class="inp" id="p-codigo" value="' + esc(p ? p.codigo || '' : '') + '"></div>' +
+      '<div class="field"><label>Categoria</label><input class="inp" id="p-categoria" value="' + esc(p ? p.categoria || '' : '') + '"></div>' +
+    '</div>' +
+    '<div class="field"><label>Preço padrão</label><input class="inp" id="p-preco" inputmode="decimal" value="' + centsToInput(p ? p.preco : 0) + '"></div>' +
+    '<div class="field-row">' +
+      '<div class="field"><label>Estoque atual</label><input class="inp" id="p-estoque" type="number" inputmode="numeric" value="' + (p && p.estoque !== null && p.estoque !== undefined ? p.estoque : '') + '" placeholder="Opcional"></div>' +
+      '<div class="field"><label>Estoque mínimo</label><input class="inp" id="p-minimo" type="number" inputmode="numeric" value="' + (p ? (p.estoqueMinimo || 0) : 0) + '"></div>' +
+    '</div>' +
+    '</div>' +
+    '<div class="modal-foot">' +
+      '<button class="btn ghost" data-act="closeModal">Cancelar</button>' +
+      '<button class="btn primary" data-act="salvarProduto" data-id="' + (edit ? p.id : '') + '">' + icon('check') + ' Salvar</button>' +
+    '</div>';
+  openModal(html);
+}
+
+function showSaleSuccess(sale, isNew) {
+  let html = '<div class="modal-body" style="text-align:center;padding-top:8px;">';
+  html += '<div style="width:76px;height:76px;border-radius:26px;background:var(--green-soft);color:var(--green);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">' +
+    '<svg class="ic" style="width:38px;height:38px;stroke-width:2.4;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m4 12.5 5.5 5.5L20 6.5"/></svg></div>';
+  html += '<h3 style="margin:0 0 6px;font-size:19px;font-weight:800;letter-spacing:-.5px;">' + (isNew ? 'Venda registrada!' : 'Venda atualizada!') + '</h3>';
+  html += '<p class="muted" style="margin:0 0 16px;font-size:13.5px;">' + esc(sale.numeroVenda) + ' · ' + fmtMoney(sale.total) + '</p>';
+
+  if (sale.valorPendente > 0) {
+    html += '<div class="sum-box" style="text-align:left;">' +
+      '<div class="sum-row"><span class="k">Pendente</span><span class="v red">' + fmtMoney(sale.valorPendente) + '</span></div>' +
+      '<div class="sum-row"><span class="k">Vencimento</span><span class="v">' + fmtDate(sale.dataVencimento) + '</span></div>' +
+      '</div>';
+  }
+  html += '</div>';
+
+  html += '<div class="modal-foot" style="flex-direction:column;">';
+  if (sale.clienteTelefone) {
+    html += '<button class="btn wa block" data-act="waComprovante" data-id="' + sale.id + '">' + waIcon() + ' Enviar comprovante pelo WhatsApp</button>';
+  }
+  html += '<div style="display:flex;gap:10px;width:100%;">' +
+    '<button class="btn ghost" data-act="closeModal" style="flex:1;">Fechar</button>' +
+    '<button class="btn primary" data-act="openSale" data-id="' + sale.id + '" style="flex:1;">Ver venda</button>' +
+    '</div>';
+  html += '</div>';
+
+  openModal(html);
+}
+
+/* ============================== ONBOARDING ============================== */
+function showOnboarding() {
+  const s = State.settings;
+  let html = modalHeader('Bem-vindo ao VendasPro');
+  html += '<div class="modal-body">';
+  html += '<p class="modal-msg">Vamos configurar sua loja em poucos segundos. Você pode alterar tudo depois.</p>';
+  html += '<div class="field"><label>Nome da loja</label><input class="inp" id="ob-loja" value="' + esc(s.loja.nome === 'Minha Loja' ? '' : s.loja.nome) + '" placeholder="Ex: Loja do João"></div>';
+  html += '<div class="field"><label>WhatsApp da loja</label><input class="inp" id="ob-wa" type="tel" inputmode="numeric" value="' + esc(maskPhone(s.loja.whatsapp)) + '" placeholder="(11) 91234-5678"></div>';
+  html += '<div class="field" style="margin-bottom:0;"><label>Chave Pix (opcional)</label><input class="inp" id="ob-pix" value="' + esc(s.pix.chave) + '" placeholder="CPF, telefone, e-mail..."></div>';
+  html += '</div>';
+  html += '<div class="modal-foot">' +
+    '<button class="btn ghost" data-act="skipOnboarding">Pular</button>' +
+    '<button class="btn primary" data-act="finishOnboarding">Continuar</button>' +
+    '</div>';
+  openModal(html, { dismissable: false });
+}
+
+function showNotifIntro() {
+  let html = '<div class="modal-body" style="text-align:center;padding-top:8px;">';
+  html += '<div style="width:76px;height:76px;border-radius:26px;background:var(--primary-soft);color:var(--primary);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">' + icon('bell', '') + '</div>';
+  html += '<h3 style="margin:0 0 6px;font-size:19px;font-weight:800;letter-spacing:-.5px;">Ative as notificações</h3>';
+  html += '<p class="muted" style="margin:0 0 6px;font-size:13.5px;line-height:1.6;">Receba um lembrete quando houver pagamentos vencendo, mesmo com o aplicativo fechado.</p>';
+  html += '</div>';
+  html += '<div class="modal-foot" style="flex-direction:column;">' +
+    '<button class="btn primary block" data-act="enableNotifsOnboarding">' + icon('bell') + ' Ativar notificações</button>' +
+    '<button class="btn ghost block" data-act="skipNotifsOnboarding">Agora não</button>' +
+    '</div>';
+  openModal(html, { dismissable: false });
+}
+
+/* ============================== ARQUIVOS ============================== */
+function downloadFile(name, content, mime) {
+  try {
+    const blob = new Blob([content], { type: mime + ';charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 800);
+  } catch (e) {
+    toast('Não foi possível gerar o arquivo.', 'error');
+  }
+}
+
+/* ============================== PERSISTÊNCIA ============================== */
+async function saveSettings() {
+  await Store.put('settings', { id: 'app', data: State.settings });
+}
+
+async function nextSaleNumber() {
+  State.counter = (State.counter || 0) + 1;
+  await Store.put('meta', { id: 'saleCounter', value: State.counter });
+  return State.counter;
+}
+
+async function upsertCustomer(nome, telefone) {
+  if (!nome) return;
+  const existing = State.customers.find((c) => normText(c.nome) === normText(nome));
+  if (existing) {
+    if (telefone && phoneDigits(existing.telefone) !== phoneDigits(telefone)) {
+      existing.telefone = telefone;
+      await Store.put('customers', existing);
+    }
+    return existing;
+  }
+  const cust = {
+    id: uid(),
+    nome: nome,
+    telefone: telefone || '',
+    observacao: '',
+    dataCriacao: Date.now(),
+    arquivado: false
+  };
+  await Store.put('customers', cust);
+  return cust;
+}
+
+async function reloadData() {
+  State.customers = await Store.getAll('customers');
+  State.sales = await Store.getAll('sales');
+  State.payments = await Store.getAll('payments');
+  State.products = await Store.getAll('products');
+  const meta = await Store.get('meta', 'saleCounter');
+  State.counter = meta ? meta.value : 0;
+
+  // Sincroniza contador com o maior número existente
+  const maxNum = State.sales.reduce((m, s) => Math.max(m, s.numero || 0), 0);
+  if (maxNum > State.counter) {
+    State.counter = maxNum;
+    await Store.put('meta', { id: 'saleCounter', value: maxNum });
+  }
+}
+
+/* ============================== TEMA ============================== */
+function applyTheme() {
+  const t = (State.settings && State.settings.tema) || 'auto';
+  let dark = false;
+  if (t === 'dark') dark = true;
+  else if (t === 'auto') {
+    try { dark = window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { dark = false; }
+  }
+  document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', dark ? '#070b16' : '#4f46e5');
+}
+
+/* ============================== EVENTOS GLOBAIS ============================== */
+document.addEventListener('click', function (e) {
+  const el = e.target.closest('[data-act]');
+  if (!el) return;
+  const act = el.dataset.act;
+  const id = el.dataset.id;
+  if (Actions[act]) {
+    e.preventDefault();
+    try { Actions[act](id, el); } catch (err) { console.error('Ação ' + act + ':', err); toast('Ocorreu um erro.', 'error'); }
+  }
+});
+
+// Inputs do formulário de venda
+document.addEventListener('input', function (e) {
+  const t = e.target;
+
+  if (t.id === 'f-telefone') {
+    const pos = t.selectionStart;
+    const before = t.value.length;
+    t.value = maskPhone(t.value);
+    const after = t.value.length;
+    try { t.setSelectionRange(pos + (after - before), pos + (after - before)); } catch (err) {}
+    return;
+  }
+
+  if (t.id === 'search-fiados') {
+    State.ui.fiadosSearch = t.value;
+    refreshList('fiados-list', fiadosListHTML);
+    return;
+  }
+  if (t.id === 'search-sales') {
+    State.ui.salesSearch = t.value;
+    refreshList('sales-list', salesListHTML);
+    return;
+  }
+
+  if (t.dataset && t.dataset.pf) {
+    const row = t.closest('.prod-row');
+    if (!row || !State.form) return;
+    const idx = parseInt(row.dataset.idx, 10);
+    const p = State.form.products[idx];
+    if (!p) return;
+    if (t.dataset.pf === 'nome') p.nome = t.value;
+    else if (t.dataset.pf === 'qtd') p.qtd = Math.max(0, parseInt(t.value, 10) || 0);
+    else if (t.dataset.pf === 'valor') p.valor = parseMoney(t.value);
+    const sub = row.querySelector('.subtotal');
+    if (sub) sub.textContent = fmtMoney((p.qtd || 0) * (p.valor || 0));
+    recalcTotals();
+    return;
+  }
+
+  if (t.id === 'f-desconto' || t.id === 'f-entrada') {
+    if (!State.form) return;
+    if (t.id === 'f-desconto') State.form.desconto = parseMoney(t.value);
+    if (t.id === 'f-entrada') State.form.entrada = parseMoney(t.value);
+    recalcTotals();
+    return;
+  }
+});
+
+// Autocomplete de cliente e produto
+document.addEventListener('change', function (e) {
+  const t = e.target;
+  if (t.id === 'f-cliente') {
+    const found = State.customers.find((c) => normText(c.nome) === normText(t.value));
+    if (found && found.telefone) {
+      const tel = $('#f-telefone');
+      if (tel && !tel.value.trim()) {
+        tel.value = maskPhone(found.telefone);
+        if (State.form) State.form.clienteTelefone = phoneDigits(found.telefone);
+        toast('Telefone preenchido automaticamente.', 'info');
+      }
+    }
+    return;
+  }
+  if (t.dataset && t.dataset.pf === 'nome') {
+    const prod = Data.productByName(t.value);
+    if (prod) {
+      const row = t.closest('.prod-row');
+      if (row) {
+        const val = row.querySelector('[data-pf="valor"]');
+        if (val && (!val.value || parseMoney(val.value) === 0)) {
+          val.value = centsToInput(prod.preco);
+          const idx = parseInt(row.dataset.idx, 10);
+          if (State.form && State.form.products[idx]) State.form.products[idx].valor = prod.preco;
+          const sub = row.querySelector('.subtotal');
+          const p = State.form.products[idx];
+          if (sub && p) sub.textContent = fmtMoney((p.qtd || 0) * (p.valor || 0));
+          recalcTotals();
+        }
+      }
+    }
+    return;
+  }
+  if (t.id === 'n-ativas') { /* tratado no botão salvar */ }
+});
+
+// Enter em campos de login/diálogos
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape') {
+    const root = $('#modal-root');
+    if (root && root.querySelector('.modal-backdrop')) closeModal();
+  }
+});
+
+// Tema automático
+try {
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () {
+    if (State.settings && State.settings.tema === 'auto') applyTheme();
+  });
+} catch (e) { /* ignore */ }
+
+/* ============================== AÇÕES DE ONBOARDING ============================== */
+Actions.finishOnboarding = async function () {
+  const loja = $('#ob-loja') ? $('#ob-loja').value.trim() : '';
+  const wa = $('#ob-wa') ? phoneDigits($('#ob-wa').value) : '';
+  const pix = $('#ob-pix') ? $('#ob-pix').value.trim() : '';
+  State.settings.loja.nome = loja || 'Minha Loja';
+  State.settings.loja.whatsapp = wa;
+  State.settings.pix.chave = pix;
+  State.settings.onboardingFeito = true;
+  await saveSettings();
+  closeModal();
+  render();
+  setTimeout(showNotifIntro, 400);
+};
+
+Actions.skipOnboarding = async function () {
+  State.settings.onboardingFeito = true;
+  await saveSettings();
+  closeModal();
+  render();
+};
+
+Actions.enableNotifsOnboarding = async function () {
+  State.settings.notificacoes.ativadas = true;
+  await saveSettings();
+  const r = await Notif.requestNotificationPermission();
+  if (r === 'granted') {
+    await Notif.createChannel();
+    await Notif.rescheduleNotifications();
+    toast('Notificações ativadas!', 'success');
+  } else if (r === 'unsupported') {
+    toast('Notificações nativas estarão disponíveis no APK.', 'info');
+  } else {
+    toast('Permissão negada. Você pode ativar depois nas configurações.', 'info');
+  }
+  closeModal();
+  render();
+};
+
+Actions.skipNotifsOnboarding = async function () {
+  State.settings.onotificacoes = State.settings.notificacoes;
+  State.settings.notificacoes.ativadas = false;
+  await saveSettings();
+  closeModal();
+  render();
+};
+
+/* ============================== BOOT ============================== */
+async function boot() {
+  await Store.init();
+
+  const rawSettings = await Store.get('settings', 'app');
+  State.settings = rawSettings && rawSettings.data
+    ? deepMerge(defaultSettings(), rawSettings.data)
+    : defaultSettings();
+  if (!State.settings.mensagens) State.settings.mensagens = defaultMessages();
+
+  await reloadData();
+  applyTheme();
+
+  render();
+
+  if (!State.settings.onboardingFeito && !State.sales.length && !State.customers.length) {
+    setTimeout(showOnboarding, 350);
+  } else {
+    // Reagenda notificações silenciosamente
+    setTimeout(function () { Notif.rescheduleNotifications(); }, 1200);
+  }
+
+  // Ajusta quando a data muda (virada de dia) — recalcula status
+  let lastDay = todayISO();
+  setInterval(function () {
+    const d = todayISO();
+    if (d !== lastDay) {
+      lastDay = d;
+      render();
+    }
+  }, 60000);
+}
+
+document.addEventListener('DOMContentLoaded', boot);
+if (document.readyState === 'interactive' || document.readyState === 'complete') {
+  boot();
+}
+</script>
+</body>
+</html>

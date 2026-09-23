@@ -1,4 +1,4 @@
-package com.gestoriptv.meuapp;
+package com.gestoriptv.meufiado;
 
 import com.getcapacitor.BridgeActivity;
 

@@ -1,0 +1,2598 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"/>
+<meta name="theme-color" content="#4f46e5"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="format-detection" content="telephone=no"/>
+<title>Fiado Control</title>
+<style>
+/* ============================================================
+   CONFIGURAÇÕES / TEMA
+   ============================================================ */
+:root{
+  --bg:#f1f5f9; --surface:#ffffff; --surface2:#f8fafc; --surface3:#f1f5f9;
+  --text:#0f172a; --text2:#64748b; --text3:#94a3b8;
+  --border:#e2e8f0; --border2:#cbd5e1;
+  --primary:#4f46e5; --primary-l:#eef2ff; --primary-d:#4338ca;
+  --success:#059669; --success-l:#ecfdf5;
+  --warn:#d97706; --warn-l:#fffbeb;
+  --danger:#dc2626; --danger-l:#fef2f2;
+  --info:#2563eb; --info-l:#eff6ff;
+  --shadow:0 1px 2px rgba(15,23,42,.06),0 4px 14px rgba(15,23,42,.06);
+  --shadow-lg:0 10px 40px rgba(15,23,42,.18);
+  --radius:16px; --radius-sm:10px; --radius-lg:22px;
+}
+[data-theme="dark"]{
+  --bg:#0b1220; --surface:#131c2e; --surface2:#1a2438; --surface3:#1f2b42;
+  --text:#e6edf7; --text2:#94a3b8; --text3:#64748b;
+  --border:#233049; --border2:#2f3f5c;
+  --primary:#6366f1; --primary-l:#1e1b4b; --primary-d:#818cf8;
+  --success:#34d399; --success-l:#052e26;
+  --warn:#fbbf24; --warn-l:#3a2a06;
+  --danger:#f87171; --danger-l:#3b0d0d;
+  --info:#60a5fa; --info-l:#0c1e3d;
+  --shadow:0 1px 2px rgba(0,0,0,.5),0 4px 14px rgba(0,0,0,.35);
+  --shadow-lg:0 10px 40px rgba(0,0,0,.6);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;height:100%;width:100%}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  background:var(--bg);color:var(--text);
+  overscroll-behavior-y:none;
+  -webkit-font-smoothing:antialiased;
+  font-size:15px;line-height:1.45;
+}
+button,input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
+button{cursor:pointer;border:none;background:none;padding:0}
+input,textarea,select{
+  width:100%;padding:12px 14px;border-radius:12px;
+  border:1.5px solid var(--border);background:var(--surface2);color:var(--text);
+  outline:none;transition:border-color .15s, box-shadow .15s;
+  font-size:16px;
+}
+input:focus,textarea:focus,select:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-l)}
+textarea{resize:vertical;min-height:74px;line-height:1.4}
+label{display:block;font-size:12.5px;font-weight:700;color:var(--text2);margin:0 0 6px 2px;letter-spacing:.02em;text-transform:uppercase}
+.field{margin-bottom:14px}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:8px}
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+#app{
+  display:flex;flex-direction:column;height:100dvh;height:100vh;
+  max-width:640px;margin:0 auto;position:relative;background:var(--bg);
+}
+#topbar{
+  flex-shrink:0;padding:calc(env(safe-area-inset-top) + 14px) 16px 14px;
+  background:linear-gradient(135deg,var(--primary) 0%,var(--primary-d) 100%);
+  color:#fff;position:relative;z-index:20;
+  border-radius:0 0 22px 22px;
+  box-shadow:0 4px 20px rgba(79,70,229,.25);
+}
+[data-theme="dark"] #topbar{box-shadow:0 4px 20px rgba(0,0,0,.5)}
+#content{
+  flex:1;overflow-y:auto;overflow-x:hidden;padding:16px 16px 24px;
+  -webkit-overflow-scrolling:touch;
+}
+#bottomnav{
+  flex-shrink:0;display:grid;grid-template-columns:repeat(5,1fr);
+  background:var(--surface);border-top:1px solid var(--border);
+  padding:6px 4px calc(env(safe-area-inset-bottom) + 6px);
+  position:relative;z-index:30;
+}
+#bottomnav button{
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+  padding:7px 2px;border-radius:12px;color:var(--text3);
+  font-size:10.5px;font-weight:600;transition:all .15s;
+}
+#bottomnav button .ico{font-size:20px;line-height:1;transition:transform .15s}
+#bottomnav button.active{color:var(--primary);background:var(--primary-l)}
+#bottomnav button.active .ico{transform:translateY(-1px) scale(1.08)}
+#bottomnav button:active{transform:scale(.94)}
+
+/* ============================================================
+   COMPONENTES
+   ============================================================ */
+.card{
+  background:var(--surface);border-radius:var(--radius);padding:16px;
+  box-shadow:var(--shadow);border:1px solid var(--border);margin-bottom:12px;
+}
+.section-title{
+  font-size:13px;font-weight:800;color:var(--text2);text-transform:uppercase;
+  letter-spacing:.06em;margin:22px 2px 10px;display:flex;align-items:center;gap:8px;
+}
+.section-title:first-child{margin-top:4px}
+.section-title .count{
+  background:var(--surface3);color:var(--text2);font-size:11px;padding:2px 8px;
+  border-radius:20px;font-weight:700;letter-spacing:0;
+}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  padding:12px 18px;border-radius:12px;font-weight:700;font-size:15px;
+  transition:transform .12s, opacity .12s, background .15s;
+  white-space:nowrap;
+}
+.btn:active{transform:scale(.96)}
+.btn-primary{background:var(--primary);color:#fff;box-shadow:0 4px 14px rgba(79,70,229,.3)}
+.btn-success{background:var(--success);color:#fff}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-warn{background:var(--warn);color:#fff}
+.btn-ghost{background:var(--surface2);color:var(--text);border:1.5px solid var(--border)}
+.btn-outline{background:transparent;color:var(--primary);border:1.5px solid var(--primary)}
+.btn-block{display:flex;width:100%}
+.btn-sm{padding:8px 12px;font-size:13px;border-radius:10px}
+.btn-lg{padding:16px 20px;font-size:16.5px;border-radius:14px}
+.btn[disabled]{opacity:.45;pointer-events:none}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+
+.stat{
+  background:var(--surface);border-radius:var(--radius);padding:13px 14px;
+  border:1px solid var(--border);box-shadow:var(--shadow);position:relative;overflow:hidden;
+}
+.stat .lbl{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px;display:flex;align-items:center;gap:5px}
+.stat .val{font-size:19px;font-weight:800;letter-spacing:-.02em;line-height:1.15}
+.stat .sub{font-size:11px;color:var(--text3);margin-top:3px;font-weight:600}
+.stat.accent-primary{background:linear-gradient(135deg,var(--primary),var(--primary-d));border:none;color:#fff}
+.stat.accent-primary .lbl,.stat.accent-primary .sub{color:rgba(255,255,255,.8)}
+.stat.accent-danger .val{color:var(--danger)}
+.stat.accent-warn .val{color:var(--warn)}
+.stat.accent-success .val{color:var(--success)}
+
+.pill{
+  display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;
+  font-size:10.5px;font-weight:800;letter-spacing:.02em;text-transform:uppercase;
+}
+.pill.aberto{background:var(--info-l);color:var(--info)}
+.pill.hoje{background:var(--warn-l);color:var(--warn)}
+.pill.vencido{background:var(--danger-l);color:var(--danger)}
+.pill.parcial{background:var(--primary-l);color:var(--primary)}
+.pill.pago{background:var(--success-l);color:var(--success)}
+.pill.arquivado{background:var(--surface3);color:var(--text2)}
+
+.item{
+  display:flex;align-items:center;gap:12px;background:var(--surface);
+  border:1px solid var(--border);border-radius:var(--radius);padding:13px 14px;
+  margin-bottom:9px;box-shadow:var(--shadow);transition:transform .12s;
+  text-align:left;width:100%;
+}
+.item:active{transform:scale(.985)}
+.item .avatar{
+  width:42px;height:42px;border-radius:13px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:16px;color:#fff;
+  background:linear-gradient(135deg,var(--primary),var(--primary-d));
+}
+.item .body{flex:1;min-width:0}
+.item .name{font-weight:700;font-size:14.5px;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item .meta{font-size:12px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item .right{text-align:right;flex-shrink:0}
+.item .amount{font-weight:800;font-size:14.5px}
+.item .amount.neg{color:var(--danger)}
+.item .amount.pos{color:var(--success)}
+
+.empty{
+  text-align:center;padding:40px 20px;color:var(--text2);
+}
+.empty .big{font-size:44px;margin-bottom:12px;opacity:.85}
+.empty .t{font-weight:700;color:var(--text);margin-bottom:6px;font-size:15px}
+.empty .d{font-size:13px;margin-bottom:18px;line-height:1.5}
+
+.row{display:flex;align-items:center;gap:8px}
+.row.between{justify-content:space-between}
+.spacer{flex:1}
+.chips{display:flex;gap:7px;overflow-x:auto;padding:2px 0 10px;margin:0 -16px;padding-left:16px;padding-right:16px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{
+  flex-shrink:0;padding:8px 14px;border-radius:20px;background:var(--surface);
+  border:1.5px solid var(--border);font-size:13px;font-weight:700;color:var(--text2);
+  transition:all .15s;white-space:nowrap;
+}
+.chip.active{background:var(--primary);border-color:var(--primary);color:#fff}
+
+.kv{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--border);font-size:14px}
+.kv:last-child{border-bottom:none}
+.kv .k{color:var(--text2);font-weight:600;flex-shrink:0}
+.kv .v{font-weight:700;text-align:right;word-break:break-word}
+
+.timeline{position:relative;padding-left:22px}
+.timeline::before{content:'';position:absolute;left:6px;top:6px;bottom:6px;width:2px;background:var(--border)}
+.tl-item{position:relative;padding:0 0 16px 0}
+.tl-item:last-child{padding-bottom:0}
+.tl-item::before{
+  content:'';position:absolute;left:-22px;top:4px;width:12px;height:12px;border-radius:50%;
+  background:var(--primary);border:2.5px solid var(--surface);box-shadow:0 0 0 2px var(--primary-l);
+}
+.tl-item.green::before{background:var(--success);box-shadow:0 0 0 2px var(--success-l)}
+.tl-item.red::before{background:var(--danger);box-shadow:0 0 0 2px var(--danger-l)}
+.tl-item.orange::before{background:var(--warn);box-shadow:0 0 0 2px var(--warn-l)}
+.tl-date{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.04em}
+.tl-text{font-size:13.5px;font-weight:600;margin-top:1px}
+.tl-sub{font-size:12px;color:var(--text2);margin-top:2px}
+
+.alert-bar{
+  display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:14px;
+  font-size:13.5px;font-weight:700;margin-bottom:10px;border:1px solid transparent;
+}
+.alert-bar.danger{background:var(--danger-l);color:var(--danger);border-color:var(--danger)}
+.alert-bar.warn{background:var(--warn-l);color:var(--warn);border-color:var(--warn)}
+.alert-bar.info{background:var(--info-l);color:var(--info);border-color:var(--info)}
+
+/* Modal */
+#modal-root{
+  position:fixed;inset:0;z-index:200;display:none;
+}
+#modal-root.open{display:block}
+.modal-backdrop{position:absolute;inset:0;background:rgba(2,6,23,.55);backdrop-filter:blur(3px);animation:fade .18s}
+.modal-sheet{
+  position:absolute;left:0;right:0;bottom:0;max-height:92dvh;
+  background:var(--surface);border-radius:24px 24px 0 0;
+  padding:8px 18px calc(env(safe-area-inset-bottom) + 20px);
+  overflow-y:auto;animation:slideUp .24s cubic-bezier(.2,.9,.3,1);
+  max-width:640px;margin:0 auto;
+}
+.modal-grab{width:42px;height:5px;border-radius:6px;background:var(--border2);margin:6px auto 14px}
+.modal-title{font-size:18px;font-weight:800;margin-bottom:4px}
+.modal-sub{font-size:13px;color:var(--text2);margin-bottom:16px}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+
+/* Toast */
+#toast-root{
+  position:fixed;left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + 86px);
+  z-index:300;display:flex;flex-direction:column;align-items:center;gap:8px;
+  pointer-events:none;padding:0 16px;
+}
+.toast{
+  background:var(--text);color:var(--bg);padding:11px 18px;border-radius:30px;
+  font-size:13.5px;font-weight:700;box-shadow:var(--shadow-lg);
+  animation:toastIn .25s cubic-bezier(.2,.9,.3,1);max-width:100%;
+  text-align:center;
+}
+.toast.success{background:var(--success);color:#fff}
+.toast.error{background:var(--danger);color:#fff}
+.toast.info{background:var(--info);color:#fff}
+@keyframes toastIn{from{opacity:0;transform:translateY(14px) scale(.95)}to{opacity:1;transform:none}}
+
+/* FAB */
+.fab{
+  position:absolute;right:16px;bottom:calc(env(safe-area-inset-bottom) + 78px);
+  width:58px;height:58px;border-radius:20px;
+  background:linear-gradient(135deg,var(--primary),var(--primary-d));
+  color:#fff;font-size:28px;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 8px 24px rgba(79,70,229,.45);z-index:25;
+  transition:transform .15s;
+}
+.fab:active{transform:scale(.92)}
+
+/* Calendário */
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.cal-head{text-align:center;font-size:11px;font-weight:800;color:var(--text3);text-transform:uppercase;padding:6px 0}
+.cal-day{
+  aspect-ratio:1;border-radius:11px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;font-size:13.5px;font-weight:700;
+  background:var(--surface2);border:1.5px solid transparent;position:relative;
+  transition:all .15s;
+}
+.cal-day.out{opacity:.28}
+.cal-day.today{border-color:var(--primary);color:var(--primary)}
+.cal-day.has{background:var(--primary-l);color:var(--primary)}
+.cal-day.has.over{background:var(--danger-l);color:var(--danger)}
+.cal-day .dot{position:absolute;bottom:5px;width:5px;height:5px;border-radius:50%;background:currentColor}
+.cal-day .num{line-height:1}
+.cal-day .cnt{font-size:9px;font-weight:800;margin-top:1px;opacity:.85}
+
+/* Switch */
+.switch{position:relative;width:48px;height:28px;flex-shrink:0}
+.switch input{opacity:0;width:100%;height:100%;margin:0;position:absolute;z-index:2;cursor:pointer}
+.switch .track{
+  position:absolute;inset:0;border-radius:20px;background:var(--border2);transition:background .2s;
+}
+.switch .thumb{
+  position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;
+  background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.3);
+}
+.switch input:checked ~ .track{background:var(--primary)}
+.switch input:checked ~ .thumb{transform:translateX(20px)}
+
+.opt-row{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:13px 0;border-bottom:1px solid var(--border);
+}
+.opt-row:last-child{border-bottom:none}
+.opt-row .t{font-weight:700;font-size:14.5px}
+.opt-row .d{font-size:12px;color:var(--text2);margin-top:1px}
+
+.badge-count{
+  background:var(--danger);color:#fff;font-size:10px;font-weight:800;
+  min-width:17px;height:17px;border-radius:9px;display:inline-flex;
+  align-items:center;justify-content:center;padding:0 5px;
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <header id="topbar"></header>
+  <main id="content"></main>
+  <nav id="bottomnav"></nav>
+</div>
+<div id="modal-root"></div>
+<div id="toast-root"></div>
+
+<script>
+"use strict";
+/* ============================================================
+   1. UTILITÁRIOS
+   ============================================================ */
+const $  = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.prototype.slice.call((r || document).querySelectorAll(s));
+
+function uid() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 9);
+}
+function esc(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function toISO(d) {
+  const y = d.getFullYear(), m = String(d.getMonth() + 1).padStart(2, '0'), dd = String(d.getDate()).padStart(2, '0');
+  return y + '-' + m + '-' + dd;
+}
+function fromISO(s) {
+  if (!s) return new Date();
+  const p = String(s).split('-').map(Number);
+  return new Date(p[0], (p[1] || 1) - 1, p[2] || 1);
+}
+function todayISO() { return toISO(new Date()); }
+function fmtDate(iso) {
+  if (!iso) return '—';
+  const p = String(iso).slice(0, 10).split('-');
+  return p[2] + '/' + p[1] + '/' + p[0];
+}
+function fmtDateTime(isoDT) {
+  if (!isoDT) return '—';
+  const d = new Date(isoDT);
+  if (isNaN(d)) return '—';
+  return String(d.getDate()).padStart(2,'0') + '/' + String(d.getMonth()+1).padStart(2,'0') + '/' + d.getFullYear() +
+         ' às ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+}
+function daysBetween(isoA, isoB) {
+  const a = fromISO(isoA), b = fromISO(isoB);
+  a.setHours(0,0,0,0); b.setHours(0,0,0,0);
+  return Math.round((b - a) / 86400000);
+}
+function fmtMoney(v) {
+  const n = Number(v) || 0;
+  return 'R$ ' + n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function parseMoney(s) {
+  if (typeof s === 'number') return s;
+  let t = String(s == null ? '' : s).trim().replace(/R\$\s?/gi, '').replace(/\s/g, '');
+  if (!t) return 0;
+  if (t.indexOf(',') > -1) t = t.replace(/\./g, '').replace(',', '.');
+  const n = parseFloat(t);
+  return isNaN(n) ? 0 : n;
+}
+function round2(n) { return Math.round((Number(n) || 0) * 100) / 100; }
+
+/* -------- Telefone -------- */
+function onlyDigits(s) { return String(s == null ? '' : s).replace(/\D/g, ''); }
+function toInternational(digits) {
+  let d = onlyDigits(digits);
+  if (!d) return '';
+  if (d.indexOf('55') === 0 && d.length >= 12) return d;
+  return '55' + d;
+}
+function displayPhone(stored) {
+  let d = onlyDigits(stored);
+  if (!d) return '';
+  if (d.indexOf('55') === 0 && d.length >= 12) return d.slice(2);
+  return d;
+}
+function validPhone(digits) {
+  const d = onlyDigits(digits);
+  return d.length >= 10 && d.length <= 11;
+}
+function waLink(telefone, mensagem) {
+  const intl = toInternational(telefone);
+  if (!intl) return '#';
+  let u = 'https://wa.me/' + intl;
+  if (mensagem) u += '?text=' + encodeURIComponent(mensagem);
+  return u;
+}
+
+/* -------- Templates -------- */
+function fillTemplate(tpl, ctx) {
+  return String(tpl == null ? '' : tpl).replace(/\{(\w+)\}/g, function (m, k) {
+    return (ctx && ctx[k] !== undefined && ctx[k] !== null) ? String(ctx[k]) : m;
+  });
+}
+
+/* ============================================================
+   2. BANCO DE DADOS (IndexedDB)
+   ============================================================ */
+const DB_NAME = 'fiado_control_db';
+const DB_VERSION = 1;
+let db = null;
+
+function openDB() {
+  return new Promise(function (resolve, reject) {
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    req.onupgradeneeded = function (e) {
+      const d = e.target.result;
+      if (!d.objectStoreNames.contains('clientes')) d.createObjectStore('clientes', { keyPath: 'id' });
+      if (!d.objectStoreNames.contains('vendas')) d.createObjectStore('vendas', { keyPath: 'id' });
+      if (!d.objectStoreNames.contains('config')) d.createObjectStore('config', { keyPath: 'key' });
+      if (!d.objectStoreNames.contains('lidas')) d.createObjectStore('lidas', { keyPath: 'id' });
+    };
+    req.onsuccess = function (e) { db = e.target.result; resolve(db); };
+    req.onerror = function (e) { reject(e.target.error); };
+  });
+}
+function store(name, mode) { return db.transaction(name, mode).objectStore(name); }
+function dbPut(name, obj) {
+  return new Promise(function (res, rej) {
+    const r = store(name, 'readwrite').put(obj);
+    r.onsuccess = function () { res(r.result); };
+    r.onerror = function () { rej(r.error); };
+  });
+}
+function dbGet(name, id) {
+  return new Promise(function (res, rej) {
+    const r = store(name, 'readonly').get(id);
+    r.onsuccess = function () { res(r.result); };
+    r.onerror = function () { rej(r.error); };
+  });
+}
+function dbAll(name) {
+  return new Promise(function (res, rej) {
+    const r = store(name, 'readonly').getAll();
+    r.onsuccess = function () { res(r.result || []); };
+    r.onerror = function () { rej(r.error); };
+  });
+}
+function dbDel(name, id) {
+  return new Promise(function (res, rej) {
+    const r = store(name, 'readwrite').delete(id);
+    r.onsuccess = function () { res(); };
+    r.onerror = function () { rej(r.error); };
+  });
+}
+function dbClear(name) {
+  return new Promise(function (res, rej) {
+    const r = store(name, 'readwrite').clear();
+    r.onsuccess = function () { res(); };
+    r.onerror = function () { rej(r.error); };
+  });
+}
+
+/* ============================================================
+   3. CONFIGURAÇÕES PADRÃO
+   ============================================================ */
+const DEFAULT_MENSAGENS = {
+  lembrete:
+    'Olá {nome}, tudo bem?\n\n' +
+    'Passando para lembrar da sua compra de {produto} no valor de {valor}.\n' +
+    'O pagamento ficou combinado para o dia {data}.\n\n' +
+    'Qualquer coisa me avise. Obrigado!',
+  venceHoje:
+    'Olá {nome}, tudo bem?\n\n' +
+    'Seu pagamento de {valor} referente a {produto} vence hoje ({data}).\n\n' +
+    'Obrigado!',
+  vencido:
+    'Olá {nome}, tudo bem?\n\n' +
+    'Seu pagamento de {valor} referente a {produto} está vencido desde {data}.\n\n' +
+    'Podemos acertar? Obrigado!',
+  novaData:
+    'Olá {nome}! Sua nova data de pagamento para {produto} ({valor}) ficou para {data}.\n\nObrigado!',
+  pagamentoRecebido:
+    'Olá {nome}! Recebemos seu pagamento de {valor} referente a {produto}.\n\nMuito obrigado!',
+  pagamentoParcial:
+    'Olá {nome}! Recebemos um pagamento parcial de {valor}.\n\nO saldo restante é {saldo}.\n\nObrigado!',
+  atrasado:
+    'Olá {nome}, tudo bem?\n\n' +
+    'Estou entrando em contato sobre o valor de {saldo} que ficou pendente.\n' +
+    'A data combinada anteriormente era {dataOriginal}.\n\n' +
+    'Quando puder, me informe uma previsão de pagamento.\n\nObrigado.'
+};
+
+const DEFAULT_CONFIG = {
+  nomeLoja: 'Minha Loja',
+  telefoneLoja: '',
+  tema: 'light',
+  proximoNumero: 1,
+  mensagens: Object.assign({}, DEFAULT_MENSAGENS),
+  lembretes: { d7: true, d3: true, d1: true, d0: true, atraso: true },
+  notifPermissao: 'default'
+};
+
+/* ============================================================
+   4. NOTIFICATION MANAGER (camada de abstração)
+   ============================================================ */
+const NotificationManager = {
+  bridge: function () {
+    // Ponte opcional fornecida por empacotadores Android (WebView + JS interface)
+    if (window.AndroidNotification &&
+        typeof window.AndroidNotification.schedule === 'function') {
+      return window.AndroidNotification;
+    }
+    if (window.Android && window.Android.notifications &&
+        typeof window.Android.notifications.schedule === 'function') {
+      return window.Android.notifications;
+    }
+    return null;
+  },
+  hasNative: function () { return !!this.bridge(); },
+  hasBrowser: function () { return typeof Notification !== 'undefined'; },
+  permission: function () {
+    if (this.hasNative() && typeof this.bridge().permission === 'function') {
+      try { return this.bridge().permission(); } catch (e) { return 'unknown'; }
+    }
+    if (this.hasBrowser()) return Notification.permission;
+    return 'unsupported';
+  },
+  requestPermission: async function () {
+    if (this.hasNative() && typeof this.bridge().requestPermission === 'function') {
+      try { return this.bridge().requestPermission(); } catch (e) {}
+    }
+    if (this.hasBrowser() && typeof Notification.requestPermission === 'function') {
+      try { return await Notification.requestPermission(); } catch (e) {}
+    }
+    return 'unsupported';
+  },
+  schedule: async function (notif) {
+    const b = this.bridge();
+    if (b && typeof b.schedule === 'function') {
+      try { b.schedule(JSON.stringify(notif)); return true; } catch (e) { return false; }
+    }
+    return false; // navegador não agenda em segundo plano
+  },
+  cancel: async function (id) {
+    const b = this.bridge();
+    if (b && typeof b.cancel === 'function') {
+      try { b.cancel(String(id)); return true; } catch (e) { return false; }
+    }
+    return false;
+  },
+  cancelAll: async function () {
+    const b = this.bridge();
+    if (b && typeof b.cancelAll === 'function') {
+      try { b.cancelAll(); return true; } catch (e) { return false; }
+    }
+    return false;
+  },
+  list: function () {
+    const b = this.bridge();
+    if (b && typeof b.list === 'function') {
+      try { return JSON.parse(b.list() || '[]'); } catch (e) { return []; }
+    }
+    return [];
+  },
+  // Notificação imediata (só funciona com app aberto / em foco)
+  notifyNow: function (titulo, texto) {
+    if (this.hasNative() && typeof this.bridge().notifyNow === 'function') {
+      try { this.bridge().notifyNow(titulo, texto); return; } catch (e) {}
+    }
+    if (this.hasBrowser() && Notification.permission === 'granted') {
+      try { new Notification(titulo, { body: texto }); } catch (e) {}
+    }
+  }
+};
+
+/* ============================================================
+   5. ESTADO GLOBAL
+   ============================================================ */
+const state = {
+  clientes: [],
+  vendas: [],
+  config: Object.assign({}, DEFAULT_CONFIG),
+  lidas: {},
+  screen: 'home',
+  params: {},
+  filtro: 'todos',
+  busca: '',
+  calRef: new Date(),
+  calSel: null,
+  historicoNav: []
+};
+
+/* ============================================================
+   6. CÁLCULOS / REGRAS DE NEGÓCIO
+   ============================================================ */
+function restante(v) { return round2((Number(v.valor) || 0) - (Number(v.pago) || 0)); }
+
+function computeStatus(v) {
+  if (v.arquivada) return 'ARQUIVADO';
+  const r = restante(v);
+  if (r <= 0.005) return 'PAGO';
+  const dias = daysBetween(todayISO(), v.dataAtual);
+  if (dias < 0) return 'VENCIDO';
+  if (dias === 0) return 'VENCE HOJE';
+  if ((Number(v.pago) || 0) > 0.005) return 'PAGAMENTO PARCIAL';
+  return 'EM ABERTO';
+}
+function statusClass(st) {
+  if (st === 'PAGO') return 'pago';
+  if (st === 'VENCIDO') return 'vencido';
+  if (st === 'VENCE HOJE') return 'hoje';
+  if (st === 'PAGAMENTO PARCIAL') return 'parcial';
+  if (st === 'ARQUIVADO') return 'arquivado';
+  return 'aberto';
+}
+function diasAtraso(v) {
+  const d = daysBetween(todayISO(), v.dataAtual);
+  return d < 0 ? -d : 0;
+}
+function vendasDoCliente(clienteId) {
+  return state.vendas.filter(function (v) { return v.clienteId === clienteId; });
+}
+function clientePorId(id) {
+  for (let i = 0; i < state.clientes.length; i++) if (state.clientes[i].id === id) return state.clientes[i];
+  return null;
+}
+function vendaPorId(id) {
+  for (let i = 0; i < state.vendas.length; i++) if (state.vendas[i].id === id) return state.vendas[i];
+  return null;
+}
+function resumoCliente(clienteId) {
+  const vs = vendasDoCliente(clienteId);
+  let totalComprado = 0, totalPago = 0, totalAberto = 0, totalVencido = 0, reneg = 0, abertas = 0, atrasadas = 0, proximo = null;
+  vs.forEach(function (v) {
+    totalComprado += Number(v.valor) || 0;
+    totalPago += Number(v.pago) || 0;
+    reneg += (v.historico || []).filter(function (h) { return h.tipo === 'data_alterada'; }).length;
+    if (!v.arquivada) {
+      const r = restante(v);
+      if (r > 0.005) {
+        totalAberto += r; abertas++;
+        const st = computeStatus(v);
+        if (st === 'VENCIDO') { totalVencido += r; atrasadas++; }
+        if (!proximo || v.dataAtual < proximo) proximo = v.dataAtual;
+      }
+    }
+  });
+  return {
+    total: vs.length, totalComprado: round2(totalComprado), totalPago: round2(totalPago),
+    totalAberto: round2(totalAberto), totalVencido: round2(totalVencido),
+    renegociacoes: reneg, abertas: abertas, atrasadas: atrasadas, proximoVencimento: proximo,
+    vendas: vs
+  };
+}
+function diasAtrasoCliente(clienteId) {
+  let max = 0;
+  vendasDoCliente(clienteId).forEach(function (v) {
+    if (v.arquivada) return;
+    if (restante(v) <= 0.005) return;
+    const d = diasAtraso(v);
+    if (d > max) max = d;
+  });
+  return max;
+}
+function totalsDashboard() {
+  let aReceber = 0, vencido = 0, hoje = 0, prox7 = 0, abertas = 0, atrasados = 0;
+  const clientesSet = {};
+  state.vendas.forEach(function (v) {
+    if (v.arquivada) return;
+    const r = restante(v);
+    if (r <= 0.005) return;
+    aReceber += r; abertas++;
+    clientesSet[v.clienteId] = true;
+    const d = daysBetween(todayISO(), v.dataAtual);
+    if (d < 0) vencido += r;
+    else if (d === 0) hoje += r;
+    else if (d <= 7) prox7 += r;
+  });
+  state.clientes.forEach(function (c) { if (c.arquivado) atrasados++; });
+  return {
+    aReceber: round2(aReceber), vencido: round2(vencido), hoje: round2(hoje),
+    prox7: round2(prox7), vendasAbertas: abertas, totalClientes: state.clientes.length,
+    emAtraso: atrasados
+  };
+}
+
+/* Lista priorizada de vencimentos (ordem inteligente) */
+function vencimentosPriorizados() {
+  const arr = state.vendas.filter(function (v) {
+    return !v.arquivada && restante(v) > 0.005;
+  }).map(function (v) {
+    return { v: v, dias: daysBetween(todayISO(), v.dataAtual) };
+  });
+  arr.sort(function (a, b) { return a.dias - b.dias; });
+  return arr;
+}
+
+/* ============================================================
+   7. TOAST
+   ============================================================ */
+function toast(msg, tipo) {
+  const root = $('#toast-root');
+  const el = document.createElement('div');
+  el.className = 'toast ' + (tipo || '');
+  el.textContent = msg;
+  root.appendChild(el);
+  setTimeout(function () {
+    el.style.transition = 'opacity .25s, transform .25s';
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(10px)';
+    setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 260);
+  }, 2400);
+}
+
+/* ============================================================
+   8. MODAIS
+   ============================================================ */
+function openModal(html) {
+  const root = $('#modal-root');
+  root.innerHTML =
+    '<div class="modal-backdrop" data-close="1"></div>' +
+    '<div class="modal-sheet"><div class="modal-grab"></div>' + html + '</div>';
+  root.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  const root = $('#modal-root');
+  root.classList.remove('open');
+  root.innerHTML = '';
+  document.body.style.overflow = '';
+}
+function confirmar(titulo, texto, onOk, okLabel, okClass) {
+  openModal(
+    '<div class="modal-title">' + esc(titulo) + '</div>' +
+    '<div class="modal-sub">' + esc(texto) + '</div>' +
+    '<div class="grid2" style="margin-top:8px">' +
+      '<button class="btn btn-ghost" data-close="1">Cancelar</button>' +
+      '<button class="btn ' + (okClass || 'btn-primary') + '" id="confirm-ok">' + esc(okLabel || 'Confirmar') + '</button>' +
+    '</div>'
+  );
+  $('#confirm-ok').addEventListener('click', function () {
+    closeModal();
+    onOk();
+  });
+}
+
+/* ============================================================
+   9. PERSISTÊNCIA
+   ============================================================ */
+async function saveCliente(c) { await dbPut('clientes', c); }
+async function saveVenda(v) { await dbPut('vendas', v); }
+async function saveConfig() {
+  await dbPut('config', { key: 'app', value: state.config });
+}
+async function saveLidas() {
+  await dbPut('config', { key: 'lidas', value: state.lidas });
+}
+
+/* ============================================================
+   10. CRIAÇÃO DE VENDA / CLIENTE
+   ============================================================ */
+async function criarOuObterCliente(nome, telefone) {
+  const nomeTrim = String(nome || '').trim();
+  const telIntl = telefone ? toInternational(telefone) : '';
+
+  if (telIntl) {
+    for (let i = 0; i < state.clientes.length; i++) {
+      if (state.clientes[i].telefone === telIntl) return state.clientes[i];
+    }
+  }
+  if (nomeTrim) {
+    const lower = nomeTrim.toLowerCase();
+    for (let i = 0; i < state.clientes.length; i++) {
+      if (state.clientes[i].nome.trim().toLowerCase() === lower) {
+        const c = state.clientes[i];
+        if (!c.telefone && telIntl) {
+          c.telefone = telIntl;
+          c.atualizadoEm = new Date().toISOString();
+          await saveCliente(c);
+        }
+        return c;
+      }
+    }
+  }
+  const novo = {
+    id: uid(),
+    nome: nomeTrim,
+    telefone: telIntl,
+    arquivado: false,
+    criadoEm: new Date().toISOString(),
+    atualizadoEm: new Date().toISOString(),
+    historico: [{ tipo: 'cliente_criado', em: new Date().toISOString(), desc: 'Cliente cadastrado' }]
+  };
+  state.clientes.push(novo);
+  await saveCliente(novo);
+  return novo;
+}
+
+async function salvarNovaVenda(dados) {
+  const cliente = await criarOuObterCliente(dados.nome, dados.telefone);
+  const numero = state.config.proximoNumero || 1;
+  const agora = new Date().toISOString();
+  const venda = {
+    id: uid(),
+    numero: numero,
+    clienteId: cliente.id,
+    produto: String(dados.produto || '').trim(),
+    valor: round2(parseMoney(dados.valor)),
+    dataVenda: dados.dataVenda || todayISO(),
+    dataOriginal: dados.dataAtual || todayISO(),
+    dataAtual: dados.dataAtual || todayISO(),
+    observacao: String(dados.observacao || '').trim(),
+    mensagem: String(dados.mensagem || '').trim(),
+    pago: 0,
+    pagamentos: [],
+    arquivada: false,
+    criadoEm: agora,
+    atualizadoEm: agora,
+    historico: [
+      { tipo: 'venda_criada', em: agora, desc: 'Venda criada — ' + fmtMoney(dados.valor) },
+      { tipo: 'data_original', em: agora, desc: 'Data original combinada: ' + fmtDate(dados.dataAtual) }
+    ]
+  };
+  state.vendas.push(venda);
+  await saveVenda(venda);
+
+  state.config.proximoNumero = numero + 1;
+  await saveConfig();
+
+  await agendarNotificacoesVenda(venda);
+  return venda;
+}
+
+/* ============================================================
+   11. NOTIFICAÇÕES (agendamento + lista interna)
+   ============================================================ */
+function notifIdVenda(vendaId, chave) { return 'n_' + vendaId + '_' + chave; }
+
+async function agendarNotificacoesVenda(venda) {
+  const cliente = clientePorId(venda.clienteId);
+  if (!cliente) return;
+  const cfg = state.config.lembretes || {};
+  const base = fromISO(venda.dataAtual);
+  const tarefas = [];
+  function add(dias, chave, titulo, texto) {
+    const d = new Date(base.getTime());
+    d.setDate(d.getDate() + dias);
+    const iso = toISO(d);
+    // não agendar datas já passadas
+    if (daysBetween(todayISO(), iso) < 0) return;
+    tarefas.push({
+      id: notifIdVenda(venda.id, chave),
+      date: iso,
+      time: '09:00',
+      title: titulo,
+      body: texto,
+      vendaId: venda.id
+    });
+  }
+  const nome = cliente.nome.split(' ')[0];
+  if (cfg.d7) add(-7, 'd7', '⏰ Lembrete de pagamento', nome + ' possui pagamento de ' + fmtMoney(restante(venda)) + ' em 7 dias.');
+  if (cfg.d3) add(-3, 'd3', '⏰ Lembrete de pagamento', nome + ' possui pagamento de ' + fmtMoney(restante(venda)) + ' em 3 dias.');
+  if (cfg.d1) add(-1, 'd1', '⏰ Lembrete de pagamento', nome + ' possui pagamento de ' + fmtMoney(restante(venda)) + ' amanhã.');
+  if (cfg.d0) add(0, 'd0', '🔔 Vence hoje', 'Pagamento de ' + nome + ' (' + fmtMoney(restante(venda)) + ') vence hoje.');
+  if (cfg.atraso) {
+    add(1, 'a1', '⚠️ Pagamento vencido', 'Pagamento de ' + nome + ' está vencido há 1 dia.');
+    add(3, 'a3', '⚠️ Pagamento atrasado', 'Pagamento de ' + nome + ' está atrasado há 3 dias.');
+    add(7, 'a7', '⚠️ Pagamento atrasado', nome + ' está com um pagamento atrasado há 7 dias.');
+    add(15, 'a15', '⚠️ Pagamento muito atrasado', nome + ' está com um pagamento atrasado há 15 dias.');
+  }
+  // cancelar antigas
+  await NotificationManager.cancel(notifIdVenda(venda.id, 'd7'));
+  await NotificationManager.cancel(notifIdVenda(venda.id, 'd3'));
+  await NotificationManager.cancel(notifIdVenda(venda.id, 'd1'));
+  await NotificationManager.cancel(notifIdVenda(venda.id, 'd0'));
+  await NotificationManager.cancel(notifIdVenda(venda.id, 'a1'));
+  await NotificationManager.cancel(notifIdVenda(venda.id, 'a3'));
+  await NotificationManager.cancel(notifIdVenda(venda.id, 'a7'));
+  await NotificationManager.cancel(notifIdVenda(venda.id, 'a15'));
+  // agendar novas
+  for (let i = 0; i < tarefas.length; i++) {
+    await NotificationManager.schedule(tarefas[i]);
+  }
+}
+async function cancelarNotificacoesVenda(vendaId) {
+  const chaves = ['d7', 'd3', 'd1', 'd0', 'a1', 'a3', 'a7', 'a15'];
+  for (let i = 0; i < chaves.length; i++) {
+    await NotificationManager.cancel(notifIdVenda(vendaId, chaves[i]));
+  }
+}
+
+/* Notificações internas (lista visível no app) */
+function notificacoesInternas() {
+  const lista = [];
+  state.vendas.forEach(function (v) {
+    if (v.arquivada) return;
+    const r = restante(v);
+    if (r <= 0.005) return;
+    const cli = clientePorId(v.clienteId);
+    if (!cli) return;
+    const nome = cli.nome.split(' ')[0];
+    const dias = daysBetween(todayISO(), v.dataAtual);
+    let tipo = null, titulo = '', texto = '', prioridade = 0;
+
+    if (dias < 0) {
+      const d = -dias;
+      tipo = 'vencido'; prioridade = 1;
+      titulo = '⚠️ Pagamento vencido há ' + d + (d === 1 ? ' dia' : ' dias');
+      texto = nome + ' • ' + v.produto + ' • ' + fmtMoney(r);
+    } else if (dias === 0) {
+      tipo = 'hoje'; prioridade = 2;
+      titulo = '🔔 Vence hoje';
+      texto = nome + ' • ' + v.produto + ' • ' + fmtMoney(r);
+    } else if (dias === 1) {
+      tipo = 'amanha'; prioridade = 3;
+      titulo = '🟡 Vence amanhã';
+      texto = nome + ' • ' + v.produto + ' • ' + fmtMoney(r);
+    } else if (dias <= 7) {
+      tipo = 'proximo'; prioridade = 4;
+      titulo = '🟢 Vence em ' + dias + ' dias';
+      texto = nome + ' • ' + v.produto + ' • ' + fmtMoney(r);
+    }
+    if (tipo) {
+      const nid = v.id + '_' + tipo + '_' + v.dataAtual;
+      lista.push({
+        id: nid, tipo: tipo, prioridade: prioridade,
+        titulo: titulo, texto: texto, vendaId: v.id, clienteId: cli.id,
+        data: v.dataAtual, lida: !!state.lidas[nid]
+      });
+    }
+  });
+  lista.sort(function (a, b) {
+    if (a.prioridade !== b.prioridade) return a.prioridade - b.prioridade;
+    return a.data < b.data ? -1 : (a.data > b.data ? 1 : 0);
+  });
+  return lista;
+}
+
+/* ============================================================
+   12. WHATSAPP
+   ============================================================ */
+function abrirWhatsAppVenda(vendaId, tipoForcado) {
+  const v = vendaPorId(vendaId);
+  if (!v) return;
+  const cli = clientePorId(v.clienteId);
+  if (!cli || !cli.telefone) { toast('Cliente sem telefone cadastrado', 'error'); return; }
+
+  const st = computeStatus(v);
+  const r = restante(v);
+  const msgs = state.config.mensagens || DEFAULT_MENSAGENS;
+  let tpl;
+  if (tipoForcado && msgs[tipoForcado]) tpl = msgs[tipoForcado];
+  else if (st === 'VENCIDO') tpl = msgs.vencido;
+  else if (st === 'VENCE HOJE') tpl = msgs.venceHoje;
+  else if (st === 'PAGO') tpl = msgs.pagamentoRecebido;
+  else if (st === 'PAGAMENTO PARCIAL') tpl = msgs.pagamentoParcial;
+  else tpl = msgs.lembrete;
+
+  const ctx = {
+    nome: cli.nome,
+    produto: v.produto,
+    valor: fmtMoney(v.valor),
+    data: fmtDate(v.dataAtual),
+    dataOriginal: fmtDate(v.dataOriginal),
+    saldo: fmtMoney(r),
+    loja: state.config.nomeLoja || ''
+  };
+  let texto = v.mensagem && !tipoForcado ? fillTemplate(v.mensagem, ctx) : fillTemplate(tpl, ctx);
+
+  const url = waLink(cli.telefone, texto);
+  window.open(url, '_blank');
+}
+function abrirWhatsAppCliente(clienteId) {
+  const cli = clientePorId(clienteId);
+  if (!cli) return;
+  if (!cli.telefone) { toast('Cliente sem telefone cadastrado', 'error'); return; }
+  const res = resumoCliente(clienteId);
+  const msgs = state.config.mensagens || DEFAULT_MENSAGENS;
+  const ctx = {
+    nome: cli.nome,
+    produto: 'suas compras',
+    valor: fmtMoney(res.totalAberto),
+    data: fmtDate(res.proximoVencimento),
+    dataOriginal: fmtDate(res.proximoVencimento),
+    saldo: fmtMoney(res.totalAberto),
+    loja: state.config.nomeLoja || ''
+  };
+  const texto = fillTemplate(msgs.atrasado, ctx);
+  window.open(waLink(cli.telefone, texto), '_blank');
+}
+
+/* ============================================================
+   13. HISTÓRICO / TIMELINE
+   ============================================================ */
+function addHistorico(venda, tipo, desc, extra) {
+  const h = { tipo: tipo, em: new Date().toISOString(), desc: desc };
+  if (extra) for (const k in extra) h[k] = extra[k];
+  venda.historico = venda.historico || [];
+  venda.historico.push(h);
+  venda.atualizadoEm = h.em;
+}
+
+/* ============================================================
+   14. RENDERIZAÇÃO
+   ============================================================ */
+function saudacao() {
+  const h = new Date().getHours();
+  if (h < 12) return 'Bom dia!';
+  if (h < 18) return 'Boa tarde!';
+  return 'Boa noite!';
+}
+
+function inicial(nome) {
+  if (!nome) return '?';
+  return nome.trim().charAt(0).toUpperCase();
+}
+function corAvatar(seed) {
+  const cores = ['#4f46e5','#0891b2','#059669','#d97706','#dc2626','#7c3aed','#db2777','#0284c7'];
+  let h = 0;
+  for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) % 997;
+  return cores[h % cores.length];
+}
+
+function renderTopbar() {
+  const tb = $('#topbar');
+  const back = state.historicoNav.length > 0;
+  const titles = {
+    home: state.config.nomeLoja || 'Minha Loja',
+    nova: 'Nova Venda Fiada',
+    clientes: 'Clientes',
+    cliente: 'Cliente',
+    venda: 'Venda',
+    receber: 'A Receber',
+    atrasados: 'Clientes em Atraso',
+    relatorios: 'Relatórios',
+    calendario: 'Calendário',
+    notificacoes: 'Notificações',
+    config: 'Configurações'
+  };
+  const t = titles[state.screen] || 'Fiado Control';
+  let sub = '';
+  if (state.screen === 'home') {
+    sub = saudacao();
+  } else if (state.screen === 'cliente' && state.params.clienteId) {
+    const c = clientePorId(state.params.clienteId);
+    sub = c ? displayPhone(c.telefone) : '';
+  } else if (state.screen === 'venda' && state.params.vendaId) {
+    const v = vendaPorId(state.params.vendaId);
+    sub = v ? ('Venda #' + String(v.numero).padStart(4, '0')) : '';
+  }
+  tb.innerHTML =
+    '<div class="row" style="gap:12px;align-items:center">' +
+      (back ? '<button id="btn-back" style="color:#fff;font-size:22px;padding:0 4px;line-height:1">‹</button>' : '') +
+      '<div style="flex:1;min-width:0">' +
+        '<div style="font-size:19px;font-weight:800;letter-spacing:-.02em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(t) + '</div>' +
+        (sub ? '<div style="font-size:12.5px;opacity:.85;font-weight:600;margin-top:1px">' + esc(sub) + '</div>' : '') +
+      '</div>' +
+      '<button id="btn-notif" style="color:#fff;font-size:19px;position:relative;padding:4px">🔔' +
+        (notificacoesInternas().filter(function(n){return !n.lida;}).length > 0
+          ? '<span class="badge-count" style="position:absolute;top:-2px;right:-4px">' +
+            notificacoesInternas().filter(function(n){return !n.lida;}).length + '</span>'
+          : '') +
+      '</button>' +
+    '</div>';
+
+  const b = $('#btn-back');
+  if (b) b.addEventListener('click', voltar);
+  const nb = $('#btn-notif');
+  if (nb) nb.addEventListener('click', function () { nav('notificacoes'); });
+}
+
+function renderNav() {
+  const items = [
+    { id: 'home', ico: '🏠', label: 'Início' },
+    { id: 'nova', ico: '➕', label: 'Venda' },
+    { id: 'clientes', ico: '👥', label: 'Clientes' },
+    { id: 'receber', ico: '💰', label: 'A receber' },
+    { id: 'config', ico: '⚙️', label: 'Config' }
+  ];
+  const activeMap = {
+    home: 'home', nova: 'nova', clientes: 'clientes', cliente: 'clientes',
+    venda: 'receber', receber: 'receber', atrasados: 'clientes',
+    relatorios: 'home', calendario: 'home', notificacoes: 'home', config: 'config'
+  };
+  const active = activeMap[state.screen] || 'home';
+  $('#bottomnav').innerHTML = items.map(function (it) {
+    return '<button data-nav="' + it.id + '" class="' + (active === it.id ? 'active' : '') + '">' +
+      '<span class="ico">' + it.ico + '</span><span>' + it.label + '</span></button>';
+  }).join('');
+  $$('#bottomnav button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      const id = b.getAttribute('data-nav');
+      if (id === 'nova') nav('nova');
+      else nav(id);
+    });
+  });
+}
+
+function render() {
+  renderTopbar();
+  renderNav();
+  const c = $('#content');
+  switch (state.screen) {
+    case 'home': c.innerHTML = htmlHome(); break;
+    case 'nova': c.innerHTML = htmlNovaVenda(); break;
+    case 'clientes': c.innerHTML = htmlClientes(); break;
+    case 'cliente': c.innerHTML = htmlClienteDetalhe(); break;
+    case 'venda': c.innerHTML = htmlVendaDetalhe(); break;
+    case 'receber': c.innerHTML = htmlReceber(); break;
+    case 'atrasados': c.innerHTML = htmlAtrasados(); break;
+    case 'relatorios': c.innerHTML = htmlRelatorios(); break;
+    case 'calendario': c.innerHTML = htmlCalendario(); break;
+    case 'notificacoes': c.innerHTML = htmlNotificacoes(); break;
+    case 'config': c.innerHTML = htmlConfig(); break;
+    default: c.innerHTML = htmlHome();
+  }
+  c.scrollTop = 0;
+  bindScreenEvents();
+}
+
+/* ---------------- HOME ---------------- */
+function htmlHome() {
+  const t = totalsDashboard();
+  const naoLidas = notificacoesInternas().filter(function (n) { return !n.lida; }).length;
+  const prox = vencimentosPriorizados().filter(function (x) { return !state.clientes.find(function(c){return c.id===x.v.clienteId && c.arquivado;}); }).slice(0, 8);
+
+  let h = '';
+  h += '<div class="grid2" style="margin-bottom:10px">' +
+    '<div class="stat accent-primary">' +
+      '<div class="lbl">💰 Total a receber</div>' +
+      '<div class="val">' + fmtMoney(t.aReceber) + '</div>' +
+      '<div class="sub">' + t.vendasAbertas + ' vendas em aberto</div>' +
+    '</div>' +
+    '<div class="stat accent-danger">' +
+      '<div class="lbl">🔴 Vencido</div>' +
+      '<div class="val">' + fmtMoney(t.vencido) + '</div>' +
+      '<div class="sub">' + (t.emAtraso > 0 ? t.emAtraso + ' cliente(s) arquivado(s)' : 'Em atraso') + '</div>' +
+    '</div>' +
+    '<div class="stat accent-warn">' +
+      '<div class="lbl">🟠 Vence hoje</div>' +
+      '<div class="val">' + fmtMoney(t.hoje) + '</div>' +
+      '<div class="sub">' + fmtDate(todayISO()) + '</div>' +
+    '</div>' +
+    '<div class="stat">' +
+      '<div class="lbl">🟢 Próximos 7 dias</div>' +
+      '<div class="val">' + fmtMoney(t.prox7) + '</div>' +
+      '<div class="sub">A vencer</div>' +
+    '</div>' +
+  '</div>';
+
+  h += '<div class="grid2" style="margin-bottom:6px">' +
+    '<div class="stat" data-action="ir-clientes" style="cursor:pointer">' +
+      '<div class="lbl">👥 Clientes</div>' +
+      '<div class="val">' + t.totalClientes + '</div>' +
+      '<div class="sub">Cadastrados</div>' +
+    '</div>' +
+    '<div class="stat" data-action="ir-atrasados" style="cursor:pointer">' +
+      '<div class="lbl">⚠️ Em atraso</div>' +
+      '<div class="val" style="color:var(--danger)">' + t.emAtraso + '</div>' +
+      '<div class="sub">Clientes arquivados</div>' +
+    '</div>' +
+  '</div>';
+
+  h += '<div class="grid2" style="margin-top:10px;margin-bottom:4px">' +
+    '<button class="btn btn-ghost btn-sm" data-action="ir-relatorios">📊 Relatórios</button>' +
+    '<button class="btn btn-ghost btn-sm" data-action="ir-calendario">📅 Calendário</button>' +
+  '</div>';
+
+  if (naoLidas > 0) {
+    h += '<div class="alert-bar danger" data-action="ir-notificacoes" style="margin-top:14px;cursor:pointer">' +
+      '🔔 Você tem ' + naoLidas + ' alerta(s) pendente(s) <span class="spacer"></span> ›' +
+    '</div>';
+  }
+
+  h += '<div class="section-title">🔎 Precisa da sua atenção</div>';
+  if (prox.length === 0) {
+    h += '<div class="empty"><div class="big">🎉</div><div class="t">Nenhum vencimento próximo</div>' +
+         '<div class="d">Você está em dia! Cadastre uma nova venda quando quiser.</div></div>';
+  } else {
+    prox.forEach(function (x) { h += vendaItemHTML(x.v, x.dias); });
+  }
+
+  h += '<div style="height:80px"></div>';
+  return h;
+}
+
+function vendaItemHTML(v, diasOverride) {
+  const cli = clientePorId(v.clienteId);
+  const st = computeStatus(v);
+  const r = restante(v);
+  const dias = (diasOverride !== undefined) ? diasOverride : daysBetween(todayISO(), v.dataAtual);
+  let tag;
+  if (v.arquivada) tag = '📦 ARQUIVADA';
+  else if (dias < 0) tag = '🔴 ' + (-dias) + ' DIAS ATRASADO';
+  else if (dias === 0) tag = '🟠 VENCE HOJE';
+  else if (dias === 1) tag = '🟡 VENCE AMANHÃ';
+  else tag = '🟢 VENCE EM ' + dias + ' DIAS';
+
+  return '<button class="item" data-action="abrir-venda" data-id="' + v.id + '">' +
+    '<div class="avatar" style="background:' + corAvatar(v.clienteId) + '">' + esc(inicial(cli ? cli.nome : '?')) + '</div>' +
+    '<div class="body">' +
+      '<div class="name">' + esc(cli ? cli.nome : 'Cliente') + '</div>' +
+      '<div class="meta">' + esc(v.produto) + ' • ' + esc(tag) + '</div>' +
+    '</div>' +
+    '<div class="right">' +
+      '<div class="amount ' + (st === 'PAGO' ? 'pos' : 'neg') + '">' + fmtMoney(r > 0 ? r : v.valor) + '</div>' +
+      '<span class="pill ' + statusClass(st) + '" style="margin-top:4px">' + esc(st) + '</span>' +
+    '</div>' +
+  '</button>';
+}
+
+/* ---------------- NOVA VENDA ---------------- */
+function htmlNovaVenda() {
+  const cliId = state.params.clienteId;
+  const cli = cliId ? clientePorId(cliId) : null;
+  const hoje = todayISO();
+  const defaultMsg = (state.config.mensagens || DEFAULT_MENSAGENS).lembrete;
+
+  let h = '';
+  h += '<div class="card">';
+  h += '<div style="font-size:15px;font-weight:800;margin-bottom:14px">' +
+       (cli ? '👤 ' + esc(cli.nome) : '🛒 Dados da venda') + '</div>';
+
+  h += '<form id="form-venda" novalidate>';
+
+  if (!cli) {
+    h += '<div class="field"><label>Nome do cliente *</label>' +
+      '<input type="text" name="nome" placeholder="Ex: João da Silva" autocomplete="off" required></div>';
+    h += '<div class="field"><label>WhatsApp / Telefone</label>' +
+      '<input type="tel" name="telefone" inputmode="numeric" placeholder="73999999999" maxlength="11" autocomplete="off"></div>';
+  } else {
+    h += '<input type="hidden" name="nome" value="' + esc(cli.nome) + '">';
+    h += '<input type="hidden" name="telefone" value="' + esc(displayPhone(cli.telefone)) + '">';
+  }
+
+  h += '<div class="field"><label>O que foi comprado *</label>' +
+    '<input type="text" name="produto" placeholder="Ex: Fone Bluetooth" autocomplete="off" required></div>';
+
+  h += '<div class="field"><label>Valor (R$) *</label>' +
+    '<input type="text" name="valor" inputmode="decimal" placeholder="0,00" required></div>';
+
+  h += '<div class="grid2">' +
+    '<div class="field"><label>Data da venda *</label><input type="date" name="dataVenda" value="' + hoje + '" required></div>' +
+    '<div class="field"><label>Vencimento *</label><input type="date" name="dataAtual" value="' + hoje + '" required></div>' +
+  '</div>';
+
+  h += '<div class="field"><label>Observação</label>' +
+    '<textarea name="observacao" placeholder="Ex: Fone preto, embalagem aberta..."></textarea></div>';
+
+  h += '<div class="field"><label>Mensagem personalizada de WhatsApp</label>' +
+    '<textarea name="mensagem" style="min-height:110px" placeholder="Deixe em branco para usar o modelo padrão">' + esc(defaultMsg) + '</textarea>' +
+    '<div style="font-size:11.5px;color:var(--text3);margin-top:6px;line-height:1.5">' +
+      'Variáveis: <b>{nome}</b> <b>{produto}</b> <b>{valor}</b> <b>{data}</b> <b>{saldo}</b> <b>{dataOriginal}</b>' +
+    '</div></div>';
+
+  h += '<button type="submit" class="btn btn-primary btn-block btn-lg" style="margin-top:6px">💾 Salvar venda fiada</button>';
+  h += '</form></div>';
+  h += '<div style="height:70px"></div>';
+  return h;
+}
+
+/* ---------------- CLIENTES ---------------- */
+function htmlClientes() {
+  const busca = (state.busca || '').toLowerCase().trim();
+  let lista = state.clientes.filter(function (c) { return !c.arquivado; });
+
+  if (busca) {
+    lista = lista.filter(function (c) {
+      return c.nome.toLowerCase().indexOf(busca) > -1 ||
+             onlyDigits(c.telefone).indexOf(onlyDigits(busca)) > -1;
+    });
+  }
+
+  const comResumo = lista.map(function (c) {
+    const r = resumoCliente(c.id);
+    return { c: c, r: r };
+  }).filter(function (x) { return x.r.total > 0 || busca; });
+
+  comResumo.sort(function (a, b) {
+    return b.r.totalAberto - a.r.totalAberto || a.c.nome.localeCompare(b.c.nome);
+  });
+
+  let h = '';
+  h += '<div class="field" style="margin-bottom:12px">' +
+    '<input type="text" id="busca-clientes" placeholder="🔍 Buscar por nome ou telefone" value="' + esc(state.busca) + '"></div>';
+
+  h += '<div class="section-title">👥 Clientes <span class="count">' + comResumo.length + '</span></div>';
+
+  if (comResumo.length === 0) {
+    h += '<div class="empty"><div class="big">👥</div><div class="t">Nenhum cliente encontrado</div>' +
+         '<div class="d">Registre uma venda para cadastrar um cliente automaticamente.</div>' +
+         '<button class="btn btn-primary" data-action="ir-nova">➕ Nova venda fiada</button></div>';
+  } else {
+    comResumo.forEach(function (x) {
+      const c = x.c, r = x.r;
+      h += '<button class="item" data-action="abrir-cliente" data-id="' + c.id + '">' +
+        '<div class="avatar" style="background:' + corAvatar(c.id) + '">' + esc(inicial(c.nome)) + '</div>' +
+        '<div class="body">' +
+          '<div class="name">' + esc(c.nome) + '</div>' +
+          '<div class="meta">' +
+            (c.telefone ? esc(displayPhone(c.telefone)) + ' • ' : '') +
+            r.abertas + ' em aberto • ' + r.total + ' compra(s)' +
+          '</div>' +
+        '</div>' +
+        '<div class="right">' +
+          '<div class="amount ' + (r.totalVencido > 0 ? 'neg' : '') + '">' + fmtMoney(r.totalAberto) + '</div>' +
+          (r.totalVencido > 0
+            ? '<span class="pill vencido" style="margin-top:4px">' + fmtMoney(r.totalVencido) + '</span>'
+            : '<span class="pill pago" style="margin-top:4px">em dia</span>') +
+        '</div>' +
+      '</button>';
+    });
+  }
+  h += '<div style="height:80px"></div>';
+  return h;
+}
+
+/* ---------------- CLIENTE DETALHE ---------------- */
+function htmlClienteDetalhe() {
+  const c = clientePorId(state.params.clienteId);
+  if (!c) return '<div class="empty"><div class="big">❓</div><div class="t">Cliente não encontrado</div></div>';
+  const r = resumoCliente(c.id);
+  const vs = r.vendas.slice().sort(function (a, b) { return (b.criadoEm || '').localeCompare(a.criadoEm || ''); });
+
+  let h = '';
+  h += '<div class="card" style="text-align:center;padding:22px 16px">' +
+    '<div class="avatar" style="width:66px;height:66px;border-radius:22px;font-size:26px;margin:0 auto 12px;background:' + corAvatar(c.id) + '">' + esc(inicial(c.nome)) + '</div>' +
+    '<div style="font-size:19px;font-weight:800">' + esc(c.nome) + '</div>' +
+    '<div style="font-size:13px;color:var(--text2);margin-top:2px">' + (c.telefone ? esc(displayPhone(c.telefone)) : 'Sem telefone') + '</div>' +
+    (c.arquivado ? '<div class="pill vencido" style="margin-top:10px">⚠️ Cliente em atraso</div>' : '') +
+    '<div class="grid2" style="margin-top:16px">' +
+      '<button class="btn btn-primary btn-sm" data-action="nova-venda-cliente" data-id="' + c.id + '">➕ Nova venda</button>' +
+      '<button class="btn btn-success btn-sm" data-action="wa-cliente" data-id="' + c.id + '">💬 WhatsApp</button>' +
+    '</div>' +
+  '</div>';
+
+  h += '<div class="grid2">' +
+    '<div class="stat"><div class="lbl">Total comprado</div><div class="val" style="font-size:16px">' + fmtMoney(r.totalComprado) + '</div></div>' +
+    '<div class="stat"><div class="lbl">Total pago</div><div class="val" style="font-size:16px;color:var(--success)">' + fmtMoney(r.totalPago) + '</div></div>' +
+    '<div class="stat accent-danger"><div class="lbl">Em aberto</div><div class="val" style="font-size:16px">' + fmtMoney(r.totalAberto) + '</div></div>' +
+    '<div class="stat accent-danger"><div class="lbl">Vencido</div><div class="val" style="font-size:16px">' + fmtMoney(r.totalVencido) + '</div></div>' +
+  '</div>';
+
+  h += '<div class="card" style="margin-top:10px">' +
+    '<div class="kv"><span class="k">Quantidade de compras</span><span class="v">' + r.total + '</span></div>' +
+    '<div class="kv"><span class="k">Vendas em aberto</span><span class="v">' + r.abertas + '</span></div>' +
+    '<div class="kv"><span class="k">Vendas atrasadas</span><span class="v">' + r.atrasadas + '</span></div>' +
+    '<div class="kv"><span class="k">Renegociações</span><span class="v">' + r.renegociacoes + '</span></div>' +
+    '<div class="kv"><span class="k">Próximo vencimento</span><span class="v">' + (r.proximoVencimento ? fmtDate(r.proximoVencimento) : '—') + '</span></div>' +
+  '</div>';
+
+  h += '<div class="grid2" style="margin-top:10px">' +
+    (c.arquivado
+      ? '<button class="btn btn-success btn-sm" data-action="restaurar-cliente" data-id="' + c.id + '">✅ Restaurar cliente</button>'
+      : '<button class="btn btn-warn btn-sm" data-action="arquivar-cliente" data-id="' + c.id + '">⚠️ Arquivar cliente</button>') +
+    '<button class="btn btn-ghost btn-sm" data-action="editar-cliente" data-id="' + c.id + '">✏️ Editar dados</button>' +
+  '</div>';
+
+  h += '<div class="section-title">🧾 Histórico de vendas <span class="count">' + vs.length + '</span></div>';
+  if (vs.length === 0) {
+    h += '<div class="empty"><div class="big">🧾</div><div class="t">Nenhuma venda</div><div class="d">Este cliente ainda não possui vendas.</div></div>';
+  } else {
+    vs.forEach(function (v) { h += vendaItemHTML(v); });
+  }
+
+  h += '<div style="height:80px"></div>';
+  return h;
+}
+
+/* ---------------- VENDA DETALHE ---------------- */
+function htmlVendaDetalhe() {
+  const v = vendaPorId(state.params.vendaId);
+  if (!v) return '<div class="empty"><div class="big">❓</div><div class="t">Venda não encontrada</div></div>';
+  const cli = clientePorId(v.clienteId);
+  const st = computeStatus(v);
+  const r = restante(v);
+  const dias = daysBetween(todayISO(), v.dataAtual);
+
+  let h = '';
+  h += '<div class="card">' +
+    '<div class="row between" style="margin-bottom:12px">' +
+      '<div style="font-size:15px;font-weight:800">Venda #' + String(v.numero).padStart(4, '0') + '</div>' +
+      '<span class="pill ' + statusClass(st) + '">' + esc(st) + '</span>' +
+    '</div>' +
+    '<div class="kv"><span class="k">Cliente</span><span class="v">' + esc(cli ? cli.nome : '—') + '</span></div>' +
+    '<div class="kv"><span class="k">Compra</span><span class="v">' + esc(v.produto) + '</span></div>' +
+    '<div class="kv"><span class="k">Data da venda</span><span class="v">' + fmtDate(v.dataVenda) + '</span></div>' +
+    '<div class="kv"><span class="k">Valor original</span><span class="v">' + fmtMoney(v.valor) + '</span></div>' +
+    '<div class="kv"><span class="k">Pago</span><span class="v" style="color:var(--success)">' + fmtMoney(v.pago) + '</span></div>' +
+    '<div class="kv"><span class="k">Restante</span><span class="v" style="color:' + (r > 0 ? 'var(--danger)' : 'var(--success)') + '">' + fmtMoney(r) + '</span></div>' +
+    '<div class="kv"><span class="k">Data original</span><span class="v">' + fmtDate(v.dataOriginal) + '</span></div>' +
+    '<div class="kv"><span class="k">Data atual</span><span class="v">' + fmtDate(v.dataAtual) + '</span></div>' +
+    (dias < 0 ? '<div class="kv"><span class="k">Atraso</span><span class="v" style="color:var(--danger)">' + (-dias) + ' dias</span></div>' : '') +
+    (v.observacao ? '<div class="kv"><span class="k">Observação</span><span class="v" style="font-weight:600">' + esc(v.observacao) + '</span></div>' : '') +
+  '</div>';
+
+  if (r > 0.005) {
+    h += '<div class="grid2" style="margin-bottom:10px">' +
+      '<button class="btn btn-success btn-sm" data-action="registrar-pagamento" data-id="' + v.id + '">💰 Registrar pagamento</button>' +
+      '<button class="btn btn-warn btn-sm" data-action="alterar-data" data-id="' + v.id + '">📅 Alterar data</button>' +
+      '<button class="btn btn-primary btn-sm" data-action="wa-venda" data-id="' + v.id + '">💬 WhatsApp</button>' +
+      '<button class="btn btn-ghost btn-sm" data-action="editar-venda" data-id="' + v.id + '">✏️ Editar</button>' +
+    '</div>';
+    h += '<div class="grid2" style="margin-bottom:10px">' +
+      (v.arquivada
+        ? '<button class="btn btn-success btn-sm" data-action="restaurar-venda" data-id="' + v.id + '">✅ Restaurar venda</button>'
+        : '<button class="btn btn-ghost btn-sm" data-action="arquivar-venda" data-id="' + v.id + '">📦 Arquivar venda</button>') +
+      '<button class="btn btn-ghost btn-sm" data-action="wa-venda-tpl" data-id="' + v.id + '">📝 Escolher mensagem</button>' +
+    '</div>';
+  } else {
+    h += '<div class="grid2" style="margin-bottom:10px">' +
+      '<button class="btn btn-primary btn-sm" data-action="wa-venda" data-id="' + v.id + '">💬 WhatsApp</button>' +
+      '<button class="btn btn-ghost btn-sm" data-action="editar-venda" data-id="' + v.id + '">✏️ Editar</button>' +
+    '</div>';
+    h += '<button class="btn btn-ghost btn-block btn-sm" data-action="excluir-venda" data-id="' + v.id + '" style="margin-bottom:10px;color:var(--danger)">🗑️ Excluir venda</button>';
+  }
+
+  h += '<div class="section-title">💵 Pagamentos <span class="count">' + (v.pagamentos || []).length + '</span></div>';
+  if (!v.pagamentos || v.pagamentos.length === 0) {
+    h += '<div class="card" style="text-align:center;color:var(--text2);font-size:13.5px;padding:22px">Nenhum pagamento registrado ainda.</div>';
+  } else {
+    h += '<div class="card">';
+    v.pagamentos.slice().reverse().forEach(function (p) {
+      h += '<div class="kv"><span class="k">' + fmtDateTime(p.em) + (p.obs ? '<br><small style="color:var(--text3);font-weight:500">' + esc(p.obs) + '</small>' : '') + '</span>' +
+           '<span class="v" style="color:var(--success)">+ ' + fmtMoney(p.valor) + '</span></div>';
+    });
+    h += '</div>';
+  }
+
+  h += '<div class="section-title">📜 Linha do tempo</div>';
+  h += '<div class="card"><div class="timeline">';
+  const hist = (v.historico || []).slice().sort(function (a, b) { return (a.em || '').localeCompare(b.em || ''); });
+  hist.forEach(function (hh) {
+    let cls = '';
+    if (hh.tipo === 'pagamento') cls = 'green';
+    else if (hh.tipo === 'data_alterada') cls = 'orange';
+    else if (hh.tipo === 'vencido') cls = 'red';
+    h += '<div class="tl-item ' + cls + '">' +
+      '<div class="tl-date">' + fmtDateTime(hh.em) + '</div>' +
+      '<div class="tl-text">' + esc(hh.desc) + '</div>' +
+    '</div>';
+  });
+  h += '</div></div>';
+
+  h += '<div style="height:80px"></div>';
+  return h;
+}
+
+/* ---------------- A RECEBER ---------------- */
+function htmlReceber() {
+  const filtros = [
+    { id: 'todos', label: 'Todos' },
+    { id: 'abertos', label: 'Abertos' },
+    { id: 'hoje', label: 'Vence hoje' },
+    { id: 'vencidos', label: 'Vencidos' },
+    { id: 'parciais', label: 'Parciais' },
+    { id: 'pagos', label: 'Pagos' },
+    { id: 'prox7', label: 'Próximos 7 dias' },
+    { id: 'prox30', label: 'Próximos 30 dias' },
+    { id: 'arquivados', label: 'Arquivados' }
+  ];
+  let h = '';
+  h += '<div class="field"><input type="text" id="busca-vendas" placeholder="🔍 Buscar cliente, produto, nº da venda..." value="' + esc(state.busca) + '"></div>';
+  h += '<div class="chips">' + filtros.map(function (f) {
+    return '<button class="chip ' + (state.filtro === f.id ? 'active' : '') + '" data-filtro="' + f.id + '">' + f.label + '</button>';
+  }).join('') + '</div>';
+
+  let lista = state.vendas.slice();
+  const f = state.filtro;
+  const hoje = todayISO();
+
+  if (f === 'abertos') lista = lista.filter(function (v) { return !v.arquivada && restante(v) > 0.005; });
+  else if (f === 'hoje') lista = lista.filter(function (v) { return !v.arquivada && restante(v) > 0.005 && daysBetween(hoje, v.dataAtual) === 0; });
+  else if (f === 'vencidos') lista = lista.filter(function (v) { return !v.arquivada && restante(v) > 0.005 && daysBetween(hoje, v.dataAtual) < 0; });
+  else if (f === 'parciais') lista = lista.filter(function (v) { return !v.arquivada && restante(v) > 0.005 && v.pago > 0.005; });
+  else if (f === 'pagos') lista = lista.filter(function (v) { return restante(v) <= 0.005; });
+  else if (f === 'prox7') lista = lista.filter(function (v) { const d = daysBetween(hoje, v.dataAtual); return !v.arquivada && restante(v) > 0.005 && d >= 0 && d <= 7; });
+  else if (f === 'prox30') lista = lista.filter(function (v) { const d = daysBetween(hoje, v.dataAtual); return !v.arquivada && restante(v) > 0.005 && d >= 0 && d <= 30; });
+  else if (f === 'arquivados') lista = lista.filter(function (v) { return v.arquivada; });
+
+  const busca = (state.busca || '').toLowerCase().trim();
+  if (busca) {
+    lista = lista.filter(function (v) {
+      const cli = clientePorId(v.clienteId);
+      const nome = cli ? cli.nome.toLowerCase() : '';
+      const tel = cli ? onlyDigits(cli.telefone) : '';
+      return nome.indexOf(busca) > -1 ||
+        tel.indexOf(onlyDigits(busca)) > -1 ||
+        (v.produto || '').toLowerCase().indexOf(busca) > -1 ||
+        (v.observacao || '').toLowerCase().indexOf(busca) > -1 ||
+        String(v.numero).indexOf(busca.replace(/\D/g, '')) > -1 && onlyDigits(busca).length > 0;
+    });
+  }
+
+  lista.sort(function (a, b) {
+    return daysBetween(hoje, a.dataAtual) - daysBetween(hoje, b.dataAtual);
+  });
+
+  let total = 0;
+  lista.forEach(function (v) { if (!v.arquivada) total += restante(v); });
+
+  h += '<div class="card" style="display:flex;justify-content:space-between;align-items:center;padding:13px 15px">' +
+    '<span style="font-size:13px;color:var(--text2);font-weight:700">' + lista.length + ' venda(s)</span>' +
+    '<span style="font-size:16px;font-weight:800">' + fmtMoney(total) + '</span>' +
+  '</div>';
+
+  if (lista.length === 0) {
+    h += '<div class="empty"><div class="big">📭</div><div class="t">Nenhuma venda encontrada</div>' +
+         '<div class="d">Tente outro filtro ou registre uma nova venda fiada.</div>' +
+         '<button class="btn btn-primary" data-action="ir-nova">➕ Nova venda fiada</button></div>';
+  } else {
+    lista.forEach(function (v) { h += vendaItemHTML(v); });
+  }
+  h += '<div style="height:80px"></div>';
+  return h;
+}
+
+/* ---------------- ATRASADOS ---------------- */
+function htmlAtrasados() {
+  const arr = state.clientes.filter(function (c) { return c.arquivado; }).map(function (c) {
+    const r = resumoCliente(c.id);
+    const atraso = diasAtrasoCliente(c.id);
+    const ultima = r.proximoVencimento;
+    return { c: c, r: r, atraso: atraso, ultima: ultima };
+  }).sort(function (a, b) { return b.atraso - a.atraso; });
+
+  let h = '';
+  if (arr.length === 0) {
+    h += '<div class="empty"><div class="big">🎉</div><div class="t">Nenhum cliente em atraso</div>' +
+         '<div class="d">Todos os seus clientes estão em dia com os pagamentos.</div></div>';
+    return h;
+  }
+
+  let totalDev = 0, totalVenc = 0;
+  arr.forEach(function (x) { totalDev += x.r.totalAberto; totalVenc += x.r.totalVencido; });
+
+  h += '<div class="alert-bar danger">⚠️ ' + arr.length + ' cliente(s) em atraso — ' + fmtMoney(totalVenc) + ' vencido</div>';
+
+  arr.forEach(function (x) {
+    const c = x.c, r = x.r;
+    h += '<div class="item" style="flex-direction:column;align-items:stretch;gap:10px" data-action="abrir-cliente" data-id="' + c.id + '">' +
+      '<div style="display:flex;gap:12px;align-items:center">' +
+        '<div class="avatar" style="background:' + corAvatar(c.id) + '">' + esc(inicial(c.nome)) + '</div>' +
+        '<div class="body">' +
+          '<div class="name">' + esc(c.nome) + '</div>' +
+          '<div class="meta">' + (c.telefone ? esc(displayPhone(c.telefone)) : 'Sem telefone') + '</div>' +
+        '</div>' +
+        '<div class="right">' +
+          '<div class="amount neg">' + fmtMoney(r.totalAberto) + '</div>' +
+          '<span class="pill vencido" style="margin-top:4px">🔴 ' + x.atraso + ' dias</span>' +
+        '</div>' +
+      '</div>' +
+      '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;font-size:11px;color:var(--text2);border-top:1px solid var(--border);padding-top:10px">' +
+        '<div><div style="font-weight:800;color:var(--text);font-size:12.5px">' + fmtMoney(r.totalVencido) + '</div>Vencido</div>' +
+        '<div><div style="font-weight:800;color:var(--text);font-size:12.5px">' + r.atrasadas + '</div>Vendas</div>' +
+        '<div><div style="font-weight:800;color:var(--text);font-size:12.5px">' + (x.ultima ? fmtDate(x.ultima) : '—') + '</div>Última data</div>' +
+        '<div><div style="font-weight:800;color:var(--text);font-size:12.5px">' + r.renegociacoes + '</div>Renegoc.</div>' +
+      '</div>' +
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
+        '<button class="btn btn-success btn-sm" data-action="wa-cliente" data-id="' + c.id + '">💬 WhatsApp</button>' +
+        '<button class="btn btn-ghost btn-sm" data-action="restaurar-cliente" data-id="' + c.id + '">✅ Restaurar</button>' +
+      '</div>' +
+    '</div>';
+  });
+
+  h += '<div style="height:80px"></div>';
+  return h;
+}
+
+/* ---------------- RELATÓRIOS ---------------- */
+function htmlRelatorios() {
+  const p = state.params.periodo || '30';
+  const periodos = [
+    { id: 'hoje', label: 'Hoje' },
+    { id: '7', label: 'Últimos 7 dias' },
+    { id: '30', label: 'Últimos 30 dias' },
+    { id: 'mes', label: 'Este mês' },
+    { id: 'mesant', label: 'Mês anterior' },
+    { id: 'all', label: 'Tudo' }
+  ];
+
+  let de = null, ate = null;
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  if (p === 'hoje') { de = toISO(hoje); ate = de; }
+  else if (p === '7') { const d = new Date(hoje); d.setDate(d.getDate() - 6); de = toISO(d); ate = toISO(hoje); }
+  else if (p === '30') { const d = new Date(hoje); d.setDate(d.getDate() - 29); de = toISO(d); ate = toISO(hoje); }
+  else if (p === 'mes') { de = toISO(new Date(hoje.getFullYear(), hoje.getMonth(), 1)); ate = toISO(hoje); }
+  else if (p === 'mesant') {
+    const ini = new Date(hoje.getFullYear(), hoje.getMonth() - 1, 1);
+    const fim = new Date(hoje.getFullYear(), hoje.getMonth(), 0);
+    de = toISO(ini); ate = toISO(fim);
+  }
+
+  const filtradas = state.vendas.filter(function (v) {
+    if (!de) return true;
+    const d = (v.dataVenda || v.criadoEm || '').slice(0, 10);
+    return d >= de && d <= ate;
+  });
+
+  let totalVendido = 0, totalRecebido = 0, emAberto = 0, vencido = 0, parciais = 0, pagas = 0;
+  filtradas.forEach(function (v) {
+    totalVendido += Number(v.valor) || 0;
+    totalRecebido += Number(v.pago) || 0;
+    const r = restante(v);
+    if (r > 0.005) {
+      emAberto += r;
+      if (daysBetween(todayISO(), v.dataAtual) < 0) vencido += r;
+      if (v.pago > 0.005) parciais += r;
+    } else pagas++;
+  });
+
+  let totalGeralPago = 0;
+  state.vendas.forEach(function (v) { totalGeralPago += Number(v.pago) || 0; });
+
+  const clientesAtivos = {};
+  filtradas.forEach(function (v) { clientesAtivos[v.clienteId] = true; });
+  const ticket = filtradas.length ? totalVendido / filtradas.length : 0;
+
+  let h = '';
+  h += '<div class="chips">' + periodos.map(function (x) {
+    return '<button class="chip ' + (p === x.id ? 'active' : '') + '" data-periodo="' + x.id + '">' + x.label + '</button>';
+  }).join('') + '</div>';
+
+  if (de) h += '<div style="font-size:12.5px;color:var(--text2);font-weight:600;margin-bottom:12px">Período: ' + fmtDate(de) + ' até ' + fmtDate(ate) + '</div>';
+
+  h += '<div class="grid2">' +
+    '<div class="stat accent-primary"><div class="lbl">Total vendido fiado</div><div class="val" style="font-size:17px">' + fmtMoney(totalVendido) + '</div></div>' +
+    '<div class="stat"><div class="lbl">Total recebido</div><div class="val" style="font-size:17px;color:var(--success)">' + fmtMoney(totalRecebido) + '</div></div>' +
+    '<div class="stat accent-danger"><div class="lbl">Em aberto</div><div class="val" style="font-size:17px">' + fmtMoney(emAberto) + '</div></div>' +
+    '<div class="stat accent-danger"><div class="lbl">Vencido</div><div class="val" style="font-size:17px">' + fmtMoney(vencido) + '</div></div>' +
+    '<div class="stat"><div class="lbl">Em pagamento parcial</div><div class="val" style="font-size:17px">' + fmtMoney(parciais) + '</div></div>' +
+    '<div class="stat"><div class="lbl">Vendas pagas</div><div class="val" style="font-size:17px;color:var(--success)">' + pagas + '</div></div>' +
+  '</div>';
+
+  h += '<div class="card" style="margin-top:10px">' +
+    '<div class="kv"><span class="k">Quantidade de vendas</span><span class="v">' + filtradas.length + '</span></div>' +
+    '<div class="kv"><span class="k">Clientes no período</span><span class="v">' + Object.keys(clientesAtivos).length + '</span></div>' +
+    '<div class="kv"><span class="k">Total de clientes</span><span class="v">' + state.clientes.length + '</span></div>' +
+    '<div class="kv"><span class="k">Clientes em atraso</span><span class="v" style="color:var(--danger)">' + state.clientes.filter(function(c){return c.arquivado;}).length + '</span></div>' +
+    '<div class="kv"><span class="k">Valor médio das vendas</span><span class="v">' + fmtMoney(ticket) + '</span></div>' +
+    '<div class="kv"><span class="k">Total recebido (geral)</span><span class="v">' + fmtMoney(totalGeralPago) + '</span></div>' +
+  '</div>';
+
+  /* Relatório de clientes atrasados */
+  const atrasados = state.clientes.filter(function (c) { return c.arquivado; }).map(function (c) {
+    const r = resumoCliente(c.id);
+    return { c: c, r: r, atraso: diasAtrasoCliente(c.id) };
+  }).sort(function (a, b) { return b.atraso - a.atraso; });
+
+  h += '<div class="section-title">⚠️ Relatório de clientes atrasados</div>';
+  if (atrasados.length === 0) {
+    h += '<div class="card" style="text-align:center;color:var(--text2);font-size:13.5px;padding:22px">Nenhum cliente em atraso. 🎉</div>';
+  } else {
+    h += '<div class="card" style="overflow-x:auto;padding:0">' +
+      '<table style="width:100%;border-collapse:collapse;font-size:12.5px">' +
+      '<thead><tr style="background:var(--surface2);text-align:left">' +
+        '<th style="padding:10px 12px;font-weight:800;color:var(--text2)">Cliente</th>' +
+        '<th style="padding:10px 8px;font-weight:800;color:var(--text2)">Atraso</th>' +
+        '<th style="padding:10px 8px;font-weight:800;color:var(--text2)">Vencido</th>' +
+        '<th style="padding:10px 8px;font-weight:800;color:var(--text2)">Vendas</th>' +
+        '<th style="padding:10px 12px;font-weight:800;color:var(--text2)">Reneg.</th>' +
+      '</tr></thead><tbody>';
+    atrasados.forEach(function (x) {
+      h += '<tr style="border-top:1px solid var(--border)">' +
+        '<td style="padding:10px 12px;font-weight:700">' + esc(x.c.nome) + '</td>' +
+        '<td style="padding:10px 8px;color:var(--danger);font-weight:700">' + x.atraso + 'd</td>' +
+        '<td style="padding:10px 8px;font-weight:700">' + fmtMoney(x.r.totalVencido) + '</td>' +
+        '<td style="padding:10px 8px">' + x.r.atrasadas + '</td>' +
+        '<td style="padding:10px 12px">' + x.r.renegociacoes + '</td>' +
+      '</tr>';
+    });
+    h += '</tbody></table></div>';
+  }
+
+  h += '<div style="height:80px"></div>';
+  return h;
+}
+
+/* ---------------- CALENDÁRIO ---------------- */
+function htmlCalendario() {
+  const ref = state.calRef;
+  const y = ref.getFullYear(), m = ref.getMonth();
+  const primeiro = new Date(y, m, 1);
+  const inicioSemana = primeiro.getDay();
+  const diasNoMes = new Date(y, m + 1, 0).getDate();
+  const hoje = todayISO();
+
+  const porDia = {};
+  state.vendas.forEach(function (v) {
+    if (v.arquivada) return;
+    if (restante(v) <= 0.005) return;
+    const key = v.dataAtual;
+    if (!porDia[key]) porDia[key] = [];
+    porDia[key].push(v);
+  });
+
+  const meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  const diasSem = ['D','S','T','Q','Q','S','S'];
+
+  let h = '';
+  h += '<div class="card">' +
+    '<div class="row between" style="margin-bottom:14px">' +
+      '<button class="btn btn-ghost btn-sm" data-cal="-1" style="padding:6px 14px;font-size:17px">‹</button>' +
+      '<div style="font-weight:800;font-size:16px">' + meses[m] + ' ' + y + '</div>' +
+      '<button class="btn btn-ghost btn-sm" data-cal="1" style="padding:6px 14px;font-size:17px">›</button>' +
+    '</div>' +
+    '<div class="cal-grid">';
+  diasSem.forEach(function (d) { h += '<div class="cal-head">' + d + '</div>'; });
+
+  for (let i = 0; i < inicioSemana; i++) h += '<div></div>';
+  for (let d = 1; d <= diasNoMes; d++) {
+    const iso = toISO(new Date(y, m, d));
+    const itens = porDia[iso] || [];
+    let cls = 'cal-day';
+    if (iso === hoje) cls += ' today';
+    if (itens.length) {
+      cls += ' has';
+      if (iso < hoje) cls += ' over';
+    }
+    h += '<div class="' + cls + '" data-dia="' + iso + '">' +
+      '<span class="num">' + d + '</span>' +
+      (itens.length ? '<span class="cnt">' + itens.length + '</span>' : '') +
+    '</div>';
+  }
+  h += '</div></div>';
+
+  const selDia = state.calSel;
+  if (selDia) {
+    const itens = porDia[selDia] || [];
+    h += '<div class="section-title">📅 ' + fmtDate(selDia) + ' <span class="count">' + itens.length + '</span></div>';
+    if (itens.length === 0) {
+      h += '<div class="card" style="text-align:center;color:var(--text2);font-size:13.5px;padding:22px">Nenhum vencimento neste dia.</div>';
+    } else {
+      itens.forEach(function (v) { h += vendaItemHTML(v); });
+    }
+  } else {
+    const prox = vencimentosPriorizados().slice(0, 6);
+    h += '<div class="section-title">🔎 Próximos vencimentos</div>';
+    if (prox.length === 0) {
+      h += '<div class="card" style="text-align:center;color:var(--text2);font-size:13.5px;padding:22px">Nenhum vencimento próximo.</div>';
+    } else {
+      prox.forEach(function (x) { h += vendaItemHTML(x.v, x.dias); });
+    }
+  }
+
+  h += '<div style="height:80px"></div>';
+  return h;
+}
+
+/* ---------------- NOTIFICAÇÕES ---------------- */
+function htmlNotificacoes() {
+  const lista = notificacoesInternas();
+  const nativas = NotificationManager.hasNative();
+  const perm = NotificationManager.permission();
+
+  let h = '';
+  h += '<div class="card" style="background:var(--surface2)">' +
+    '<div style="font-size:13px;font-weight:800;margin-bottom:6px">🔔 Status das notificações</div>' +
+    '<div style="font-size:12.5px;color:var(--text2);line-height:1.55">' +
+      (nativas
+        ? '✅ Ponte nativa Android detectada. Os lembretes podem ser agendados no sistema.'
+        : 'ℹ️ Executando no navegador. Os alertas aparecem dentro do aplicativo. ' +
+          'Notificações em segundo plano (app fechado) só funcionam quando o APK fornece uma ponte nativa.') +
+    '</div>' +
+    '<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">' +
+      '<button class="btn btn-ghost btn-sm" data-action="pedir-permissao">Permissão: ' + esc(perm) + '</button>' +
+      '<button class="btn btn-ghost btn-sm" data-action="marcar-lidas">Marcar todas como lidas</button>' +
+    '</div>' +
+  '</div>';
+
+  h += '<div class="section-title">Alertas <span class="count">' + lista.filter(function(n){return !n.lida;}).length + ' não lidas</span></div>';
+
+  if (lista.length === 0) {
+    h += '<div class="empty"><div class="big">🔕</div><div class="t">Nenhum alerta no momento</div>' +
+         '<div class="d">Você não tem vencimentos próximos ou atrasados.</div></div>';
+    return h;
+  }
+
+  lista.forEach(function (n) {
+    const cls = n.tipo === 'vencido' ? 'danger' : (n.tipo === 'hoje' ? 'warn' : 'info');
+    h += '<div class="card" style="border-left:4px solid var(--' + (n.tipo === 'vencido' ? 'danger' : n.tipo === 'hoje' ? 'warn' : 'info') + ');' +
+         (n.lida ? 'opacity:.6' : '') + '">' +
+      '<div class="row between" style="margin-bottom:6px">' +
+        '<div style="font-weight:800;font-size:14px">' + esc(n.titulo) + '</div>' +
+        (!n.lida ? '<span class="badge-count">nova</span>' : '') +
+      '</div>' +
+      '<div style="font-size:13px;color:var(--text2);margin-bottom:10px">' + esc(n.texto) + '</div>' +
+      '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
+        '<button class="btn btn-ghost btn-sm" data-action="abrir-venda" data-id="' + n.vendaId + '">👁️ Ver venda</button>' +
+        '<button class="btn btn-success btn-sm" data-action="wa-venda" data-id="' + n.vendaId + '">💬 WhatsApp</button>' +
+        (!n.lida ? '<button class="btn btn-ghost btn-sm" data-action="marcar-lida" data-id="' + n.id + '">✓ Lida</button>' : '') +
+      '</div>' +
+    '</div>';
+  });
+
+  h += '<div style="height:80px"></div>';
+  return h;
+}
+
+/* ---------------- CONFIGURAÇÕES ---------------- */
+function htmlConfig() {
+  const c = state.config;
+  const msgs = c.mensagens || DEFAULT_MENSAGENS;
+  const lemb = c.lembretes || {};
+
+  const msgDefs = [
+    { k: 'lembrete', t: 'Lembrete antes do vencimento' },
+    { k: 'venceHoje', t: 'Vence hoje' },
+    { k: 'vencido', t: 'Vencido' },
+    { k: 'novaData', t: 'Nova data de pagamento' },
+    { k: 'pagamentoRecebido', t: 'Pagamento recebido' },
+    { k: 'pagamentoParcial', t: 'Pagamento parcial' },
+    { k: 'atrasado', t: 'Cliente atrasado (cobrança)' }
+  ];
+
+  let h = '';
+  h += '<div class="section-title">🏪 Loja</div>' +
+    '<div class="card">' +
+      '<div class="field"><label>Nome da loja</label><input type="text" id="cfg-nome" value="' + esc(c.nomeLoja) + '"></div>' +
+      '<div class="field" style="margin-bottom:0"><label>Telefone da loja</label><input type="tel" id="cfg-tel" inputmode="numeric" value="' + esc(displayPhone(c.telefoneLoja)) + '" placeholder="73999999999"></div>' +
+    '</div>';
+
+  h += '<div class="section-title">🎨 Aparência</div>' +
+    '<div class="card"><div class="opt-row">' +
+      '<div><div class="t">Modo escuro</div><div class="d">Alterna entre tema claro e escuro</div></div>' +
+      '<label class="switch"><input type="checkbox" id="cfg-tema" ' + (c.tema === 'dark' ? 'checked' : '') + '><span class="track"></span><span class="thumb"></span></label>' +
+    '</div></div>';
+
+  h += '<div class="section-title">⏰ Lembretes</div>' +
+    '<div class="card">' +
+      '<div class="opt-row"><div><div class="t">7 dias antes</div><div class="d">Aviso antecipado</div></div>' +
+        '<label class="switch"><input type="checkbox" data-lemb="d7" ' + (lemb.d7 ? 'checked' : '') + '><span class="track"></span><span class="thumb"></span></label></div>' +
+      '<div class="opt-row"><div><div class="t">3 dias antes</div></div>' +
+        '<label class="switch"><input type="checkbox" data-lemb="d3" ' + (lemb.d3 ? 'checked' : '') + '><span class="track"></span><span class="thumb"></span></label></div>' +
+      '<div class="opt-row"><div><div class="t">1 dia antes</div></div>' +
+        '<label class="switch"><input type="checkbox" data-lemb="d1" ' + (lemb.d1 ? 'checked' : '') + '><span class="track"></span><span class="thumb"></span></label></div>' +
+      '<div class="opt-row"><div><div class="t">No dia do vencimento</div></div>' +
+        '<label class="switch"><input type="checkbox" data-lemb="d0" ' + (lemb.d0 ? 'checked' : '') + '><span class="track"></span><span class="thumb"></span></label></div>' +
+      '<div class="opt-row"><div><div class="t">Após o atraso</div><div class="d">1, 3, 7 e 15 dias</div></div>' +
+        '<label class="switch"><input type="checkbox" data-lemb="atraso" ' + (lemb.atraso ? 'checked' : '') + '><span class="track"></span><span class="thumb"></span></label></div>' +
+    '</div>';
+
+  h += '<div class="section-title">💬 Modelos de mensagem</div>';
+  msgDefs.forEach(function (d) {
+    h += '<div class="card">' +
+      '<label>' + d.t + '</label>' +
+      '<textarea data-msg="' + d.k + '" style="min-height:90px;font-size:13.5px">' + esc(msgs[d.k] || '') + '</textarea>' +
+    '</div>';
+  });
+
+  h += '<div class="section-title">💾 Backup e dados</div>' +
+    '<div class="card">' +
+      '<div style="display:grid;gap:8px">' +
+        '<button class="btn btn-primary btn-block" data-action="exportar-backup">📤 Exportar backup (JSON)</button>' +
+        '<button class="btn btn-ghost btn-block" data-action="importar-backup">📥 Importar backup</button>' +
+        '<input type="file" id="file-backup" accept="application/json,.json" style="display:none">' +
+        '<button class="btn btn-danger btn-block" data-action="apagar-tudo">🗑️ Apagar todos os dados</button>' +
+      '</div>' +
+    '</div>';
+
+  h += '<div class="section-title">🔔 Notificações</div>' +
+    '<div class="card">' +
+      '<div class="kv"><span class="k">Ambiente</span><span class="v">' + (NotificationManager.hasNative() ? 'APK Android (ponte nativa)' : 'Navegador / WebView') + '</span></div>' +
+      '<div class="kv"><span class="k">Permissão</span><span class="v">' + esc(NotificationManager.permission()) + '</span></div>' +
+      '<div style="margin-top:12px;display:grid;gap:8px">' +
+        '<button class="btn btn-ghost btn-block" data-action="pedir-permissao">Solicitar permissão de notificação</button>' +
+        '<button class="btn btn-ghost btn-block" data-action="reagendar-tudo">Reagendar todas as notificações</button>' +
+      '</div>' +
+      '<div style="font-size:12px;color:var(--text3);margin-top:12px;line-height:1.55">' +
+        'No APK, se o empacotador expuser as pontes <b>AndroidNotification</b> ou <b>Android.notifications</b> ' +
+        'com os métodos <b>schedule</b>, <b>cancel</b>, <b>list</b>, <b>requestPermission</b>, ' +
+        'os lembretes serão agendados no sistema operacional. Caso contrário, os alertas funcionam dentro do aplicativo.' +
+      '</div>' +
+    '</div>';
+
+  h += '<div class="section-title">ℹ️ Sobre</div>' +
+    '<div class="card" style="text-align:center;color:var(--text2);font-size:12.5px">' +
+      '<div style="font-weight:800;color:var(--text);font-size:15px;margin-bottom:4px">Fiado Control</div>' +
+      'Sistema de controle de vendas fiadas<br>Versão 1.0 • Offline • IndexedDB<br>' +
+      '<div style="margin-top:10px">' + state.clientes.length + ' clientes • ' + state.vendas.length + ' vendas</div>' +
+    '</div>';
+
+  h += '<div style="height:80px"></div>';
+  return h;
+}
+
+/* ============================================================
+   15. EVENTOS DE TELA
+   ============================================================ */
+function bindScreenEvents() {
+  // Busca clientes
+  const bc = $('#busca-clientes');
+  if (bc) {
+    bc.addEventListener('input', function () {
+      state.busca = bc.value;
+      const v = bc.value;
+      render();
+      const nb = $('#busca-clientes');
+      if (nb) { nb.focus(); try { nb.setSelectionRange(v.length, v.length); } catch (e) {} }
+    });
+  }
+  // Busca vendas
+  const bv = $('#busca-vendas');
+  if (bv) {
+    bv.addEventListener('input', function () {
+      state.busca = bv.value;
+      const v = bv.value;
+      render();
+      const nb = $('#busca-vendas');
+      if (nb) { nb.focus(); try { nb.setSelectionRange(v.length, v.length); } catch (e) {} }
+    });
+  }
+  // Filtros
+  $$('[data-filtro]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      state.filtro = b.getAttribute('data-filtro');
+      render();
+    });
+  });
+  // Períodos relatórios
+  $$('[data-periodo]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      state.params.periodo = b.getAttribute('data-periodo');
+      render();
+    });
+  });
+  // Calendário
+  $$('[data-cal]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      const d = parseInt(b.getAttribute('data-cal'), 10);
+      state.calRef = new Date(state.calRef.getFullYear(), state.calRef.getMonth() + d, 1);
+      render();
+    });
+  });
+  $$('[data-dia]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      const iso = b.getAttribute('data-dia');
+      state.calSel = (state.calSel === iso) ? null : iso;
+      render();
+    });
+  });
+  // Form nova venda
+  const fv = $('#form-venda');
+  if (fv) {
+    fv.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const fd = new FormData(fv);
+      const nome = (fd.get('nome') || '').toString().trim();
+      const tel = onlyDigits(fd.get('telefone') || '');
+      const produto = (fd.get('produto') || '').toString().trim();
+      const valor = parseMoney(fd.get('valor'));
+      const dataVenda = fd.get('dataVenda');
+      const dataAtual = fd.get('dataAtual');
+
+      if (!nome) { toast('Informe o nome do cliente', 'error'); return; }
+      if (!produto) { toast('Informe o que foi comprado', 'error'); return; }
+      if (!valor || valor <= 0) { toast('Informe um valor maior que zero', 'error'); return; }
+      if (!dataAtual) { toast('Informe a data de vencimento', 'error'); return; }
+      if (tel && !validPhone(tel)) { toast('Telefone inválido. Use DDD + número', 'error'); return; }
+
+      const venda = await salvarNovaVenda({
+        nome: nome, telefone: tel, produto: produto, valor: valor,
+        dataVenda: dataVenda, dataAtual: dataAtual,
+        observacao: fd.get('observacao') || '', mensagem: fd.get('mensagem') || ''
+      });
+      toast('Venda cadastrada com sucesso!', 'success');
+      state.busca = '';
+      voltarPara('home');
+      nav('venda', { vendaId: venda.id });
+    });
+  }
+  // Telefone somente números
+  $$('input[type="tel"]').forEach(function (inp) {
+    inp.addEventListener('input', function () {
+      const v = onlyDigits(inp.value).slice(0, 11);
+      if (inp.value !== v) inp.value = v;
+    });
+  });
+  // Configurações
+  const cn = $('#cfg-nome');
+  if (cn) cn.addEventListener('input', function () { state.config.nomeLoja = cn.value; saveConfig(); });
+  const ct = $('#cfg-tel');
+  if (ct) {
+    ct.addEventListener('input', function () {
+      const v = onlyDigits(ct.value).slice(0, 11);
+      if (ct.value !== v) ct.value = v;
+      state.config.telefoneLoja = v ? toInternational(v) : '';
+      saveConfig();
+    });
+  }
+  const ctm = $('#cfg-tema');
+  if (ctm) {
+    ctm.addEventListener('change', function () {
+      state.config.tema = ctm.checked ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', state.config.tema);
+      const mt = document.querySelector('meta[name="theme-color"]');
+      if (mt) mt.setAttribute('content', state.config.tema === 'dark' ? '#0b1220' : '#4f46e5');
+      saveConfig();
+    });
+  }
+  $$('[data-lemb]').forEach(function (inp) {
+    inp.addEventListener('change', function () {
+      state.config.lembretes[inp.getAttribute('data-lemb')] = inp.checked;
+      saveConfig();
+    });
+  });
+  $$('[data-msg]').forEach(function (ta) {
+    ta.addEventListener('change', function () {
+      state.config.mensagens[ta.getAttribute('data-msg')] = ta.value;
+      saveConfig();
+      toast('Modelo salvo', 'success');
+    });
+  });
+  const fb = $('#file-backup');
+  if (fb) {
+    fb.addEventListener('change', function () {
+      const f = fb.files && fb.files[0];
+      if (f) importarBackup(f);
+      fb.value = '';
+    });
+  }
+}
+
+/* ============================================================
+   16. AÇÕES GLOBAIS (delegação)
+   ============================================================ */
+document.addEventListener('click', function (e) {
+  const closeEl = e.target.closest('[data-close]');
+  if (closeEl && closeEl.getAttribute('data-close') === '1') { closeModal(); return; }
+
+  const t = e.target.closest('[data-action]');
+  if (!t) return;
+  const action = t.getAttribute('data-action');
+  const id = t.getAttribute('data-id');
+
+  switch (action) {
+    case 'ir-nova': nav('nova'); break;
+    case 'ir-clientes': nav('clientes'); break;
+    case 'ir-atrasados': nav('atrasados'); break;
+    case 'ir-relatorios': nav('relatorios'); break;
+    case 'ir-calendario': nav('calendario'); break;
+    case 'ir-notificacoes': nav('notificacoes'); break;
+    case 'abrir-cliente': nav('cliente', { clienteId: id }); break;
+    case 'abrir-venda': nav('venda', { vendaId: id }); break;
+    case 'nova-venda-cliente': nav('nova', { clienteId: id }); break;
+    case 'wa-cliente': abrirWhatsAppCliente(id); break;
+    case 'wa-venda': abrirWhatsAppVenda(id); break;
+    case 'wa-venda-tpl': modalEscolherMensagem(id); break;
+    case 'registrar-pagamento': modalPagamento(id); break;
+    case 'alterar-data': modalAlterarData(id); break;
+    case 'editar-venda': modalEditarVenda(id); break;
+    case 'editar-cliente': modalEditarCliente(id); break;
+    case 'arquivar-cliente': acaoArquivarCliente(id); break;
+    case 'restaurar-cliente': acaoRestaurarCliente(id); break;
+    case 'arquivar-venda': acaoArquivarVenda(id); break;
+    case 'restaurar-venda': acaoRestaurarVenda(id); break;
+    case 'excluir-venda': acaoExcluirVenda(id); break;
+    case 'exportar-backup': exportarBackup(); break;
+    case 'importar-backup': { const f = $('#file-backup'); if (f) f.click(); break; }
+    case 'apagar-tudo': acaoApagarTudo(); break;
+    case 'pedir-permissao': acaoPedirPermissao(); break;
+    case 'reagendar-tudo': acaoReagendarTudo(); break;
+    case 'marcar-lida': marcarLida(id); break;
+    case 'marcar-lidas': marcarTodasLidas(); break;
+  }
+});
+
+/* ============================================================
+   17. NAVEGAÇÃO
+   ============================================================ */
+function nav(screen, params) {
+  if (state.screen !== screen || JSON.stringify(params || {}) !== JSON.stringify(state.params || {})) {
+    if (state.screen !== 'nova' || screen !== 'nova') {
+      // histórico simples
+      if (screen === 'home' || screen === 'clientes' || screen === 'receber' || screen === 'config' ||
+          screen === 'relatorios' || screen === 'calendario' || screen === 'atrasados' || screen === 'notificacoes') {
+        state.historicoNav = [];
+      } else {
+        state.historicoNav.push({ screen: state.screen, params: state.params });
+        if (state.historicoNav.length > 20) state.historicoNav.shift();
+      }
+    }
+  }
+  state.screen = screen;
+  state.params = params || {};
+  if (screen !== 'clientes' && screen !== 'receber') state.busca = '';
+  render();
+}
+function voltarPara(screen) {
+  state.historicoNav = [];
+  state.screen = screen;
+  state.params = {};
+}
+function voltar() {
+  const prev = state.historicoNav.pop();
+  if (prev) {
+    state.screen = prev.screen;
+    state.params = prev.params || {};
+  } else {
+    state.screen = 'home';
+    state.params = {};
+  }
+  render();
+}
+
+/* ============================================================
+   18. MODAIS DE AÇÃO
+   ============================================================ */
+function modalPagamento(vendaId) {
+  const v = vendaPorId(vendaId);
+  if (!v) return;
+  const r = restante(v);
+  const hoje = todayISO();
+  openModal(
+    '<div class="modal-title">💰 Registrar pagamento</div>' +
+    '<div class="modal-sub">Venda #' + String(v.numero).padStart(4, '0') + ' • Saldo devedor: <b>' + fmtMoney(r) + '</b></div>' +
+    '<div class="field"><label>Valor recebido (R$) *</label>' +
+      '<input type="text" id="pg-valor" inputmode="decimal" placeholder="0,00" value="' + (r > 0 ? r.toFixed(2).replace('.', ',') : '') + '"></div>' +
+    '<div class="field"><label>Data do pagamento</label>' +
+      '<input type="date" id="pg-data" value="' + hoje + '"></div>' +
+    '<div class="field"><label>Observação</label>' +
+      '<input type="text" id="pg-obs" placeholder="Ex: Pago em dinheiro / Pix"></div>' +
+    '<div class="grid2">' +
+      '<button class="btn btn-ghost" data-close="1">Cancelar</button>' +
+      '<button class="btn btn-success" id="pg-ok">Registrar</button>' +
+    '</div>'
+  );
+  $('#pg-ok').addEventListener('click', async function () {
+    const val = parseMoney($('#pg-valor').value);
+    if (!val || val <= 0) { toast('Informe um valor válido', 'error'); return; }
+    const data = $('#pg-data').value || hoje;
+    const obs = $('#pg-obs').value.trim();
+
+    const agora = new Date().toISOString();
+    v.pagamentos = v.pagamentos || [];
+    v.pagamentos.push({ id: uid(), valor: round2(val), data: data, obs: obs, em: agora });
+    v.pago = round2((Number(v.pago) || 0) + val);
+    if (v.pago > v.valor) v.pago = v.valor;
+
+    const novoR = restante(v);
+    const pagoTotal = novoR <= 0.005;
+
+    addHistorico(v, 'pagamento',
+      'Pagamento ' + (pagoTotal ? 'total' : 'parcial') + ' de ' + fmtMoney(val) +
+      (obs ? ' — ' + obs : ''),
+      { valor: val });
+
+    await saveVenda(v);
+
+    if (pagoTotal) {
+      addHistorico(v, 'quitado', 'Venda quitada — pagamento completo');
+      await saveVenda(v);
+      await cancelarNotificacoesVenda(v.id);
+    } else {
+      // reagenda restante
+      await agendarNotificacoesVenda(v);
+    }
+    await saveConfig();
+
+    closeModal();
+    toast(pagoTotal ? 'Venda quitada! 🎉' : 'Pagamento registrado!', 'success');
+    render();
+
+    // oferta de enviar whatsapp de confirmação
+    setTimeout(function () {
+      const cli = clientePorId(v.clienteId);
+      if (!cli || !cli.telefone) return;
+      confirmar(
+        'Enviar confirmação?',
+        'Deseja enviar a mensagem de ' + (pagoTotal ? 'pagamento recebido' : 'pagamento parcial') + ' no WhatsApp de ' + cli.nome + '?',
+        function () { abrirWhatsAppVenda(v.id, pagoTotal ? 'pagamentoRecebido' : 'pagamentoParcial'); },
+        'Enviar',
+        'btn-success'
+      );
+    }, 350);
+  });
+}
+
+function modalAlterarData(vendaId) {
+  const v = vendaPorId(vendaId);
+  if (!v) return;
+  openModal(
+    '<div class="modal-title">📅 Alterar vencimento</div>' +
+    '<div class="modal-sub">Data original: <b>' + fmtDate(v.dataOriginal) + '</b> • Data atual: <b>' + fmtDate(v.dataAtual) + '</b></div>' +
+    '<div class="field"><label>Nova data *</label><input type="date" id="ad-data" value="' + v.dataAtual + '"></div>' +
+    '<div class="field"><label>Motivo</label><input type="text" id="ad-motivo" placeholder="Ex: Cliente pediu mais prazo"></div>' +
+    '<div class="grid2">' +
+      '<button class="btn btn-ghost" data-close="1">Cancelar</button>' +
+      '<button class="btn btn-warn" id="ad-ok">Salvar nova data</button>' +
+    '</div>'
+  );
+  $('#ad-ok').addEventListener('click', async function () {
+    const nova = $('#ad-data').value;
+    const motivo = $('#ad-motivo').value.trim() || 'Sem motivo informado';
+    if (!nova) { toast('Escolha uma data', 'error'); return; }
+    if (nova === v.dataAtual) { toast('A data é a mesma', 'error'); return; }
+
+    const anterior = v.dataAtual;
+    v.dataAtual = nova;
+    addHistorico(v, 'data_alterada',
+      'Data alterada de ' + fmtDate(anterior) + ' para ' + fmtDate(nova) + ' — ' + motivo,
+      { de: anterior, para: nova, motivo: motivo });
+    await saveVenda(v);
+    await agendarNotificacoesVenda(v);
+
+    closeModal();
+    toast('Data alterada!', 'success');
+    render();
+
+    setTimeout(function () {
+      const cli = clientePorId(v.clienteId);
+      if (!cli || !cli.telefone) return;
+      confirmar('Avisar cliente?', 'Enviar a nova data para ' + cli.nome + ' pelo WhatsApp?',
+        function () { abrirWhatsAppVenda(v.id, 'novaData'); }, 'Enviar', 'btn-success');
+    }, 350);
+  });
+}
+
+function modalEditarVenda(vendaId) {
+  const v = vendaPorId(vendaId);
+  if (!v) return;
+  openModal(
+    '<div class="modal-title">✏️ Editar venda</div>' +
+    '<div class="modal-sub">Venda #' + String(v.numero).padStart(4, '0') + '</div>' +
+    '<div class="field"><label>O que foi comprado</label><input type="text" id="ev-produto" value="' + esc(v.produto) + '"></div>' +
+    '<div class="field"><label>Valor (R$)</label><input type="text" id="ev-valor" inputmode="decimal" value="' + String(v.valor).replace('.', ',') + '"></div>' +
+    '<div class="field"><label>Observação</label><textarea id="ev-obs">' + esc(v.observacao || '') + '</textarea></div>' +
+    '<div class="field"><label>Mensagem personalizada</label><textarea id="ev-msg" style="min-height:100px">' + esc(v.mensagem || '') + '</textarea></div>' +
+    '<div class="grid2">' +
+      '<button class="btn btn-ghost" data-close="1">Cancelar</button>' +
+      '<button class="btn btn-primary" id="ev-ok">Salvar</button>' +
+    '</div>'
+  );
+  $('#ev-ok').addEventListener('click', async function () {
+    const produto = $('#ev-produto').value.trim();
+    const valor = parseMoney($('#ev-valor').value);
+    if (!produto) { toast('Informe o produto', 'error'); return; }
+    if (!valor || valor <= 0) { toast('Valor inválido', 'error'); return; }
+    if (valor < v.pago) { toast('O valor não pode ser menor que o já pago', 'error'); return; }
+
+    const antes = v.valor;
+    v.produto = produto;
+    v.valor = round2(valor);
+    v.observacao = $('#ev-obs').value.trim();
+    v.mensagem = $('#ev-msg').value.trim();
+    addHistorico(v, 'editada', 'Venda editada' + (antes !== v.valor ? ' — valor de ' + fmtMoney(antes) + ' para ' + fmtMoney(v.valor) : ''));
+    await saveVenda(v);
+    closeModal();
+    toast('Venda atualizada!', 'success');
+    render();
+  });
+}
+
+function modalEditarCliente(clienteId) {
+  const c = clientePorId(clienteId);
+  if (!c) return;
+  openModal(
+    '<div class="modal-title">✏️ Editar cliente</div>' +
+    '<div class="field"><label>Nome</label><input type="text" id="ec-nome" value="' + esc(c.nome) + '"></div>' +
+    '<div class="field"><label>WhatsApp / Telefone</label><input type="tel" id="ec-tel" inputmode="numeric" maxlength="11" value="' + esc(displayPhone(c.telefone)) + '"></div>' +
+    '<div class="grid2">' +
+      '<button class="btn btn-ghost" data-close="1">Cancelar</button>' +
+      '<button class="btn btn-primary" id="ec-ok">Salvar</button>' +
+    '</div>'
+  );
+  $('#ec-tel').addEventListener('input', function () {
+    const v = onlyDigits($('#ec-tel').value).slice(0, 11);
+    if ($('#ec-tel').value !== v) $('#ec-tel').value = v;
+  });
+  $('#ec-ok').addEventListener('click', async function () {
+    const nome = $('#ec-nome').value.trim();
+    const tel = onlyDigits($('#ec-tel').value);
+    if (!nome) { toast('Informe o nome', 'error'); return; }
+    if (tel && !validPhone(tel)) { toast('Telefone inválido', 'error'); return; }
+    c.nome = nome;
+    c.telefone = tel ? toInternational(tel) : '';
+    c.atualizadoEm = new Date().toISOString();
+    await saveCliente(c);
+    closeModal();
+    toast('Cliente atualizado!', 'success');
+    render();
+  });
+}
+
+function modalEscolherMensagem(vendaId) {
+  const opts = [
+    { k: 'lembrete', t: '⏰ Lembrete' },
+    { k: 'venceHoje', t: '🔔 Vence hoje' },
+    { k: 'vencido', t: '⚠️ Vencido' },
+    { k: 'novaData', t: '📅 Nova data' },
+    { k: 'pagamentoRecebido', t: '✅ Pagamento recebido' },
+    { k: 'pagamentoParcial', t: '💵 Pagamento parcial' },
+    { k: 'atrasado', t: '🔴 Cobrança de atraso' }
+  ];
+  openModal(
+    '<div class="modal-title">📝 Escolher mensagem</div>' +
+    '<div class="modal-sub">Selecione o modelo que será enviado pelo WhatsApp.</div>' +
+    '<div style="display:grid;gap:8px">' +
+      opts.map(function (o) {
+        return '<button class="btn btn-ghost btn-block" data-tpl="' + o.k + '" style="justify-content:flex-start">' + o.t + '</button>';
+      }).join('') +
+    '</div>' +
+    '<div style="margin-top:14px"><button class="btn btn-ghost btn-block" data-close="1">Cancelar</button></div>'
+  );
+  $$('[data-tpl]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      const k = b.getAttribute('data-tpl');
+      closeModal();
+      abrirWhatsAppVenda(vendaId, k);
+    });
+  });
+}
+
+/* ============================================================
+   19. AÇÕES DE ARQUIVAMENTO
+   ============================================================ */
+function acaoArquivarCliente(clienteId) {
+  const c = clientePorId(clienteId);
+  if (!c) return;
+  confirmar(
+    '⚠️ Arquivar cliente',
+    'Você deseja mover ' + c.nome + ' para a área de clientes em atraso? Os dados e o histórico serão preservados.',
+    async function () {
+      c.arquivado = true;
+      c.atualizadoEm = new Date().toISOString();
+      c.historico = c.historico || [];
+      c.historico.push({ tipo: 'arquivado', em: c.atualizadoEm, desc: 'Cliente movido para atrasados' });
+      await saveCliente(c);
+      toast('Cliente arquivado!', 'success');
+      render();
+    },
+    'Arquivar',
+    'btn-warn'
+  );
+}
+function acaoRestaurarCliente(clienteId) {
+  const c = clientePorId(clienteId);
+  if (!c) return;
+  confirmar(
+    '✅ Restaurar cliente',
+    'Deseja restaurar ' + c.nome + ' para a lista principal de clientes?',
+    async function () {
+      c.arquivado = false;
+      c.atualizadoEm = new Date().toISOString();
+      c.historico = c.historico || [];
+      c.historico.push({ tipo: 'restaurado', em: c.atualizadoEm, desc: 'Cliente restaurado' });
+      await saveCliente(c);
+      toast('Cliente restaurado!', 'success');
+      render();
+    },
+    'Restaurar',
+    'btn-success'
+  );
+}
+function acaoArquivarVenda(vendaId) {
+  const v = vendaPorId(vendaId);
+  if (!v) return;
+  confirmar('📦 Arquivar venda', 'Deseja arquivar somente esta venda? O cliente e outras vendas não serão afetados.', async function () {
+    v.arquivada = true;
+    addHistorico(v, 'arquivada', 'Venda arquivada');
+    await saveVenda(v);
+    await cancelarNotificacoesVenda(v.id);
+    toast('Venda arquivada!', 'success');
+    render();
+  }, 'Arquivar', 'btn-warn');
+}
+function acaoRestaurarVenda(vendaId) {
+  const v = vendaPorId(vendaId);
+  if (!v) return;
+  v.arquivada = false;
+  addHistorico(v, 'restaurada', 'Venda restaurada');
+  saveVenda(v).then(function () {
+    agendarNotificacoesVenda(v);
+    toast('Venda restaurada!', 'success');
+    render();
+  });
+}
+function acaoExcluirVenda(vendaId) {
+  confirmar(
+    '🗑️ Excluir venda',
+    'Tem certeza que deseja excluir esta venda? Esta ação não pode ser desfeita. Prefira arquivar para manter o histórico.',
+    async function () {
+      const idx = state.vendas.findIndex(function (x) { return x.id === vendaId; });
+      if (idx > -1) state.vendas.splice(idx, 1);
+      await dbDel('vendas', vendaId);
+      await cancelarNotificacoesVenda(vendaId);
+      toast('Venda excluída', 'info');
+      voltar();
+    },
+    'Excluir',
+    'btn-danger'
+  );
+}
+
+/* ============================================================
+   20. NOTIFICAÇÕES (ações)
+   ============================================================ */
+async function acaoPedirPermissao() {
+  const r = await NotificationManager.requestPermission();
+  state.config.notifPermissao = r;
+  await saveConfig();
+  toast('Permissão: ' + r, r === 'granted' ? 'success' : 'info');
+  render();
+}
+async function acaoReagendarTudo() {
+  for (let i = 0; i < state.vendas.length; i++) {
+    await agendarNotificacoesVenda(state.vendas[i]);
+  }
+  toast('Notificações reagendadas!', 'success');
+}
+function marcarLida(id) {
+  state.lidas[id] = true;
+  saveLidas();
+  render();
+}
+function marcarTodasLidas() {
+  notificacoesInternas().forEach(function (n) { state.lidas[n.id] = true; });
+  saveLidas();
+  toast('Todos os alertas marcados como lidos', 'success');
+  render();
+}
+
+/* ============================================================
+   21. BACKUP / RESTAURAÇÃO
+   ============================================================ */
+async function exportarBackup() {
+  const dados = {
+    app: 'Fiado Control',
+    versao: 1,
+    exportadoEm: new Date().toISOString(),
+    config: state.config,
+    clientes: state.clientes,
+    vendas: state.vendas,
+    lidas: state.lidas
+  };
+  const blob = new Blob([JSON.stringify(dados, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const dt = new Date();
+  const nome = 'backup-fiado-' + dt.getFullYear() + String(dt.getMonth() + 1).padStart(2, '0') + String(dt.getDate()).padStart(2, '0') +
+               '-' + String(dt.getHours()).padStart(2, '0') + String(dt.getMinutes()).padStart(2, '0') + '.json';
+  a.href = url;
+  a.download = nome;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(function () { URL.revokeObjectURL(url); }, 3000);
+  toast('Backup exportado!', 'success');
+}
+
+function importarBackup(file) {
+  const reader = new FileReader();
+  reader.onload = function () {
+    let dados;
+    try { dados = JSON.parse(reader.result); }
+    catch (e) { toast('Arquivo inválido', 'error'); return; }
+    if (!dados || !dados.clientes || !dados.vendas) { toast('Backup inválido', 'error'); return; }
+    confirmar(
+      '📥 Restaurar backup',
+      'Restaurar backup pode alterar os dados atuais. Deseja continuar?',
+      async function () {
+        try {
+          await dbClear('clientes');
+          await dbClear('vendas');
+          await dbClear('config');
+          await dbClear('lidas');
+
+          state.clientes = dados.clientes || [];
+          state.vendas = dados.vendas || [];
+          state.config = Object.assign({}, DEFAULT_CONFIG, dados.config || {});
+          state.config.mensagens = Object.assign({}, DEFAULT_MENSAGENS, (dados.config && dados.config.mensagens) || {});
+          state.config.lembretes = Object.assign({}, DEFAULT_CONFIG.lembretes, (dados.config && dados.config.lembretes) || {});
+          state.lidas = dados.lidas || {};
+
+          for (let i = 0; i < state.clientes.length; i++) await dbPut('clientes', state.clientes[i]);
+          for (let i = 0; i < state.vendas.length; i++) await dbPut('vendas', state.vendas[i]);
+          await saveConfig();
+          await saveLidas();
+
+          aplicarTema();
+          toast('Backup restaurado!', 'success');
+          render();
+        } catch (e) {
+          toast('Erro ao restaurar: ' + e.message, 'error');
+        }
+      },
+      'Restaurar',
+      'btn-primary'
+    );
+  };
+  reader.readAsText(file);
+}
+
+function acaoApagarTudo() {
+  confirmar(
+    '🗑️ Apagar todos os dados',
+    'Isso apagará TODOS os clientes, vendas e pagamentos permanentemente. Recomendamos exportar um backup antes. Deseja continuar?',
+    function () {
+      confirmar('Confirmação final', 'Esta ação é irreversível. Tem certeza absoluta?', async function () {
+        await dbClear('clientes');
+        await dbClear('vendas');
+        await dbClear('config');
+        await dbClear('lidas');
+        state.clientes = [];
+        state.vendas = [];
+        state.lidas = {};
+        state.config = Object.assign({}, DEFAULT_CONFIG);
+        state.config.mensagens = Object.assign({}, DEFAULT_MENSAGENS);
+        state.config.lembretes = Object.assign({}, DEFAULT_CONFIG.lembretes);
+        await saveConfig();
+        await NotificationManager.cancelAll();
+        aplicarTema();
+        toast('Todos os dados foram apagados', 'info');
+        nav('home');
+      }, 'Apagar tudo', 'btn-danger');
+    },
+    'Continuar',
+    'btn-danger'
+  );
+}
+
+/* ============================================================
+   22. TEMA
+   ============================================================ */
+function aplicarTema() {
+  const t = (state.config && state.config.tema) || 'light';
+  document.documentElement.setAttribute('data-theme', t);
+  const mt = document.querySelector('meta[name="theme-color"]');
+  if (mt) mt.setAttribute('content', t === 'dark' ? '#0b1220' : '#4f46e5');
+}
+
+/* ============================================================
+   23. INICIALIZAÇÃO
+   ============================================================ */
+async function init() {
+  try {
+    await openDB();
+
+    const cfgRec = await dbGet('config', 'app');
+    if (cfgRec && cfgRec.value) {
+      state.config = Object.assign({}, DEFAULT_CONFIG, cfgRec.value);
+      state.config.mensagens = Object.assign({}, DEFAULT_MENSAGENS, (cfgRec.value.mensagens || {}));
+      state.config.lembretes = Object.assign({}, DEFAULT_CONFIG.lembretes, (cfgRec.value.lembretes || {}));
+    } else {
+      state.config = Object.assign({}, DEFAULT_CONFIG);
+      state.config.mensagens = Object.assign({}, DEFAULT_MENSAGENS);
+      state.config.lembretes = Object.assign({}, DEFAULT_CONFIG.lembretes);
+    }
+
+    const lidasRec = await dbGet('config', 'lidas');
+    if (lidasRec && lidasRec.value) state.lidas = lidasRec.value;
+
+    state.clientes = await dbAll('clientes');
+    state.vendas = await dbAll('vendas');
+
+    aplicarTema();
+    render();
+
+    // Reagenda notificações ao abrir (garante consistência de datas)
+    setTimeout(function () {
+      state.vendas.forEach(function (v) {
+        if (!v.arquivada && restante(v) > 0.005) agendarNotificacoesVenda(v);
+      });
+    }, 800);
+
+  } catch (err) {
+    document.getElementById('content').innerHTML =
+      '<div class="empty"><div class="big">⚠️</div><div class="t">Erro ao iniciar o banco de dados</div>' +
+      '<div class="d">' + esc(err && err.message ? err.message : 'Erro desconhecido') + '</div></div>';
+  }
+}
+
+/* Previne zoom por duplo toque */
+document.addEventListener('dblclick', function (e) { e.preventDefault(); }, { passive: false });
+
+/* Atualiza a tela ao voltar o foco (recalcula status por data) */
+document.addEventListener('visibilitychange', function () {
+  if (!document.hidden) render();
+});
+window.addEventListener('focus', function () { render(); });
+
+init();
+</script>
+</body>
+</html>

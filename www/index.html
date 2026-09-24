@@ -3,9 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline'; connect-src *; media-src *; img-src * data:; font-src * data:;">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="referrer" content="no-referrer">
 <title>FREE IPTV</title>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <script src="https://cdn.jsdelivr.net/npm/mpegts.js@latest/dist/mpegts.js"></script>
@@ -337,7 +335,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 
 <script>
 // ============================================
-// CONFIGURACAO - EDITE AQUI
+// CONFIGURACAO
 // ============================================
 var SERVER = "https://zeus.x10.mx";
 var USER   = "184507";
@@ -362,7 +360,31 @@ function logLine(msg, cls) {
 }
 
 // ============================================
-// FETCH UNIVERSAL - 5 METODOS EM CASCATA
+// XMLHttpRequest - FUNCIONA EM QUALQUER APK/WEBVIEW
+// (fetch é bloqueado por CORS no WebView do APK)
+// ============================================
+function xhrGet(url, timeoutMs, callback, errorCallback) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", url, true);
+    xhr.timeout = timeoutMs || 120000;
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+            if (xhr.status >= 200 && xhr.status < 300) {
+                callback(xhr.responseText);
+            } else if (xhr.status === 0) {
+                errorCallback(new Error("CORS/Network"));
+            } else {
+                errorCallback(new Error("HTTP " + xhr.status));
+            }
+        }
+    };
+    xhr.ontimeout = function() { errorCallback(new Error("Timeout")); };
+    xhr.onerror = function() { errorCallback(new Error("Network error")); };
+    try { xhr.send(); } catch(e) { errorCallback(e); }
+}
+
+// ============================================
+// PROXIES CORS (com URL validada por varios metodos)
 // ============================================
 var PROXIES = [
     { name: "DIRETO",       url: null },
@@ -370,14 +392,12 @@ var PROXIES = [
     { name: "corsproxy.io", url: "https://corsproxy.io/?" },
     { name: "cors.eu.org",  url: "https://cors.eu.org/" },
     { name: "thingproxy",   url: "https://thingproxy.freeboard.io/fetch/" },
-    { name: "codetabs",     url: "https://api.codetabs.com/v1/proxy?quest=" },
-    { name: "whateverorigin", url: "https://www.whateverorigin.org/get?url=" }
+    { name: "codetabs",     url: "https://api.codetabs.com/v1/proxy?quest=" }
 ];
 var workingProxyIdx = -1;
 
 function fetchText(url, timeoutMs) {
     if (!timeoutMs) timeoutMs = 120000;
-
     var order = workingProxyIdx >= 0
         ? [PROXIES[workingProxyIdx]].concat(PROXIES.filter(function(_, i) { return i !== workingProxyIdx; }))
         : PROXIES;
@@ -391,29 +411,16 @@ function fetchText(url, timeoutMs) {
             var idx = PROXIES.indexOf(p);
             logLine("Tentando: " + p.name, "info");
 
-            var controller = new AbortController();
-            var tid = setTimeout(function() { controller.abort(); }, timeoutMs);
-
-            fetch(fullUrl, {
-                signal: controller.signal,
-                mode: "cors",
-                cache: "no-cache",
-                credentials: "omit"
-            })
-            .then(function(res) {
-                clearTimeout(tid);
-                if (!res.ok) throw new Error("HTTP " + res.status);
-                return res.text();
-            })
-            .then(function(txt) {
-                if (!txt || txt.length < 10) throw new Error("Resposta vazia");
+            xhrGet(fullUrl, timeoutMs, function(txt) {
+                if (!txt || txt.length < 10) {
+                    logLine("Falhou: " + p.name + " - vazio", "err");
+                    i++; tryNext(); return;
+                }
                 workingProxyIdx = idx;
                 logLine("OK: " + p.name + " (" + txt.length + " bytes)", "ok");
                 resolve(txt);
-            })
-            .catch(function(e) {
-                clearTimeout(tid);
-                logLine("Falhou: " + p.name + " - " + (e.message || "").slice(0, 60), "err");
+            }, function(e) {
+                logLine("Falhou: " + p.name + " - " + (e.message || "").slice(0, 40), "err");
                 i++;
                 tryNext();
             });
@@ -1105,36 +1112,29 @@ function closePlayer() {
     destroyPlayers();
 }
 
-// ============================================
 // ALERTAS
-// ============================================
 function showAlert() {
     var modal = document.getElementById("alert-modal");
     if (modal) modal.classList.add("show");
 }
-
 function closeAlert() {
     var modal = document.getElementById("alert-modal");
     if (modal) modal.classList.remove("show");
     setTimeout(function() { showPix(); }, 350);
 }
-
 function showPix() {
     var modal = document.getElementById("pix-modal");
     if (modal) modal.classList.add("show");
 }
-
 function closePix() {
     var modal = document.getElementById("pix-modal");
     if (modal) modal.classList.remove("show");
 }
-
 function copyPix() {
     var key = "1ea6ae84-f545-4dd3-8488-d6bcd1be7dd4";
     var btn = document.getElementById("pixCopyBtn");
     var icon = document.getElementById("pixCopyIcon");
     var text = document.getElementById("pixCopyText");
-
     function doCopy() {
         btn.classList.add("copied");
         if (icon) icon.textContent = "OK";
@@ -1145,31 +1145,21 @@ function copyPix() {
             if (text) text.textContent = "Copiar";
         }, 2500);
     }
-
     if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(key).then(doCopy).catch(function() {
-            legacyCopy(key); doCopy();
-        });
-    } else {
-        legacyCopy(key); doCopy();
-    }
+        navigator.clipboard.writeText(key).then(doCopy).catch(function() { legacyCopy(key); doCopy(); });
+    } else { legacyCopy(key); doCopy(); }
 }
-
 function legacyCopy(text) {
     var ta = document.createElement("textarea");
     ta.value = text;
     ta.style.position = "fixed";
     ta.style.left = "-9999px";
-    ta.style.top = "0";
     document.body.appendChild(ta);
     ta.focus(); ta.select();
     try { document.execCommand("copy"); } catch(e) {}
     document.body.removeChild(ta);
 }
 
-// ============================================
-// ATALHOS DE TECLADO
-// ============================================
 document.addEventListener("keydown", function(e) {
     if (e.key === "Escape") {
         var pixModal = document.getElementById("pix-modal");

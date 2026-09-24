@@ -1,4 +1,4 @@
-package com.gestoriptv.teste2;
+package com.gestoriptv.iptvfree;
 
 import com.getcapacitor.BridgeActivity;
 

@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Teste 2</string>
-    <string name="title_activity_main">Teste 2</string>
-    <string name="package_name">com.gestoriptv.teste2</string>
-    <string name="custom_url_scheme">com.gestoriptv.teste2</string>
+    <string name="app_name">IPTV FREE</string>
+    <string name="title_activity_main">IPTV FREE</string>
+    <string name="package_name">com.gestoriptv.iptvfree</string>
+    <string name="custom_url_scheme">com.gestoriptv.iptvfree</string>
 </resources>

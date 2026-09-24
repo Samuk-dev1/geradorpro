@@ -360,7 +360,6 @@ function logLine(msg, cls) {
 
 // ============================================
 // XMLHttpRequest - COMPATIVEL COM APK/WEBVIEW
-// (Metodo antigo que funcionava no APK)
 // ============================================
 function xhrGet(url, callback, errorCallback) {
     var xhr = new XMLHttpRequest();
@@ -379,13 +378,16 @@ function xhrGet(url, callback, errorCallback) {
 }
 
 // ============================================
-// PROXIES CORS - LISTA QUE FUNCIONAVA NO APK
+// PROXIES CORS - LISTA ATUALIZADA 2026
+// (corsproxy.io removido - agora exige API key paga)
 // ============================================
 var PROXIES = [
-    { name: "DIRETO",       url: null },
-    { name: "allorigins",   url: "https://api.allorigins.win/raw?url=" },
-    { name: "corsproxy.io", url: "https://corsproxy.io/?" },
-    { name: "cors.eu.org",  url: "https://cors.eu.org/" }
+    { name: "DIRETO",            url: null },
+    { name: "codetabs",          url: "https://api.codetabs.com/v1/proxy?quest=" },
+    { name: "cors.isomorphic",   url: "https://cors.isomorphic-git.org/" },
+    { name: "allorigins",        url: "https://api.allorigins.win/raw?url=" },
+    { name: "whateverorigin",    url: "https://www.whateverorigin.org/get?url=" },
+    { name: "thingproxy",        url: "https://thingproxy.freeboard.io/fetch/" }
 ];
 var workingProxyIdx = -1;
 

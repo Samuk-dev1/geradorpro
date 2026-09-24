@@ -2,12 +2,16 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
     <meta name="screen-orientation" content="landscape">
     <meta name="x5-orientation" content="landscape">
     <meta name="full-screen" content="yes">
-    <meta name="x5-fullscreen" content="true">
-    <title>IPTV Player</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#0d1b2a">
+    
+    <title>IPTV Xtream Player</title>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
@@ -34,33 +38,101 @@
             user-select: none;
         }
 
-        /* Força orientação horizontal via CSS (quando suportado) */
-        @media screen and (orientation: portrait) {
-            body::before {
-                content: "📱↻ Por favor, gire o dispositivo para horizontal";
-                position: fixed;
-                top: 0; left: 0;
-                width: 100%; height: 100%;
-                background: #0d1b2a;
-                color: white;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                font-size: 20px;
-                font-weight: bold;
-                z-index: 9999;
-                text-align: center;
-                padding: 20px;
-            }
+        body.force-landscape {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vh; height: 100vw;
+            transform: rotate(90deg);
+            transform-origin: left top;
+            overflow: hidden;
         }
 
-        header {
+        /* TELA DE LOADING */
+        #loading-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at center, #1b263b 0%, #0d1b2a 100%);
+            z-index: 5000;
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
-            padding: 15px 30px;
-            height: 70px;
-            flex-shrink: 0;
+            padding: 30px;
+        }
+
+        .loading-box {
+            background: rgba(27, 38, 59, 0.95);
+            border: 2px solid var(--accent);
+            border-radius: 20px;
+            padding: 30px 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 0 60px rgba(0, 180, 216, 0.5);
+            text-align: center;
+        }
+
+        .loading-logo { font-size: 38px; font-weight: bold; margin-bottom: 10px; letter-spacing: 3px; }
+        .loading-logo span { border-bottom: 4px solid white; padding-bottom: 3px; }
+        .loading-title { font-size: 16px; color: #ccc; margin-bottom: 25px; font-weight: 300; }
+
+        .progress-bar {
+            width: 100%; height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px; overflow: hidden; margin-bottom: 20px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), #00ffcc);
+            width: 0%; transition: width 0.4s ease;
+            border-radius: 4px;
+            box-shadow: 0 0 15px rgba(0, 180, 216, 0.6);
+        }
+
+        .loading-steps {
+            display: flex; flex-direction: column; gap: 10px; text-align: left;
+        }
+
+        .step {
+            display: flex; align-items: center; gap: 12px;
+            padding: 10px 15px;
+            background: rgba(13, 27, 42, 0.6);
+            border-radius: 10px;
+            border-left: 4px solid #444;
+            transition: all 0.3s;
+            font-size: 13px; color: #888;
+        }
+
+        .step.active { border-left-color: var(--accent); color: white; background: rgba(0, 180, 216, 0.15); }
+        .step.done { border-left-color: #00ff88; color: #00ff88; background: rgba(0, 255, 136, 0.08); }
+        .step.error { border-left-color: #ff4444; color: #ff4444; background: rgba(255, 68, 68, 0.1); }
+
+        .step-icon { font-size: 18px; flex-shrink: 0; width: 26px; text-align: center; }
+        .step-text { flex: 1; font-weight: 500; }
+        .step-count { font-weight: bold; font-size: 12px; opacity: 0.8; }
+
+        .spinner {
+            display: inline-block; width: 16px; height: 16px;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        .loading-footer { margin-top: 20px; font-size: 12px; color: #666; line-height: 1.5; }
+
+        .retry-btn {
+            margin-top: 15px; padding: 12px 25px;
+            background: var(--accent); border: none; border-radius: 10px;
+            color: white; font-weight: bold; font-size: 14px;
+            cursor: pointer; transition: 0.2s;
+        }
+        .retry-btn:hover { background: #0088aa; transform: scale(1.02); }
+
+        /* HEADER */
+        header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 30px; height: 70px; flex-shrink: 0;
         }
 
         .logo { font-size: 28px; font-weight: bold; display: flex; align-items: center; gap: 10px; }
@@ -73,12 +145,9 @@
         .icons span:hover { transform: scale(1.2); }
 
         main {
-            flex: 1;
-            padding: 15px 30px;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            overflow: hidden;
+            flex: 1; padding: 15px 30px;
+            display: flex; flex-direction: column;
+            position: relative; overflow: hidden;
         }
 
         .dashboard {
@@ -86,8 +155,7 @@
             grid-template-columns: 2fr 3fr;
             grid-template-rows: 2fr 1fr;
             gap: 15px;
-            height: 100%;
-            max-height: 600px;
+            height: 100%; max-height: 600px;
         }
 
         .card-large {
@@ -95,12 +163,9 @@
             background-color: rgba(27, 38, 59, 0.8);
             border: 2px solid var(--accent);
             border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            transition: transform 0.2s;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            cursor: pointer; transition: transform 0.2s;
             box-shadow: 0 0 15px rgba(0, 180, 216, 0.3);
         }
         .card-large:hover { transform: scale(1.02); }
@@ -114,10 +179,8 @@
         .card-medium {
             background-color: rgba(27, 38, 59, 0.6);
             border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
             cursor: pointer;
             border: 1px solid rgba(255,255,255,0.1);
             transition: 0.2s;
@@ -129,39 +192,27 @@
         .card-medium small { color: var(--accent); margin-top: 5px; font-size: 11px; }
 
         .bottom-row {
-            grid-column: 2 / 3;
-            grid-row: 2 / 3;
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 15px;
+            grid-column: 2 / 3; grid-row: 2 / 3;
+            display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;
         }
 
         .card-small {
             background-color: rgba(27, 38, 59, 0.6);
             border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            gap: 8px; cursor: pointer;
             border: 1px solid rgba(255,255,255,0.1);
-            font-weight: bold;
-            transition: 0.2s;
-            font-size: 12px;
-            padding: 0 10px;
-            text-align: center;
+            font-weight: bold; transition: 0.2s;
+            font-size: 12px; padding: 0 10px; text-align: center;
         }
         .card-small:hover { border-color: var(--accent); background-color: rgba(27, 38, 59, 0.9); }
         .card-small:active { transform: scale(0.98); }
         .card-small svg { width: 20px; height: 20px; fill: white; flex-shrink: 0; }
 
         .footer-info {
-            margin-top: auto;
-            padding-bottom: 15px;
-            font-size: 12px;
-            color: #aaa;
-            display: flex;
-            justify-content: space-between;
+            margin-top: auto; padding-bottom: 15px;
+            font-size: 12px; color: #aaa;
+            display: flex; justify-content: space-between;
         }
 
         /* NAVEGAÇÃO */
@@ -169,19 +220,15 @@
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg-color);
-            z-index: 900;
-            display: none;
-            flex-direction: column;
+            z-index: 900; display: none; flex-direction: column;
         }
 
         .nav-header {
-            display: flex;
-            align-items: center;
+            display: flex; align-items: center;
             padding: 15px 20px;
             background: #1b263b;
             border-bottom: 2px solid var(--accent);
-            gap: 15px;
-            flex-shrink: 0;
+            gap: 15px; flex-shrink: 0;
         }
 
         .nav-header button {
@@ -199,38 +246,26 @@
             background: rgba(13, 27, 42, 0.8);
             border: 1px solid rgba(255,255,255,0.2);
             border-radius: 8px;
-            color: white;
-            font-size: 13px;
-            width: 220px;
+            color: white; font-size: 13px; width: 220px;
         }
         .search-input:focus { outline: none; border-color: var(--accent); }
 
         .grid-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 12px;
-            padding: 20px;
-            overflow-y: auto;
-            flex: 1;
+            gap: 12px; padding: 20px;
+            overflow-y: auto; flex: 1;
         }
 
         .grid-item {
             background: rgba(27, 38, 59, 0.8);
             border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 8px;
-            padding: 15px;
-            cursor: pointer;
-            transition: 0.2s;
-            text-align: center;
-            font-weight: bold;
-            font-size: 13px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 65px;
-            word-break: break-word;
-            overflow: hidden;
+            border-radius: 8px; padding: 15px;
+            cursor: pointer; transition: 0.2s;
+            text-align: center; font-weight: bold; font-size: 13px;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            min-height: 65px; word-break: break-word; overflow: hidden;
         }
         .grid-item:hover { background: var(--accent); color: black; transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0, 180, 216, 0.4); }
         .grid-item:active { transform: translateY(0); }
@@ -239,26 +274,20 @@
 
         /* PLAYER */
         #player-container {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: black;
-            z-index: 1000;
-            display: none;
-            flex-direction: column;
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: black; z-index: 1000;
+            display: none; flex-direction: column;
         }
 
         #video-player { width: 100%; height: 100%; object-fit: contain; background: black; }
 
         .player-top-bar {
-            position: absolute;
-            top: 0; left: 0; width: 100%;
+            position: absolute; top: 0; left: 0; width: 100%;
             padding: 12px 20px;
             background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            z-index: 1001;
-            transition: opacity 0.3s;
+            display: flex; align-items: center; gap: 10px;
+            z-index: 1001; transition: opacity 0.3s;
         }
 
         .player-top-bar.hidden { opacity: 0; pointer-events: none; }
@@ -267,8 +296,7 @@
             background: rgba(255,255,255,0.15);
             border: none; color: white; padding: 8px 15px;
             border-radius: 8px; cursor: pointer; font-size: 13px;
-            transition: 0.2s;
-            white-space: nowrap;
+            transition: 0.2s; white-space: nowrap;
         }
         .player-top-bar button:hover { background: rgba(255,255,255,0.35); }
         .player-top-bar button:active { transform: scale(0.95); }
@@ -277,69 +305,100 @@
         .loader {
             position: absolute; top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            border: 5px solid #f3f3f3; border-top: 5px solid var(--accent);
-            border-radius: 50%; width: 50px; height: 50px;
-            animation: spin 1s linear infinite; display: none;
-        }
-
-        .loading-screen {
-            grid-column: 1/-1;
-            text-align: center;
-            padding: 60px 20px;
-        }
-        .loading-screen .big-spinner {
-            width: 60px; height: 60px;
-            border: 5px solid rgba(255,255,255,0.1);
-            border-top-color: var(--accent);
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--accent);
             border-radius: 50%;
+            width: 50px; height: 50px;
             animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
+            display: none;
         }
-
-        @keyframes spin { 100% { transform: rotate(360deg); } }
 
         .toast {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
+            position: fixed; bottom: 30px; left: 50%;
             transform: translateX(-50%) translateY(100px);
-            background: #00b4d8;
-            color: white;
-            padding: 12px 25px;
-            border-radius: 10px;
-            font-weight: bold;
-            font-size: 13px;
-            z-index: 3000;
-            opacity: 0;
-            transition: 0.3s;
-            pointer-events: none;
-            max-width: 80vw;
-            text-align: center;
+            background: #00b4d8; color: white;
+            padding: 12px 25px; border-radius: 10px;
+            font-weight: bold; font-size: 13px;
+            z-index: 3000; opacity: 0; transition: 0.3s;
+            pointer-events: none; max-width: 80vw; text-align: center;
         }
         .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
         .fullscreen-btn {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
+            position: absolute; bottom: 20px; right: 20px;
             background: rgba(255,255,255,0.15);
-            border: none;
-            color: white;
-            padding: 12px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 20px;
-            z-index: 1001;
-            width: 45px; height: 45px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            border: none; color: white;
+            padding: 12px; border-radius: 50%;
+            cursor: pointer; font-size: 20px;
+            z-index: 1001; width: 45px; height: 45px;
+            display: flex; align-items: center; justify-content: center;
             transition: 0.2s;
         }
         .fullscreen-btn:hover { background: rgba(255,255,255,0.35); }
+
+        #rotate-btn {
+            position: fixed; bottom: 15px; left: 15px;
+            background: rgba(0, 180, 216, 0.9);
+            color: white; border: none;
+            padding: 10px 16px; border-radius: 25px;
+            font-weight: bold; font-size: 12px;
+            cursor: pointer; z-index: 9998;
+            display: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            transition: 0.2s;
+        }
+        #rotate-btn.show { display: block; }
+        #rotate-btn:hover { background: rgba(0, 180, 216, 1); transform: scale(1.05); }
     </style>
 </head>
 <body>
+
+    <!-- TELA DE LOADING -->
+    <div id="loading-screen">
+        <div class="loading-box">
+            <div class="loading-logo"><span>IPTV</span></div>
+            <div class="loading-title" id="loading-title">Conectando ao servidor Xtream...</div>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+
+            <div class="loading-steps">
+                <div class="step" id="step-auth">
+                    <span class="step-icon">🔐</span>
+                    <span class="step-text">Autenticando conta Xtream</span>
+                    <span class="step-count" id="count-auth"></span>
+                </div>
+                <div class="step" id="step-live">
+                    <span class="step-icon">📺</span>
+                    <span class="step-text">Carregando Canais ao Vivo</span>
+                    <span class="step-count" id="count-live-loading"></span>
+                </div>
+                <div class="step" id="step-movies">
+                    <span class="step-icon">🎬</span>
+                    <span class="step-text">Carregando Filmes (VOD)</span>
+                    <span class="step-count" id="count-movies-loading"></span>
+                </div>
+                <div class="step" id="step-series">
+                    <span class="step-icon">📼</span>
+                    <span class="step-text">Carregando Séries</span>
+                    <span class="step-count" id="count-series-loading"></span>
+                </div>
+                <div class="step" id="step-ready">
+                    <span class="step-icon">✅</span>
+                    <span class="step-text">Pronto para assistir</span>
+                </div>
+            </div>
+
+            <div class="loading-footer" id="loading-footer">
+                Usando API Xtream Codes + Proxy CORS interno
+            </div>
+
+            <button class="retry-btn" id="retry-btn" style="display: none;" onclick="startDownload()">
+                🔄 Tentar Novamente
+            </button>
+        </div>
+    </div>
 
     <!-- HEADER -->
     <header>
@@ -353,7 +412,7 @@
         </div>
         <div class="icons">
             <span title="Tela cheia" onclick="toggleFullscreen()">⛶</span>
-            <span title="Recarregar" onclick="reloadAll()">↻</span>
+            <span title="Recarregar" onclick="forceReload()">↻</span>
             <span>👤</span>
             <span>⏻</span>
         </div>
@@ -365,19 +424,19 @@
             <div class="card-large" onclick="openSection('live')">
                 <svg viewBox="0 0 24 24"><path d="M21,6H3A2,2 0 0,0 1,8V18A2,2 0 0,0 3,20H21A2,2 0 0,0 23,18V8A2,2 0 0,0 21,6M21,18H3V8H21V18M16,11V15L19,13L16,11M12,6L10,2H14L12,6Z" /></svg>
                 <h2>Live TV</h2>
-                <small id="count-live">Carregando...</small>
+                <small id="count-live">0 canais</small>
             </div>
 
             <div class="top-right-group">
                 <div class="card-medium" onclick="openSection('movies')">
                     <svg viewBox="0 0 24 24"><path d="M4,6H2V20A2,2 0 0,0 4,22H18V20H4V6M20,2H8A2,2 0 0,0 6,4V16A2,2 0 0,0 8,18H20A2,2 0 0,0 22,16V4A2,2 0 0,0 20,2M20,16H8V4H20V16M12,6V14L17,10L12,6Z" /></svg>
                     <h3>Movies</h3>
-                    <small id="count-movies">Carregando...</small>
+                    <small id="count-movies">0 filmes</small>
                 </div>
                 <div class="card-medium" onclick="openSection('series')">
                     <svg viewBox="0 0 24 24"><path d="M18,3H6V1H18V3M18,21H6V23H18V21M21,5H3V19H21V5M19,17H5V7H19V17M12,9V15L16,12L12,9Z" /></svg>
                     <h3>Series</h3>
-                    <small id="count-series">Carregando...</small>
+                    <small id="count-series">0 séries</small>
                 </div>
             </div>
             
@@ -390,9 +449,9 @@
                     <svg viewBox="0 0 24 24"><path d="M12,21.35L10.55,20.03C5.4,15.36 2,12.27 2,8.5C2,5.41 4.42,3 7.5,3C9.24,3 10.91,3.81 12,5.08C13.09,3.81 14.76,3 16.5,3C19.58,3 22,5.41 22,8.5C22,12.27 18.6,15.36 13.45,20.03L12,21.35Z" /></svg>
                     <span>Favoritos</span>
                 </div>
-                <div class="card-small" onclick="showToast('Servidor: Zeus Panel')">
-                    <svg viewBox="0 0 24 24"><path d="M4,6H2V20A2,2 0 0,0 4,22H18V20H4V6M20,2H8A2,2 0 0,0 6,4V16A2,2 0 0,0 8,18H20A2,2 0 0,0 22,16V4A2,2 0 0,0 20,2M20,16H8V4H20V16M12,6V14L17,10L12,6Z" /></svg>
-                    <span>Info</span>
+                <div class="card-small" onclick="forceReload()">
+                    <svg viewBox="0 0 24 24"><path d="M17.65,6.35C16.2,4.9 14.21,4 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20C15.73,20 18.84,17.45 19.73,14H17.65C16.83,16.33 14.61,18 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6C13.66,6 15.14,6.69 16.22,7.78L13,11H20V4L17.65,6.35Z" /></svg>
+                    <span>Recarregar</span>
                 </div>
             </div>
         </div>
@@ -400,9 +459,9 @@
         <div class="footer-info">
             <div>
                 <p>Servidor: <span id="playlist-name">Zeus Panel</span></p>
-                <p>Status: <span id="status-text">Conectando...</span></p>
+                <p>Status: <span id="status-text">Aguardando...</span></p>
             </div>
-            <div>V:5.0.0 - Auto Connect</div>
+            <div>V:9.0.0 - Xtream API</div>
         </div>
     </main>
 
@@ -429,38 +488,120 @@
         <button class="fullscreen-btn" onclick="togglePlayerFullscreen()">⛶</button>
     </div>
 
+    <button id="rotate-btn" onclick="enterFullscreenAndLock()">🔄 Girar Tela</button>
     <div class="toast" id="toast"></div>
 
     <script>
         // ============================================
-        // ⚙️ CONFIGURAÇÃO - JÁ VEM PREENCHIDA
+        // CONFIGURAÇÃO XTREAM
         // ============================================
-        const PRE_CONFIGURED_URL = "https://zeus.meupanel.com.br/get.php?username=962313&password=723839&type=m3u_plus&output=ts";
+        const XTREAM_HOST = "https://zeus.meupanel.com.br";
+        const XTREAM_USER = "962313";
+        const XTREAM_PASS = "723839";
         
-        // Proxies para contornar CORS
-        const PROXIES = [
-            "https://corsproxy.io/?",
-            "https://api.allorigins.win/raw?url=",
-            "https://api.codetabs.com/v1/proxy?quest="
+        // ============================================
+        // PROXY CORS INTERNO - Cascata de servidores
+        // ============================================
+        // Cada chamada passa por um desses proxies para contornar CORS
+        const CORS_PROXIES = [
+            { name: "corsproxy.io", url: (u) => "https://corsproxy.io/?" + encodeURIComponent(u), json: true },
+            { name: "allorigins", url: (u) => "https://api.allorigins.win/raw?url=" + encodeURIComponent(u), json: true },
+            { name: "codetabs", url: (u) => "https://api.codetabs.com/v1/proxy?quest=" + encodeURIComponent(u), json: true },
+            { name: "thingproxy", url: (u) => "https://thingproxy.freeboard.io/fetch/" + u, json: true },
+            { name: "direct", url: (u) => u, json: false } // Última tentativa: sem proxy
         ];
+
+        // Função que tenta cada proxy em sequência até um funcionar
+        async function proxyFetch(url, options = {}) {
+            let lastError = '';
+            
+            for (let i = 0; i < CORS_PROXIES.length; i++) {
+                const proxy = CORS_PROXIES[i];
+                try {
+                    const proxyUrl = proxy.url(url);
+                    console.log(`[Proxy] Tentando ${proxy.name}...`);
+                    
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 30000);
+                    
+                    const response = await fetch(proxyUrl, {
+                        ...options,
+                        signal: controller.signal
+                    });
+                    
+                    clearTimeout(timeoutId);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+                    
+                    console.log(`✅ [Proxy] ${proxy.name} funcionou!`);
+                    return response;
+                    
+                } catch (error) {
+                    console.warn(`❌ [Proxy] ${proxy.name} falhou:`, error.message);
+                    lastError = error.message;
+                    continue;
+                }
+            }
+            
+            throw new Error(`Todos os proxies falharam. Último erro: ${lastError}`);
+        }
+
+        // Específica para JSON (player_api.php)
+        async function proxyJson(url) {
+            const response = await proxyFetch(url);
+            const text = await response.text();
+            try {
+                return JSON.parse(text);
+            } catch (e) {
+                // Às vezes o proxy adiciona HTML antes do JSON, tenta extrair
+                const jsonStart = text.indexOf('[');
+                const jsonStartObj = text.indexOf('{');
+                const start = jsonStart !== -1 && (jsonStart < jsonStartObj || jsonStartObj === -1) ? jsonStart : jsonStartObj;
+                if (start !== -1) {
+                    return JSON.parse(text.substring(start));
+                }
+                throw new Error("Resposta não é JSON válido");
+            }
+        }
+
+        // ============================================
+        // URLS DA API XTREAM
+        // ============================================
+        function apiUrl(action, params = '') {
+            return `${XTREAM_HOST}/player_api.php?username=${XTREAM_USER}&password=${XTREAM_PASS}&action=${action}${params}`;
+        }
+
+        function streamUrl(type, streamId, ext) {
+            if (type === 'live') {
+                return `${XTREAM_HOST}/live/${XTREAM_USER}/${XTREAM_PASS}/${streamId}.${ext}`;
+            } else if (type === 'movie') {
+                return `${XTREAM_HOST}/movie/${XTREAM_USER}/${XTREAM_PASS}/${streamId}.${ext}`;
+            } else if (type === 'series') {
+                return `${XTREAM_HOST}/series/${XTREAM_USER}/${XTREAM_PASS}/${streamId}.${ext}`;
+            }
+            return '';
+        }
 
         // ============================================
         // ESTADO GLOBAL
         // ============================================
-        let serverConfig = null;
-        let cachedCategories = { live: null, movies: null, series: null };
+        let allData = { live: {}, movies: {}, series: {} };
         let currentSection = '';
-        let currentCategoryId = '';
+        let currentCategory = '';
         let currentStreamUrl = '';
         let hls = null;
         let topBarTimeout = null;
+        let orientationLockActive = false;
 
         // ============================================
-        // ELEMENTOS DOM
+        // DOM
         // ============================================
         const video = document.getElementById('video-player');
         const playerContainer = document.getElementById('player-container');
         const navScreen = document.getElementById('navigation-screen');
+        const loadingScreen = document.getElementById('loading-screen');
         const contentGrid = document.getElementById('content-grid');
         const navTitle = document.getElementById('nav-title');
         const loader = document.getElementById('loader');
@@ -469,255 +610,371 @@
         const playerTopBar = document.getElementById('player-top-bar');
 
         // ============================================
-        // INICIALIZAÇÃO AUTOMÁTICA
+        // ORIENTAÇÃO AUTOMÁTICA
+        // ============================================
+        const hasOrientationAPI = !!(screen.orientation && screen.orientation.lock);
+
+        async function tryLockLandscape() {
+            if (!hasOrientationAPI) return false;
+            try {
+                await screen.orientation.lock('landscape');
+                orientationLockActive = true;
+                return true;
+            } catch (e) {
+                try {
+                    await screen.orientation.lock('landscape-primary');
+                    orientationLockActive = true;
+                    return true;
+                } catch (e2) {
+                    orientationLockActive = false;
+                    return false;
+                }
+            }
+        }
+
+        function applyCssRotation() {
+            const isPortrait = window.innerHeight > window.innerWidth;
+            if (isPortrait && !orientationLockActive) {
+                document.body.classList.add('force-landscape');
+                document.getElementById('rotate-btn').classList.add('show');
+            } else {
+                document.body.classList.remove('force-landscape');
+                document.getElementById('rotate-btn').classList.remove('show');
+            }
+        }
+
+        function checkOrientation() {
+            const isPortrait = window.innerHeight > window.innerWidth;
+            if (isPortrait && !orientationLockActive) {
+                tryLockLandscape().then(success => {
+                    if (!success) applyCssRotation();
+                });
+            } else {
+                applyCssRotation();
+            }
+        }
+
+        async function enterFullscreenAndLock() {
+            try {
+                const el = document.documentElement;
+                if (!document.fullscreenElement) {
+                    if (el.requestFullscreen) await el.requestFullscreen();
+                    else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+                }
+                await new Promise(r => setTimeout(r, 300));
+                await tryLockLandscape();
+            } catch (e) {}
+        }
+
+        function setupFirstTouchLock() {
+            const handler = async () => {
+                await enterFullscreenAndLock();
+                document.removeEventListener('touchstart', handler);
+                document.removeEventListener('click', handler);
+            };
+            document.addEventListener('touchstart', handler, { once: true, passive: true });
+            document.addEventListener('click', handler, { once: true });
+        }
+
+        // ============================================
+        // INICIALIZAÇÃO
         // ============================================
         window.addEventListener('load', async () => {
             updateClock();
             setInterval(updateClock, 1000);
+            setTimeout(() => tryLockLandscape(), 100);
+            checkOrientation();
+            setupFirstTouchLock();
 
-            // Tenta travar orientação em paisagem
-            tryLockLandscape();
+            // Verifica cache
+            const cached = loadFromCache();
+            if (cached) {
+                console.log("✅ Carregado do cache");
+                allData = cached;
+                updateCounters();
+                loadingScreen.style.display = 'none';
+                statusText.innerText = "✅ Cache carregado";
+                return;
+            }
 
-            // Conecta automaticamente com a lista configurada
-            await autoConnect();
+            startDownload();
         });
 
-        // Trava orientação horizontal (funciona em alguns dispositivos)
-        async function tryLockLandscape() {
+        if (screen.orientation) {
+            screen.orientation.addEventListener('change', () => setTimeout(checkOrientation, 200));
+        }
+        window.addEventListener('orientationchange', () => setTimeout(checkOrientation, 300));
+        window.addEventListener('resize', () => {
+            clearTimeout(window._resizeTimer);
+            window._resizeTimer = setTimeout(checkOrientation, 300);
+        });
+
+        // ============================================
+        // CACHE
+        // ============================================
+        function loadFromCache() {
             try {
-                if (screen.orientation && screen.orientation.lock) {
-                    await screen.orientation.lock('landscape');
-                    console.log("✅ Orientação travada em paisagem");
-                }
+                const cacheStr = localStorage.getItem('xtream_cache_v9');
+                if (!cacheStr) return null;
+                const cache = JSON.parse(cacheStr);
+                const maxAge = 6 * 60 * 60 * 1000; // 6 horas
+                if (Date.now() - cache.timestamp > maxAge) return null;
+                return cache.data;
+            } catch (e) { return null; }
+        }
+
+        function saveToCache() {
+            try {
+                localStorage.setItem('xtream_cache_v9', JSON.stringify({
+                    timestamp: Date.now(),
+                    data: allData
+                }));
+                console.log("💾 Cache salvo");
             } catch (e) {
-                console.log("Não foi possível travar orientação:", e.message);
+                console.warn("Cache falhou");
             }
         }
 
-        // Tenta entrar em tela cheia (chamado no primeiro clique)
-        function requestFullscreenOnFirstClick() {
-            const enterFullscreen = () => {
-                const el = document.documentElement;
-                if (el.requestFullscreen) el.requestFullscreen().catch(() => {});
-                else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-                document.removeEventListener('click', enterFullscreen);
-            };
-            document.addEventListener('click', enterFullscreen, { once: true });
+        function forceReload() {
+            try { localStorage.removeItem('xtream_cache_v9'); } catch (e) {}
+            allData = { live: {}, movies: {}, series: {} };
+            startDownload();
         }
 
         // ============================================
-        // CONEXÃO AUTOMÁTICA
+        // DOWNLOAD E PROCESSAMENTO
         // ============================================
-        async function autoConnect() {
+        async function startDownload() {
+            loadingScreen.style.display = 'flex';
+            document.getElementById('retry-btn').style.display = 'none';
+            resetSteps();
+            updateProgress(5);
+
             try {
-                statusText.innerText = "🔄 Analisando link...";
-                serverConfig = parseM3ULink(PRE_CONFIGURED_URL);
-                console.log("Config:", serverConfig);
-
-                statusText.innerText = "🔄 Testando servidor...";
+                // ==========================================
+                // PASSO 1: Autenticar com API Xtream
+                // ==========================================
+                setStepActive('step-auth');
+                document.getElementById('loading-title').innerText = "Autenticando...";
+                document.getElementById('count-auth').innerHTML = '<span class="spinner"></span>';
                 
-                // Tenta conectar com múltiplos proxies
-                let success = false;
-                let lastError = '';
-
-                for (let i = 0; i < PROXIES.length; i++) {
-                    try {
-                        statusText.innerText = `🔄 Tentando servidor ${i + 1}/${PROXIES.length}...`;
-                        const testUrl = buildApiUrl('get_live_categories');
-                        const proxyUrl = PROXIES[i] + encodeURIComponent(testUrl);
-
-                        const controller = new AbortController();
-                        const timeoutId = setTimeout(() => controller.abort(), 20000);
-
-                        const response = await fetch(proxyUrl, { signal: controller.signal });
-                        clearTimeout(timeoutId);
-
-                        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-                        const text = await response.text();
-                        let data;
-                        try {
-                            data = JSON.parse(text);
-                        } catch (e) {
-                            throw new Error("Resposta não é JSON válido");
-                        }
-
-                        if (!Array.isArray(data)) throw new Error("Formato inesperado");
-
-                        // Sucesso!
-                        console.log(`✅ Conectado via proxy ${i + 1}`);
-                        statusText.innerText = `✅ Online (${data.length} categorias)`;
-                        document.getElementById('count-live').innerText = `${data.length} categorias`;
-                        
-                        // Pré-carrega contadores das outras seções em background
-                        loadOtherCounts();
-                        
-                        success = true;
-                        showToast("✅ Conectado ao servidor!");
-                        requestFullscreenOnFirstClick();
-                        break;
-
-                    } catch (error) {
-                        console.warn(`Proxy ${i + 1} falhou:`, error.message);
-                        lastError = error.message;
-                        continue;
-                    }
+                const authData = await proxyJson(apiUrl(''));
+                
+                if (!authData.user_info || authData.user_info.auth === 0) {
+                    throw new Error("Credenciais inválidas ou conta expirada");
                 }
+                
+                const status = authData.user_info.status;
+                const expDate = authData.user_info.exp_date;
+                console.log("✅ Autenticado! Status:", status, "Expira:", expDate);
+                
+                document.getElementById('count-auth').innerText = `✅ ${status}`;
+                setStepDone('step-auth');
+                updateProgress(15);
 
-                if (!success) {
-                    statusText.innerText = "❌ Erro de conexão";
-                    document.getElementById('count-live').innerText = "Offline";
-                    document.getElementById('count-movies').innerText = "Offline";
-                    document.getElementById('count-series').innerText = "Offline";
-                    showToast("⚠️ Servidor não respondeu. Tente novamente mais tarde.");
+                // ==========================================
+                // PASSO 2: Carregar Categorias de Canais
+                // ==========================================
+                setStepActive('step-live');
+                document.getElementById('loading-title').innerText = "Carregando canais ao vivo...";
+                document.getElementById('count-live-loading').innerHTML = '<span class="spinner"></span>';
+                
+                const liveCats = await proxyJson(apiUrl('get_live_categories'));
+                console.log(`📺 ${liveCats.length} categorias de canais`);
+                
+                // Carrega todos os streams de uma vez (mais rápido)
+                const allLiveStreams = await proxyJson(apiUrl('get_live_streams'));
+                console.log(`📺 ${allLiveStreams.length} canais no total`);
+                
+                // Organiza por categoria
+                const catMap = {};
+                liveCats.forEach(c => catMap[c.category_id] = c.category_name);
+                
+                allLiveStreams.forEach(stream => {
+                    const catName = catMap[stream.category_id] || 'Outros';
+                    if (!allData.live[catName]) allData.live[catName] = [];
+                    allData.live[catName].push({
+                        name: stream.name,
+                        stream_id: stream.stream_id,
+                        stream_icon: stream.stream_icon,
+                        type: 'live'
+                    });
+                });
+                
+                document.getElementById('count-live-loading').innerText = `${allLiveStreams.length} canais`;
+                document.getElementById('count-live').innerText = `${allLiveStreams.length} canais`;
+                setStepDone('step-live');
+                updateProgress(40);
+
+                // ==========================================
+                // PASSO 3: Carregar Filmes (VOD)
+                // ==========================================
+                setStepActive('step-movies');
+                document.getElementById('loading-title').innerText = "Carregando filmes...";
+                document.getElementById('count-movies-loading').innerHTML = '<span class="spinner"></span>';
+                
+                try {
+                    const vodCats = await proxyJson(apiUrl('get_vod_categories'));
+                    const allVodStreams = await proxyJson(apiUrl('get_vod_streams'));
+                    console.log(`🎬 ${allVodStreams.length} filmes`);
+                    
+                    const vodCatMap = {};
+                    vodCats.forEach(c => vodCatMap[c.category_id] = c.category_name);
+                    
+                    allVodStreams.forEach(stream => {
+                        const catName = vodCatMap[stream.category_id] || 'Outros';
+                        if (!allData.movies[catName]) allData.movies[catName] = [];
+                        allData.movies[catName].push({
+                            name: stream.name,
+                            stream_id: stream.stream_id,
+                            container_extension: stream.container_extension || 'mp4',
+                            stream_icon: stream.stream_icon,
+                            type: 'movie'
+                        });
+                    });
+                    
+                    document.getElementById('count-movies-loading').innerText = `${allVodStreams.length} filmes`;
+                    document.getElementById('count-movies').innerText = `${allVodStreams.length} filmes`;
+                } catch (e) {
+                    console.warn("Erro filmes:", e);
+                    document.getElementById('count-movies-loading').innerText = '0';
                 }
+                setStepDone('step-movies');
+                updateProgress(65);
+
+                // ==========================================
+                // PASSO 4: Carregar Séries
+                // ==========================================
+                setStepActive('step-series');
+                document.getElementById('loading-title').innerText = "Carregando séries...";
+                document.getElementById('count-series-loading').innerHTML = '<span class="spinner"></span>';
+                
+                try {
+                    const seriesCats = await proxyJson(apiUrl('get_series_categories'));
+                    const allSeries = await proxyJson(apiUrl('get_series'));
+                    console.log(`📼 ${allSeries.length} séries`);
+                    
+                    const seriesCatMap = {};
+                    seriesCats.forEach(c => seriesCatMap[c.category_id] = c.category_name);
+                    
+                    allSeries.forEach(stream => {
+                        const catName = seriesCatMap[stream.category_id] || 'Outros';
+                        if (!allData.series[catName]) allData.series[catName] = [];
+                        allData.series[catName].push({
+                            name: stream.name,
+                            series_id: stream.series_id,
+                            cover: stream.cover,
+                            type: 'series'
+                        });
+                    });
+                    
+                    document.getElementById('count-series-loading').innerText = `${allSeries.length} séries`;
+                    document.getElementById('count-series').innerText = `${allSeries.length} séries`;
+                } catch (e) {
+                    console.warn("Erro séries:", e);
+                    document.getElementById('count-series-loading').innerText = '0';
+                }
+                setStepDone('step-series');
+                updateProgress(90);
+
+                // ==========================================
+                // PASSO 5: Finalizar
+                // ==========================================
+                setStepActive('step-ready');
+                saveToCache();
+                updateProgress(100);
+                
+                document.getElementById('loading-title').innerText = "✅ Pronto!";
+                statusText.innerText = "✅ Online";
+                
+                await sleep(800);
+                setStepDone('step-ready');
+                
+                loadingScreen.style.display = 'none';
+                
+                const totalLive = Object.values(allData.live).reduce((a, b) => a + b.length, 0);
+                const totalMovies = Object.values(allData.movies).reduce((a, b) => a + b.length, 0);
+                const totalSeries = Object.values(allData.series).reduce((a, b) => a + b.length, 0);
+                
+                showToast(`✅ ${totalLive} canais, ${totalMovies} filmes, ${totalSeries} séries`);
 
             } catch (error) {
-                console.error(error);
-                statusText.innerText = "❌ Erro: " + error.message;
+                console.error("Erro geral:", error);
+                
+                // Verifica qual passo falhou
+                const currentActive = document.querySelector('.step.active');
+                if (currentActive) {
+                    currentActive.className = 'step error';
+                }
+                
+                document.getElementById('loading-title').innerText = "❌ Erro ao conectar";
+                document.getElementById('loading-footer').innerHTML = `
+                    <strong>${error.message}</strong><br><br>
+                    Possíveis causas:<br>
+                    1. Servidor Xtream offline (zeus.meupanel.com.br)<br>
+                    2. Conta expirada ou suspensa<br>
+                    3. Proxies CORS bloqueados no seu país<br>
+                    4. Firewall / Antivírus bloqueando<br><br>
+                    <strong>Solução:</strong> Teste este link no navegador:<br>
+                    <code style="font-size: 10px; background: #000; padding: 5px; display: block; margin-top: 5px; word-break: break-all;">
+                        ${apiUrl('')}
+                    </code>
+                `;
+                document.getElementById('retry-btn').style.display = 'inline-block';
             }
         }
 
-        async function loadOtherCounts() {
-            try {
-                // Filmes
-                const moviesUrl = PROXIES[0] + encodeURIComponent(buildApiUrl('get_vod_categories'));
-                const r1 = await fetch(moviesUrl);
-                const d1 = await r1.json();
-                if (Array.isArray(d1)) document.getElementById('count-movies').innerText = `${d1.length} categorias`;
-
-                // Séries
-                const seriesUrl = PROXIES[0] + encodeURIComponent(buildApiUrl('get_series_categories'));
-                const r2 = await fetch(seriesUrl);
-                const d2 = await r2.json();
-                if (Array.isArray(d2)) document.getElementById('count-series').innerText = `${d2.length} categorias`;
-            } catch (e) {
-                console.log("Contadores secundários falharam:", e.message);
-            }
+        function resetSteps() {
+            ['step-auth', 'step-live', 'step-movies', 'step-series', 'step-ready'].forEach(id => {
+                document.getElementById(id).className = 'step';
+            });
+            ['count-auth', 'count-live-loading', 'count-movies-loading', 'count-series-loading'].forEach(id => {
+                document.getElementById(id).innerText = '';
+            });
         }
 
-        function parseM3ULink(url) {
-            let urlObj;
-            try {
-                urlObj = new URL(url);
-            } catch (e) {
-                urlObj = new URL('http://' + url);
-            }
+        function setStepActive(id) { document.getElementById(id).className = 'step active'; }
+        function setStepDone(id) { document.getElementById(id).className = 'step done'; }
+        function setStepError(id) { document.getElementById(id).className = 'step error'; }
+        function updateProgress(p) { document.getElementById('progress-fill').style.width = p + '%'; }
+        function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-            const protocol = urlObj.protocol.replace(':', '');
-            const host = urlObj.hostname;
-            const port = urlObj.port || (protocol === 'https' ? '443' : '80');
-            const params = urlObj.searchParams;
-            
-            const username = params.get('username');
-            const password = params.get('password');
-
-            if (!username || !password) {
-                throw new Error("Link precisa conter 'username' e 'password'");
-            }
-
-            return { protocol, host, port, username, password };
-        }
-
-        function buildApiUrl(action, extraParams = '') {
-            const { protocol, host, port, username, password } = serverConfig;
-            const isDefaultPort = (protocol === 'http' && port === '80') || (protocol === 'https' && port === '443');
-            const portPart = isDefaultPort ? '' : `:${port}`;
-            return `${protocol}://${host}${portPart}/player_api.php?username=${username}&password=${password}&action=${action}${extraParams}`;
-        }
-
-        function buildStreamUrl(streamId, type = 'live', ext = 'm3u8') {
-            const { protocol, host, port, username, password } = serverConfig;
-            const isDefaultPort = (protocol === 'http' && port === '80') || (protocol === 'https' && port === '443');
-            const portPart = isDefaultPort ? '' : `:${port}`;
-            
-            if (type === 'live') {
-                return `${protocol}://${host}${portPart}/live/${username}/${password}/${streamId}.${ext}`;
-            } else if (type === 'movie') {
-                return `${protocol}://${host}${portPart}/movie/${username}/${password}/${streamId}.${ext}`;
-            } else if (type === 'series') {
-                return `${protocol}://${host}${portPart}/series/${username}/${password}/${streamId}.${ext}`;
-            }
-            return '';
+        function updateCounters() {
+            const countLive = Object.values(allData.live).reduce((a, b) => a + b.length, 0);
+            const countMovies = Object.values(allData.movies).reduce((a, b) => a + b.length, 0);
+            const countSeries = Object.values(allData.series).reduce((a, b) => a + b.length, 0);
+            document.getElementById('count-live').innerText = `${countLive} canais`;
+            document.getElementById('count-movies').innerText = `${countMovies} filmes`;
+            document.getElementById('count-series').innerText = `${countSeries} séries`;
         }
 
         // ============================================
         // NAVEGAÇÃO
         // ============================================
-        async function openSection(section) {
-            if (!serverConfig) {
-                showToast("⏳ Aguarde a conexão...");
+        function openSection(section) {
+            if (Object.keys(allData[section]).length === 0) {
+                showToast(`⚠️ Nenhum conteúdo de ${section} disponível`);
                 return;
             }
-            
             currentSection = section;
             navScreen.style.display = 'flex';
-            currentCategoryId = '';
+            currentCategory = '';
             searchInput.value = '';
-            
-            await loadCategories();
+            renderCategories();
         }
 
-        async function loadCategories() {
+        function renderCategories() {
             const sectionName = currentSection === 'live' ? 'Canais ao Vivo' : 
                                (currentSection === 'movies' ? 'Filmes' : 'Séries');
             navTitle.innerText = `📁 ${sectionName}`;
             searchInput.placeholder = '🔍 Buscar categoria...';
-            contentGrid.innerHTML = `
-                <div class="loading-screen">
-                    <div class="big-spinner"></div>
-                    <p>Carregando categorias...</p>
-                </div>
-            `;
-
-            try {
-                if (!cachedCategories[currentSection]) {
-                    const action = currentSection === 'live' ? 'get_live_categories' :
-                                  (currentSection === 'movies' ? 'get_vod_categories' : 'get_series_categories');
-                    
-                    const data = await fetchWithProxies(buildApiUrl(action));
-                    cachedCategories[currentSection] = data;
-                }
-
-                renderCategories(cachedCategories[currentSection]);
-
-            } catch (error) {
-                console.error(error);
-                contentGrid.innerHTML = `
-                    <div style="grid-column: 1/-1; text-align: center; padding: 50px; color: #ff6b6b;">
-                        <h2>❌ Erro ao carregar</h2>
-                        <p>${error.message}</p>
-                        <button onclick="loadCategories()" style="margin-top: 20px; padding: 10px 20px; background: var(--accent); border: none; border-radius: 8px; color: white; cursor: pointer; font-weight: bold;">🔄 Tentar Novamente</button>
-                    </div>
-                `;
-            }
-        }
-
-        async function fetchWithProxies(url) {
-            let lastError = '';
-            for (let i = 0; i < PROXIES.length; i++) {
-                try {
-                    const proxyUrl = PROXIES[i] + encodeURIComponent(url);
-                    const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), 20000);
-                    const response = await fetch(proxyUrl, { signal: controller.signal });
-                    clearTimeout(timeoutId);
-                    
-                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                    const text = await response.text();
-                    return JSON.parse(text);
-                } catch (e) {
-                    lastError = e.message;
-                    continue;
-                }
-            }
-            throw new Error(lastError);
-        }
-
-        function renderCategories(categories) {
+            searchInput.value = '';
             contentGrid.innerHTML = '';
+            currentCategory = '';
             
-            if (!categories || categories.length === 0) {
+            const categories = Object.keys(allData[currentSection]).sort();
+            
+            if (categories.length === 0) {
                 contentGrid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 50px; color: #aaa;"><h2>📭 Nenhuma categoria</h2></div>`;
                 return;
             }
@@ -725,62 +982,26 @@
             categories.forEach(cat => {
                 const div = document.createElement('div');
                 div.className = 'grid-item';
-                div.dataset.name = cat.category_name.toLowerCase();
-                div.innerHTML = `<span>${cat.category_name}</span>`;
-                div.onclick = () => loadStreams(cat.category_id, cat.category_name);
+                div.dataset.name = cat.toLowerCase();
+                div.innerHTML = `<span>${cat}</span><small>${allData[currentSection][cat].length} itens</small>`;
+                div.onclick = () => renderStreams(cat);
                 contentGrid.appendChild(div);
             });
         }
 
-        async function loadStreams(categoryId, categoryName) {
-            currentCategoryId = categoryId;
-            navTitle.innerText = `📺 ${categoryName}`;
+        function renderStreams(category) {
+            currentCategory = category;
+            navTitle.innerText = `📺 ${category}`;
             searchInput.placeholder = '🔍 Buscar item...';
             searchInput.value = '';
-            contentGrid.innerHTML = `
-                <div class="loading-screen">
-                    <div class="big-spinner"></div>
-                    <p>Carregando conteúdos...</p>
-                </div>
-            `;
-
-            try {
-                const action = currentSection === 'live' ? 'get_live_streams' :
-                              (currentSection === 'movies' ? 'get_vod_streams' : 'get_series');
-                
-                const data = await fetchWithProxies(buildApiUrl(action, `&category_id=${categoryId}`));
-                renderStreams(data);
-
-            } catch (error) {
-                console.error(error);
-                contentGrid.innerHTML = `
-                    <div style="grid-column: 1/-1; text-align: center; padding: 50px; color: #ff6b6b;">
-                        <h2>❌ Erro ao carregar</h2>
-                        <p>${error.message}</p>
-                        <button onclick="loadStreams('${categoryId}', '${categoryName}')" style="margin-top: 20px; padding: 10px 20px; background: var(--accent); border: none; border-radius: 8px; color: white; cursor: pointer; font-weight: bold;">🔄 Tentar Novamente</button>
-                    </div>
-                `;
-            }
-        }
-
-        function renderStreams(streams) {
             contentGrid.innerHTML = '';
-            
-            if (!streams || streams.length === 0) {
-                contentGrid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 50px; color: #aaa;"><h2>📭 Nenhum item</h2></div>`;
-                return;
-            }
 
-            streams.forEach(stream => {
+            allData[currentSection][category].forEach(item => {
                 const div = document.createElement('div');
                 div.className = 'grid-item';
-                div.dataset.name = (stream.name || '').toLowerCase();
-                
-                let name = stream.name || 'Sem Nome';
-                name = name.replace(/^[A-Z]{2,3}\s*\|\s*/, '');
-                
-                div.innerHTML = `<span>${name}</span>`;
-                div.onclick = () => playStream(stream);
+                div.dataset.name = item.name.toLowerCase();
+                div.innerText = item.name;
+                div.onclick = () => playStream(item);
                 contentGrid.appendChild(div);
             });
         }
@@ -794,104 +1015,180 @@
         }
 
         function goBack() {
-            if (currentCategoryId) {
-                currentCategoryId = '';
-                renderCategories(cachedCategories[currentSection]);
-            } else {
-                navScreen.style.display = 'none';
-            }
+            if (currentCategory) renderCategories();
+            else navScreen.style.display = 'none';
         }
 
         // ============================================
-        // PLAYER
+        // PLAYER - Suporta TS, MP4, MKV, M3U8
         // ============================================
-        function playStream(stream) {
+        async function playStream(item) {
             let streamUrl = '';
             
-            if (currentSection === 'live') {
-                streamUrl = buildStreamUrl(stream.stream_id, 'live', 'm3u8');
-            } else if (currentSection === 'movies') {
-                const ext = stream.container_extension || 'mp4';
-                streamUrl = buildStreamUrl(stream.stream_id, 'movie', ext);
-            } else if (currentSection === 'series') {
-                streamUrl = buildStreamUrl(stream.series_id, 'series', 'mp4');
+            if (item.type === 'live') {
+                // Canais ao vivo: tenta .m3u8 primeiro (mais compatível), depois .ts
+                streamUrl = streamUrl = streamUrlFor('live', item.stream_id, 'm3u8');
+            } else if (item.type === 'movie') {
+                // Filmes: usa extensão original (mp4, mkv, avi)
+                const ext = item.container_extension || 'mp4';
+                streamUrl = streamUrlFor('movie', item.stream_id, ext);
+            } else if (item.type === 'series') {
+                streamUrl = streamUrlFor('series', item.stream_id, 'mp4');
             }
 
             currentStreamUrl = streamUrl;
-            document.getElementById('player-title').innerText = stream.name || 'Sem nome';
+            document.getElementById('player-title').innerText = item.name;
             playerContainer.style.display = 'flex';
             loader.style.display = 'block';
             
             if (hls) { hls.destroy(); hls = null; }
             video.src = '';
-
-            console.log("Reproduzindo:", streamUrl);
             showPlayerTopBar();
 
-            // Tenta HLS.js primeiro
-            if (Hls.isSupported()) {
-                hls = new Hls({
-                    enableWorker: true,
-                    lowLatencyMode: false,
-                    manifestLoadingTimeOut: 15000,
-                    manifestLoadingMaxRetry: 2,
-                });
-                hls.loadSource(streamUrl);
-                hls.attachMedia(video);
-                hls.on(Hls.Events.MANIFEST_PARSED, function() {
-                    video.play().catch(e => {
-                        console.log("Autoplay bloqueado:", e);
-                        showToast("👆 Toque para dar play");
-                    });
-                    loader.style.display = 'none';
-                });
-                hls.on(Hls.Events.ERROR, function (event, data) {
-                    if (data.fatal) {
-                        console.error("Erro HLS:", data);
+            console.log("🎬 Reproduzindo:", streamUrl);
+
+            // ESTRATÉGIA 1: Se for .m3u8/.ts → HLS.js com proxy CORS
+            if (streamUrl.includes('.m3u8') || streamUrl.includes('.ts')) {
+                await playWithHls(streamUrl);
+            } 
+            // ESTRATÉGIA 2: MP4/MKV → tenta nativo primeiro, depois proxy
+            else {
+                await playNative(streamUrl);
+            }
+        }
+
+        function streamUrlFor(type, id, ext) {
+            // Constrói URL sem depender de currentStreamUrl (evita bugs)
+            if (type === 'live') return `${XTREAM_HOST}/live/${XTREAM_USER}/${XTREAM_PASS}/${id}.${ext}`;
+            if (type === 'movie') return `${XTREAM_HOST}/movie/${XTREAM_USER}/${XTREAM_PASS}/${id}.${ext}`;
+            if (type === 'series') return `${XTREAM_HOST}/series/${XTREAM_USER}/${XTREAM_PASS}/${id}.${ext}`;
+            return '';
+        }
+
+        // Player HLS com suporte a proxy CORS
+        async function playWithHls(url) {
+            if (!Hls.isSupported()) {
+                // Safari tem suporte nativo
+                if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                    video.src = url;
+                    video.addEventListener('loadedmetadata', () => {
+                        video.play().catch(() => {});
                         loader.style.display = 'none';
-                        showToast("⚠️ Stream indisponível. Tente o VLC.");
-                    }
-                });
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = streamUrl;
-                video.addEventListener('loadedmetadata', function() {
-                    video.play();
-                    loader.style.display = 'none';
-                });
-                video.addEventListener('error', () => {
-                    loader.style.display = 'none';
-                    showToast("⚠️ Erro. Tente o VLC.");
-                });
-            } else {
-                video.src = streamUrl;
-                video.play().then(() => loader.style.display = 'none').catch(() => {
-                    loader.style.display = 'none';
-                    showToast("⚠️ Use o botão VLC");
-                });
+                    });
+                    video.addEventListener('error', () => {
+                        loader.style.display = 'none';
+                        showToast("⚠️ Erro ao tocar. Use o VLC.");
+                    });
+                }
+                return;
             }
 
-            // Auto-hide top bar após 5s
-            video.addEventListener('play', () => {
-                clearTimeout(topBarTimeout);
-                topBarTimeout = setTimeout(() => {
-                    playerTopBar.classList.add('hidden');
-                }, 5000);
+            // HLS.js com configuração para usar proxy CORS se necessário
+            hls = new Hls({
+                enableWorker: true,
+                lowLatencyMode: false,
+                xhrSetup: function(xhr, url) {
+                    // Aplica proxy CORS se o servidor bloquear
+                    // (HLS.js já lida com isso tentando requisições diretas primeiro)
+                    xhr.withCredentials = false;
+                },
+                // Aumenta tentativas para streams instáveis
+                manifestLoadingMaxRetry: 3,
+                levelLoadingMaxRetry: 3,
+                fragLoadingMaxRetry: 3
+            });
+            
+            hls.loadSource(url);
+            hls.attachMedia(video);
+            
+            hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                console.log("✅ HLS manifest carregado");
+                video.play().catch(e => console.log("Autoplay bloqueado"));
+                loader.style.display = 'none';
+            });
+            
+            hls.on(Hls.Events.ERROR, (event, data) => {
+                console.error("HLS erro:", data);
+                
+                if (data.fatal) {
+                    // Se for erro de CORS/rede, tenta via proxy alternativo
+                    if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
+                        console.log("Tentando recuperar erro de rede...");
+                        
+                        // Tenta novamente com proxy externo
+                        const proxiedUrl = "https://corsproxy.io/?" + encodeURIComponent(url);
+                        console.log("Tentando via proxy:", proxiedUrl);
+                        
+                        hls.destroy();
+                        hls = new Hls({ enableWorker: true });
+                        hls.loadSource(proxiedUrl);
+                        hls.attachMedia(video);
+                        hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                            video.play().catch(() => {});
+                            loader.style.display = 'none';
+                            showToast("✅ Reproduzindo via proxy");
+                        });
+                        hls.on(Hls.Events.ERROR, () => {
+                            loader.style.display = 'none';
+                            showToast("⚠️ Stream indisponível. Use o VLC.");
+                        });
+                    } else {
+                        loader.style.display = 'none';
+                        showToast("⚠️ Erro no stream. Tente o VLC.");
+                    }
+                }
+            });
+        }
+
+        // Player para MP4/MKV
+        async function playNative(url) {
+            video.src = url;
+            
+            video.addEventListener('loadedmetadata', () => {
+                console.log("✅ Vídeo carregado");
+                video.play().catch(() => {});
+                loader.style.display = 'none';
             }, { once: true });
+            
+            video.addEventListener('error', async (e) => {
+                console.warn("Erro nativo:", e);
+                
+                // Tenta via proxy CORS
+                const proxiedUrl = "https://corsproxy.io/?" + encodeURIComponent(url);
+                console.log("Tentando via proxy:", proxiedUrl);
+                
+                video.src = proxiedUrl;
+                video.load();
+                
+                video.addEventListener('loadedmetadata', () => {
+                    video.play().catch(() => {});
+                    loader.style.display = 'none';
+                    showToast("✅ Reproduzindo via proxy");
+                }, { once: true });
+                
+                video.addEventListener('error', () => {
+                    loader.style.display = 'none';
+                    showToast("⚠️ Stream não suportado. Use o VLC.");
+                }, { once: true });
+            }, { once: true });
+            
+            // Timeout de segurança
+            setTimeout(() => {
+                if (video.readyState < 2 && loader.style.display !== 'none') {
+                    loader.style.display = 'none';
+                    showToast("⚠️ Demorando... tente o VLC");
+                }
+            }, 15000);
         }
 
         function showPlayerTopBar() {
             playerTopBar.classList.remove('hidden');
             clearTimeout(topBarTimeout);
-            topBarTimeout = setTimeout(() => {
-                playerTopBar.classList.add('hidden');
-            }, 5000);
+            topBarTimeout = setTimeout(() => playerTopBar.classList.add('hidden'), 5000);
         }
 
-        // Mostra a top bar ao tocar na tela
         playerContainer.addEventListener('click', (e) => {
-            if (e.target.tagName === 'VIDEO' || e.target === playerContainer) {
-                showPlayerTopBar();
-            }
+            if (e.target.tagName === 'VIDEO' || e.target === playerContainer) showPlayerTopBar();
         });
 
         function closePlayer() {
@@ -903,27 +1200,22 @@
         }
 
         function openInVlc() {
-            if (!currentStreamUrl) { showToast("Nenhum stream selecionado"); return; }
-            
+            if (!currentStreamUrl) return;
             let vlcUrl = currentStreamUrl;
             if (vlcUrl.startsWith('https://')) vlcUrl = 'vlc://' + vlcUrl.substring(8);
             else if (vlcUrl.startsWith('http://')) vlcUrl = 'vlc://' + vlcUrl.substring(7);
-            
             const a = document.createElement('a');
             a.href = vlcUrl;
-            a.style.display = 'none';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
-            
             showToast("✅ Comando enviado ao VLC");
         }
 
         function copyStreamUrl() {
             if (!currentStreamUrl) return;
-            navigator.clipboard.writeText(currentStreamUrl).then(() => {
-                showToast("📋 URL copiada!");
-            }).catch(() => {
+            navigator.clipboard.writeText(currentStreamUrl).then(() => showToast("📋 URL copiada!"))
+            .catch(() => {
                 const ta = document.createElement('textarea');
                 ta.value = currentStreamUrl;
                 document.body.appendChild(ta);
@@ -935,22 +1227,15 @@
         }
 
         function togglePlayerFullscreen() {
-            if (!document.fullscreenElement) {
-                playerContainer.requestFullscreen?.().catch(() => {});
-            } else {
-                document.exitFullscreen?.();
-            }
+            if (!document.fullscreenElement) playerContainer.requestFullscreen?.().catch(() => {});
+            else document.exitFullscreen?.();
             showPlayerTopBar();
         }
 
-        // ============================================
-        // FULLSCREEN GERAL
-        // ============================================
         function toggleFullscreen() {
             const el = document.documentElement;
             if (!document.fullscreenElement) {
-                (el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen)?.call(el);
-                // Tenta travar orientação após fullscreen
+                (el.requestFullscreen || el.webkitRequestFullscreen)?.call(el);
                 setTimeout(() => tryLockLandscape(), 300);
             } else {
                 document.exitFullscreen?.();
@@ -964,7 +1249,7 @@
             const toast = document.getElementById('toast');
             toast.innerText = message;
             toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
+            setTimeout(() => toast.classList.remove('show'), 3500);
         }
 
         function updateClock() {
@@ -975,22 +1260,12 @@
             if (dateEl) dateEl.textContent = now.toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
         }
 
-        function reloadAll() {
-            cachedCategories = { live: null, movies: null, series: null };
-            statusText.innerText = "🔄 Recarregando...";
-            showToast("🔄 Recarregando servidor...");
-            autoConnect();
-        }
-
-        // Suporte a teclas (útil em TVs e controle remoto)
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 if (playerContainer.style.display === 'flex') closePlayer();
                 else if (navScreen.style.display === 'flex') goBack();
             }
-            if (e.key === 'f' || e.key === 'F') {
-                toggleFullscreen();
-            }
+            if (e.key === 'f' || e.key === 'F') toggleFullscreen();
         });
     </script>
 </body>

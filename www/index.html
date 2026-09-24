@@ -322,7 +322,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 
 <script>
 // ============================================
-// CONFIGURACAO - USA PLAYER_API (TEM CORS)
+// CONFIGURACAO - HTTPS + player_api (funciona APK)
 // ============================================
 var SERVER = "https://zeus.x10.mx";
 var USER   = "184507";
@@ -348,58 +348,14 @@ function logLine(msg, cls) {
 }
 
 // ============================================
-// XHR - COMPATIVEL COM APK/WEBVIEW
+// FETCH IGUAL AO ANTIGO (funciona APK)
 // ============================================
-function xhrGet(url) {
-    return new Promise(function(resolve, reject) {
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", url, true);
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === 4) {
-                if (xhr.status >= 200 && xhr.status < 300) {
-                    resolve(xhr.responseText);
-                } else if (xhr.status === 0) {
-                    reject(new Error("CORS/Blocked"));
-                } else {
-                    reject(new Error("HTTP " + xhr.status));
-                }
-            }
-        };
-        xhr.onerror = function() { reject(new Error("Network")); };
-        try { xhr.send(); } catch(e) { reject(e); }
-    });
-}
-
-// ============================================
-// PROXIES - CASO PRECISE
-// ============================================
-var PROXIES = [
-    { name: "DIRETO",   url: null },
-    { name: "codetabs", url: "https://api.codetabs.com/v1/proxy?quest=" }
-];
-
-function tryFetch(url) {
-    var i = 0;
-    return new Promise(function(resolve, reject) {
-        function next() {
-            if (i >= PROXIES.length) { reject(new Error("Falhou tudo")); return; }
-            var p = PROXIES[i];
-            var fullUrl = p.url ? p.url + encodeURIComponent(url) : url;
-            logLine("Tentando: " + p.name, "info");
-            xhrGet(fullUrl)
-                .then(function(txt) {
-                    if (!txt || txt.length < 10) throw new Error("vazio");
-                    logLine("OK: " + p.name, "ok");
-                    resolve(txt);
-                })
-                .catch(function(e) {
-                    logLine("Falhou: " + p.name + " - " + (e.message || "").slice(0, 40), "err");
-                    i++;
-                    next();
-                });
-        }
-        next();
-    });
+async function apiFetch(url) {
+    var res = await fetch(url);
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    var text = await res.text();
+    try { return JSON.parse(text); }
+    catch(e) { throw new Error("Resposta inválida"); }
 }
 
 // ============================================
@@ -412,19 +368,20 @@ var PER_PAGE = 60;
 var hls = null;
 var mpegtsPlayer = null;
 var currentItems = [];
+var allCategories = [];
 var isLiveStream = false;
 var liveCheckInterval = null;
 var panelCategoryId = null;
 var panelChannels = [];
 var currentPlayingItem = null;
-var ALL_LIVE = [];
-var ALL_MOVIES = [];
-var ALL_SERIES = [];
-var CATS_LIVE = [];
-var CATS_MOVIE = [];
-var CATS_SERIES = [];
 
 function $(id) { return document.getElementById(id); }
+
+function updateUserUI(u) {
+    $("user-name-text").innerText = u;
+    $("user-avatar-letter").innerText = (u || "U").charAt(0).toUpperCase();
+}
+updateUserUI(USER);
 
 function createParticles() {
     var c = $("particles");
@@ -468,188 +425,40 @@ function runSplash() {
 }
 
 // ============================================
-// INICIALIZACAO - USA PLAYER_API (que tem CORS)
+// INICIALIZACAO
 // ============================================
-function initApp() {
+async function initApp() {
     $("loading").classList.add("show");
-    updateProgress(5, "Autenticando...", "Verificando conta");
+    updateProgress(10, "Conectando ao servidor...", "Verificando credenciais");
 
-    tryFetch(API_URL)
-        .then(function(txt) {
-            var info = JSON.parse(txt);
-            if (!info || !info.user_info || info.user_info.auth === 0) {
-                throw new Error("Credenciais invalidas");
-            }
-            var exp = info.user_info.exp_date
-                ? new Date(info.user_info.exp_date * 1000).toLocaleDateString("pt-BR")
-                : "N/A";
-            $("user-status-line").innerText = "Expira em " + exp;
-            $("user-name-text").innerText = info.user_info.username;
-            $("user-avatar-letter").innerText = info.user_info.username.charAt(0);
-            logLine("Autenticado! Expira: " + exp, "ok");
-            updateProgress(15, "Autenticado!", "Expira: " + exp);
-            return sleep(200);
-        })
-        .then(function() {
-            updateProgress(25, "Baixando categorias...", "Canais, Filmes, Series");
-            return loadAllCategories();
-        })
-        .then(function() {
-            updateProgress(40, "Baixando canais...", "Aguarde...");
-            return loadLiveStreams();
-        })
-        .then(function() {
-            updateProgress(65, "Baixando filmes...", "Aguarde...");
-            return loadVODStreams();
-        })
-        .then(function() {
-            updateProgress(85, "Baixando series...", "Aguarde...");
-            return loadSeriesList();
-        })
-        .then(function() {
-            if (ALL_LIVE.length === 0 && ALL_MOVIES.length === 0 && ALL_SERIES.length === 0) {
-                throw new Error("Nenhum conteudo retornado");
-            }
-            updateProgress(95, "Indexando...", "Quase pronto");
-            return sleep(300);
-        })
-        .then(function() {
-            $("count-live").innerText = ALL_LIVE.length;
-            $("count-movie").innerText = ALL_MOVIES.length;
-            $("count-series").innerText = ALL_SERIES.length;
-            return changeMainTab("live");
-        })
-        .then(function() {
-            updateProgress(100, "Pronto!", "Conteudos carregados");
-            return sleep(400);
-        })
-        .then(function() {
-            $("loading").classList.remove("show");
-            setTimeout(function() { showAlert(); }, 600);
-        })
-        .catch(function(e) {
-            console.error(e);
-            showError((e && e.message) ? e.message : String(e));
-        });
-}
+    try {
+        var info = await apiFetch(API_URL);
+        if (!info || !info.user_info || info.user_info.auth === 0) {
+            throw new Error("Credenciais inválidas");
+        }
+        var exp = info.user_info.exp_date
+            ? new Date(info.user_info.exp_date * 1000).toLocaleDateString("pt-BR")
+            : "N/A";
 
-function loadAllCategories() {
-    return tryFetch(API_URL + "&action=get_live_categories").then(function(txt) {
-        CATS_LIVE = JSON.parse(txt) || [];
-        logLine("Categorias LIVE: " + CATS_LIVE.length, "ok");
-    }).catch(function(){})
-    .then(function() {
-        return tryFetch(API_URL + "&action=get_vod_categories").then(function(txt) {
-            CATS_MOVIE = JSON.parse(txt) || [];
-            logLine("Categorias VOD: " + CATS_MOVIE.length, "ok");
-        }).catch(function(){});
-    })
-    .then(function() {
-        return tryFetch(API_URL + "&action=get_series_categories").then(function(txt) {
-            CATS_SERIES = JSON.parse(txt) || [];
-            logLine("Categorias Series: " + CATS_SERIES.length, "ok");
-        }).catch(function(){});
-    });
-}
-
-function loadLiveStreams() {
-    var chain = Promise.resolve();
-    CATS_LIVE.forEach(function(cat, i) {
-        chain = chain.then(function() {
-            return tryFetch(API_URL + "&action=get_live_streams&category_id=" + cat.category_id)
-                .then(function(txt) {
-                    var streams = JSON.parse(txt);
-                    if (Array.isArray(streams)) {
-                        streams.forEach(function(s) {
-                            ALL_LIVE.push({
-                                name: s.name, logo: s.stream_icon || "",
-                                group: cat.category_name, type: "live",
-                                stream_id: s.stream_id,
-                                url: liveUrl(s.stream_id, "ts")
-                            });
-                        });
-                    }
-                })
-                .catch(function(){})
-                .then(function() {
-                    if (i % 3 === 0 || i === CATS_LIVE.length - 1) {
-                        updateProgress(40 + Math.min(i * 0.3, 20), "Canais...", (i+1) + "/" + CATS_LIVE.length + " (" + ALL_LIVE.length + ")");
-                    }
-                });
-        });
-    });
-    return chain;
-}
-
-function loadVODStreams() {
-    var chain = Promise.resolve();
-    CATS_MOVIE.forEach(function(cat, i) {
-        chain = chain.then(function() {
-            return tryFetch(API_URL + "&action=get_vod_streams&category_id=" + cat.category_id)
-                .then(function(txt) {
-                    var streams = JSON.parse(txt);
-                    if (Array.isArray(streams)) {
-                        streams.forEach(function(s) {
-                            ALL_MOVIES.push({
-                                name: s.name, logo: s.stream_icon || "",
-                                group: cat.category_name, type: "movie",
-                                stream_id: s.stream_id,
-                                url: movieUrl(s.stream_id, s.container_extension || "mp4")
-                            });
-                        });
-                    }
-                })
-                .catch(function(){})
-                .then(function() {
-                    if (i % 3 === 0 || i === CATS_MOVIE.length - 1) {
-                        updateProgress(65 + Math.min(i * 0.2, 15), "Filmes...", (i+1) + "/" + CATS_MOVIE.length + " (" + ALL_MOVIES.length + ")");
-                    }
-                });
-        });
-    });
-    return chain;
-}
-
-function loadSeriesList() {
-    var chain = Promise.resolve();
-    CATS_SERIES.forEach(function(cat, i) {
-        chain = chain.then(function() {
-            return tryFetch(API_URL + "&action=get_series&category_id=" + cat.category_id)
-                .then(function(txt) {
-                    var series = JSON.parse(txt);
-                    if (Array.isArray(series)) {
-                        series.forEach(function(s) {
-                            ALL_SERIES.push({
-                                name: s.name, logo: s.cover || "",
-                                group: cat.category_name, type: "series",
-                                series_id: s.series_id
-                            });
-                        });
-                    }
-                })
-                .catch(function(){})
-                .then(function() {
-                    if (i % 3 === 0 || i === CATS_SERIES.length - 1) {
-                        updateProgress(85 + Math.min(i * 0.2, 10), "Series...", (i+1) + "/" + CATS_SERIES.length + " (" + ALL_SERIES.length + ")");
-                    }
-                });
-        });
-    });
-    return chain;
-}
-
-function showError(detail) {
-    $("loading").innerHTML =
-        '<div class="error-msg">' +
-        '<h3>Erro ao carregar</h3>' +
-        '<p>Nao foi possivel conectar.</p>' +
-        '<div class="help-box">' +
-        '<strong>Teste:</strong><br><br>' +
-        '<a href="' + API_URL + '" target="_blank">Ver info da conta</a>' +
-        '</div>' +
-        '<div class="debug-info">' + detail + '</div>' +
-        '<button onclick="location.reload()">Tentar Novamente</button>' +
-        '</div>';
+        $("user-status-line").innerText = "Expira em " + exp;
+        updateProgress(30, "Conectado!", "Expira em " + exp);
+        await sleep(400);
+        updateProgress(60, "Baixando conteúdos...", "Canais ao vivo");
+        await changeMainTab("live");
+        updateProgress(100, "Pronto!", "Todos os conteúdos carregados");
+        await sleep(400);
+        $("loading").classList.remove("show");
+        setTimeout(function() { showAlert(); }, 600);
+    } catch(e) {
+        console.error(e);
+        $("loading").innerHTML =
+            '<div class="error-msg">' +
+            '<h3>Erro ao conectar</h3>' +
+            '<p>' + e.message + '</p>' +
+            '<p style="font-size:0.8rem;color:#94a3b8;margin-top:10px;">Teste no navegador:<br>' + API_URL + '</p>' +
+            '<button onclick="location.reload()">Tentar Novamente</button>' +
+            '</div>';
+    }
 }
 
 function updateProgress(pct, text, sub) {
@@ -663,62 +472,84 @@ function toggleSidebar(open) {
     $("overlay").classList.toggle("show", open);
 }
 
-function changeMainTab(type) {
+async function changeMainTab(type) {
     currentMainTab = type;
     currentCategoryId = null;
     currentPage = 1;
-    var btns = document.querySelectorAll(".nav-btn");
-    for (var i = 0; i < btns.length; i++) btns[i].classList.remove("active");
+
+    document.querySelectorAll(".nav-btn").forEach(function(b) { b.classList.remove("active"); });
     var btn = document.querySelector('.nav-btn[data-tab="' + type + '"]');
     if (btn) btn.classList.add("active");
+
     var titles = {
         live:   '<span class="dot-decoration"></span><span class="highlight">Canais</span> ao Vivo',
         movie:  '<span class="dot-decoration"></span><span class="highlight">Filmes</span>',
         series: '<span class="dot-decoration"></span><span class="highlight">Séries</span>'
     };
     $("pageTitle").innerHTML = titles[type];
+
     if (window.innerWidth < 900) toggleSidebar(false);
-    buildCategories();
-    loadItems();
-    return Promise.resolve();
+
+    try { await loadCategories(); }
+    catch(e) {
+        console.error(e);
+        $("contentGrid").innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#ef4444;padding:40px;">Erro: ' + e.message + '</p>';
+    }
 }
 
-function buildCategories() {
-    var source = currentMainTab === "live" ? ALL_LIVE : currentMainTab === "movie" ? ALL_MOVIES : ALL_SERIES;
-    var groups = [], seen = {};
-    source.forEach(function(i) { if (i.group && !seen[i.group]) { seen[i.group] = true; groups.push(i.group); } });
-    groups.sort();
+async function loadCategories() {
+    var action = "";
+    if (currentMainTab === "live")   action = "get_live_categories";
+    if (currentMainTab === "movie")  action = "get_vod_categories";
+    if (currentMainTab === "series") action = "get_series_categories";
+
+    var cats = await apiFetch(API_URL + "&action=" + action);
+    allCategories = Array.isArray(cats) ? cats : [];
+
     var listEl = $("categoryList");
     listEl.innerHTML = "";
+
     var allBtn = document.createElement("div");
     allBtn.className = "cat-btn active";
-    allBtn.innerText = "Todas (" + source.length + ")";
+    allBtn.innerText = "Todas";
     allBtn.onclick = function() { selectCategory(null, allBtn); };
     listEl.appendChild(allBtn);
-    groups.forEach(function(g) {
-        var count = source.filter(function(i) { return i.group === g; }).length;
+
+    allCategories.forEach(function(cat) {
         var btn = document.createElement("div");
         btn.className = "cat-btn";
-        btn.innerText = g + " (" + count + ")";
-        btn.onclick = function() { selectCategory(g, btn); };
+        btn.innerText = cat.category_name;
+        btn.title = cat.category_name;
+        btn.onclick = function() { selectCategory(cat.category_id, btn); };
         listEl.appendChild(btn);
     });
+
+    await loadItems();
 }
 
 function selectCategory(catId, btnEl) {
     currentCategoryId = catId;
     currentPage = 1;
-    var btns = document.querySelectorAll(".cat-btn");
-    for (var i = 0; i < btns.length; i++) btns[i].classList.remove("active");
+    document.querySelectorAll(".cat-btn").forEach(function(b) { b.classList.remove("active"); });
     btnEl.classList.add("active");
     if (window.innerWidth < 900) toggleSidebar(false);
     loadItems();
 }
 
-function loadItems() {
-    var source = currentMainTab === "live" ? ALL_LIVE : currentMainTab === "movie" ? ALL_MOVIES : ALL_SERIES;
-    if (currentCategoryId) source = source.filter(function(i) { return i.group === currentCategoryId; });
-    currentItems = source;
+async function loadItems() {
+    var action = "";
+    if (currentMainTab === "live")   action = "get_live_streams";
+    if (currentMainTab === "movie")  action = "get_vod_streams";
+    if (currentMainTab === "series") action = "get_series";
+
+    var url = API_URL + "&action=" + action;
+    if (currentCategoryId) url += "&category_id=" + currentCategoryId;
+
+    $("contentGrid").innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#94a3b8;padding:40px;">Carregando...</p>';
+    $("loadMoreBtn").style.display = "none";
+
+    var items = await apiFetch(url);
+    currentItems = Array.isArray(items) ? items : [];
     currentPage = 1;
     renderContent();
 }
@@ -727,46 +558,73 @@ function filterBySearch() {
     var q = $("searchInput").value.trim().toLowerCase();
     if (!q) { renderContent(); return; }
     var filtered = currentItems.filter(function(i) { return (i.name || "").toLowerCase().indexOf(q) >= 0; });
-    renderCards(filtered.slice(0, 200));
-    $("sectionInfo").innerHTML = "<strong>" + filtered.length + "</strong> resultados";
-    $("loadMoreBtn").style.display = "none";
+    renderFiltered(filtered, "🔍 Resultados para \"" + q + "\"");
 }
 
 function renderContent() {
     var end = currentPage * PER_PAGE;
-    renderCards(currentItems.slice(0, end));
+    var toShow = currentItems.slice(0, end);
+    renderCards(toShow);
+
     $("sectionInfo").innerHTML = "<strong>" + currentItems.length + "</strong> itens encontrados";
+
     if (end < currentItems.length) {
         $("loadMoreBtn").style.display = "block";
-        $("loadMoreBtn").innerText = "Carregar Mais (" + (currentItems.length - end) + ")";
-    } else $("loadMoreBtn").style.display = "none";
+        $("loadMoreBtn").innerText = "Carregar Mais (" + (currentItems.length - end) + " restantes)";
+    } else {
+        $("loadMoreBtn").style.display = "none";
+    }
+}
+
+function renderFiltered(items, label) {
+    renderCards(items.slice(0, 200));
+    $("sectionInfo").innerHTML = "<strong>" + items.length + "</strong> " + label;
+    $("loadMoreBtn").style.display = "none";
 }
 
 function renderCards(items) {
     var gridEl = $("contentGrid");
     gridEl.innerHTML = "";
+
     if (items.length === 0) {
         gridEl.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:60px 20px;">Nenhum item encontrado.</p>';
         return;
     }
+
     items.forEach(function(item, idx) {
         var card = document.createElement("div");
         card.className = "card";
-        card.style.animationDelay = Math.min(idx * 12, 500) + "ms";
+        card.style.animationDelay = (idx * 15) + "ms";
         card.onclick = function() { playItem(item); };
-        var bc, bt;
-        if (item.type === "live") { bc = "live"; bt = "LIVE"; }
-        else if (item.type === "movie") { bc = "movie"; bt = "FILME"; }
-        else { bc = "series"; bt = "SERIE"; }
+
+        var name, img, badgeClass, badgeText, sub;
+
+        if (currentMainTab === "live") {
+            name = item.name;
+            img = item.stream_icon || "";
+            badgeClass = "live"; badgeText = "LIVE";
+            sub = item.num ? "Canal #" + item.num : "Ao vivo";
+        } else if (currentMainTab === "movie") {
+            name = item.name;
+            img = item.stream_icon || "";
+            badgeClass = "movie"; badgeText = "FILME";
+            sub = item.rating && item.rating !== "0" ? "⭐ " + parseFloat(item.rating).toFixed(1) : "Filme";
+        } else {
+            name = item.name;
+            img = item.cover || "";
+            badgeClass = "series"; badgeText = "SÉRIE";
+            sub = item.rating && item.rating !== "0" ? "⭐ " + parseFloat(item.rating).toFixed(1) : "Série";
+        }
+
         card.innerHTML =
             '<div class="card-img-wrap">' +
-            '<img src="' + (item.logo || "") + '" loading="lazy" onerror="this.src=\'https://via.placeholder.com/300x180/1e293b/8b5cf6?text=Sem+Capa\'">' +
-            '<span class="badge ' + bc + '">' + bt + '</span>' +
+            '<img src="' + img + '" onerror="this.src=\'https://via.placeholder.com/300x180/1e293b/8b5cf6?text=Sem+Capa\'">' +
+            '<span class="badge ' + badgeClass + '">' + badgeText + '</span>' +
             '<div class="card-overlay"><div class="play-btn">▶</div></div>' +
             '</div>' +
             '<div class="card-info">' +
-            '<div class="card-title" title="' + item.name + '">' + item.name + '</div>' +
-            '<div class="card-sub">' + (item.group || "") + '</div>' +
+            '<div class="card-title" title="' + name + '">' + name + '</div>' +
+            '<div class="card-sub">' + sub + '</div>' +
             '</div>';
         gridEl.appendChild(card);
     });
@@ -774,10 +632,10 @@ function renderCards(items) {
 
 function loadMore() { currentPage++; renderContent(); }
 
-function playItem(item) {
-    if (item.type === "live") { startLiveChannel(item); return; }
-    if (item.type === "movie") { startPlayer(item.url, item.name); return; }
-    if (item.type === "series") { openEpisodes(item); return; }
+async function playItem(item) {
+    if (currentMainTab === "series") { openEpisodes(item); return; }
+    if (currentMainTab === "live") { startLiveChannel(item); }
+    else if (currentMainTab === "movie") { startPlayer(movieUrl(item.stream_id), item.name); }
 }
 
 function startLiveChannel(item) {
@@ -785,76 +643,109 @@ function startLiveChannel(item) {
     isLiveStream = true;
     $("player-modal").style.display = "block";
     $("video-title").innerText = item.name;
-    $("video-cat").innerText = item.group || "";
+    $("video-cat").innerText = "";
     $("player-loading").style.display = "block";
+    $("player-status").innerText = "Conectando ao canal...";
     $("liveIndicator").style.display = "flex";
-    $("vi-dot").style.display = "block";
+    $("goLiveBtn").classList.remove("show");
     $("delayIndicator").classList.add("show");
+
     destroyPlayers();
 
     var video = $("videoPlayer");
-    var playUrl = item.url || liveUrl(item.stream_id, "ts");
-    var m3u8Url = playUrl.replace(/\.ts$/i, ".m3u8");
+    var m3u8Url = liveUrl(item.stream_id, "m3u8");
+    var tsUrl   = liveUrl(item.stream_id, "ts");
     var failed = false;
 
     if (Hls.isSupported()) {
         hls = new Hls({
+            enableWorker: true,
+            lowLatencyMode: false,
             liveSyncDurationCount: 4,
             liveMaxLatencyDurationCount: 12,
+            liveDurationInfinity: true,
             maxLiveSyncPlaybackRate: 1.0,
             backBufferLength: 30,
             manifestLoadingTimeOut: 15000,
-            fragLoadingTimeOut: 30000
+            manifestLoadingMaxRetry: 3,
+            fragLoadingTimeOut: 30000,
+            fragLoadingMaxRetry: 8
         });
+
         hls.loadSource(m3u8Url);
         hls.attachMedia(video);
+
         hls.on(Hls.Events.MANIFEST_PARSED, function() {
             $("player-loading").style.display = "none";
             video.play().catch(function(){});
             video.playbackRate = 1.0;
             startLiveDelayMonitor(video);
         });
-        hls.on(Hls.Events.ERROR, function(e, data) {
+
+        hls.on(Hls.Events.ERROR, function(event, data) {
             if (data.fatal && !failed) {
                 failed = true;
                 if (hls) { hls.destroy(); hls = null; }
-                playTsDirect(playUrl);
+                playTsDirect(tsUrl);
             }
         });
+
         setTimeout(function() {
-            if (!failed && hls && (!hls.levels || hls.levels.length === 0)) {
+            if (failed || !hls) return;
+            if (!hls.levels || hls.levels.length === 0) {
                 failed = true;
                 hls.destroy(); hls = null;
-                playTsDirect(playUrl);
+                playTsDirect(tsUrl);
             }
-        }, 8000);
+        }, 10000);
     } else {
         video.src = m3u8Url;
-        video.play().catch(function() { playTsDirect(playUrl); });
+        video.play().catch(function() { playTsDirect(tsUrl); });
+        video.playbackRate = 1.0;
         startLiveDelayMonitor(video);
     }
 }
 
 function playTsDirect(tsUrl) {
-    $("player-status").innerText = "Formato alternativo...";
+    $("player-status").innerText = "Tentando formato alternativo...";
     var video = $("videoPlayer");
+
     if (typeof mpegts === "undefined" || !mpegts.isSupported()) {
-        $("player-loading").innerHTML = '<p style="color:#ef4444;">Canal nao compativel. Use VLC.</p>';
+        $("player-loading").innerHTML = '<p style="color:#ef4444;">Canal não compatível. Use VLC.</p>';
         return;
     }
+
     try {
-        mpegtsPlayer = mpegts.createPlayer({ type: "mpegts", isLive: true, url: tsUrl }, {
-            enableWorker: true, enableStashBuffer: false, liveBufferLatencyChasing: false, autoCleanupSourceBuffer: true
+        mpegtsPlayer = mpegts.createPlayer({
+            type: "mpegts",
+            isLive: true,
+            url: tsUrl
+        }, {
+            enableWorker: true,
+            enableStashBuffer: false,
+            stashInitialSize: 128,
+            lazyLoad: false,
+            liveBufferLatencyChasing: false,
+            liveBufferLatencyChasingOnPaused: false,
+            autoCleanupSourceBuffer: true,
+            autoCleanupMaxBackwardDuration: 30,
+            autoCleanupMinBackwardDuration: 15
         });
+
         mpegtsPlayer.attachMediaElement(video);
         mpegtsPlayer.load();
+
         mpegtsPlayer.on(mpegts.Events.ERROR, function() {
-            $("player-loading").innerHTML = '<p style="color:#ef4444;">Canal offline.</p>';
+            $("player-loading").innerHTML = '<p style="color:#ef4444;">Não foi possível reproduzir. Canal offline.</p>';
         });
+
         mpegtsPlayer.play().then(function() {
             $("player-loading").style.display = "none";
+            video.playbackRate = 1.0;
             startLiveDelayMonitor(video);
-        }).catch(function() { $("player-loading").style.display = "none"; });
+        }).catch(function() {
+            $("player-loading").style.display = "none";
+        });
     } catch(e) {
         $("player-loading").innerHTML = '<p style="color:#ef4444;">Erro: ' + e.message + '</p>';
     }
@@ -862,24 +753,130 @@ function playTsDirect(tsUrl) {
 
 function startLiveDelayMonitor(video) {
     if (liveCheckInterval) clearInterval(liveCheckInterval);
+
     liveCheckInterval = setInterval(function() {
         if (!video || video.paused || !isLiveStream) return;
-        var b = video.buffered;
-        if (b.length === 0) return;
-        var delay = Math.max(0, b.end(b.length - 1) - video.currentTime);
+
+        var buffered = video.buffered;
+        if (buffered.length === 0) return;
+
+        var currentTime = video.currentTime;
+        var liveEdge = buffered.end(buffered.length - 1);
+        var delay = Math.max(0, liveEdge - currentTime);
+
         $("delaySecs").innerText = Math.round(delay) + "s";
-        if (delay > 60) $("goLiveBtn").classList.add("show");
-        else $("goLiveBtn").classList.remove("show");
-        if (video.playbackRate !== 1.0) video.playbackRate = 1.0;
+
+        if (delay > 60) {
+            $("goLiveBtn").classList.add("show");
+        } else {
+            $("goLiveBtn").classList.remove("show");
+        }
+
+        if (currentTime > liveEdge + 0.5) {
+            video.currentTime = liveEdge - 1;
+        }
+
+        if (video.playbackRate !== 1.0) {
+            video.playbackRate = 1.0;
+        }
     }, 2000);
 }
 
 function jumpToLive() {
     var video = $("videoPlayer");
-    var b = video.buffered;
-    if (b.length > 0) video.currentTime = b.end(b.length - 1) - 0.5;
-    video.playbackRate = 1.0;
+    var buffered = video.buffered;
+
+    if (buffered.length > 0) {
+        var liveEdge = buffered.end(buffered.length - 1);
+        video.currentTime = liveEdge - 0.5;
+        video.playbackRate = 1.0;
+    }
+
     $("goLiveBtn").classList.remove("show");
+}
+
+async function openEpisodes(serie) {
+    $("episodes-modal").style.display = "block";
+    $("ep-series-title").innerText = serie.name;
+    $("ep-list").innerHTML = '<p style="color:#94a3b8;text-align:center;padding:40px;">Carregando episódios...</p>';
+
+    try {
+        var info = await apiFetch(API_URL + "&action=get_series_info&series_id=" + serie.series_id);
+        var eps = info.episodes || {};
+        var seasons = Object.keys(eps).sort(function(a,b) { return parseInt(a) - parseInt(b); });
+
+        var html = "";
+        seasons.forEach(function(seasonNum) {
+            html += '<div class="season-title">📁 Temporada ' + seasonNum + '</div>';
+            eps[seasonNum].forEach(function(ep) {
+                var safeTitle = (serie.name + " - " + ep.title).replace(/'/g, "");
+                html +=
+                    '<div class="ep-item" onclick="playEpisode(\'' + ep.id + '\', \'' + safeTitle + '\')">' +
+                    '<span class="ep-name">' + ep.title + '</span>' +
+                    '<span class="ep-num">Ep ' + ep.episode_num + '</span>' +
+                    '</div>';
+            });
+        });
+        $("ep-list").innerHTML = html || '<p style="color:#94a3b8;text-align:center;padding:40px;">Nenhum episódio encontrado.</p>';
+    } catch(e) {
+        $("ep-list").innerHTML = '<p style="color:#ef4444;text-align:center;padding:40px;">Erro: ' + e.message + '</p>';
+    }
+}
+
+function closeEpisodes() { $("episodes-modal").style.display = "none"; }
+
+function playEpisode(episodeId, title) {
+    closeEpisodes();
+    startPlayer(seriesUrl(episodeId), title);
+}
+
+function startPlayer(url, title) {
+    isLiveStream = false;
+    currentPlayingItem = null;
+    $("player-modal").style.display = "block";
+    $("video-title").innerText = title;
+    $("video-cat").innerText = "";
+    $("vi-dot").style.display = "none";
+    $("player-status").innerText = "Carregando vídeo...";
+    $("player-loading").style.display = "block";
+    $("liveIndicator").style.display = "none";
+    $("goLiveBtn").classList.remove("show");
+    $("delayIndicator").classList.remove("show");
+
+    if (liveCheckInterval) { clearInterval(liveCheckInterval); liveCheckInterval = null; }
+
+    destroyPlayers();
+    var video = $("videoPlayer");
+    video.playbackRate = 1.0;
+    video.src = url;
+    video.load();
+
+    video.onloadeddata = function() { $("player-loading").style.display = "none"; };
+    video.onerror = function() {
+        $("player-loading").innerHTML = '<p style="color:#ef4444;">Formato não suportado. MKV precisa de VLC.</p>';
+    };
+    video.play().catch(function() { $("player-loading").style.display = "none"; });
+}
+
+function destroyPlayers() {
+    if (liveCheckInterval) { clearInterval(liveCheckInterval); liveCheckInterval = null; }
+    if (hls) { try { hls.destroy(); } catch(e){} hls = null; }
+    if (mpegtsPlayer) { try { mpegtsPlayer.destroy(); } catch(e){} mpegtsPlayer = null; }
+    var v = $("videoPlayer");
+    v.pause();
+    v.playbackRate = 1.0;
+    v.removeAttribute("src");
+    v.load();
+    $("player-loading").style.display = "block";
+    $("player-loading").innerHTML = '<div class="spinner2"></div><p id="player-status">Conectando...</p>';
+}
+
+function closePlayer() {
+    $("player-modal").style.display = "none";
+    $("channelPanel").classList.remove("open");
+    isLiveStream = false;
+    currentPlayingItem = null;
+    destroyPlayers();
 }
 
 function toggleChannelPanel(force) {
@@ -894,33 +891,23 @@ function buildPanel() {
     var catsEl = $("cpCats");
     catsEl.innerHTML = "";
     var groups = [], seen = {};
-    ALL_LIVE.forEach(function(i) { if (i.group && !seen[i.group]) { seen[i.group] = true; groups.push(i.group); } });
+    currentItems.forEach(function(i) { if (i.group && !seen[i.group]) { seen[i.group] = true; groups.push(i.group); } });
     groups.sort();
     var allBtn = document.createElement("div");
-    allBtn.className = "cp-cat" + (panelCategoryId === null ? " active" : "");
+    allBtn.className = "cp-cat active";
     allBtn.innerText = "Todos";
     allBtn.onclick = function() { panelCategoryId = null; buildPanel(); };
     catsEl.appendChild(allBtn);
-    groups.slice(0, 50).forEach(function(g) {
-        var btn = document.createElement("div");
-        btn.className = "cp-cat" + (String(panelCategoryId) === String(g) ? " active" : "");
-        btn.innerText = g;
-        btn.onclick = function() { panelCategoryId = g; buildPanel(); };
-        catsEl.appendChild(btn);
-    });
-    var channels = ALL_LIVE;
-    if (panelCategoryId) channels = channels.filter(function(c) { return c.group === panelCategoryId; });
-    panelChannels = channels;
     var listEl = $("cpList");
     listEl.innerHTML = "";
-    if (channels.length === 0) { listEl.innerHTML = '<div class="cp-loading">Nenhum canal.</div>'; return; }
-    channels.slice(0, 300).forEach(function(ch) {
+    if (currentItems.length === 0) { listEl.innerHTML = '<div class="cp-loading">Nenhum canal.</div>'; return; }
+    currentItems.slice(0, 300).forEach(function(ch) {
         var item = document.createElement("div");
-        var isActive = currentPlayingItem && currentPlayingItem.url === ch.url;
+        var isActive = currentPlayingItem && currentPlayingItem.stream_id === ch.stream_id;
         item.className = "cp-channel" + (isActive ? " active" : "");
         item.innerHTML =
-            '<img class="cp-logo" src="' + (ch.logo || "") + '" loading="lazy" onerror="this.src=\'https://via.placeholder.com/50/1e293b/8b5cf6?text=TV\'">' +
-            '<div class="cp-info"><div class="cp-name">' + ch.name + '</div><div class="cp-meta">' + (ch.group || "") + '</div></div>' +
+            '<img class="cp-logo" src="' + (ch.stream_icon || "") + '" onerror="this.src=\'https://via.placeholder.com/50/1e293b/8b5cf6?text=TV\'">' +
+            '<div class="cp-info"><div class="cp-name">' + ch.name + '</div><div class="cp-meta"># ' + (ch.num || "-") + '</div></div>' +
             '<span class="cp-play-icon">▶</span>';
         item.onclick = function() {
             if (isActive) return;
@@ -931,83 +918,17 @@ function buildPanel() {
     });
 }
 
-function openEpisodes(serie) {
-    $("episodes-modal").style.display = "block";
-    $("ep-series-title").innerText = serie.name;
-    $("ep-list").innerHTML = '<p style="color:#94a3b8;text-align:center;padding:40px;">Carregando...</p>';
-    var seriesId = serie.series_id;
-    if (!seriesId && serie.url) { var m = serie.url.match(/\/(\d+)\.\w+$/); if (m) seriesId = m[1]; }
-    if (!seriesId) { $("ep-list").innerHTML = '<p style="color:#ef4444;text-align:center;padding:40px;">ID nao encontrado</p>'; return; }
-
-    tryFetch(API_URL + "&action=get_series_info&series_id=" + seriesId)
-        .then(function(txt) {
-            var info = JSON.parse(txt);
-            var eps = info.episodes || {};
-            var html = "";
-            Object.keys(eps).sort(function(a,b) { return parseInt(a) - parseInt(b); }).forEach(function(sn) {
-                html += '<div class="season-title">Temporada ' + sn + '</div>';
-                eps[sn].forEach(function(ep) {
-                    var t = (serie.name + " - " + ep.title).replace(/'/g, "");
-                    var ext = ep.container_extension || "mp4";
-                    html += '<div class="ep-item" onclick="playEpisode(\'' + ep.id + '\', \'' + t + '\', \'' + ext + '\')">' +
-                            '<span>' + ep.title + '</span><span class="ep-num">Ep ' + ep.episode_num + '</span></div>';
-                });
-            });
-            $("ep-list").innerHTML = html || '<p style="color:#94a3b8;text-align:center;padding:40px;">Nenhum episodio.</p>';
-        })
-        .catch(function(e) { $("ep-list").innerHTML = '<p style="color:#ef4444;text-align:center;padding:40px;">Erro: ' + e.message + '</p>'; });
-}
-
-function closeEpisodes() { $("episodes-modal").style.display = "none"; }
-function playEpisode(id, title, ext) { closeEpisodes(); startPlayer(seriesUrl(id, ext), title); }
-
-function startPlayer(url, title) {
-    isLiveStream = false;
-    currentPlayingItem = null;
-    $("player-modal").style.display = "block";
-    $("video-title").innerText = title;
-    $("video-cat").innerText = "";
-    $("vi-dot").style.display = "none";
-    $("player-loading").style.display = "block";
-    $("liveIndicator").style.display = "none";
-    $("goLiveBtn").classList.remove("show");
-    $("delayIndicator").classList.remove("show");
-    if (liveCheckInterval) { clearInterval(liveCheckInterval); liveCheckInterval = null; }
-    destroyPlayers();
-    var video = $("videoPlayer");
-    video.src = url;
-    video.load();
-    video.onloadeddata = function() { $("player-loading").style.display = "none"; };
-    video.onerror = function() { $("player-loading").innerHTML = '<p style="color:#ef4444;">Formato nao suportado. MKV precisa de VLC.</p>'; };
-    video.play().catch(function() { $("player-loading").style.display = "none"; });
-}
-
-function destroyPlayers() {
-    if (liveCheckInterval) { clearInterval(liveCheckInterval); liveCheckInterval = null; }
-    if (hls) { try { hls.destroy(); } catch(e){} hls = null; }
-    if (mpegtsPlayer) { try { mpegtsPlayer.destroy(); } catch(e){} mpegtsPlayer = null; }
-    var v = $("videoPlayer");
-    v.pause(); v.removeAttribute("src"); v.load();
-    $("player-loading").style.display = "block";
-    $("player-loading").innerHTML = '<div class="spinner2"></div><p id="player-status">Conectando...</p>';
-}
-
-function closePlayer() {
-    $("player-modal").style.display = "none";
-    $("channelPanel").classList.remove("open");
-    isLiveStream = false;
-    currentPlayingItem = null;
-    destroyPlayers();
-}
-
-function showAlert() { var modal = document.getElementById("alert-modal"); if (modal) modal.classList.add("show"); }
+// ============================================
+// ALERTAS
+// ============================================
+function showAlert() { var m = document.getElementById("alert-modal"); if (m) m.classList.add("show"); }
 function closeAlert() {
-    var modal = document.getElementById("alert-modal");
-    if (modal) modal.classList.remove("show");
+    var m = document.getElementById("alert-modal");
+    if (m) m.classList.remove("show");
     setTimeout(function() { showPix(); }, 350);
 }
-function showPix() { var modal = document.getElementById("pix-modal"); if (modal) modal.classList.add("show"); }
-function closePix() { var modal = document.getElementById("pix-modal"); if (modal) modal.classList.remove("show"); }
+function showPix() { var m = document.getElementById("pix-modal"); if (m) m.classList.add("show"); }
+function closePix() { var m = document.getElementById("pix-modal"); if (m) m.classList.remove("show"); }
 
 function copyPix() {
     var key = "1ea6ae84-f545-4dd3-8488-d6bcd1be7dd4";
@@ -1059,7 +980,7 @@ function nextChannel(dir) {
     if (!panelChannels.length || !currentPlayingItem) return;
     var idx = -1;
     for (var i = 0; i < panelChannels.length; i++) {
-        if (panelChannels[i].url === currentPlayingItem.url) { idx = i; break; }
+        if (panelChannels[i].stream_id === currentPlayingItem.stream_id) { idx = i; break; }
     }
     if (idx === -1) return;
     var next = panelChannels[(idx + dir + panelChannels.length) % panelChannels.length];

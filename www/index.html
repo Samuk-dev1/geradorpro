@@ -2,17 +2,22 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline'; connect-src *; media-src *; img-src * data:; font-src * data:;">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="referrer" content="no-referrer">
+<meta name="format-detection" content="telephone=no">
 <title>FREE IPTV</title>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <script src="https://cdn.jsdelivr.net/npm/mpegts.js@latest/dist/mpegts.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#050810;--sidebar:rgba(10,15,30,.92);--card:#0f1626;--card-hover:#1a2439;--primary:#8b5cf6;--primary-2:#a78bfa;--primary-3:#c4b5fd;--primary-glow:rgba(139,92,246,.6);--primary-glow-soft:rgba(139,92,246,.25);--accent:#2dd4bf;--accent-2:#5eead4;--text:#f8fafc;--text-sec:#94a3b8;--text-muted:#64748b;--live:#ef4444;--border:rgba(255,255,255,.06);--border-2:rgba(139,92,246,.35)}
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',-apple-system,sans-serif}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',-apple-system,sans-serif;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden}
 body{background:var(--bg);color:var(--text);display:flex;-webkit-font-smoothing:antialiased;position:relative}
 body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle at 15% 15%,rgba(139,92,246,.18) 0%,transparent 45%),radial-gradient(circle at 85% 85%,rgba(45,212,191,.12) 0%,transparent 45%);pointer-events:none;z-index:0}
+
 #splash{position:fixed;inset:0;z-index:5000;background:radial-gradient(ellipse at center,#0d1421 0%,#050810 70%);display:flex;align-items:center;justify-content:center;flex-direction:column;overflow:hidden;transition:opacity 1s,visibility 1s}
 #splash.hide{opacity:0;visibility:hidden}
 .particles{position:absolute;inset:0;overflow:hidden}
@@ -26,6 +31,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 .splash-progress{width:380px;max-width:85vw;height:6px;background:rgba(255,255,255,.06);border-radius:10px;overflow:hidden;margin:0 auto 15px}
 .splash-progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--primary),var(--accent));border-radius:10px;transition:width .4s;box-shadow:0 0 25px var(--primary-glow)}
 .splash-status{font-size:.85rem;color:var(--text-muted);letter-spacing:2px;text-transform:uppercase}
+
 .sidebar{width:270px;background:var(--sidebar);backdrop-filter:blur(40px);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;flex-shrink:0;transition:transform .35s;z-index:100}
 .sidebar-header{padding:24px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px}
 .logo{width:44px;height:44px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;box-shadow:0 6px 25px var(--primary-glow)}
@@ -47,6 +53,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 .cat-btn{display:flex;align-items:center;padding:9px 16px;border-radius:10px;cursor:pointer;color:var(--text-sec);font-size:.84rem;transition:all .2s;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cat-btn:hover{background:var(--card);color:var(--text)}
 .cat-btn.active{background:linear-gradient(90deg,rgba(139,92,246,.25),transparent);color:var(--primary-3);font-weight:700}
+
 .main-area{flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden;position:relative;z-index:1}
 .topbar{padding:18px 30px;display:flex;align-items:center;gap:18px;border-bottom:1px solid var(--border);background:rgba(5,8,16,.6);backdrop-filter:blur(25px);z-index:10}
 .menu-toggle{display:none;background:var(--card);border:1px solid var(--border);color:var(--text);width:44px;height:44px;border-radius:14px;cursor:pointer}
@@ -80,6 +87,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 .load-more{display:block;width:100%;max-width:360px;margin:40px auto 0;padding:16px;background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff;border:none;border-radius:16px;cursor:pointer;font-weight:800;font-size:.92rem;font-family:inherit;text-transform:uppercase;box-shadow:0 12px 35px var(--primary-glow)}
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);z-index:99}
 .overlay.show{display:block}
+
 #episodes-modal,#player-modal{display:none;position:fixed;inset:0;z-index:1000}
 #episodes-modal{background:rgba(5,8,16,.98);padding:30px;overflow-y:auto}
 .ep-header{display:flex;justify-content:space-between;align-items:center;margin:0 auto 26px;max-width:950px;padding-bottom:22px;border-bottom:1px solid var(--border)}
@@ -90,6 +98,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 .ep-item{background:var(--card);padding:16px 22px;margin:0 auto 8px;max-width:950px;border-radius:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;border:1px solid transparent}
 .ep-item:hover{background:var(--card-hover);border-color:var(--primary)}
 .ep-item .ep-num{font-size:.75rem;color:var(--primary-3);background:rgba(139,92,246,.15);padding:5px 12px;border-radius:8px;font-weight:800}
+
 #player-modal{background:#000;z-index:2000}
 #player-modal video{width:100%;height:100%;background:#000}
 .video-info{position:absolute;top:24px;left:24px;background:rgba(10,15,30,.92);backdrop-filter:blur(30px);padding:14px 22px;border-radius:16px;font-size:.9rem;font-weight:700;max-width:55%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:2001;border:1px solid var(--border);display:flex;align-items:center;gap:12px}
@@ -132,6 +141,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 .cp-play-icon{color:var(--text-muted);opacity:0}
 .cp-channel:hover .cp-play-icon,.cp-channel.active .cp-play-icon{opacity:1;color:var(--primary-3)}
 .cp-loading{text-align:center;padding:50px 20px;color:var(--text-muted)}
+
 #loading{display:none;justify-content:center;align-items:center;height:100vh;flex-direction:column;background:radial-gradient(ellipse at top,#1a2338 0%,var(--bg) 60%);position:fixed;inset:0;z-index:3000;padding:20px;text-align:center}
 #loading.show{display:flex}
 .spinner{border:4px solid rgba(255,255,255,.08);border-left-color:var(--primary);border-right-color:var(--accent);border-radius:50%;width:65px;height:65px;animation:spin 1s linear infinite;margin-bottom:28px}
@@ -191,6 +201,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 .pix-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:rgba(45,212,191,.12);border:1px solid rgba(45,212,191,.35);border-radius:20px;font-size:.72rem;font-weight:700;color:#5eead4}
 .pix-close-btn{margin-top:18px;padding:12px 32px;background:linear-gradient(135deg,#2dd4bf,#14b8a6);color:#042f2e;border:none;border-radius:12px;font-weight:800;font-size:.88rem;font-family:inherit;cursor:pointer;text-transform:uppercase;box-shadow:0 10px 30px rgba(45,212,191,.5);transition:all .25s}
 .pix-close-btn:hover{transform:translateY(-2px)}
+
 .pix-telegram-box{margin-top:18px;padding:16px 18px;background:linear-gradient(135deg,rgba(45,136,255,.12),rgba(0,136,204,.08));border:1px solid rgba(45,136,255,.35);border-radius:14px;display:flex;align-items:center;gap:14px;text-align:left}
 .pix-telegram-box:hover{border-color:rgba(45,136,255,.6);box-shadow:0 0 25px rgba(45,136,255,.25)}
 .pix-telegram-icon{width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#2AABEE,#229ED9);display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex-shrink:0;box-shadow:0 0 25px rgba(42,171,238,.5)}
@@ -276,7 +287,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 <div class="delay-indicator" id="delayIndicator">Delay: <span class="secs" id="delaySecs">0s</span></div>
 <button class="go-live-btn" id="goLiveBtn" onclick="jumpToLive()">⏩ Ir para o Ao Vivo</button>
 <div class="player-loading" id="player-loading"><div class="spinner2"></div><p id="player-status">Conectando...</p></div>
-<video id="videoPlayer" controls playsinline></video>
+<video id="videoPlayer" controls playsinline webkit-playsinline></video>
 <div class="channel-panel" id="channelPanel">
 <div class="cp-header"><h3>📺 Trocar Canal</h3><button class="cp-close" onclick="toggleChannelPanel(false)">✕</button></div>
 <div class="cp-cats" id="cpCats"></div>
@@ -284,7 +295,6 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 </div>
 </div>
 
-<!-- ALERTA 1: SCRIPT 277 -->
 <div id="alert-modal">
 <div class="alert-box">
 <button class="alert-close" onclick="closeAlert()" title="Fechar">✕</button>
@@ -298,7 +308,6 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 </div>
 </div>
 
-<!-- ALERTA 2: PIX + TELEGRAM -->
 <div id="pix-modal">
 <div class="pix-box">
 <button class="pix-close" onclick="closePix()" title="Fechar">✕</button>
@@ -341,14 +350,15 @@ function movieUrl(id, ext) { return SERVER + "/movie/" + USER + "/" + PASS + "/"
 function seriesUrl(id, ext) { return SERVER + "/series/" + USER + "/" + PASS + "/" + id + "." + (ext || "mp4"); }
 
 // ============================================
-// PROXIES CORS
+// PROXIES CORS - ORDEM OTIMIZADA PRA APK
 // ============================================
 var PROXIES = [
-    { name: "DIRETO",       url: null },
-    { name: "corsproxy.io", url: "https://corsproxy.io/?" },
-    { name: "allorigins",   url: "https://api.allorigins.win/raw?url=" },
-    { name: "cors.eu.org",  url: "https://cors.eu.org/" },
-    { name: "thingproxy",   url: "https://thingproxy.freeboard.io/fetch/" }
+    { name: "DIRETO",         url: null },
+    { name: "allorigins",     url: "https://api.allorigins.win/raw?url=" },
+    { name: "corsproxy.io",   url: "https://corsproxy.io/?" },
+    { name: "corsproxy.org",  url: "https://corsproxy.org/?" },
+    { name: "cors.eu.org",    url: "https://cors.eu.org/" },
+    { name: "thingproxy",     url: "https://thingproxy.freeboard.io/fetch/" }
 ];
 var workingProxyIdx = -1;
 
@@ -363,7 +373,7 @@ function logLine(msg, cls) {
 }
 
 function fetchText(url, timeoutMs) {
-    if (!timeoutMs) timeoutMs = 90000;
+    if (!timeoutMs) timeoutMs = 120000; // 2 minutos - compativel com APK
     var order = workingProxyIdx >= 0
         ? [PROXIES[workingProxyIdx]].concat(PROXIES.filter(function(_, i) { return i !== workingProxyIdx; }))
         : PROXIES;
@@ -380,24 +390,29 @@ function fetchText(url, timeoutMs) {
             var controller = new AbortController();
             var tid = setTimeout(function() { controller.abort(); }, timeoutMs);
 
-            fetch(fullUrl, { signal: controller.signal })
-                .then(function(res) {
-                    clearTimeout(tid);
-                    if (!res.ok) throw new Error("HTTP " + res.status);
-                    return res.text();
-                })
-                .then(function(txt) {
-                    if (!txt || txt.length < 10) throw new Error("Resposta vazia");
-                    workingProxyIdx = idx;
-                    logLine("OK: " + p.name + " (" + txt.length + " bytes)", "ok");
-                    resolve(txt);
-                })
-                .catch(function(e) {
-                    clearTimeout(tid);
-                    logLine("Falhou: " + p.name + " - " + (e.message || "").slice(0, 60), "err");
-                    i++;
-                    tryNext();
-                });
+            fetch(fullUrl, {
+                signal: controller.signal,
+                mode: "cors",
+                cache: "no-cache",
+                headers: { "Accept": "*/*" }
+            })
+            .then(function(res) {
+                clearTimeout(tid);
+                if (!res.ok) throw new Error("HTTP " + res.status);
+                return res.text();
+            })
+            .then(function(txt) {
+                if (!txt || txt.length < 10) throw new Error("Resposta vazia");
+                workingProxyIdx = idx;
+                logLine("OK: " + p.name + " (" + txt.length + " bytes)", "ok");
+                resolve(txt);
+            })
+            .catch(function(e) {
+                clearTimeout(tid);
+                logLine("Falhou: " + p.name + " - " + (e.message || "").slice(0, 60), "err");
+                i++;
+                tryNext();
+            });
         }
         tryNext();
     });
@@ -574,9 +589,7 @@ function loadLiveStreams() {
                                 });
                             }
                         })
-                        .catch(function(e) {
-                            logLine("Cat " + cat.category_name + " falhou", "err");
-                        })
+                        .catch(function(e) { logLine("Cat " + cat.category_name + " falhou", "err"); })
                         .then(function() {
                             if (i % 5 === 0 || i === CATS_LIVE.length - 1) {
                                 updateProgress(35 + Math.min(i * 0.2, 20), "Canais...", (i+1) + "/" + CATS_LIVE.length + " (" + ALL_LIVE.length + ")");

@@ -176,15 +176,11 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 .video-info{position:absolute;top:20px;left:20px;background:rgba(13,20,33,.9);backdrop-filter:blur(30px);padding:12px 20px;border-radius:14px;font-size:.88rem;font-weight:600;max-width:55%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:2001;border:1px solid var(--border);display:flex;align-items:center;gap:10px;box-shadow:0 10px 30px rgba(0,0,0,.5)}
 .video-info .vi-dot{width:8px;height:8px;background:var(--live);border-radius:50%;animation:blink 1s infinite;flex-shrink:0;box-shadow:0 0 10px var(--live)}
 .video-info .vi-cat{font-size:.7rem;color:var(--text-sec);padding:3px 10px;background:rgba(139,92,246,.2);border:1px solid var(--border-2);border-radius:6px;font-weight:600}
-
-/* BOTÕES DO PLAYER */
 .player-actions{position:absolute;top:20px;right:20px;display:flex;gap:10px;z-index:2001}
 .icon-btn{width:48px;height:48px;background:rgba(13,20,33,.9);backdrop-filter:blur(30px);border:1px solid var(--border);color:#fff;border-radius:14px;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;transition:.25s;box-shadow:0 8px 25px rgba(0,0,0,.4)}
 .icon-btn:hover{background:var(--primary);transform:scale(1.08);border-color:var(--primary);box-shadow:0 8px 30px var(--primary-glow)}
 .icon-btn.close{background:rgba(239,68,68,.9);border-color:var(--live)}
 .icon-btn.close:hover{background:var(--live);box-shadow:0 8px 30px rgba(239,68,68,.5)}
-.icon-btn .btn-label{display:none}
-
 .player-loading{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;text-align:center;z-index:2001}
 .player-loading .spinner2{border:4px solid rgba(255,255,255,.1);border-left-color:var(--primary);border-radius:50%;width:55px;height:55px;animation:spin 1s linear infinite;margin:0 auto 18px;box-shadow:0 0 30px var(--primary-glow)}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -197,37 +193,6 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 .go-live-btn{position:absolute;bottom:140px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff;border:none;padding:13px 28px;border-radius:30px;cursor:pointer;font-weight:700;font-size:.85rem;font-family:inherit;z-index:2002;box-shadow:0 10px 30px var(--primary-glow);display:none;align-items:center;gap:8px;animation:slideUp .35s}
 .go-live-btn.show{display:flex}
 @keyframes slideUp{from{opacity:0;transform:translate(-50%,20px)}to{opacity:1;transform:translate(-50%,0)}}
-
-/* PAINEL DE TROCA (dentro do player) */
-.switch-panel{position:absolute;top:0;right:0;width:420px;max-width:90vw;height:100%;background:linear-gradient(180deg,rgba(13,20,33,.97),rgba(5,8,16,.99));backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-left:1px solid var(--border);z-index:2100;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .4s cubic-bezier(.4,0,.2,1);box-shadow:-20px 0 60px rgba(0,0,0,.6)}
-.switch-panel.open{transform:translateX(0)}
-.sp-header{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
-.sp-header h3{font-size:1rem;font-weight:800;background:linear-gradient(135deg,var(--primary-2),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:.3px}
-.sp-close{width:38px;height:38px;background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:10px;cursor:pointer;font-size:.95rem;display:flex;align-items:center;justify-content:center;transition:.2s}
-.sp-close:hover{background:var(--live);border-color:var(--live);transform:scale(1.05)}
-.sp-tabs{display:flex;gap:6px;padding:12px 16px;border-bottom:1px solid var(--border);background:rgba(0,0,0,.2)}
-.sp-tab{flex:1;padding:9px 12px;background:var(--card);color:var(--text-sec);border-radius:10px;font-size:.78rem;font-weight:600;cursor:pointer;white-space:nowrap;border:1px solid transparent;transition:.2s;text-align:center}
-.sp-tab:hover{color:var(--text);border-color:var(--primary)}
-.sp-tab.active{background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff;font-weight:700;box-shadow:0 4px 15px var(--primary-glow)}
-.sp-cats{padding:10px 16px;overflow-x:auto;display:flex;gap:6px;border-bottom:1px solid var(--border);scrollbar-width:none;background:rgba(0,0,0,.15)}
-.sp-cats::-webkit-scrollbar{display:none}
-.sp-cat{padding:6px 14px;background:var(--card);color:var(--text-sec);border-radius:16px;font-size:.72rem;font-weight:600;cursor:pointer;white-space:nowrap;border:1px solid transparent;transition:.2s}
-.sp-cat:hover{color:var(--text);border-color:var(--primary)}
-.sp-cat.active{background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff;font-weight:700;box-shadow:0 4px 15px var(--primary-glow)}
-.sp-list{flex:1;overflow-y:auto;padding:8px}
-.sp-list::-webkit-scrollbar{width:5px}
-.sp-list::-webkit-scrollbar-thumb{background:var(--card);border-radius:10px}
-.sp-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;cursor:pointer;transition:.2s;border:1px solid transparent;margin-bottom:3px}
-.sp-item:hover{background:var(--card);border-color:var(--border);transform:translateX(-3px)}
-.sp-item.active{background:linear-gradient(90deg,rgba(139,92,246,.25),rgba(139,92,246,.05));border-color:var(--primary);box-shadow:0 0 20px rgba(139,92,246,.2)}
-.sp-item .sp-logo{width:46px;height:46px;border-radius:10px;object-fit:cover;background:var(--bg);flex-shrink:0;border:1px solid var(--border)}
-.sp-item .sp-info{flex:1;min-width:0}
-.sp-item .sp-name{font-size:.85rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px}
-.sp-item .sp-meta{font-size:.68rem;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sp-item.active .sp-name{color:var(--primary-2)}
-.sp-item .sp-play{color:var(--text-muted);font-size:.85rem;opacity:0;transition:opacity .2s}
-.sp-item:hover .sp-play,.sp-item.active .sp-play{opacity:1;color:var(--primary-2)}
-.sp-loading{text-align:center;padding:40px 20px;color:var(--text-muted);font-size:.85rem}
 
 /* LOADING */
 #loading{display:none;justify-content:center;align-items:center;height:100vh;flex-direction:column;background:radial-gradient(ellipse at top,#1a2338 0%,var(--bg) 60%);position:fixed;inset:0;z-index:3000;padding:20px;text-align:center}
@@ -251,10 +216,9 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 .content{padding:18px 16px 40px}
 .grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px}
 .page-title{font-size:1.05rem}
-.video-info{max-width:45%;font-size:.75rem;padding:8px 12px}
+.video-info{max-width:50%;font-size:.75rem;padding:8px 12px}
 .player-actions{top:15px;right:15px}
 .icon-btn{width:42px;height:42px;font-size:1rem}
-.switch-panel{width:100%;max-width:100%}
 .splash-title{font-size:3rem;letter-spacing:-2px}
 .splash-icon{width:70px;height:70px;font-size:2.2rem;border-radius:20px}
 .splash-subtitle{font-size:.85rem;letter-spacing:5px}
@@ -360,7 +324,7 @@ oferecendo conteúdo de qualidade, <strong>totalmente gratuito</strong>.
 <div class="logo-text">FREE IPTV</div>
 </div>
 <div class="user-info">
-<div class="user-name"><span class="status-dot"></span><span id="sidebar-user">184507</span></div>
+<div class="user-name"><span class="status-dot"></span><span id="sidebar-user">962313</span></div>
 <div id="user-status-line">Verificando...</div>
 </div>
 <div class="main-nav">
@@ -411,20 +375,14 @@ oferecendo conteúdo de qualidade, <strong>totalmente gratuito</strong>.
 
 <!-- PLAYER -->
 <div id="player-modal">
-<div class="video-info" id="video-title-wrap">
+<div class="video-info">
 <span class="vi-dot" id="vi-dot"></span>
 <span id="video-title">Carregando...</span>
 <span class="vi-cat" id="video-cat"></span>
 </div>
-
-<!-- Botões do player: trocar + fechar -->
 <div class="player-actions">
-<button class="icon-btn" id="btn-switch" onclick="toggleSwitchPanel()" title="Trocar Canal / Categoria (C)">
-<span>☰</span>
-</button>
-<button class="icon-btn close" onclick="closePlayer()" title="Fechar (ESC)">
-<span>✕</span>
-</button>
+<button class="icon-btn" onclick="toggleSwitchPanel()" title="Trocar Canal (C)">☰</button>
+<button class="icon-btn close" onclick="closePlayer()" title="Fechar (ESC)">✕</button>
 </div>
 
 <div class="live-indicator" id="liveIndicator" style="display:none;">
@@ -446,51 +404,66 @@ Delay: <span class="secs" id="delaySecs">0s</span>
 <video id="videoPlayer" controls playsinline></video>
 
 <!-- PAINEL DE TROCA -->
-<div class="switch-panel" id="switchPanel">
+<div class="switch-panel" id="switchPanel" style="display:none;">
 <div class="sp-header">
 <h3>🔄 Trocar Conteúdo</h3>
 <button class="sp-close" onclick="toggleSwitchPanel(false)">✕</button>
 </div>
-
-<!-- Abas: Canais / Filmes / Séries -->
 <div class="sp-tabs">
 <div class="sp-tab active" data-sp-tab="live" onclick="switchPanelTab('live')">🔴 Canais</div>
 <div class="sp-tab" data-sp-tab="movie" onclick="switchPanelTab('movie')">🎬 Filmes</div>
 <div class="sp-tab" data-sp-tab="series" onclick="switchPanelTab('series')">📺 Séries</div>
 </div>
-
-<!-- Categorias -->
 <div class="sp-cats" id="spCats"></div>
-
-<!-- Lista -->
 <div class="sp-list" id="spList">
 <div class="sp-loading">Escolha uma categoria...</div>
 </div>
 </div>
 </div>
 
+<style>
+/* Painel de troca */
+.switch-panel{position:absolute;top:0;right:0;width:420px;max-width:90vw;height:100%;background:linear-gradient(180deg,rgba(13,20,33,.97),rgba(5,8,16,.99));backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border-left:1px solid var(--border);z-index:2100;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .4s cubic-bezier(.4,0,.2,1);box-shadow:-20px 0 60px rgba(0,0,0,.6)}
+.switch-panel.open{transform:translateX(0)}
+.sp-header{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.sp-header h3{font-size:1rem;font-weight:800;background:linear-gradient(135deg,var(--primary-2),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:.3px}
+.sp-close{width:38px;height:38px;background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:10px;cursor:pointer;font-size:.95rem;display:flex;align-items:center;justify-content:center;transition:.2s}
+.sp-close:hover{background:var(--live);border-color:var(--live);transform:scale(1.05)}
+.sp-tabs{display:flex;gap:6px;padding:12px 16px;border-bottom:1px solid var(--border);background:rgba(0,0,0,.2)}
+.sp-tab{flex:1;padding:9px 12px;background:var(--card);color:var(--text-sec);border-radius:10px;font-size:.78rem;font-weight:600;cursor:pointer;white-space:nowrap;border:1px solid transparent;transition:.2s;text-align:center}
+.sp-tab:hover{color:var(--text);border-color:var(--primary)}
+.sp-tab.active{background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff;font-weight:700;box-shadow:0 4px 15px var(--primary-glow)}
+.sp-cats{padding:10px 16px;overflow-x:auto;display:flex;gap:6px;border-bottom:1px solid var(--border);scrollbar-width:none;background:rgba(0,0,0,.15)}
+.sp-cats::-webkit-scrollbar{display:none}
+.sp-cat{padding:6px 14px;background:var(--card);color:var(--text-sec);border-radius:16px;font-size:.72rem;font-weight:600;cursor:pointer;white-space:nowrap;border:1px solid transparent;transition:.2s}
+.sp-cat:hover{color:var(--text);border-color:var(--primary)}
+.sp-cat.active{background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff;font-weight:700;box-shadow:0 4px 15px var(--primary-glow)}
+.sp-list{flex:1;overflow-y:auto;padding:8px}
+.sp-list::-webkit-scrollbar{width:5px}
+.sp-list::-webkit-scrollbar-thumb{background:var(--card);border-radius:10px}
+.sp-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;cursor:pointer;transition:.2s;border:1px solid transparent;margin-bottom:3px}
+.sp-item:hover{background:var(--card);border-color:var(--border);transform:translateX(-3px)}
+.sp-item.active{background:linear-gradient(90deg,rgba(139,92,246,.25),rgba(139,92,246,.05));border-color:var(--primary)}
+.sp-item .sp-logo{width:46px;height:46px;border-radius:10px;object-fit:cover;background:var(--bg);flex-shrink:0;border:1px solid var(--border)}
+.sp-item .sp-info{flex:1;min-width:0}
+.sp-item .sp-name{font-size:.85rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px}
+.sp-item .sp-meta{font-size:.68rem;color:var(--text-muted)}
+.sp-loading{text-align:center;padding:40px 20px;color:var(--text-muted);font-size:.85rem}
+</style>
+
 <script>
 // ============================================
-// SERVIDOR - ZEUS X10.MX
+// SERVIDOR ÚNICO - ZEUS MEUPANEL (FUNCIONA NO APK)
 // ============================================
-const SERVER = "https://zeus.x10.mx";
-const USER   = "184507";
-const PASS   = "181626";
+const SERVER = "https://zeus.meupanel.com.br";
+const USER   = "962313";
+const PASS   = "723839";
 
-const API_PORTS = [
-    SERVER,
-    'http://zeus.x10.mx:8080',
-    'http://zeus.x10.mx:25461',
-    'http://zeus.x10.mx:8000'
-];
-
-let ACTIVE_BASE = SERVER;
-
-const LIVE_M3U8_URL = id => `${ACTIVE_BASE}/live/${USER}/${PASS}/${id}.m3u8`;
-const LIVE_TS_URL   = id => `${ACTIVE_BASE}/live/${USER}/${PASS}/${id}.ts`;
-const MOVIE_URL     = id => `${ACTIVE_BASE}/movie/${USER}/${PASS}/${id}.mp4`;
-const SERIES_URL    = id => `${ACTIVE_BASE}/series/${USER}/${PASS}/${id}.mp4`;
-const API           = () => `${ACTIVE_BASE}/player_api.php?username=${USER}&password=${PASS}`;
+const API           = `${SERVER}/player_api.php?username=${USER}&password=${PASS}`;
+const LIVE_M3U8_URL = id => `${SERVER}/live/${USER}/${PASS}/${id}.m3u8`;
+const LIVE_TS_URL   = id => `${SERVER}/live/${USER}/${PASS}/${id}.ts`;
+const MOVIE_URL     = id => `${SERVER}/movie/${USER}/${PASS}/${id}.mp4`;
+const SERIES_URL    = id => `${SERVER}/series/${USER}/${PASS}/${id}.mp4`;
 
 let currentMainTab = 'live';
 let currentCategoryId = null;
@@ -502,8 +475,6 @@ let currentItems = [];
 let allCategories = [];
 let isLiveStream = false;
 let liveCheckInterval = null;
-
-// Estado do painel de troca
 let spCurrentTab = 'live';
 let spCurrentCat = null;
 let spItems = [];
@@ -558,29 +529,11 @@ async function runSplash() {
 // API
 // ============================================
 async function apiFetch(url) {
-    const res = await fetch(url);
+    const res = await fetch(url, { cache: 'no-store' });
     if (!res.ok) throw new Error("HTTP " + res.status);
     const text = await res.text();
     try { return JSON.parse(text); }
     catch(e) { throw new Error("Resposta inválida"); }
-}
-
-async function discoverApi() {
-    for (const base of API_PORTS) {
-        try {
-            const url = `${base}/player_api.php?username=${USER}&password=${PASS}`;
-            console.log('[discovery] tentando:', url);
-            const info = await apiFetch(url);
-            if (info && info.user_info && info.user_info.auth !== 0) {
-                console.log('[discovery] ✅ API em:', base);
-                ACTIVE_BASE = base;
-                return info;
-            }
-        } catch(e) {
-            console.warn('[discovery] falhou:', base, '-', e.message);
-        }
-    }
-    throw new Error("Não foi possível localizar a API do servidor.");
 }
 
 // ============================================
@@ -592,9 +545,9 @@ async function initApp() {
     updateProgress(15, "🔌 Conectando ao servidor...", "Verificando credenciais");
 
     try {
-        const info = await discoverApi();
+        const info = await apiFetch(API);
 
-        if (!info.user_info || info.user_info.auth === 0) {
+        if (!info || !info.user_info || info.user_info.auth === 0) {
             throw new Error("Credenciais inválidas");
         }
 
@@ -603,7 +556,6 @@ async function initApp() {
             : 'N/A';
 
         $('user-status-line').innerText = `Expira em ${exp}`;
-
         updateProgress(40, "✅ Conectado!", `Expira em ${exp}`);
         await sleep(400);
         updateProgress(70, "📥 Baixando conteúdos...", "Canais ao vivo");
@@ -617,7 +569,6 @@ async function initApp() {
             <div class="error-msg">
                 <h3>❌ Erro ao conectar</h3>
                 <p>${e.message}</p>
-                <p style="font-size:0.75rem;color:#94a3b8;margin-top:8px;">Servidor: ${SERVER}</p>
                 <button onclick="location.reload()">🔄 Tentar Novamente</button>
             </div>`;
     }
@@ -662,7 +613,7 @@ async function loadCategories() {
     if (currentMainTab === 'live')   action = 'get_live_categories';
     if (currentMainTab === 'movie')  action = 'get_vod_categories';
     if (currentMainTab === 'series') action = 'get_series_categories';
-    const cats = await apiFetch(`${API()}&action=${action}`);
+    const cats = await apiFetch(`${API}&action=${action}`);
     allCategories = Array.isArray(cats) ? cats : [];
     const listEl = $('categoryList');
     listEl.innerHTML = '';
@@ -696,7 +647,7 @@ async function loadItems() {
     if (currentMainTab === 'live')   action = 'get_live_streams';
     if (currentMainTab === 'movie')  action = 'get_vod_streams';
     if (currentMainTab === 'series') action = 'get_series';
-    let url = `${API()}&action=${action}`;
+    let url = `${API}&action=${action}`;
     if (currentCategoryId) url += `&category_id=${currentCategoryId}`;
     $('contentGrid').innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#94a3b8;padding:40px;">⏳ Carregando...</p>';
     $('loadMoreBtn').style.display = 'none';
@@ -807,34 +758,24 @@ function startLiveChannel(item) {
 
     if (Hls.isSupported()) {
         hls = new Hls({
-            enableWorker: true,
-            lowLatencyMode: false,
-            liveSyncDurationCount: 4,
-            liveMaxLatencyDurationCount: 12,
+            enableWorker: true, lowLatencyMode: false,
+            liveSyncDurationCount: 4, liveMaxLatencyDurationCount: 12,
             liveDurationInfinity: true,
             maxLiveSyncPlaybackRate: 1.0,
             maxLiveSyncPlaybackRateThreshold: 0,
             backBufferLength: 30,
-            manifestLoadingTimeOut: 15000,
-            manifestLoadingMaxRetry: 3,
-            manifestLoadingRetryDelay: 1000,
-            levelLoadingTimeOut: 15000,
-            levelLoadingMaxRetry: 4,
-            fragLoadingTimeOut: 30000,
-            fragLoadingMaxRetry: 8,
-            fragLoadingRetryDelay: 1000
+            manifestLoadingTimeOut: 15000, manifestLoadingMaxRetry: 3,
+            levelLoadingTimeOut: 15000, levelLoadingMaxRetry: 4,
+            fragLoadingTimeOut: 30000, fragLoadingMaxRetry: 8
         });
-
         hls.loadSource(m3u8Url);
         hls.attachMedia(video);
-
         hls.on(Hls.Events.MANIFEST_PARSED, () => {
             $('player-loading').style.display = 'none';
             video.play().catch(()=>{});
             video.playbackRate = 1.0;
             startLiveDelayMonitor(video);
         });
-
         hls.on(Hls.Events.ERROR, (event, data) => {
             if (data.fatal && !failed) {
                 failed = true;
@@ -842,7 +783,6 @@ function startLiveChannel(item) {
                 playTsDirect(tsUrl);
             }
         });
-
         setTimeout(() => {
             if (failed || !hls) return;
             if (!hls.levels || hls.levels.length === 0) {
@@ -868,14 +808,10 @@ function playTsDirect(tsUrl) {
     }
     try {
         mpegtsPlayer = mpegts.createPlayer({
-            type: 'mpegts',
-            isLive: true,
-            url: tsUrl
+            type: 'mpegts', isLive: true, url: tsUrl
         }, {
-            enableWorker: true,
-            enableStashBuffer: false,
-            stashInitialSize: 128,
-            lazyLoad: false,
+            enableWorker: true, enableStashBuffer: false,
+            stashInitialSize: 128, lazyLoad: false,
             liveBufferLatencyChasing: false,
             liveBufferLatencyChasingOnPaused: false,
             autoCleanupSourceBuffer: true,
@@ -891,9 +827,7 @@ function playTsDirect(tsUrl) {
             $('player-loading').style.display = 'none';
             video.playbackRate = 1.0;
             startLiveDelayMonitor(video);
-        }).catch(() => {
-            $('player-loading').style.display = 'none';
-        });
+        }).catch(() => $('player-loading').style.display = 'none');
     } catch(e) {
         $('player-loading').innerHTML = `<p style="color:#ef4444;">Erro: ${e.message}</p>`;
     }
@@ -935,7 +869,7 @@ async function openEpisodes(serie) {
     $('ep-series-title').innerText = serie.name;
     $('ep-list').innerHTML = '<p style="color:#94a3b8;text-align:center;padding:40px;">⏳ Carregando episódios...</p>';
     try {
-        const info = await apiFetch(`${API()}&action=get_series_info&series_id=${serie.series_id}`);
+        const info = await apiFetch(`${API}&action=get_series_info&series_id=${serie.series_id}`);
         const eps = info.episodes || {};
         const seasons = Object.keys(eps).sort((a,b) => parseInt(a) - parseInt(b));
         let html = '';
@@ -1010,21 +944,22 @@ function closePlayer() {
 }
 
 // ============================================
-// PAINEL DE TROCA (dentro do player)
+// PAINEL DE TROCA
 // ============================================
 function toggleSwitchPanel(force) {
     const panel = $('switchPanel');
     const isOpen = panel.classList.contains('open');
     const shouldOpen = force !== undefined ? force : !isOpen;
     if (shouldOpen) {
+        panel.style.display = 'flex';
         panel.classList.add('open');
-        // Sincroniza a aba do painel com a aba atual do app
         spCurrentTab = currentMainTab;
         spCurrentCat = null;
         updateSpTabs();
         loadSpCategories();
     } else {
         panel.classList.remove('open');
+        setTimeout(() => { panel.style.display = 'none'; }, 400);
     }
 }
 
@@ -1046,17 +981,13 @@ async function loadSpCategories() {
     catsEl.innerHTML = '';
     const listEl = $('spList');
     listEl.innerHTML = '<div class="sp-loading">⏳ Carregando...</div>';
-
     try {
         let action = '';
         if (spCurrentTab === 'live')   action = 'get_live_categories';
         if (spCurrentTab === 'movie')  action = 'get_vod_categories';
         if (spCurrentTab === 'series') action = 'get_series_categories';
-
-        const cats = await apiFetch(`${API()}&action=${action}`);
+        const cats = await apiFetch(`${API}&action=${action}`);
         const allCats = Array.isArray(cats) ? cats : [];
-
-        // Botão "Todos"
         const allBtn = document.createElement('div');
         allBtn.className = 'sp-cat active';
         allBtn.innerText = 'Todas';
@@ -1067,7 +998,6 @@ async function loadSpCategories() {
             loadSpItems();
         };
         catsEl.appendChild(allBtn);
-
         allCats.forEach(cat => {
             const btn = document.createElement('div');
             btn.className = 'sp-cat';
@@ -1080,7 +1010,6 @@ async function loadSpCategories() {
             };
             catsEl.appendChild(btn);
         });
-
         await loadSpItems();
     } catch(e) {
         listEl.innerHTML = `<div class="sp-loading" style="color:#ef4444;">Erro: ${e.message}</div>`;
@@ -1090,38 +1019,28 @@ async function loadSpCategories() {
 async function loadSpItems() {
     const listEl = $('spList');
     listEl.innerHTML = '<div class="sp-loading">⏳ Carregando...</div>';
-
     try {
         let action = '';
         if (spCurrentTab === 'live')   action = 'get_live_streams';
         if (spCurrentTab === 'movie')  action = 'get_vod_streams';
         if (spCurrentTab === 'series') action = 'get_series';
-
-        let url = `${API()}&action=${action}`;
+        let url = `${API}&action=${action}`;
         if (spCurrentCat) url += `&category_id=${spCurrentCat}`;
-
         spItems = await apiFetch(url);
         if (!Array.isArray(spItems)) spItems = [];
-
         listEl.innerHTML = '';
-
         if (spItems.length === 0) {
-            listEl.innerHTML = '<div class="sp-loading">Nenhum item nesta categoria.</div>';
+            listEl.innerHTML = '<div class="sp-loading">Nenhum item.</div>';
             return;
         }
-
-        // Limita a 300 itens para não travar
         const limit = Math.min(spItems.length, 300);
-
         for (let i = 0; i < limit; i++) {
             const item = spItems[i];
             const el = document.createElement('div');
             el.className = 'sp-item';
-
             let name = item.name || 'Sem nome';
             let img = '';
             let meta = '';
-
             if (spCurrentTab === 'live') {
                 img = item.stream_icon || '';
                 meta = item.num ? `Canal #${item.num}` : 'Ao vivo';
@@ -1132,40 +1051,20 @@ async function loadSpItems() {
                 img = item.cover || '';
                 meta = item.rating && item.rating !== '0' ? `⭐ ${parseFloat(item.rating).toFixed(1)}` : 'Série';
             }
-
             el.innerHTML = `
                 <img class="sp-logo" src="${img}" onerror="this.src='https://via.placeholder.com/44x44/1e293b/8b5cf6?text=TV'">
                 <div class="sp-info">
                     <div class="sp-name">${name}</div>
                     <div class="sp-meta">${meta}</div>
                 </div>
-                <span class="sp-play">▶</span>
             `;
-
             el.onclick = () => {
-                // Fecha o painel
                 toggleSwitchPanel(false);
-
-                // Toca o item
-                if (spCurrentTab === 'live') {
-                    startLiveChannel(item);
-                } else if (spCurrentTab === 'movie') {
-                    startPlayer(MOVIE_URL(item.stream_id), item.name);
-                } else {
-                    openEpisodes(item);
-                }
+                if (spCurrentTab === 'live') startLiveChannel(item);
+                else if (spCurrentTab === 'movie') startPlayer(MOVIE_URL(item.stream_id), item.name);
+                else openEpisodes(item);
             };
-
             listEl.appendChild(el);
-        }
-
-        // Avisa se truncou
-        if (spItems.length > limit) {
-            const info = document.createElement('div');
-            info.className = 'sp-loading';
-            info.style.fontSize = '0.72rem';
-            info.innerText = `Mostrando ${limit} de ${spItems.length} itens. Use a busca para encontrar.`;
-            listEl.appendChild(info);
         }
     } catch(e) {
         listEl.innerHTML = `<div class="sp-loading" style="color:#ef4444;">Erro: ${e.message}</div>`;
@@ -1186,18 +1085,10 @@ document.addEventListener('keydown', e => {
     }
     if ($('player-modal').style.display === 'block') {
         if (e.key === 'Escape') {
-            // Se o painel de troca estiver aberto, fecha ele
-            if ($('switchPanel').classList.contains('open')) {
-                toggleSwitchPanel(false);
-            } else {
-                closePlayer();
-            }
-            return;
+            if ($('switchPanel').classList.contains('open')) toggleSwitchPanel(false);
+            else closePlayer();
         }
-        if (e.key === 'c' || e.key === 'C') {
-            toggleSwitchPanel();
-            return;
-        }
+        if (e.key === 'c' || e.key === 'C') toggleSwitchPanel();
         return;
     }
     if (e.key === 'Escape') {

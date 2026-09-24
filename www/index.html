@@ -2,8 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FREE IPTV</title>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <script src="https://cdn.jsdelivr.net/npm/mpegts.js@latest/dist/mpegts.js"></script>
@@ -160,7 +159,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 #alert-modal{display:none;position:fixed;inset:0;z-index:6000;background:rgba(5,8,16,.75);backdrop-filter:blur(12px);align-items:center;justify-content:center;padding:20px}
 #alert-modal.show{display:flex}
 .alert-box{background:linear-gradient(180deg,#0f1626 0%,#050810 100%);border:1px solid rgba(139,92,246,.4);border-radius:20px;padding:32px 28px 26px;max-width:460px;width:100%;box-shadow:0 30px 80px rgba(0,0,0,.8),0 0 60px rgba(139,92,246,.3);position:relative;text-align:center}
-.alert-close{position:absolute;top:14px;right:14px;width:38px;height:38px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#94a3b8;border-radius:12px;cursor:pointer;font-size:1rem;font-weight:700;display:flex;align-items:center;justify-content:center;transition:all .25s;font-family:inherit}
+.alert-close{position:absolute;top:14px;right:14px;width:38px;height:38px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#94a3b8;border-radius:12px;cursor:pointer;font-size:1rem;font-weight:700;display:flex;align-items:center;justify-content:center;font-family:inherit}
 .alert-close:hover{background:#ef4444;border-color:#ef4444;color:#fff;transform:scale(1.1) rotate(90deg)}
 .alert-icon{width:80px;height:80px;margin:0 auto 20px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#ef4444);display:flex;align-items:center;justify-content:center;font-size:2.5rem;box-shadow:0 0 40px rgba(245,158,11,.6),0 0 80px rgba(239,68,68,.3);animation:alertPulse 2s ease-in-out infinite}
 @keyframes alertPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
@@ -360,44 +359,37 @@ function logLine(msg, cls) {
 }
 
 // ============================================
-// XMLHttpRequest - FUNCIONA EM QUALQUER APK/WEBVIEW
-// (fetch é bloqueado por CORS no WebView do APK)
+// XMLHttpRequest - COMPATIVEL COM APK/WEBVIEW
+// (Metodo antigo que funcionava no APK)
 // ============================================
-function xhrGet(url, timeoutMs, callback, errorCallback) {
+function xhrGet(url, callback, errorCallback) {
     var xhr = new XMLHttpRequest();
     xhr.open("GET", url, true);
-    xhr.timeout = timeoutMs || 120000;
     xhr.onreadystatechange = function() {
         if (xhr.readyState === 4) {
             if (xhr.status >= 200 && xhr.status < 300) {
                 callback(xhr.responseText);
-            } else if (xhr.status === 0) {
-                errorCallback(new Error("CORS/Network"));
             } else {
                 errorCallback(new Error("HTTP " + xhr.status));
             }
         }
     };
-    xhr.ontimeout = function() { errorCallback(new Error("Timeout")); };
     xhr.onerror = function() { errorCallback(new Error("Network error")); };
     try { xhr.send(); } catch(e) { errorCallback(e); }
 }
 
 // ============================================
-// PROXIES CORS (com URL validada por varios metodos)
+// PROXIES CORS - LISTA QUE FUNCIONAVA NO APK
 // ============================================
 var PROXIES = [
     { name: "DIRETO",       url: null },
     { name: "allorigins",   url: "https://api.allorigins.win/raw?url=" },
     { name: "corsproxy.io", url: "https://corsproxy.io/?" },
-    { name: "cors.eu.org",  url: "https://cors.eu.org/" },
-    { name: "thingproxy",   url: "https://thingproxy.freeboard.io/fetch/" },
-    { name: "codetabs",     url: "https://api.codetabs.com/v1/proxy?quest=" }
+    { name: "cors.eu.org",  url: "https://cors.eu.org/" }
 ];
 var workingProxyIdx = -1;
 
-function fetchText(url, timeoutMs) {
-    if (!timeoutMs) timeoutMs = 120000;
+function fetchText(url) {
     var order = workingProxyIdx >= 0
         ? [PROXIES[workingProxyIdx]].concat(PROXIES.filter(function(_, i) { return i !== workingProxyIdx; }))
         : PROXIES;
@@ -411,7 +403,7 @@ function fetchText(url, timeoutMs) {
             var idx = PROXIES.indexOf(p);
             logLine("Tentando: " + p.name, "info");
 
-            xhrGet(fullUrl, timeoutMs, function(txt) {
+            xhrGet(fullUrl, function(txt) {
                 if (!txt || txt.length < 10) {
                     logLine("Falhou: " + p.name + " - vazio", "err");
                     i++; tryNext(); return;
@@ -429,8 +421,8 @@ function fetchText(url, timeoutMs) {
     });
 }
 
-function fetchJson(url, timeoutMs) {
-    return fetchText(url, timeoutMs).then(function(txt) { return JSON.parse(txt); });
+function fetchJson(url) {
+    return fetchText(url).then(function(txt) { return JSON.parse(txt); });
 }
 
 // ============================================
@@ -563,13 +555,13 @@ function initApp() {
 }
 
 function loadLiveStreams() {
-    return fetchJson(API_URL + "&action=get_live_categories", 60000)
+    return fetchJson(API_URL + "&action=get_live_categories")
         .then(function(cats) {
             CATS_LIVE = Array.isArray(cats) ? cats : [];
             logLine("Categorias LIVE: " + CATS_LIVE.length, "ok");
 
             if (CATS_LIVE.length === 0) {
-                return fetchJson(API_URL + "&action=get_live_streams", 60000)
+                return fetchJson(API_URL + "&action=get_live_streams")
                     .then(function(all) {
                         if (Array.isArray(all)) {
                             all.forEach(function(s) {
@@ -587,7 +579,7 @@ function loadLiveStreams() {
             var chain = Promise.resolve();
             CATS_LIVE.forEach(function(cat, i) {
                 chain = chain.then(function() {
-                    return fetchJson(API_URL + "&action=get_live_streams&category_id=" + cat.category_id, 60000)
+                    return fetchJson(API_URL + "&action=get_live_streams&category_id=" + cat.category_id)
                         .then(function(streams) {
                             if (Array.isArray(streams)) {
                                 streams.forEach(function(s) {
@@ -614,13 +606,13 @@ function loadLiveStreams() {
 }
 
 function loadVODStreams() {
-    return fetchJson(API_URL + "&action=get_vod_categories", 60000)
+    return fetchJson(API_URL + "&action=get_vod_categories")
         .then(function(cats) {
             CATS_MOVIE = Array.isArray(cats) ? cats : [];
             logLine("Categorias VOD: " + CATS_MOVIE.length, "ok");
 
             if (CATS_MOVIE.length === 0) {
-                return fetchJson(API_URL + "&action=get_vod_streams", 60000)
+                return fetchJson(API_URL + "&action=get_vod_streams")
                     .then(function(all) {
                         if (Array.isArray(all)) {
                             all.forEach(function(s) {
@@ -638,7 +630,7 @@ function loadVODStreams() {
             var chain = Promise.resolve();
             CATS_MOVIE.forEach(function(cat, i) {
                 chain = chain.then(function() {
-                    return fetchJson(API_URL + "&action=get_vod_streams&category_id=" + cat.category_id, 60000)
+                    return fetchJson(API_URL + "&action=get_vod_streams&category_id=" + cat.category_id)
                         .then(function(streams) {
                             if (Array.isArray(streams)) {
                                 streams.forEach(function(s) {
@@ -665,13 +657,13 @@ function loadVODStreams() {
 }
 
 function loadSeriesList() {
-    return fetchJson(API_URL + "&action=get_series_categories", 60000)
+    return fetchJson(API_URL + "&action=get_series_categories")
         .then(function(cats) {
             CATS_SERIES = Array.isArray(cats) ? cats : [];
             logLine("Categorias Series: " + CATS_SERIES.length, "ok");
 
             if (CATS_SERIES.length === 0) {
-                return fetchJson(API_URL + "&action=get_series", 60000)
+                return fetchJson(API_URL + "&action=get_series")
                     .then(function(all) {
                         if (Array.isArray(all)) {
                             all.forEach(function(s) {
@@ -688,7 +680,7 @@ function loadSeriesList() {
             var chain = Promise.resolve();
             CATS_SERIES.forEach(function(cat, i) {
                 chain = chain.then(function() {
-                    return fetchJson(API_URL + "&action=get_series&category_id=" + cat.category_id, 60000)
+                    return fetchJson(API_URL + "&action=get_series&category_id=" + cat.category_id)
                         .then(function(series) {
                             if (Array.isArray(series)) {
                                 series.forEach(function(s) {

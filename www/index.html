@@ -12,13 +12,8 @@
 
 <style>
 :root {
-    /* Paleta Neon Premium */
     --bg-deep: #0a0612;
     --bg-panel: #0f0a1a;
-    --bg-gradient-1: #1a0d2e;
-    --bg-gradient-2: #0a0612;
-    --bg-gradient-3: #000000;
-    
     --neon-cyan: #00e5ff;
     --neon-cyan-glow: rgba(0, 229, 255, 0.6);
     --neon-magenta: #ff0080;
@@ -26,14 +21,10 @@
     --neon-purple: #8b5cf6;
     --neon-purple-glow: rgba(139, 92, 246, 0.5);
     --neon-green: #10b981;
-    
     --text: #ffffff;
     --text-muted: #a0a0b8;
-    --text-dim: #66667a;
-    
-    --focus: #00e5ff;
+    --focus: #ffdd00;
     --border: rgba(255,255,255,0.06);
-    --border-light: rgba(0, 229, 255, 0.2);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
@@ -59,11 +50,6 @@ body::before {
         radial-gradient(circle at 50% 50%, rgba(255, 0, 128, 0.05) 0%, transparent 60%);
     pointer-events: none;
     z-index: 0;
-    animation: bgShift 20s ease infinite;
-}
-@keyframes bgShift {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.7; }
 }
 
 /* ============================================ */
@@ -73,23 +59,17 @@ body::before {
     position: fixed;
     inset: 0;
     z-index: 9999;
-    background: rgba(0,0,0,0.92);
+    background: rgba(0,0,0,0.95);
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 15px;
-    animation: fadeInModal 0.3s ease;
     overflow-y: auto;
 }
 #warning-modal.hidden, #donation-modal.hidden { display: none; }
 #donation-modal { z-index: 9998; }
-
-@keyframes fadeInModal {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
 
 .warning-box {
     background: linear-gradient(160deg, #1a1230 0%, #0a0612 100%);
@@ -99,12 +79,8 @@ body::before {
     width: 100%;
     max-height: calc(100vh - 30px);
     position: relative;
-    animation: popModal 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
     overflow: hidden;
-    box-shadow:
-        0 20px 70px rgba(0,0,0,0.8),
-        0 0 60px rgba(139, 92, 246, 0.3),
-        inset 0 1px 0 rgba(255,255,255,0.08);
+    box-shadow: 0 20px 70px rgba(0,0,0,0.8), 0 0 60px rgba(139, 92, 246, 0.3);
     display: flex;
     flex-direction: column;
 }
@@ -117,19 +93,10 @@ body::before {
     width: 100%;
     max-height: calc(100vh - 30px);
     position: relative;
-    animation: popModal 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
     overflow: hidden;
-    box-shadow:
-        0 20px 70px rgba(0,0,0,0.8),
-        0 0 60px rgba(16, 185, 129, 0.3),
-        inset 0 1px 0 rgba(255,255,255,0.08);
+    box-shadow: 0 20px 70px rgba(0,0,0,0.8), 0 0 60px rgba(16, 185, 129, 0.3);
     display: flex;
     flex-direction: column;
-}
-
-@keyframes popModal {
-    from { opacity: 0; transform: scale(0.9) translateY(15px); }
-    to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
 .warning-top-bar {
@@ -161,18 +128,16 @@ body::before {
     color: var(--neon-purple);
     letter-spacing: 1.2px;
     text-transform: uppercase;
-    text-shadow: 0 0 20px var(--neon-purple-glow);
 }
-.warning-header-title i { font-size: 15px; }
 
 .warning-close {
-    width: 32px;
-    height: 32px;
+    width: 38px;
+    height: 38px;
     background: rgba(255,255,255,0.06);
     color: rgba(255,255,255,0.7);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 9px;
-    font-size: 15px;
+    border: 2px solid rgba(255,255,255,0.15);
+    border-radius: 10px;
+    font-size: 16px;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -181,19 +146,12 @@ body::before {
     transition: all 0.25s ease;
     flex-shrink: 0;
 }
-.warning-close:hover {
-    background: rgba(255, 0, 128, 0.9);
-    color: #fff;
-    border-color: rgba(255, 0, 128, 1);
-    transform: rotate(90deg) scale(1.08);
-    box-shadow: 0 0 25px var(--neon-magenta-glow);
-}
-.warning-close:focus {
+.warning-close:hover, .warning-close:focus {
     background: var(--focus);
     color: #000;
     border-color: var(--focus);
-    transform: scale(1.1);
-    box-shadow: 0 0 25px var(--focus);
+    transform: scale(1.15);
+    box-shadow: 0 0 30px var(--focus), 0 0 0 3px rgba(255,221,0,0.3);
 }
 
 .warning-body {
@@ -221,10 +179,8 @@ body::before {
 .warning-title {
     font-size: 20px;
     font-weight: 800;
-    color: #ffffff;
     text-align: center;
     margin-bottom: 4px;
-    letter-spacing: 0.2px;
 }
 
 .warning-subtitle {
@@ -240,7 +196,6 @@ body::before {
     border-radius: 20px;
     letter-spacing: 1.3px;
     text-transform: uppercase;
-    box-shadow: 0 0 20px rgba(0, 229, 255, 0.15);
 }
 
 .warning-text {
@@ -270,7 +225,6 @@ body::before {
     gap: 8px;
     font-size: 11.5px;
     color: rgba(255,255,255,0.8);
-    line-height: 1.35;
 }
 .warning-point i { color: var(--neon-cyan); font-size: 12px; flex-shrink: 0; }
 .warning-point.red i { color: var(--neon-magenta); }
@@ -280,7 +234,7 @@ body::before {
     width: 100%;
     background: linear-gradient(135deg, var(--neon-purple), #6d28d9);
     color: #fff;
-    border: none;
+    border: 2px solid transparent;
     padding: 13px 20px;
     border-radius: 10px;
     font-size: 14px;
@@ -291,17 +245,13 @@ body::before {
     text-transform: uppercase;
     transition: all 0.25s ease;
     box-shadow: 0 6px 25px var(--neon-purple-glow);
-    flex-shrink: 0;
 }
-.warning-ok-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 40px var(--neon-purple-glow);
-}
-.warning-ok-btn:focus {
+.warning-ok-btn:hover, .warning-ok-btn:focus {
     background: var(--focus);
     color: #000;
-    transform: scale(1.02);
-    box-shadow: 0 0 0 3px rgba(255,255,255,0.2), 0 0 35px var(--focus);
+    border-color: #fff;
+    transform: scale(1.03);
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.3), 0 0 35px var(--focus);
 }
 
 /* DOAÇÃO */
@@ -318,17 +268,11 @@ body::before {
     font-size: 32px;
     color: var(--neon-green);
     box-shadow: 0 0 45px rgba(16, 185, 129, 0.4);
-    animation: heartBeat 2s ease infinite;
-}
-@keyframes heartBeat {
-    0%, 100% { transform: scale(1); box-shadow: 0 0 45px rgba(16, 185, 129, 0.4); }
-    50% { transform: scale(1.06); box-shadow: 0 0 65px rgba(16, 185, 129, 0.7); }
 }
 
 .donation-title {
     font-size: 22px;
     font-weight: 800;
-    color: #ffffff;
     text-align: center;
     margin-bottom: 6px;
 }
@@ -348,7 +292,6 @@ body::before {
     border-radius: 12px;
     padding: 14px 16px;
     margin-bottom: 14px;
-    text-align: left;
 }
 
 .pix-label {
@@ -384,7 +327,7 @@ body::before {
 .pix-copy-btn {
     background: linear-gradient(135deg, var(--neon-green), #059669);
     color: #fff;
-    border: none;
+    border: 2px solid transparent;
     padding: 8px 14px;
     border-radius: 8px;
     font-size: 12px;
@@ -399,15 +342,15 @@ body::before {
     flex-shrink: 0;
     white-space: nowrap;
 }
-.pix-copy-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(16, 185, 129, 0.6); }
-.pix-copy-btn:focus {
+.pix-copy-btn:hover, .pix-copy-btn:focus {
     background: var(--focus);
     color: #000;
-    box-shadow: 0 0 0 3px rgba(255,255,255,0.2), 0 0 25px var(--focus);
+    border-color: #fff;
+    transform: scale(1.08);
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.3), 0 0 25px var(--focus);
 }
 .pix-copy-btn.copied {
     background: linear-gradient(135deg, #3b82f6, #2563eb);
-    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.5);
 }
 
 .donation-divider {
@@ -446,17 +389,14 @@ body::before {
     transition: all 0.25s ease;
     box-shadow: 0 6px 22px rgba(34, 158, 217, 0.4);
     margin-bottom: 10px;
-    border: none;
-    letter-spacing: 0.3px;
+    border: 2px solid transparent;
 }
-.telegram-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 30px rgba(34, 158, 217, 0.6);
-}
-.telegram-btn:focus {
+.telegram-btn:hover, .telegram-btn:focus {
     background: var(--focus);
     color: #000;
-    box-shadow: 0 0 0 3px rgba(255,255,255,0.2), 0 0 30px var(--focus);
+    border-color: #fff;
+    transform: scale(1.03);
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.3), 0 0 30px var(--focus);
 }
 .telegram-btn i { font-size: 18px; }
 
@@ -465,7 +405,7 @@ body::before {
     width: 100%;
     background: rgba(255,255,255,0.06);
     color: rgba(255,255,255,0.85);
-    border: 1px solid rgba(255,255,255,0.12);
+    border: 2px solid rgba(255,255,255,0.12);
     padding: 12px 20px;
     border-radius: 10px;
     font-size: 13px;
@@ -473,19 +413,13 @@ body::before {
     cursor: pointer;
     outline: none;
     transition: all 0.25s ease;
-    letter-spacing: 0.3px;
 }
-.continue-btn:hover {
-    background: rgba(16, 185, 129, 0.15);
-    border-color: rgba(16, 185, 129, 0.5);
-    color: #fff;
-}
-.continue-btn:focus {
+.continue-btn:hover, .continue-btn:focus {
     background: var(--focus);
     color: #000;
-    border-color: var(--focus);
-    transform: scale(1.02);
-    box-shadow: 0 0 25px var(--focus);
+    border-color: #fff;
+    transform: scale(1.03);
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.3), 0 0 25px var(--focus);
 }
 
 .copy-toast {
@@ -503,15 +437,12 @@ body::before {
     z-index: 10000;
     opacity: 0;
     pointer-events: none;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s;
     display: flex;
     align-items: center;
     gap: 8px;
 }
-.copy-toast.show {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-}
+.copy-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
 /* ============================================ */
 /* HEADER - MENU SUPERIOR                       */
@@ -520,10 +451,7 @@ body::before {
     position: fixed;
     top: 0; left: 0; right: 0;
     height: 58px;
-    background: linear-gradient(180deg, 
-        rgba(26, 13, 46, 0.95) 0%, 
-        rgba(15, 10, 26, 0.98) 50%,
-        rgba(0, 0, 0, 0.98) 100%);
+    background: linear-gradient(180deg, rgba(26, 13, 46, 0.95) 0%, rgba(15, 10, 26, 0.98) 50%, rgba(0, 0, 0, 0.98) 100%);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     display: flex;
@@ -542,8 +470,6 @@ body::before {
     align-items: center;
     gap: 10px;
     white-space: nowrap;
-    letter-spacing: 0.8px;
-    position: relative;
 }
 .top-logo .icon-tv {
     font-size: 20px;
@@ -588,13 +514,11 @@ body::before {
     transition: 0.3s;
     flex-shrink: 0;
     border-radius: 8px;
+    border: 2px solid transparent;
     position: relative;
     letter-spacing: 0.5px;
 }
-.top-nav-item:hover { 
-    color: #fff;
-    background: rgba(139, 92, 246, 0.1);
-}
+.top-nav-item:hover { color: #fff; background: rgba(139, 92, 246, 0.1); }
 .top-nav-item.active { 
     color: #fff; 
     font-weight: 700;
@@ -615,7 +539,9 @@ body::before {
 .top-nav-item:focus {
     background: var(--focus);
     color: #000;
-    box-shadow: 0 0 30px var(--focus);
+    border-color: #fff;
+    box-shadow: 0 0 25px var(--focus), 0 0 0 3px rgba(255,221,0,0.3);
+    transform: scale(1.05);
 }
 
 .top-icons {
@@ -632,12 +558,13 @@ body::before {
     transition: 0.3s;
     padding: 6px;
     border-radius: 6px;
+    outline: none;
 }
-.top-icons i:hover { 
+.top-icons i:hover, .top-icons i:focus { 
     opacity: 1; 
-    color: var(--neon-cyan);
-    transform: scale(1.15);
-    text-shadow: 0 0 15px var(--neon-cyan-glow);
+    color: var(--focus);
+    transform: scale(1.2);
+    background: rgba(255,221,0,0.15);
 }
 .top-time {
     font-size: 14px;
@@ -649,7 +576,6 @@ body::before {
     padding: 5px 12px;
     border-radius: 8px;
     border: 1px solid rgba(139, 92, 246, 0.3);
-    text-shadow: 0 0 10px rgba(255,255,255,0.3);
 }
 
 /* ============================================ */
@@ -669,16 +595,12 @@ body::before {
 .left-panel {
     width: 42%;
     max-width: 480px;
-    background: linear-gradient(180deg, 
-        rgba(26, 13, 46, 0.6) 0%, 
-        rgba(15, 10, 26, 0.95) 100%);
+    background: linear-gradient(180deg, rgba(26, 13, 46, 0.6) 0%, rgba(15, 10, 26, 0.95) 100%);
     backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
     display: flex;
     flex-direction: column;
     border-right: 1px solid rgba(139, 92, 246, 0.15);
     overflow: hidden;
-    position: relative;
 }
 
 .left-panel-title {
@@ -694,12 +616,11 @@ body::before {
     min-height: 48px;
     text-transform: uppercase;
     letter-spacing: 1.5px;
-    text-shadow: 0 0 15px rgba(139, 92, 246, 0.4);
 }
 
 .left-panel-title .back-btn-inline {
     background: rgba(0, 229, 255, 0.1);
-    border: 1px solid rgba(0, 229, 255, 0.3);
+    border: 2px solid rgba(0, 229, 255, 0.3);
     color: var(--neon-cyan);
     padding: 5px 12px;
     border-radius: 6px;
@@ -714,14 +635,10 @@ body::before {
     text-transform: none;
     letter-spacing: 0;
 }
-.left-panel-title .back-btn-inline:hover { 
-    background: rgba(0, 229, 255, 0.2);
-    box-shadow: 0 0 20px var(--neon-cyan-glow);
-}
 .left-panel-title .back-btn-inline:focus {
     background: var(--focus);
     color: #000;
-    border-color: var(--focus);
+    border-color: #fff;
     box-shadow: 0 0 25px var(--focus);
 }
 
@@ -731,14 +648,9 @@ body::before {
     overflow-x: hidden;
     scrollbar-width: thin;
     scrollbar-color: rgba(139, 92, 246, 0.3) transparent;
-    -webkit-overflow-scrolling: touch;
-    padding: 0;
 }
 .list-container::-webkit-scrollbar { width: 6px; }
-.list-container::-webkit-scrollbar-thumb { 
-    background: linear-gradient(180deg, var(--neon-purple), var(--neon-cyan)); 
-    border-radius: 3px; 
-}
+.list-container::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--neon-purple), var(--neon-cyan)); border-radius: 3px; }
 
 .list-item {
     display: flex;
@@ -750,21 +662,11 @@ body::before {
     gap: 14px;
     border-left: 4px solid transparent;
     border-bottom: 1px solid rgba(255,255,255,0.03);
-    position: relative;
 }
-.list-item:hover { 
-    background: rgba(139, 92, 246, 0.08);
-    padding-left: 20px;
-}
+.list-item:hover { background: rgba(139, 92, 246, 0.08); padding-left: 20px; }
 .list-item.active {
     background: linear-gradient(90deg, rgba(0, 229, 255, 0.15), rgba(139, 92, 246, 0.05));
     border-left-color: var(--neon-cyan);
-    box-shadow: inset 0 0 30px rgba(0, 229, 255, 0.1);
-}
-.list-item.active .item-name {
-    color: #fff;
-    font-weight: 600;
-    text-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
 }
 .list-item:focus {
     background: var(--focus);
@@ -781,8 +683,6 @@ body::before {
     color: var(--neon-cyan);
     min-width: 45px;
     text-align: right;
-    letter-spacing: 0.5px;
-    text-shadow: 0 0 10px var(--neon-cyan-glow);
     font-family: 'Courier New', monospace;
 }
 
@@ -805,7 +705,6 @@ body::before {
     overflow: hidden;
     text-overflow: ellipsis;
     font-weight: 400;
-    transition: color 0.2s;
 }
 
 .list-footer {
@@ -825,8 +724,6 @@ body::before {
     border-radius: 4px;
     font-weight: 800;
     font-size: 10px;
-    letter-spacing: 0.5px;
-    box-shadow: 0 0 10px var(--neon-cyan-glow);
 }
 
 .right-panel {
@@ -834,7 +731,6 @@ body::before {
     background: #000;
     display: flex;
     flex-direction: column;
-    position: relative;
     overflow: hidden;
 }
 
@@ -846,15 +742,6 @@ body::before {
     align-items: center;
     justify-content: center;
     overflow: hidden;
-}
-
-.player-wrapper::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at center, rgba(139, 92, 246, 0.05) 0%, transparent 70%);
-    pointer-events: none;
-    z-index: 1;
 }
 
 #main-video {
@@ -887,11 +774,6 @@ body::before {
     -webkit-text-fill-color: transparent;
     background-clip: text;
     filter: drop-shadow(0 0 25px var(--neon-cyan-glow));
-    animation: iconFloat 3s ease infinite;
-}
-@keyframes iconFloat {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
 }
 .player-placeholder p {
     font-size: 15px;
@@ -917,22 +799,14 @@ body::before {
     z-index: 50;
     outline: none;
     transition: 0.25s;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 0 20px rgba(0, 229, 255, 0.2);
 }
-.btn-fullscreen:hover { 
-    background: var(--neon-cyan); 
-    color: #000;
-    border-color: var(--neon-cyan); 
-    transform: scale(1.08);
-    box-shadow: 0 0 35px var(--neon-cyan-glow);
-}
+.btn-fullscreen:hover { background: var(--neon-cyan); color: #000; transform: scale(1.08); }
 .btn-fullscreen:focus {
     background: var(--focus);
     color: #000;
-    border-color: var(--focus);
+    border-color: #fff;
     transform: scale(1.15);
-    box-shadow: 0 0 35px var(--focus);
+    box-shadow: 0 0 30px var(--focus), 0 0 0 3px rgba(255,221,0,0.3);
 }
 
 #player-loading {
@@ -943,7 +817,6 @@ body::before {
     font-size: 40px;
     display: none;
     z-index: 40;
-    filter: drop-shadow(0 0 20px var(--neon-cyan-glow));
 }
 
 .live-indicator {
@@ -959,9 +832,6 @@ body::before {
     align-items: center;
     gap: 6px;
     z-index: 40;
-    letter-spacing: 0.8px;
-    box-shadow: 0 0 25px var(--neon-magenta-glow);
-    border: 1px solid rgba(255,255,255,0.2);
 }
 .live-indicator.show { display: flex; }
 .live-indicator .dot {
@@ -969,17 +839,13 @@ body::before {
     background: #fff;
     border-radius: 50%;
     animation: blink 1s infinite;
-    box-shadow: 0 0 10px #fff;
 }
 @keyframes blink { 50% { opacity: 0.3; } }
 
 .player-footer {
     height: 58px;
-    background: linear-gradient(0deg, 
-        rgba(0, 0, 0, 0.98) 0%, 
-        rgba(15, 10, 26, 0.98) 100%);
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.98) 0%, rgba(15, 10, 26, 0.98) 100%);
     backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
     display: flex;
     align-items: center;
     padding: 0 20px;
@@ -987,17 +853,6 @@ body::before {
     border-top: 1px solid rgba(139, 92, 246, 0.15);
     font-size: 15px;
     color: #fff;
-    position: relative;
-}
-.player-footer::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--neon-cyan), var(--neon-purple), var(--neon-cyan), transparent);
-    opacity: 0.5;
 }
 .footer-name {
     font-weight: 800;
@@ -1008,7 +863,6 @@ body::before {
     flex-shrink: 0;
     max-width: 40%;
     font-size: 16px;
-    text-shadow: 0 0 15px rgba(0, 229, 255, 0.3);
 }
 .footer-time {
     color: var(--neon-cyan);
@@ -1016,7 +870,6 @@ body::before {
     white-space: nowrap;
     font-size: 15px;
     font-family: 'Courier New', monospace;
-    text-shadow: 0 0 15px var(--neon-cyan-glow);
     background: rgba(0, 229, 255, 0.08);
     padding: 3px 10px;
     border-radius: 6px;
@@ -1028,7 +881,6 @@ body::before {
     overflow: hidden;
     text-overflow: ellipsis;
     flex: 1;
-    font-weight: 400;
     font-size: 15px;
 }
 
@@ -1077,21 +929,14 @@ body::before {
     z-index: 2100;
     outline: none;
     transition: 0.25s;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 0 25px var(--neon-cyan-glow);
 }
-.fs-close:hover { 
-    background: var(--neon-cyan); 
-    color: #000;
-    transform: scale(1.1) rotate(90deg);
-    box-shadow: 0 0 40px var(--neon-cyan-glow);
-}
+.fs-close:hover { background: var(--neon-cyan); color: #000; transform: scale(1.1); }
 .fs-close:focus {
     background: var(--focus);
     color: #000;
-    border-color: var(--focus);
+    border-color: #fff;
     transform: scale(1.15);
-    box-shadow: 0 0 40px var(--focus);
+    box-shadow: 0 0 35px var(--focus);
 }
 
 .fs-title {
@@ -1109,8 +954,6 @@ body::before {
     overflow: hidden;
     text-overflow: ellipsis;
     border: 1px solid rgba(0, 229, 255, 0.3);
-    backdrop-filter: blur(10px);
-    box-shadow: 0 0 25px rgba(0, 229, 255, 0.2);
 }
 
 #fs-loading {
@@ -1121,7 +964,6 @@ body::before {
     font-size: 45px;
     display: none;
     z-index: 2100;
-    filter: drop-shadow(0 0 25px var(--neon-cyan-glow));
 }
 
 .fs-live {
@@ -1139,8 +981,6 @@ body::before {
     align-items: center;
     gap: 7px;
     z-index: 2100;
-    box-shadow: 0 0 25px var(--neon-magenta-glow);
-    border: 1px solid rgba(255,255,255,0.2);
 }
 .fs-live.show { display: flex; }
 .fs-live .dot {
@@ -1148,14 +988,11 @@ body::before {
     background: #fff;
     border-radius: 50%;
     animation: blink 1s infinite;
-    box-shadow: 0 0 10px #fff;
 }
 
 .fs-footer {
     height: 58px;
-    background: linear-gradient(0deg, 
-        rgba(0, 0, 0, 0.98) 0%, 
-        rgba(15, 10, 26, 0.98) 100%);
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.98) 0%, rgba(15, 10, 26, 0.98) 100%);
     display: flex;
     align-items: center;
     padding: 0 25px;
@@ -1163,17 +1000,6 @@ body::before {
     border-top: 1px solid rgba(139, 92, 246, 0.15);
     font-size: 15px;
     color: #fff;
-    position: relative;
-}
-.fs-footer::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--neon-cyan), var(--neon-purple), var(--neon-cyan), transparent);
-    opacity: 0.5;
 }
 .fs-footer .footer-name {
     font-weight: 800;
@@ -1183,7 +1009,6 @@ body::before {
     flex-shrink: 0;
     max-width: 40%;
     font-size: 16px;
-    text-shadow: 0 0 15px rgba(0, 229, 255, 0.3);
 }
 .fs-footer .footer-time {
     color: var(--neon-cyan);
@@ -1191,7 +1016,6 @@ body::before {
     white-space: nowrap;
     font-size: 15px;
     font-family: 'Courier New', monospace;
-    text-shadow: 0 0 15px var(--neon-cyan-glow);
     background: rgba(0, 229, 255, 0.08);
     padding: 3px 10px;
     border-radius: 6px;
@@ -1217,15 +1041,12 @@ body::before {
     display: flex;
     align-items: center;
     padding: 0 20px;
-    background: linear-gradient(180deg, 
-        rgba(26, 13, 46, 0.98) 0%, 
-        rgba(15, 10, 26, 0.98) 100%);
+    background: linear-gradient(180deg, rgba(26, 13, 46, 0.98) 0%, rgba(15, 10, 26, 0.98) 100%);
     position: sticky;
     top: 0;
     z-index: 10;
     gap: 15px;
     border-bottom: 1px solid rgba(139, 92, 246, 0.15);
-    backdrop-filter: blur(20px);
 }
 .back-btn {
     font-size: 18px;
@@ -1235,18 +1056,16 @@ body::before {
     outline: none;
     color: var(--neon-cyan);
     background: rgba(0, 229, 255, 0.1);
-    border: 1px solid rgba(0, 229, 255, 0.3);
+    border: 2px solid rgba(0, 229, 255, 0.3);
     transition: 0.25s;
 }
-.back-btn:hover {
-    background: rgba(0, 229, 255, 0.2);
-    box-shadow: 0 0 20px var(--neon-cyan-glow);
-}
+.back-btn:hover { background: rgba(0, 229, 255, 0.2); }
 .back-btn:focus { 
     background: var(--focus); 
     color: #000; 
-    border-color: var(--focus);
+    border-color: #fff;
     box-shadow: 0 0 25px var(--focus);
+    transform: scale(1.05);
 }
 
 .season-selector {
@@ -1263,7 +1082,7 @@ body::before {
     border-radius: 20px;
     color: var(--text-muted);
     cursor: pointer;
-    border: 1px solid rgba(255,255,255,0.08);
+    border: 2px solid rgba(255,255,255,0.08);
     white-space: nowrap;
     flex-shrink: 0;
     font-size: 13px;
@@ -1271,21 +1090,16 @@ body::before {
     outline: none;
     transition: 0.25s;
 }
-.season-btn:hover { 
-    color: #fff; 
-    background: rgba(139, 92, 246, 0.15);
-    border-color: rgba(139, 92, 246, 0.4);
-}
 .season-btn.active { 
     background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
     color: #fff; 
     border-color: transparent;
-    box-shadow: 0 0 20px var(--neon-cyan-glow);
 }
 .season-btn:focus { 
     background: var(--focus); 
     color: #000; 
-    transform: scale(1.05);
+    border-color: #fff;
+    transform: scale(1.08);
     box-shadow: 0 0 25px var(--focus);
 }
 
@@ -1304,23 +1118,22 @@ body::before {
     gap: 15px;
     transition: 0.25s;
 }
-.episode-item:hover { 
-    background: rgba(139, 92, 246, 0.1);
-    border-color: rgba(139, 92, 246, 0.3);
-    transform: translateX(5px);
-}
+.episode-item:hover { background: rgba(139, 92, 246, 0.1); transform: translateX(5px); }
 .episode-item:focus { 
     border-color: var(--focus); 
-    background: rgba(0, 229, 255, 0.1);
-    box-shadow: 0 0 25px var(--focus);
+    background: var(--focus);
+    color: #000;
+    transform: translateX(8px) scale(1.02);
+    box-shadow: 0 0 30px var(--focus);
 }
+.episode-item:focus .episode-num,
+.episode-item:focus .episode-title { color: #000; }
 .episode-num {
     font-size: 15px;
     color: var(--neon-cyan);
     font-weight: 800;
     min-width: 60px;
     font-family: 'Courier New', monospace;
-    text-shadow: 0 0 10px var(--neon-cyan-glow);
 }
 .episode-title {
     flex: 1;
@@ -1331,16 +1144,75 @@ body::before {
     text-overflow: ellipsis;
 }
 
-/* RESPONSIVO MOBILE */
+/* ============================================ */
+/* LOADING INICIAL / ERRO                       */
+/* ============================================ */
+#initial-loading {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, #1a0d2e 0%, #0f0a1a 50%, #000000 100%);
+    z-index: 3000;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    text-align: center;
+    padding: 20px;
+}
+#initial-loading.show { display: flex; }
+
+.spinner-big {
+    width: 60px;
+    height: 60px;
+    border: 4px solid rgba(0, 229, 255, 0.1);
+    border-top-color: var(--neon-cyan);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    box-shadow: 0 0 30px var(--neon-cyan-glow);
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+#initial-loading-text {
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+}
+#initial-loading-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.error-message {
+    color: var(--neon-magenta);
+    font-size: 14px;
+    max-width: 400px;
+    line-height: 1.6;
+    padding: 20px;
+    text-align: center;
+}
+.error-message .btn-retry {
+    margin-top: 15px;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 14px;
+    outline: none;
+}
+.error-message .btn-retry:focus {
+    background: var(--focus);
+    color: #000;
+    box-shadow: 0 0 25px var(--focus);
+}
+
+/* RESPONSIVO */
 @media (max-width: 900px) {
     .main-layout { flex-direction: column; }
-    .left-panel {
-        width: 100%;
-        max-width: none;
-        height: 55%;
-        border-right: none;
-        border-bottom: 1px solid rgba(139, 92, 246, 0.15);
-    }
+    .left-panel { width: 100%; max-width: none; height: 55%; border-right: none; border-bottom: 1px solid rgba(139, 92, 246, 0.15); }
     .right-panel { height: 45%; }
     .top-logo { font-size: 14px; margin-right: 15px; }
     .top-nav-item { padding: 8px 12px; font-size: 12px; }
@@ -1354,11 +1226,9 @@ body::before {
     .footer-time { font-size: 12px; padding: 2px 8px; }
     .footer-program { font-size: 12px; }
     .btn-fullscreen { width: 38px; height: 38px; font-size: 15px; bottom: 10px; right: 10px; }
-    .player-placeholder i { font-size: 55px; }
 }
 
 @media (max-width: 500px) {
-    .warning-box, .donation-box { border-radius: 14px; }
     .warning-body { padding: 12px 16px 16px 16px; }
     .warning-icon-wrap { width: 50px; height: 50px; font-size: 22px; margin-bottom: 10px; }
     .warning-title { font-size: 17px; }
@@ -1366,31 +1236,10 @@ body::before {
     .warning-points { grid-template-columns: 1fr; padding: 10px 12px; gap: 6px; }
     .warning-point { font-size: 11px; }
     .warning-ok-btn { padding: 12px 16px; font-size: 13px; }
-    .warning-close { width: 30px; height: 30px; font-size: 14px; }
-    .warning-header { padding: 12px 14px 0 14px; }
-    
-    .donation-icon-wrap { width: 58px; height: 58px; font-size: 26px; margin-bottom: 12px; }
-    .donation-title { font-size: 18px; }
-    .donation-text { font-size: 12px; }
     .pix-key { font-size: 11px; padding: 7px 8px; }
     .pix-copy-btn { padding: 7px 10px; font-size: 11px; }
     .telegram-btn { padding: 12px 16px; font-size: 13px; }
     .continue-btn { padding: 11px 16px; font-size: 12px; }
-}
-
-@media (max-height: 700px) {
-    .warning-icon-wrap, .donation-icon-wrap { width: 46px; height: 46px; font-size: 22px; margin-bottom: 8px; }
-    .warning-title, .donation-title { font-size: 17px; }
-    .warning-subtitle { margin-bottom: 8px; font-size: 9px; padding: 3px 10px; }
-    .warning-text, .donation-text { font-size: 12px; margin-bottom: 8px; }
-    .warning-points { padding: 10px 12px; margin: 8px 0 12px; }
-    .warning-point { font-size: 11px; }
-    .warning-ok-btn { padding: 11px 16px; font-size: 13px; }
-    .warning-body { padding: 10px 16px 14px 16px; }
-    .pix-box { padding: 10px 12px; margin-bottom: 10px; }
-    .donation-divider { margin: 10px 0; }
-    .telegram-btn { padding: 11px 16px; font-size: 13px; margin-bottom: 8px; }
-    .continue-btn { padding: 10px 16px; font-size: 12px; }
 }
 
 ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -1399,6 +1248,13 @@ body::before {
 </style>
 </head>
 <body>
+
+<!-- LOADING INICIAL -->
+<div id="initial-loading">
+    <div class="spinner-big"></div>
+    <div id="initial-loading-text">🔌 Conectando ao servidor...</div>
+    <div id="initial-loading-sub">Aguarde, carregando sua lista</div>
+</div>
 
 <!-- MODAL 1: AVISO IMPORTANTE -->
 <div id="warning-modal">
@@ -1409,7 +1265,7 @@ body::before {
                 <i class="fa-solid fa-shield-halved"></i>
                 Aviso Importante
             </div>
-            <button class="warning-close" tabindex="0" onclick="closeWarning()" title="Fechar">
+            <button class="warning-close" tabindex="0" onclick="closeWarning()" onkeydown="if(event.key==='Enter')closeWarning()" title="Fechar (X)">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
@@ -1431,7 +1287,7 @@ body::before {
                 <div class="warning-point red"><i class="fa-solid fa-triangle-exclamation"></i><span>Venda = banimento</span></div>
                 <div class="warning-point"><i class="fa-solid fa-heart"></i><span>Preserve o projeto</span></div>
             </div>
-            <button class="warning-ok-btn" tabindex="0" onclick="closeWarning()">Entendi</button>
+            <button class="warning-ok-btn" tabindex="0" onclick="closeWarning()" onkeydown="if(event.key==='Enter')closeWarning()">Entendi</button>
         </div>
     </div>
 </div>
@@ -1445,7 +1301,7 @@ body::before {
                 <i class="fa-solid fa-heart"></i>
                 Apoie o Projeto
             </div>
-            <button class="warning-close" tabindex="0" onclick="closeDonation()" title="Fechar">
+            <button class="warning-close" tabindex="0" onclick="closeDonation()" onkeydown="if(event.key==='Enter')closeDonation()" title="Fechar (X)">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
@@ -1455,7 +1311,7 @@ body::before {
             </div>
             <h2 class="donation-title">Ajude o Projeto</h2>
             <p class="donation-text">
-                Este app é mantido de forma <strong>100% gratuita</strong> graças a pessoas como você. Se puder, faça uma doação via PIX para ajudar a manter o projeto vivo!
+                Este app é mantido de forma <strong>100% gratuita</strong> graças a pessoas como você. Se puder, faça uma doação via PIX!
             </p>
             <div class="pix-box">
                 <div class="pix-label">
@@ -1464,18 +1320,18 @@ body::before {
                 </div>
                 <div class="pix-key-row">
                     <div class="pix-key" id="pixKey">1ea6ae84-f545-4dd3-8488-d6bcd1be7dd4</div>
-                    <button class="pix-copy-btn" id="pixCopyBtn" tabindex="0" onclick="copyPix()">
+                    <button class="pix-copy-btn" id="pixCopyBtn" tabindex="0" onclick="copyPix()" onkeydown="if(event.key==='Enter')copyPix()">
                         <i class="fa-solid fa-copy"></i>
                         <span id="pixBtnText">Copiar</span>
                     </button>
                 </div>
             </div>
             <div class="donation-divider">OU</div>
-            <a href="https://t.me/iptvfree277" target="_blank" rel="noopener noreferrer" class="telegram-btn" tabindex="0">
+            <a href="https://t.me/iptvfree277" target="_blank" rel="noopener noreferrer" class="telegram-btn" tabindex="0" onkeydown="if(event.key==='Enter'){window.open('https://t.me/iptvfree277','_blank');}">
                 <i class="fa-brands fa-telegram"></i>
                 <span>Entrar na Comunidade</span>
             </a>
-            <button class="continue-btn" tabindex="0" onclick="closeDonation()">Continuar para o App</button>
+            <button class="continue-btn" tabindex="0" onclick="closeDonation()" onkeydown="if(event.key==='Enter')closeDonation()">Continuar para o App</button>
         </div>
     </div>
 </div>
@@ -1492,9 +1348,9 @@ body::before {
         <span class="logo-highlight">IPTV FREE</span>
     </div>
     <div class="top-nav" id="topNav">
-        <div class="top-nav-item active" tabindex="0" data-tab="live" onclick="changeTab('live', this)">TV</div>
-        <div class="top-nav-item" tabindex="0" data-tab="movie" onclick="changeTab('movie', this)">FILMES</div>
-        <div class="top-nav-item" tabindex="0" data-tab="series" onclick="changeTab('series', this)">SÉRIES</div>
+        <div class="top-nav-item active" tabindex="0" data-tab="live" onclick="changeTab('live', this)" onkeydown="if(event.key==='Enter')changeTab('live', this)">TV</div>
+        <div class="top-nav-item" tabindex="0" data-tab="movie" onclick="changeTab('movie', this)" onkeydown="if(event.key==='Enter')changeTab('movie', this)">FILMES</div>
+        <div class="top-nav-item" tabindex="0" data-tab="series" onclick="changeTab('series', this)" onkeydown="if(event.key==='Enter')changeTab('series', this)">SÉRIES</div>
     </div>
     <div class="top-icons">
         <i class="fa-solid fa-magnifying-glass" tabindex="0"></i>
@@ -1504,7 +1360,7 @@ body::before {
         <i class="fa-solid fa-bell" tabindex="0"></i>
         <i class="fa-solid fa-wifi"></i>
     </div>
-    <div class="top-time" id="topTime">15:31</div>
+    <div class="top-time" id="topTime">--:--</div>
 </div>
 
 <!-- LAYOUT PRINCIPAL -->
@@ -1512,7 +1368,7 @@ body::before {
     <div class="left-panel">
         <div class="left-panel-title" id="leftPanelTitle">
             <span id="leftPanelTitleText">Lista de Canais</span>
-            <button class="back-btn-inline" id="backToCatsBtn" tabindex="0" onclick="backToCategories()" style="display:none;">
+            <button class="back-btn-inline" id="backToCatsBtn" tabindex="0" onclick="backToCategories()" onkeydown="if(event.key==='Enter')backToCategories()" style="display:none;">
                 <i class="fa-solid fa-arrow-left"></i> Voltar
             </button>
         </div>
@@ -1528,14 +1384,14 @@ body::before {
         <div class="player-wrapper">
             <div class="player-placeholder" id="playerPlaceholder">
                 <i class="fa-solid fa-tv"></i>
-                <p>Selecione um canal para assistir</p>
+                <p>Selecione um conteúdo para assistir</p>
             </div>
             <video id="main-video" controls playsinline webkit-playsinline style="display:none;"></video>
             <div id="player-loading"><i class="fa-solid fa-spinner fa-spin"></i></div>
             <div class="live-indicator" id="liveIndicator">
                 <span class="dot"></span> AO VIVO
             </div>
-            <button class="btn-fullscreen" tabindex="0" id="btnFullscreen" onclick="openFullscreen()" title="Tela Cheia">
+            <button class="btn-fullscreen" tabindex="0" id="btnFullscreen" onclick="openFullscreen()" onkeydown="if(event.key==='Enter')openFullscreen()" title="Tela Cheia">
                 <i class="fa-solid fa-expand"></i>
             </button>
         </div>
@@ -1554,7 +1410,7 @@ body::before {
         <div id="fs-loading"><i class="fa-solid fa-spinner fa-spin"></i></div>
         <div class="fs-live" id="fsLive"><span class="dot"></span> AO VIVO</div>
         <div class="fs-title" id="fsTitle">Carregando...</div>
-        <button class="fs-close" tabindex="0" onclick="closeFullscreen()"><i class="fa-solid fa-compress"></i></button>
+        <button class="fs-close" tabindex="0" onclick="closeFullscreen()" onkeydown="if(event.key==='Enter')closeFullscreen()"><i class="fa-solid fa-compress"></i></button>
     </div>
     <div class="fs-footer">
         <div class="footer-name" id="fsFooterName">Canal</div>
@@ -1565,7 +1421,7 @@ body::before {
 <!-- MODAL DE EPISÓDIOS -->
 <div id="episodes-modal">
     <div class="episodes-header">
-        <div class="back-btn" tabindex="0" onclick="closeEpisodes()"><i class="fa-solid fa-arrow-left"></i></div>
+        <div class="back-btn" tabindex="0" onclick="closeEpisodes()" onkeydown="if(event.key==='Enter')closeEpisodes()"><i class="fa-solid fa-arrow-left"></i></div>
         <div id="seriesTitle" style="font-size:15px; font-weight:bold;">Série</div>
     </div>
     <div class="season-selector" id="seasonSelector"></div>
@@ -1574,19 +1430,22 @@ body::before {
 
 <script>
 // ==========================================
-// CONFIGURAÇÃO
+// CONFIGURAÇÃO - SERVIDOR QUE FUNCIONA
 // ==========================================
-const CONFIG = {
-    host: 'https://zeus.x10.mx',
-    username: '184507',
-    password: '181626'
-};
+const SERVER = "https://zeus.meupanel.com.br";
+const USER   = "962313";
+const PASS   = "723839";
+
+const API           = `${SERVER}/player_api.php?username=${USER}&password=${PASS}`;
+const LIVE_M3U8_URL = id => `${SERVER}/live/${USER}/${PASS}/${id}.m3u8`;
+const LIVE_TS_URL   = id => `${SERVER}/live/${USER}/${PASS}/${id}.ts`;
+const MOVIE_URL     = id => `${SERVER}/movie/${USER}/${PASS}/${id}.mp4`;
+const SERIES_URL    = id => `${SERVER}/series/${USER}/${PASS}/${id}.mp4`;
 
 const PIX_KEY = '1ea6ae84-f545-4dd3-8488-d6bcd1be7dd4';
 
 let currentTab = 'live';
 let currentCategoryId = null;
-let currentCategoryName = '';
 let currentItems = [];
 let allCategories = [];
 let currentView = 'categories';
@@ -1596,6 +1455,8 @@ let hlsInstance = null;
 let mpegtsInstance = null;
 let hlsFsInstance = null;
 let mpegtsFsInstance = null;
+let liveCheckInterval = null;
+let isLiveStream = false;
 let appInitialized = false;
 
 const listContainer = document.getElementById('listContainer');
@@ -1615,7 +1476,9 @@ const fsFooterTime = document.getElementById('fsFooterTime');
 const episodesModal = document.getElementById('episodes-modal');
 const seasonSelector = document.getElementById('seasonSelector');
 const episodeList = document.getElementById('episodeList');
+const initialLoading = document.getElementById('initial-loading');
 
+// Relógio
 function updateClock() {
     const now = new Date();
     const h = String(now.getHours()).padStart(2, '0');
@@ -1630,29 +1493,23 @@ updateClock();
 // ==========================================
 function closeWarning() {
     const modal = document.getElementById('warning-modal');
-    modal.style.opacity = '0';
-    modal.style.transition = 'opacity 0.3s';
+    modal.classList.add('hidden');
     setTimeout(() => {
-        modal.classList.add('hidden');
         document.getElementById('donation-modal').classList.remove('hidden');
         setTimeout(() => {
-            const copyBtn = document.getElementById('pixCopyBtn');
-            if (copyBtn) copyBtn.focus();
-        }, 300);
-    }, 300);
+            const firstBtn = document.querySelector('#donation-modal .pix-copy-btn');
+            if (firstBtn) firstBtn.focus();
+        }, 200);
+    }, 100);
 }
 
 function closeDonation() {
     const modal = document.getElementById('donation-modal');
-    modal.style.opacity = '0';
-    modal.style.transition = 'opacity 0.3s';
-    setTimeout(() => {
-        modal.classList.add('hidden');
-        if (!appInitialized) {
-            appInitialized = true;
-            changeTab('live', document.querySelector('.top-nav-item'));
-        }
-    }, 300);
+    modal.classList.add('hidden');
+    if (!appInitialized) {
+        appInitialized = true;
+        initApp();
+    }
 }
 
 function copyPix() {
@@ -1690,12 +1547,39 @@ function fallbackCopy(onSuccess) {
 }
 
 // ==========================================
+// INICIALIZAÇÃO
+// ==========================================
+async function initApp() {
+    initialLoading.classList.add('show');
+    
+    try {
+        await changeTab('live', document.querySelector('.top-nav-item'));
+        initialLoading.classList.remove('show');
+        
+        setTimeout(() => {
+            const firstItem = listContainer.querySelector('.list-item');
+            if (firstItem) firstItem.focus();
+        }, 300);
+    } catch (e) {
+        console.error(e);
+        initialLoading.innerHTML = `
+            <div class="error-message">
+                <i class="fa-solid fa-triangle-exclamation" style="font-size:48px; margin-bottom:15px; display:block;"></i>
+                <strong>Erro ao conectar</strong><br>
+                ${e.message || 'Verifique sua conexão e tente novamente.'}
+                <br>
+                <button class="btn-retry" onclick="location.reload()">🔄 Tentar Novamente</button>
+            </div>
+        `;
+    }
+}
+
+// ==========================================
 // NAVEGAÇÃO
 // ==========================================
 async function changeTab(tab, element) {
     currentTab = tab;
     currentCategoryId = null;
-    currentCategoryName = '';
     currentView = 'categories';
     document.querySelectorAll('.top-nav-item').forEach(el => el.classList.remove('active'));
     if (element) element.classList.add('active');
@@ -1716,11 +1600,11 @@ async function changeTab(tab, element) {
             allCategories = cats;
             renderCategories();
         } else {
-            listContainer.innerHTML = '<div style="text-align:center; padding:30px; color:rgba(255,255,255,0.5);">Vazio.</div>';
+            listContainer.innerHTML = '<div style="text-align:center; padding:30px; color:rgba(255,255,255,0.5);">Nenhuma categoria disponível.</div>';
         }
     } catch (e) {
         console.error(e);
-        listContainer.innerHTML = '<div style="text-align:center; padding:30px; color:var(--neon-magenta);">Erro de conexão.</div>';
+        listContainer.innerHTML = '<div style="text-align:center; padding:30px; color:var(--neon-magenta);">Erro ao carregar. Verifique a conexão.</div>';
     }
 }
 
@@ -1729,15 +1613,16 @@ function renderCategories() {
     listContainer.innerHTML = '';
     backToCatsBtn.style.display = 'none';
     
-    allCategories.forEach((cat, index) => {
+    allCategories.forEach((cat) => {
         const el = document.createElement('div');
         el.className = 'list-item';
         el.tabIndex = 0;
         el.innerHTML = `
-            <div class="item-num" style="text-align:center; min-width:35px;"><i class="fa-solid fa-folder" style="color:var(--neon-cyan); font-size:16px; filter: drop-shadow(0 0 8px var(--neon-cyan-glow));"></i></div>
+            <div class="item-num" style="text-align:center; min-width:35px;"><i class="fa-solid fa-folder" style="color:var(--neon-cyan); font-size:16px;"></i></div>
             <div class="item-name" style="font-weight:500;">${cat.category_name}</div>
         `;
         el.onclick = () => openCategory(cat.category_id, cat.category_name);
+        el.onkeydown = (e) => { if (e.key === 'Enter') openCategory(cat.category_id, cat.category_name); };
         el.onfocus = () => el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         listContainer.appendChild(el);
     });
@@ -1750,12 +1635,11 @@ function renderCategories() {
 
 async function openCategory(categoryId, categoryName) {
     currentCategoryId = categoryId;
-    currentCategoryName = categoryName;
     currentView = 'content';
     
     leftPanelTitleText.innerText = categoryName;
     backToCatsBtn.style.display = 'flex';
-    listContainer.innerHTML = '<div style="text-align:center; padding:30px; color:rgba(255,255,255,0.5);">Carregando...</div>';
+    listContainer.innerHTML = '<div style="text-align:center; padding:30px; color:rgba(255,255,255,0.5);">Carregando conteúdos...</div>';
     
     let action = '';
     if (currentTab === 'live') action = 'get_live_streams';
@@ -1768,7 +1652,7 @@ async function openCategory(categoryId, categoryName) {
         renderContent();
     } catch (e) {
         console.error(e);
-        listContainer.innerHTML = '<div style="text-align:center; padding:30px; color:var(--neon-magenta);">Erro.</div>';
+        listContainer.innerHTML = '<div style="text-align:center; padding:30px; color:var(--neon-magenta);">Erro ao carregar conteúdos.</div>';
     }
 }
 
@@ -1776,7 +1660,7 @@ function renderContent() {
     listContainer.innerHTML = '';
     
     if (!currentItems || currentItems.length === 0) {
-        listContainer.innerHTML = '<div style="text-align:center; padding:30px; color:rgba(255,255,255,0.5);">Nenhum item.</div>';
+        listContainer.innerHTML = '<div style="text-align:center; padding:30px; color:rgba(255,255,255,0.5);">Nenhum item nesta categoria.</div>';
         return;
     }
     
@@ -1784,7 +1668,6 @@ function renderContent() {
         const el = document.createElement('div');
         el.className = 'list-item';
         el.tabIndex = 0;
-        el.dataset.index = index;
         
         let num = item.num || (index + 1);
         let imgUrl = item.stream_icon || item.cover || '';
@@ -1802,11 +1685,19 @@ function renderContent() {
             if (currentTab === 'series') openSeriesInfo(item.series_id, item.name);
             else playInRightPanel(item, currentTab);
         };
+        el.onkeydown = (e) => {
+            if (e.key === 'Enter') {
+                document.querySelectorAll('.list-item').forEach(el2 => el2.classList.remove('active'));
+                el.classList.add('active');
+                if (currentTab === 'series') openSeriesInfo(item.series_id, item.name);
+                else playInRightPanel(item, currentTab);
+            }
+        };
         
         el.onfocus = () => {
             el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             if (!currentPlayingItem || currentPlayingItem.stream_id !== item.stream_id) {
-                updateFooterPreview(item, index);
+                updateFooterPreview(item);
             }
         };
         
@@ -1819,10 +1710,10 @@ function renderContent() {
     }, 100);
 }
 
-function updateFooterPreview(item, index) {
+function updateFooterPreview(item) {
     document.getElementById('footerName').innerText = item.name || 'IPTV FREE';
     document.getElementById('footerTime').innerText = '--:--';
-    document.getElementById('footerProgram').innerText = item.category_name || '';
+    document.getElementById('footerProgram').innerText = '';
 }
 
 function backToCategories() {
@@ -1850,7 +1741,7 @@ async function openSeriesInfo(seriesId, title) {
             seasonSelector.innerHTML = '<div style="color:var(--neon-magenta); padding:10px;">Sem episódios.</div>';
         }
     } catch (e) {
-        seasonSelector.innerHTML = '<div style="color:var(--neon-magenta); padding:10px;">Erro.</div>';
+        seasonSelector.innerHTML = '<div style="color:var(--neon-magenta); padding:10px;">Erro ao carregar.</div>';
     }
 }
 
@@ -1862,6 +1753,7 @@ function renderSeasons(seasons) {
         btn.innerText = `Temporada ${seasonNum}`;
         btn.tabIndex = 0;
         btn.onclick = () => selectSeason(seasonNum);
+        btn.onkeydown = (e) => { if (e.key === 'Enter') selectSeason(seasonNum); };
         seasonSelector.appendChild(btn);
     });
 }
@@ -1885,7 +1777,7 @@ function selectSeason(seasonNum) {
             <div class="episode-num">EP ${ep.episode_num}</div>
             <div class="episode-title">${ep.title}</div>
         `;
-        item.onclick = () => {
+        const playFn = () => {
             closeEpisodes();
             playInRightPanel({
                 stream_id: ep.id,
@@ -1893,6 +1785,8 @@ function selectSeason(seasonNum) {
                 stream_icon: seriesDataCache.info?.cover || ''
             }, 'series');
         };
+        item.onclick = playFn;
+        item.onkeydown = (e) => { if (e.key === 'Enter') playFn(); };
         item.onfocus = () => item.scrollIntoView({ behavior: 'smooth', block: 'center' });
         episodeList.appendChild(item);
     });
@@ -1903,10 +1797,16 @@ function selectSeason(seasonNum) {
     }, 100);
 }
 
-function closeEpisodes() { episodesModal.classList.remove('active'); }
+function closeEpisodes() { 
+    episodesModal.classList.remove('active');
+    setTimeout(() => {
+        const focused = document.querySelector('.list-item.active') || document.querySelector('.list-item');
+        if (focused) focused.focus();
+    }, 100);
+}
 
 // ==========================================
-// PLAYER - IDÊNTICO AO QUE FUNCIONA EM APK
+// PLAYER - FUNCIONA EM APK (PADRÃO DO ARQUIVO REFERÊNCIA)
 // ==========================================
 function playInRightPanel(item, type) {
     currentPlayingItem = item;
@@ -1916,71 +1816,142 @@ function playInRightPanel(item, type) {
     
     document.getElementById('footerName').innerText = item.name || 'Canal';
     document.getElementById('footerTime').innerText = new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
-    document.getElementById('footerProgram').innerText = item.category_name || '';
+    document.getElementById('footerProgram').innerText = '';
     
     stopMainPlayer();
     
     if (type === 'series' || type === 'movie') {
+        isLiveStream = false;
         liveIndicator.classList.remove('show');
         let folder = type === 'series' ? 'series' : 'movie';
-        let url = `${CONFIG.host}/${folder}/${CONFIG.username}/${CONFIG.password}/${item.stream_id}.mp4`;
+        let url = `${SERVER}/${folder}/${USER}/${PASS}/${item.stream_id}.mp4`;
         mainVideo.src = url;
         mainVideo.play().then(() => { playerLoading.style.display = 'none'; }).catch(() => {
-            mainVideo.src = `${CONFIG.host}/${folder}/${CONFIG.username}/${CONFIG.password}/${item.stream_id}.mkv`;
+            mainVideo.src = `${SERVER}/${folder}/${USER}/${PASS}/${item.stream_id}.mkv`;
             mainVideo.play().then(() => playerLoading.style.display = 'none').catch(() => playerLoading.style.display = 'none');
         });
     } else {
+        // CANAIS AO VIVO - USANDO PADRÃO DO ARQUIVO REFERÊNCIA
+        isLiveStream = true;
         liveIndicator.classList.add('show');
-        const tsUrl = `${CONFIG.host}/live/${CONFIG.username}/${CONFIG.password}/${item.stream_id}.ts`;
         
-        if (typeof mpegts !== 'undefined' && mpegts.isSupported()) {
-            try {
-                mpegtsInstance = mpegts.createPlayer({
-                    type: 'mpegts', isLive: true, url: tsUrl
-                }, {
-                    enableWorker: true, enableStashBuffer: false,
-                    stashInitialSize: 128, lazyLoad: false,
-                    liveBufferLatencyChasing: false,
-                    autoCleanupSourceBuffer: true,
-                    autoCleanupMaxBackwardDuration: 30,
-                    autoCleanupMinBackwardDuration: 15
-                });
-                mpegtsInstance.attachMediaElement(mainVideo);
-                mpegtsInstance.load();
-                mpegtsInstance.on(mpegts.Events.ERROR, () => {
-                    if (mpegtsInstance) { mpegtsInstance.destroy(); mpegtsInstance = null; }
-                    tryLiveHLS(item.stream_id);
-                });
-                mpegtsInstance.play().then(() => playerLoading.style.display = 'none').catch(() => playerLoading.style.display = 'none');
-                setTimeout(() => {
-                    if (mpegtsInstance && mainVideo.readyState < 2) {
-                        if (mpegtsInstance) { mpegtsInstance.destroy(); mpegtsInstance = null; }
-                        tryLiveHLS(item.stream_id);
-                    }
-                }, 8000);
-            } catch(e) { tryLiveHLS(item.stream_id); }
-        } else { tryLiveHLS(item.stream_id); }
+        const m3u8Url = LIVE_M3U8_URL(item.stream_id);
+        const tsUrl = LIVE_TS_URL(item.stream_id);
+        let failed = false;
+        
+        if (Hls.isSupported()) {
+            hlsInstance = new Hls({
+                enableWorker: true,
+                lowLatencyMode: false,
+                liveSyncDurationCount: 4,
+                liveMaxLatencyDurationCount: 12,
+                liveDurationInfinity: true,
+                maxLiveSyncPlaybackRate: 1.0,
+                backBufferLength: 30,
+                manifestLoadingTimeOut: 15000,
+                manifestLoadingMaxRetry: 3,
+                levelLoadingTimeOut: 15000,
+                levelLoadingMaxRetry: 4,
+                fragLoadingTimeOut: 30000,
+                fragLoadingMaxRetry: 8
+            });
+            hlsInstance.loadSource(m3u8Url);
+            hlsInstance.attachMedia(mainVideo);
+            
+            hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
+                playerLoading.style.display = 'none';
+                mainVideo.play().catch(()=>{});
+                mainVideo.playbackRate = 1.0;
+                startLiveDelayMonitor(mainVideo);
+            });
+            
+            hlsInstance.on(Hls.Events.ERROR, (event, data) => {
+                if (data.fatal && !failed) {
+                    failed = true;
+                    if (hlsInstance) { hlsInstance.destroy(); hlsInstance = null; }
+                    playTsDirect(tsUrl);
+                }
+            });
+            
+            setTimeout(() => {
+                if (failed || !hlsInstance) return;
+                if (!hlsInstance.levels || hlsInstance.levels.length === 0) {
+                    failed = true;
+                    hlsInstance.destroy(); hlsInstance = null;
+                    playTsDirect(tsUrl);
+                }
+            }, 10000);
+        } else {
+            mainVideo.src = m3u8Url;
+            mainVideo.play().catch(() => playTsDirect(tsUrl));
+            mainVideo.playbackRate = 1.0;
+            startLiveDelayMonitor(mainVideo);
+        }
     }
 }
 
-function tryLiveHLS(id) {
+function playTsDirect(tsUrl) {
     playerLoading.style.display = 'block';
-    if (hlsInstance) { hlsInstance.destroy(); hlsInstance = null; }
-    const urlM3U8 = `${CONFIG.host}/live/${CONFIG.username}/${CONFIG.password}/${id}.m3u8`;
     
-    if (Hls.isSupported()) {
-        hlsInstance = new Hls({ enableWorker: true, lowLatencyMode: false, manifestLoadingTimeOut: 15000, manifestLoadingMaxRetry: 3 });
-        hlsInstance.loadSource(urlM3U8);
-        hlsInstance.attachMedia(mainVideo);
-        hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => { playerLoading.style.display = 'none'; mainVideo.play().catch(() => {}); });
-        hlsInstance.on(Hls.Events.ERROR, (event, data) => { if (data.fatal) playerLoading.style.display = 'none'; });
-    } else if (mainVideo.canPlayType('application/vnd.apple.mpegurl')) {
-        mainVideo.src = urlM3U8;
-        mainVideo.addEventListener('loadedmetadata', () => { playerLoading.style.display = 'none'; mainVideo.play(); });
+    if (typeof mpegts === 'undefined' || !mpegts.isSupported()) {
+        playerLoading.innerHTML = `<p style="color:var(--neon-magenta);">⚠️ Canal não compatível.</p>`;
+        return;
     }
+    
+    try {
+        mpegtsInstance = mpegts.createPlayer({
+            type: 'mpegts',
+            isLive: true,
+            url: tsUrl
+        }, {
+            enableWorker: true,
+            enableStashBuffer: false,
+            stashInitialSize: 128,
+            lazyLoad: false,
+            liveBufferLatencyChasing: false,
+            autoCleanupSourceBuffer: true,
+            autoCleanupMaxBackwardDuration: 30,
+            autoCleanupMinBackwardDuration: 15
+        });
+        
+        mpegtsInstance.attachMediaElement(mainVideo);
+        mpegtsInstance.load();
+        
+        mpegtsInstance.on(mpegts.Events.ERROR, () => {
+            playerLoading.innerHTML = `<p style="color:var(--neon-magenta);">⚠️ Canal offline.</p>`;
+        });
+        
+        mpegtsInstance.play().then(() => {
+            playerLoading.style.display = 'none';
+            mainVideo.playbackRate = 1.0;
+            startLiveDelayMonitor(mainVideo);
+        }).catch(() => {
+            playerLoading.style.display = 'none';
+        });
+    } catch(e) {
+        playerLoading.innerHTML = `<p style="color:var(--neon-magenta);">Erro: ${e.message}</p>`;
+    }
+}
+
+function startLiveDelayMonitor(video) {
+    if (liveCheckInterval) clearInterval(liveCheckInterval);
+    liveCheckInterval = setInterval(() => {
+        if (!video || video.paused || !isLiveStream) return;
+        const buffered = video.buffered;
+        if (buffered.length === 0) return;
+        const currentTime = video.currentTime;
+        const liveEdge = buffered.end(buffered.length - 1);
+        if (currentTime > liveEdge + 0.5) {
+            video.currentTime = liveEdge - 1;
+        }
+        if (video.playbackRate !== 1.0) {
+            video.playbackRate = 1.0;
+        }
+    }, 2000);
 }
 
 function stopMainPlayer() {
+    if (liveCheckInterval) { clearInterval(liveCheckInterval); liveCheckInterval = null; }
     if (hlsInstance) { try { hlsInstance.destroy(); } catch(e) {} hlsInstance = null; }
     if (mpegtsInstance) { try { mpegtsInstance.destroy(); } catch(e) {} mpegtsInstance = null; }
     mainVideo.pause();
@@ -2014,15 +1985,15 @@ function openFullscreen() {
     if (type === 'series' || type === 'movie') {
         fsLive.classList.remove('show');
         let folder = type === 'series' ? 'series' : 'movie';
-        let url = `${CONFIG.host}/${folder}/${CONFIG.username}/${CONFIG.password}/${currentPlayingItem.stream_id}.mp4`;
+        let url = `${SERVER}/${folder}/${USER}/${PASS}/${currentPlayingItem.stream_id}.mp4`;
         fsVideo.src = url;
         fsVideo.play().then(() => fsLoading.style.display = 'none').catch(() => {
-            fsVideo.src = `${CONFIG.host}/${folder}/${CONFIG.username}/${CONFIG.password}/${currentPlayingItem.stream_id}.mkv`;
+            fsVideo.src = `${SERVER}/${folder}/${USER}/${PASS}/${currentPlayingItem.stream_id}.mkv`;
             fsVideo.play().then(() => fsLoading.style.display = 'none').catch(() => fsLoading.style.display = 'none');
         });
     } else {
         fsLive.classList.add('show');
-        const tsUrl = `${CONFIG.host}/live/${CONFIG.username}/${CONFIG.password}/${currentPlayingItem.stream_id}.ts`;
+        const tsUrl = LIVE_TS_URL(currentPlayingItem.stream_id);
         
         if (typeof mpegts !== 'undefined' && mpegts.isSupported()) {
             try {
@@ -2055,7 +2026,7 @@ function openFullscreen() {
 
 function tryFsHLS(id) {
     if (hlsFsInstance) { hlsFsInstance.destroy(); hlsFsInstance = null; }
-    const urlM3U8 = `${CONFIG.host}/live/${CONFIG.username}/${CONFIG.password}/${id}.m3u8`;
+    const urlM3U8 = LIVE_M3U8_URL(id);
     
     if (Hls.isSupported()) {
         hlsFsInstance = new Hls({ enableWorker: true, lowLatencyMode: false, manifestLoadingTimeOut: 15000, manifestLoadingMaxRetry: 3 });
@@ -2079,7 +2050,7 @@ function closeFullscreen() {
     if (currentPlayingItem) playInRightPanel(currentPlayingItem, currentTab);
     
     setTimeout(() => {
-        const focused = document.querySelector('.list-item:focus') || document.querySelector('.list-item');
+        const focused = document.querySelector('.list-item.active') || document.querySelector('.list-item');
         if (focused) focused.focus();
     }, 100);
 }
@@ -2088,9 +2059,22 @@ function closeFullscreen() {
 // API
 // ==========================================
 async function apiRequest(actionParams) {
-    const url = `${CONFIG.host}/player_api.php?username=${CONFIG.username}&password=${CONFIG.password}&action=${actionParams}`;
-    const response = await fetch(url);
-    return await response.json();
+    const url = `${API}&action=${actionParams}`;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 20000);
+    
+    try {
+        const response = await fetch(url, { cache: 'no-store', signal: controller.signal });
+        clearTimeout(timeoutId);
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        const text = await response.text();
+        try { return JSON.parse(text); }
+        catch(e) { throw new Error('Resposta inválida'); }
+    } catch (e) {
+        clearTimeout(timeoutId);
+        if (e.name === 'AbortError') throw new Error('Tempo esgotado');
+        throw e;
+    }
 }
 
 // ==========================================
@@ -2098,40 +2082,89 @@ async function apiRequest(actionParams) {
 // ==========================================
 document.addEventListener('keydown', function(e) {
     if (!document.getElementById('warning-modal').classList.contains('hidden')) {
-        if (e.key === 'Enter' || e.key === 'Escape' || e.key === 'Backspace') { closeWarning(); e.preventDefault(); return; }
+        const focusables = Array.from(document.querySelectorAll('#warning-modal button, #warning-modal [tabindex="0"]'))
+            .filter(el => el.offsetParent !== null);
+        const currentIdx = focusables.indexOf(document.activeElement);
+        
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+            const nextIdx = currentIdx === -1 ? 0 : (currentIdx + 1) % focusables.length;
+            focusables[nextIdx]?.focus();
+            e.preventDefault(); return;
+        }
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+            const prevIdx = currentIdx === -1 ? 0 : (currentIdx - 1 + focusables.length) % focusables.length;
+            focusables[prevIdx]?.focus();
+            e.preventDefault(); return;
+        }
+        if (e.key === 'Enter' && document.activeElement) { document.activeElement.click(); e.preventDefault(); return; }
+        if (e.key === 'Escape' || e.key === 'Backspace') { closeWarning(); e.preventDefault(); return; }
         return;
     }
+    
     if (!document.getElementById('donation-modal').classList.contains('hidden')) {
+        const focusables = Array.from(document.querySelectorAll('#donation-modal button, #donation-modal [tabindex="0"]'))
+            .filter(el => el.offsetParent !== null);
+        const currentIdx = focusables.indexOf(document.activeElement);
+        
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+            const nextIdx = currentIdx === -1 ? 0 : (currentIdx + 1) % focusables.length;
+            focusables[nextIdx]?.focus();
+            e.preventDefault(); return;
+        }
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+            const prevIdx = currentIdx === -1 ? 0 : (currentIdx - 1 + focusables.length) % focusables.length;
+            focusables[prevIdx]?.focus();
+            e.preventDefault(); return;
+        }
+        if (e.key === 'Enter' && document.activeElement) { document.activeElement.click(); e.preventDefault(); return; }
         if (e.key === 'Escape' || e.key === 'Backspace') { closeDonation(); e.preventDefault(); return; }
         return;
     }
+    
     if (fsPlayer.classList.contains('active')) {
         if (e.key === 'Escape' || e.key === 'Backspace') { closeFullscreen(); e.preventDefault(); return; }
         return;
     }
+    
+    if (episodesModal.classList.contains('active')) {
+        if (e.key === 'Escape' || e.key === 'Backspace') { closeEpisodes(); e.preventDefault(); return; }
+    }
+    
     if (e.key === 'Escape' || e.key === 'Backspace') {
-        if (episodesModal.classList.contains('active')) { closeEpisodes(); e.preventDefault(); return; }
         if (currentView === 'content') { backToCategories(); e.preventDefault(); return; }
     }
+    
     if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
         const focusables = Array.from(document.querySelectorAll('button, [tabindex="0"]'))
             .filter(el => el.offsetParent !== null && !el.disabled);
         const currentIdx = focusables.indexOf(document.activeElement);
-        if (currentIdx === -1) return;
+        
+        if (currentIdx === -1) { focusables[0]?.focus(); e.preventDefault(); return; }
+        
         let nextIdx = currentIdx;
-        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') nextIdx = Math.min(currentIdx + 1, focusables.length - 1);
-        if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') nextIdx = Math.max(currentIdx - 1, 0);
+        if (e.key === 'ArrowRight') nextIdx = Math.min(currentIdx + 1, focusables.length - 1);
+        if (e.key === 'ArrowLeft') nextIdx = Math.max(currentIdx - 1, 0);
+        if (e.key === 'ArrowDown') nextIdx = Math.min(currentIdx + 1, focusables.length - 1);
+        if (e.key === 'ArrowUp') nextIdx = Math.max(currentIdx - 1, 0);
+        
         focusables[nextIdx]?.focus();
         e.preventDefault();
     }
-    if (e.key === 'Enter' && document.activeElement) { document.activeElement.click(); e.preventDefault(); }
+    
+    if (e.key === 'Enter' && document.activeElement) {
+        document.activeElement.click();
+        e.preventDefault();
+    }
 });
 
+// ==========================================
+// START
+// ==========================================
 window.onload = () => {
     setTimeout(() => {
         const okBtn = document.querySelector('.warning-ok-btn');
         if (okBtn) okBtn.focus();
-    }, 300);
+    }, 500);
 };
 </script>
 </body>

@@ -19,11 +19,8 @@
 <style>
 :root {
     --neon-cyan: #00e5ff;
-    --neon-cyan-glow: rgba(0, 229, 255, 0.6);
     --neon-magenta: #ff0080;
-    --neon-magenta-glow: rgba(255, 0, 128, 0.5);
     --neon-purple: #8b5cf6;
-    --neon-purple-glow: rgba(139, 92, 246, 0.5);
     --neon-green: #10b981;
     --text: #ffffff;
     --text-muted: #a0a0b8;
@@ -64,7 +61,6 @@ body {
     font-size: 14px;
 }
 
-/* Fundo decorativo */
 body::before {
     content: '';
     position: fixed;
@@ -77,7 +73,7 @@ body::before {
 }
 
 /* ============================================ */
-/* HEADER - FIXO NO TOPO                        */
+/* HEADER                                       */
 /* ============================================ */
 .top-menu {
     position: fixed;
@@ -129,7 +125,6 @@ body::before {
     border-radius: 6px;
     border: 2px solid transparent;
     margin-right: 4px;
-    letter-spacing: 0.3px;
 }
 .top-nav-item.active { 
     color: #fff; 
@@ -155,7 +150,7 @@ body::before {
 }
 
 /* ============================================ */
-/* MAIN LAYOUT - FIXO HORIZONTAL                */
+/* MAIN LAYOUT                                  */
 /* ============================================ */
 .main-layout {
     position: fixed;
@@ -658,7 +653,7 @@ body::before {
 }
 
 /* ============================================ */
-/* MODAL DE AVISO + DOAÇÃO                      */
+/* MODAIS                                       */
 /* ============================================ */
 #warning-modal, #donation-modal {
     position: fixed;
@@ -694,7 +689,6 @@ body::before {
 .warning-top-bar {
     height: 4px;
     background: linear-gradient(90deg, var(--neon-purple), var(--neon-cyan), var(--neon-magenta), var(--neon-cyan), var(--neon-purple));
-    background-size: 300% 100%;
     flex-shrink: 0;
 }
 
@@ -973,7 +967,7 @@ body::before {
 }
 
 /* ============================================ */
-/* LOADING INICIAL                              */
+/* LOADING                                      */
 /* ============================================ */
 #initial-loading {
     position: fixed;
@@ -1010,9 +1004,7 @@ body::before {
     color: var(--text-muted);
 }
 
-/* ============================================ */
-/* AJUSTES ESPECÍFICOS PARA TV BOX (>= 1280px) */
-/* ============================================ */
+/* TV BOX - TAMANHOS MAIORES */
 @media (min-width: 1280px) {
     .top-menu { height: 56px; }
     .main-layout { top: 56px; }
@@ -1029,7 +1021,6 @@ body::before {
     .footer-time { font-size: 13px; }
 }
 
-/* Esconde scrollbars em TV */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--neon-purple), var(--neon-cyan)); border-radius: 3px; }
@@ -1053,7 +1044,7 @@ body::before {
                 <i class="fa-solid fa-shield-halved"></i>
                 Aviso Importante
             </div>
-            <button class="warning-close" tabindex="0" onclick="closeWarning()">
+            <button class="warning-close" tabindex="0" data-action="closeWarning" aria-label="Fechar">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
@@ -1075,7 +1066,7 @@ body::before {
                 <div class="warning-point red"><i class="fa-solid fa-triangle-exclamation"></i><span>Venda = banimento</span></div>
                 <div class="warning-point"><i class="fa-solid fa-heart"></i><span>Preserve o projeto</span></div>
             </div>
-            <button class="warning-ok-btn" tabindex="0" onclick="closeWarning()">Entendi</button>
+            <button class="warning-ok-btn" tabindex="0" data-action="closeWarning">ENTENDI</button>
         </div>
     </div>
 </div>
@@ -1089,7 +1080,7 @@ body::before {
                 <i class="fa-solid fa-heart"></i>
                 Apoie o Projeto
             </div>
-            <button class="warning-close" tabindex="0" onclick="closeDonation()">
+            <button class="warning-close" tabindex="0" data-action="closeDonation" aria-label="Fechar">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
@@ -1108,18 +1099,18 @@ body::before {
                 </div>
                 <div class="pix-key-row">
                     <div class="pix-key" id="pixKey">1ea6ae84-f545-4dd3-8488-d6bcd1be7dd4</div>
-                    <button class="pix-copy-btn" id="pixCopyBtn" tabindex="0" onclick="copyPix()">
+                    <button class="pix-copy-btn" id="pixCopyBtn" tabindex="0" data-action="copyPix">
                         <i class="fa-solid fa-copy"></i>
                         <span id="pixBtnText">Copiar</span>
                     </button>
                 </div>
             </div>
             <div class="donation-divider">OU</div>
-            <a href="https://t.me/iptvfree277" target="_blank" rel="noopener noreferrer" class="telegram-btn" tabindex="0">
+            <a href="https://t.me/iptvfree277" target="_blank" rel="noopener noreferrer" class="telegram-btn" tabindex="0" data-action="openTelegram">
                 <i class="fa-brands fa-telegram"></i>
                 <span>Entrar na Comunidade</span>
             </a>
-            <button class="continue-btn" tabindex="0" onclick="closeDonation()">Continuar para o App</button>
+            <button class="continue-btn" tabindex="0" data-action="closeDonation">Continuar para o App</button>
         </div>
     </div>
 </div>
@@ -1131,9 +1122,9 @@ body::before {
         <span class="logo-highlight">IPTV FREE</span>
     </div>
     <div class="top-nav" id="topNav">
-        <div class="top-nav-item active" tabindex="0" data-tab="live" onclick="changeTab('live', this)">TV</div>
-        <div class="top-nav-item" tabindex="0" data-tab="movie" onclick="changeTab('movie', this)">FILMES</div>
-        <div class="top-nav-item" tabindex="0" data-tab="series" onclick="changeTab('series', this)">SÉRIES</div>
+        <div class="top-nav-item active" tabindex="0" data-tab="live">TV</div>
+        <div class="top-nav-item" tabindex="0" data-tab="movie">FILMES</div>
+        <div class="top-nav-item" tabindex="0" data-tab="series">SÉRIES</div>
     </div>
     <div class="top-time" id="topTime">--:--</div>
 </div>
@@ -1143,7 +1134,7 @@ body::before {
     <div class="left-panel">
         <div class="left-panel-title" id="leftPanelTitle">
             <span id="leftPanelTitleText">Lista de Canais</span>
-            <button class="back-btn-inline" id="backToCatsBtn" tabindex="0" onclick="backToCategories()" style="display:none;">
+            <button class="back-btn-inline" id="backToCatsBtn" tabindex="0" data-action="backToCategories" style="display:none;">
                 <i class="fa-solid fa-arrow-left"></i> Voltar
             </button>
         </div>
@@ -1163,7 +1154,7 @@ body::before {
             <div class="live-indicator" id="liveIndicator">
                 <span class="dot"></span> AO VIVO
             </div>
-            <button class="btn-fullscreen" tabindex="0" id="btnFullscreen" onclick="openFullscreen()" title="Tela Cheia">
+            <button class="btn-fullscreen" tabindex="0" id="btnFullscreen" data-action="openFullscreen" title="Tela Cheia">
                 <i class="fa-solid fa-expand"></i>
             </button>
         </div>
@@ -1182,7 +1173,7 @@ body::before {
         <div id="fs-loading"><i class="fa-solid fa-spinner fa-spin"></i></div>
         <div class="fs-live" id="fsLive"><span class="dot"></span> AO VIVO</div>
         <div class="fs-title" id="fsTitle">Carregando...</div>
-        <button class="fs-close" tabindex="0" onclick="closeFullscreen()"><i class="fa-solid fa-compress"></i></button>
+        <button class="fs-close" tabindex="0" data-action="closeFullscreen"><i class="fa-solid fa-compress"></i></button>
     </div>
     <div class="fs-footer">
         <div class="footer-name" id="fsFooterName">Canal</div>
@@ -1193,7 +1184,7 @@ body::before {
 <!-- MODAL DE EPISÓDIOS -->
 <div id="episodes-modal">
     <div class="episodes-header">
-        <div class="back-btn" tabindex="0" onclick="closeEpisodes()"><i class="fa-solid fa-arrow-left"></i></div>
+        <div class="back-btn" tabindex="0" data-action="closeEpisodes"><i class="fa-solid fa-arrow-left"></i></div>
         <div id="seriesTitle" style="font-size:13px; font-weight:bold;">Série</div>
     </div>
     <div class="season-selector" id="seasonSelector"></div>
@@ -1261,9 +1252,9 @@ setInterval(updateClock, 1000);
 updateClock();
 
 // ==========================================
-// MODAIS
+// FUNÇÕES DOS BOTÕES - REGISTRADAS GLOBALMENTE
 // ==========================================
-function closeWarning() {
+window.closeWarning = function() {
     document.getElementById('warning-modal').classList.add('hidden');
     setTimeout(() => {
         document.getElementById('donation-modal').classList.remove('hidden');
@@ -1272,17 +1263,17 @@ function closeWarning() {
             if (firstBtn) firstBtn.focus();
         }, 300);
     }, 100);
-}
+};
 
-function closeDonation() {
+window.closeDonation = function() {
     document.getElementById('donation-modal').classList.add('hidden');
     if (!appInitialized) {
         appInitialized = true;
         initApp();
     }
-}
+};
 
-function copyPix() {
+window.copyPix = function() {
     const btn = document.getElementById('pixCopyBtn');
     const btnText = document.getElementById('pixBtnText');
     
@@ -1300,18 +1291,147 @@ function copyPix() {
     } else {
         fallbackCopy(onSuccess);
     }
-}
+};
 
-function fallbackCopy(onSuccess) {
-    const ta = document.createElement('textarea');
-    ta.value = PIX_KEY;
-    ta.style.position = 'fixed';
-    ta.style.opacity = '0';
-    document.body.appendChild(ta);
-    ta.select();
-    try { document.execCommand('copy'); onSuccess(); } catch(e) {}
-    document.body.removeChild(ta);
-}
+window.openTelegram = function() {
+    window.open('https://t.me/iptvfree277', '_blank');
+};
+
+window.backToCategories = function() {
+    if (currentView === 'content') renderCategories();
+};
+
+window.openFullscreen = function() {
+    if (!currentPlayingItem) return;
+    stopMainPlayer();
+    
+    fsPlayer.classList.add('active');
+    fsTitle.innerText = currentPlayingItem.name;
+    fsFooterName.innerText = currentPlayingItem.name;
+    fsFooterTime.innerText = new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
+    fsLoading.style.display = 'block';
+    
+    let type = 'live';
+    if (currentTab === 'movie') type = 'movie';
+    else if (currentTab === 'series') type = 'series';
+    
+    if (hlsFsInstance) { try { hlsFsInstance.destroy(); } catch(e) {} hlsFsInstance = null; }
+    if (mpegtsFsInstance) { try { mpegtsFsInstance.destroy(); } catch(e) {} mpegtsFsInstance = null; }
+    fsVideo.pause();
+    fsVideo.removeAttribute('src');
+    fsVideo.load();
+    
+    if (type === 'series' || type === 'movie') {
+        fsLive.classList.remove('show');
+        let folder = type === 'series' ? 'series' : 'movie';
+        let url = `${SERVER}/${folder}/${USER}/${PASS}/${currentPlayingItem.stream_id}.mp4`;
+        fsVideo.src = url;
+        fsVideo.play().then(() => fsLoading.style.display = 'none').catch(() => {
+            fsVideo.src = `${SERVER}/${folder}/${USER}/${PASS}/${currentPlayingItem.stream_id}.mkv`;
+            fsVideo.play().then(() => fsLoading.style.display = 'none').catch(() => fsLoading.style.display = 'none');
+        });
+    } else {
+        fsLive.classList.add('show');
+        const tsUrl = LIVE_TS_URL(currentPlayingItem.stream_id);
+        
+        if (typeof mpegts !== 'undefined' && mpegts.isSupported()) {
+            try {
+                mpegtsFsInstance = mpegts.createPlayer({
+                    type: 'mpegts', isLive: true, url: tsUrl
+                }, {
+                    enableWorker: true, enableStashBuffer: false,
+                    stashInitialSize: 128, lazyLoad: false,
+                    liveBufferLatencyChasing: false,
+                    autoCleanupSourceBuffer: true,
+                    autoCleanupMaxBackwardDuration: 30,
+                    autoCleanupMinBackwardDuration: 15
+                });
+                mpegtsFsInstance.attachMediaElement(fsVideo);
+                mpegtsFsInstance.load();
+                mpegtsFsInstance.on(mpegts.Events.ERROR, () => {
+                    if (mpegtsFsInstance) { mpegtsFsInstance.destroy(); mpegtsFsInstance = null; }
+                    tryFsHLS(currentPlayingItem.stream_id);
+                });
+                mpegtsFsInstance.play().then(() => fsLoading.style.display = 'none').catch(() => fsLoading.style.display = 'none');
+            } catch(e) { tryFsHLS(currentPlayingItem.stream_id); }
+        } else { tryFsHLS(currentPlayingItem.stream_id); }
+    }
+    
+    setTimeout(() => {
+        const closeBtn = fsPlayer.querySelector('.fs-close');
+        if (closeBtn) closeBtn.focus();
+    }, 200);
+};
+
+window.closeFullscreen = function() {
+    fsPlayer.classList.remove('active');
+    if (hlsFsInstance) { try { hlsFsInstance.destroy(); } catch(e) {} hlsFsInstance = null; }
+    if (mpegtsFsInstance) { try { mpegtsFsInstance.destroy(); } catch(e) {} mpegtsFsInstance = null; }
+    fsVideo.pause();
+    fsVideo.removeAttribute('src');
+    fsVideo.load();
+    
+    if (currentPlayingItem) playInRightPanel(currentPlayingItem, currentTab);
+    
+    setTimeout(() => {
+        const focused = document.querySelector('.list-item.active') || document.querySelector('.list-item');
+        if (focused) focused.focus();
+    }, 100);
+};
+
+window.closeEpisodes = function() {
+    episodesModal.classList.remove('active');
+    setTimeout(() => {
+        const focused = document.querySelector('.list-item.active') || document.querySelector('.list-item');
+        if (focused) focused.focus();
+    }, 100);
+};
+
+window.changeTab = function(tab, element) {
+    currentTab = tab;
+    currentCategoryId = null;
+    currentView = 'categories';
+    document.querySelectorAll('.top-nav-item').forEach(el => el.classList.remove('active'));
+    if (element) element.classList.add('active');
+    
+    let action = '';
+    if (tab === 'live') action = 'get_live_categories';
+    else if (tab === 'movie') action = 'get_vod_categories';
+    else if (tab === 'series') action = 'get_series_categories';
+    
+    const titles = { live: 'Lista de Canais', movie: 'Lista de Filmes', series: 'Lista de Séries' };
+    leftPanelTitleText.innerText = titles[tab] || 'Lista';
+    backToCatsBtn.style.display = 'none';
+    listContainer.innerHTML = '<div style="text-align:center; padding:30px; color:rgba(255,255,255,0.5);">Carregando...</div>';
+    
+    return (async () => {
+        try {
+            const cats = await apiRequest(action);
+            if (cats && cats.length > 0) {
+                allCategories = cats;
+                renderCategories();
+            } else {
+                listContainer.innerHTML = '<div style="text-align:center; padding:30px; color:rgba(255,255,255,0.5);">Nenhuma categoria disponível.</div>';
+            }
+        } catch (e) {
+            console.error(e);
+            listContainer.innerHTML = '<div style="text-align:center; padding:30px; color:var(--neon-magenta);">Erro ao carregar.</div>';
+        }
+    })();
+};
+
+// ==========================================
+// DELEGAÇÃO DE EVENTOS - FUNCIONA COM CONTROLE
+// ==========================================
+document.addEventListener('click', function(e) {
+    const btn = e.target.closest('[data-action]');
+    if (btn) {
+        const action = btn.getAttribute('data-action');
+        if (window[action]) {
+            window[action]();
+        }
+    }
+});
 
 // ==========================================
 // INICIALIZAÇÃO
@@ -1341,40 +1461,20 @@ async function initApp() {
     }
 }
 
+function fallbackCopy(onSuccess) {
+    const ta = document.createElement('textarea');
+    ta.value = PIX_KEY;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); onSuccess(); } catch(e) {}
+    document.body.removeChild(ta);
+}
+
 // ==========================================
 // NAVEGAÇÃO
 // ==========================================
-async function changeTab(tab, element) {
-    currentTab = tab;
-    currentCategoryId = null;
-    currentView = 'categories';
-    document.querySelectorAll('.top-nav-item').forEach(el => el.classList.remove('active'));
-    if (element) element.classList.add('active');
-    
-    let action = '';
-    if (tab === 'live') action = 'get_live_categories';
-    else if (tab === 'movie') action = 'get_vod_categories';
-    else if (tab === 'series') action = 'get_series_categories';
-    
-    const titles = { live: 'Lista de Canais', movie: 'Lista de Filmes', series: 'Lista de Séries' };
-    leftPanelTitleText.innerText = titles[tab] || 'Lista';
-    backToCatsBtn.style.display = 'none';
-    listContainer.innerHTML = '<div style="text-align:center; padding:30px; color:rgba(255,255,255,0.5);">Carregando...</div>';
-    
-    try {
-        const cats = await apiRequest(action);
-        if (cats && cats.length > 0) {
-            allCategories = cats;
-            renderCategories();
-        } else {
-            listContainer.innerHTML = '<div style="text-align:center; padding:30px; color:rgba(255,255,255,0.5);">Nenhuma categoria disponível.</div>';
-        }
-    } catch (e) {
-        console.error(e);
-        listContainer.innerHTML = '<div style="text-align:center; padding:30px; color:var(--neon-magenta);">Erro ao carregar.</div>';
-    }
-}
-
 function renderCategories() {
     currentView = 'categories';
     listContainer.innerHTML = '';
@@ -1388,9 +1488,7 @@ function renderCategories() {
             <div class="item-num" style="text-align:center; min-width:30px;"><i class="fa-solid fa-folder" style="color:var(--neon-cyan); font-size:14px;"></i></div>
             <div class="item-name" style="font-weight:500;">${cat.category_name}</div>
         `;
-        const openFn = () => openCategory(cat.category_id, cat.category_name);
-        el.onclick = openFn;
-        el.onkeydown = (e) => { if (e.key === 'Enter') openFn(); };
+        el.onclick = () => openCategory(cat.category_id, cat.category_name);
         el.onfocus = () => el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         listContainer.appendChild(el);
     });
@@ -1447,15 +1545,12 @@ function renderContent() {
             <div class="item-name">${name}</div>
         `;
         
-        const playFn = () => {
+        el.onclick = () => {
             document.querySelectorAll('.list-item').forEach(el2 => el2.classList.remove('active'));
             el.classList.add('active');
             if (currentTab === 'series') openSeriesInfo(item.series_id, item.name);
             else playInRightPanel(item, currentTab);
         };
-        
-        el.onclick = playFn;
-        el.onkeydown = (e) => { if (e.key === 'Enter') playFn(); };
         
         el.onfocus = () => {
             el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -1468,10 +1563,6 @@ function renderContent() {
         const first = listContainer.querySelector('.list-item');
         if (first) first.focus();
     }, 100);
-}
-
-function backToCategories() {
-    if (currentView === 'content') renderCategories();
 }
 
 // ==========================================
@@ -1506,9 +1597,7 @@ function renderSeasons(seasons) {
         btn.className = 'season-btn';
         btn.innerText = `Temporada ${seasonNum}`;
         btn.tabIndex = 0;
-        const selFn = () => selectSeason(seasonNum);
-        btn.onclick = selFn;
-        btn.onkeydown = (e) => { if (e.key === 'Enter') selFn(); };
+        btn.onclick = () => selectSeason(seasonNum);
         seasonSelector.appendChild(btn);
     });
 }
@@ -1532,7 +1621,7 @@ function selectSeason(seasonNum) {
             <div class="episode-num">EP ${ep.episode_num}</div>
             <div class="episode-title">${ep.title}</div>
         `;
-        const playFn = () => {
+        item.onclick = () => {
             closeEpisodes();
             playInRightPanel({
                 stream_id: ep.id,
@@ -1540,8 +1629,6 @@ function selectSeason(seasonNum) {
                 stream_icon: seriesDataCache.info?.cover || ''
             }, 'series');
         };
-        item.onclick = playFn;
-        item.onkeydown = (e) => { if (e.key === 'Enter') playFn(); };
         item.onfocus = () => item.scrollIntoView({ behavior: 'smooth', block: 'center' });
         episodeList.appendChild(item);
     });
@@ -1549,14 +1636,6 @@ function selectSeason(seasonNum) {
     setTimeout(() => {
         const first = episodeList.querySelector('.episode-item');
         if (first) first.focus();
-    }, 100);
-}
-
-function closeEpisodes() { 
-    episodesModal.classList.remove('active');
-    setTimeout(() => {
-        const focused = document.querySelector('.list-item.active') || document.querySelector('.list-item');
-        if (focused) focused.focus();
     }, 100);
 }
 
@@ -1709,71 +1788,6 @@ function stopMainPlayer() {
     mainVideo.load();
 }
 
-// ==========================================
-// TELA CHEIA
-// ==========================================
-function openFullscreen() {
-    if (!currentPlayingItem) return;
-    stopMainPlayer();
-    
-    fsPlayer.classList.add('active');
-    fsTitle.innerText = currentPlayingItem.name;
-    fsFooterName.innerText = currentPlayingItem.name;
-    fsFooterTime.innerText = new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
-    fsLoading.style.display = 'block';
-    
-    let type = 'live';
-    if (currentTab === 'movie') type = 'movie';
-    else if (currentTab === 'series') type = 'series';
-    
-    if (hlsFsInstance) { try { hlsFsInstance.destroy(); } catch(e) {} hlsFsInstance = null; }
-    if (mpegtsFsInstance) { try { mpegtsFsInstance.destroy(); } catch(e) {} mpegtsFsInstance = null; }
-    fsVideo.pause();
-    fsVideo.removeAttribute('src');
-    fsVideo.load();
-    
-    if (type === 'series' || type === 'movie') {
-        fsLive.classList.remove('show');
-        let folder = type === 'series' ? 'series' : 'movie';
-        let url = `${SERVER}/${folder}/${USER}/${PASS}/${currentPlayingItem.stream_id}.mp4`;
-        fsVideo.src = url;
-        fsVideo.play().then(() => fsLoading.style.display = 'none').catch(() => {
-            fsVideo.src = `${SERVER}/${folder}/${USER}/${PASS}/${currentPlayingItem.stream_id}.mkv`;
-            fsVideo.play().then(() => fsLoading.style.display = 'none').catch(() => fsLoading.style.display = 'none');
-        });
-    } else {
-        fsLive.classList.add('show');
-        const tsUrl = LIVE_TS_URL(currentPlayingItem.stream_id);
-        
-        if (typeof mpegts !== 'undefined' && mpegts.isSupported()) {
-            try {
-                mpegtsFsInstance = mpegts.createPlayer({
-                    type: 'mpegts', isLive: true, url: tsUrl
-                }, {
-                    enableWorker: true, enableStashBuffer: false,
-                    stashInitialSize: 128, lazyLoad: false,
-                    liveBufferLatencyChasing: false,
-                    autoCleanupSourceBuffer: true,
-                    autoCleanupMaxBackwardDuration: 30,
-                    autoCleanupMinBackwardDuration: 15
-                });
-                mpegtsFsInstance.attachMediaElement(fsVideo);
-                mpegtsFsInstance.load();
-                mpegtsFsInstance.on(mpegts.Events.ERROR, () => {
-                    if (mpegtsFsInstance) { mpegtsFsInstance.destroy(); mpegtsFsInstance = null; }
-                    tryFsHLS(currentPlayingItem.stream_id);
-                });
-                mpegtsFsInstance.play().then(() => fsLoading.style.display = 'none').catch(() => fsLoading.style.display = 'none');
-            } catch(e) { tryFsHLS(currentPlayingItem.stream_id); }
-        } else { tryFsHLS(currentPlayingItem.stream_id); }
-    }
-    
-    setTimeout(() => {
-        const closeBtn = fsPlayer.querySelector('.fs-close');
-        if (closeBtn) closeBtn.focus();
-    }, 200);
-}
-
 function tryFsHLS(id) {
     if (hlsFsInstance) { hlsFsInstance.destroy(); hlsFsInstance = null; }
     const urlM3U8 = LIVE_M3U8_URL(id);
@@ -1787,22 +1801,6 @@ function tryFsHLS(id) {
         fsVideo.src = urlM3U8;
         fsVideo.addEventListener('loadedmetadata', () => { fsLoading.style.display = 'none'; fsVideo.play(); });
     }
-}
-
-function closeFullscreen() {
-    fsPlayer.classList.remove('active');
-    if (hlsFsInstance) { try { hlsFsInstance.destroy(); } catch(e) {} hlsFsInstance = null; }
-    if (mpegtsFsInstance) { try { mpegtsFsInstance.destroy(); } catch(e) {} mpegtsFsInstance = null; }
-    fsVideo.pause();
-    fsVideo.removeAttribute('src');
-    fsVideo.load();
-    
-    if (currentPlayingItem) playInRightPanel(currentPlayingItem, currentTab);
-    
-    setTimeout(() => {
-        const focused = document.querySelector('.list-item.active') || document.querySelector('.list-item');
-        if (focused) focused.focus();
-    }, 100);
 }
 
 // ==========================================
@@ -1828,9 +1826,47 @@ async function apiRequest(actionParams) {
 }
 
 // ==========================================
+// DISPARO UNIFICADO DE AÇÃO
+// ==========================================
+function triggerAction(element) {
+    if (!element) return false;
+    
+    // 1. Verifica data-action
+    const action = element.getAttribute('data-action');
+    if (action && typeof window[action] === 'function') {
+        window[action]();
+        return true;
+    }
+    
+    // 2. Verifica onclick inline
+    if (element.onclick) {
+        try {
+            element.onclick(new MouseEvent('click', { bubbles: true, cancelable: true }));
+            return true;
+        } catch(e) {
+            console.error('Erro no onclick:', e);
+        }
+    }
+    
+    // 3. Dispatch event
+    try {
+        element.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+        return true;
+    } catch(e) {
+        console.error('Erro no dispatch:', e);
+    }
+    
+    return false;
+}
+
+// ==========================================
 // CONTROLE REMOTO
 // ==========================================
 document.addEventListener('keydown', function(e) {
+    const isEnter = (e.key === 'Enter' || e.key === 'OK' || e.keyCode === 13 || e.keyCode === 23);
+    const isBack = (e.key === 'Escape' || e.key === 'Backspace' || e.key === 'GoBack' || e.keyCode === 27 || e.keyCode === 8 || e.keyCode === 461);
+    const isArrow = ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(e.key);
+    
     // Modal de aviso
     if (!document.getElementById('warning-modal').classList.contains('hidden')) {
         const focusables = Array.from(document.querySelectorAll('#warning-modal button, #warning-modal [tabindex="0"]'))
@@ -1847,14 +1883,17 @@ document.addEventListener('keydown', function(e) {
             focusables[prevIdx]?.focus();
             e.preventDefault(); return;
         }
-        if (e.key === 'Enter' && document.activeElement) { document.activeElement.click(); e.preventDefault(); return; }
-        if (e.key === 'Escape' || e.key === 'Backspace') { closeWarning(); e.preventDefault(); return; }
+        if (isEnter && document.activeElement) {
+            triggerAction(document.activeElement);
+            e.preventDefault(); return;
+        }
+        if (isBack) { window.closeWarning(); e.preventDefault(); return; }
         return;
     }
     
     // Modal de doação
     if (!document.getElementById('donation-modal').classList.contains('hidden')) {
-        const focusables = Array.from(document.querySelectorAll('#donation-modal button, #donation-modal [tabindex="0"]'))
+        const focusables = Array.from(document.querySelectorAll('#donation-modal button, #donation-modal [tabindex="0"], #donation-modal a'))
             .filter(el => el.offsetParent !== null);
         const currentIdx = focusables.indexOf(document.activeElement);
         
@@ -1868,29 +1907,32 @@ document.addEventListener('keydown', function(e) {
             focusables[prevIdx]?.focus();
             e.preventDefault(); return;
         }
-        if (e.key === 'Enter' && document.activeElement) { document.activeElement.click(); e.preventDefault(); return; }
-        if (e.key === 'Escape' || e.key === 'Backspace') { closeDonation(); e.preventDefault(); return; }
+        if (isEnter && document.activeElement) {
+            triggerAction(document.activeElement);
+            e.preventDefault(); return;
+        }
+        if (isBack) { window.closeDonation(); e.preventDefault(); return; }
         return;
     }
     
     // Tela cheia
     if (fsPlayer.classList.contains('active')) {
-        if (e.key === 'Escape' || e.key === 'Backspace') { closeFullscreen(); e.preventDefault(); return; }
+        if (isBack) { window.closeFullscreen(); e.preventDefault(); return; }
         return;
     }
     
     // Modal de episódios
     if (episodesModal.classList.contains('active')) {
-        if (e.key === 'Escape' || e.key === 'Backspace') { closeEpisodes(); e.preventDefault(); return; }
+        if (isBack) { window.closeEpisodes(); e.preventDefault(); return; }
     }
     
     // Voltar
-    if (e.key === 'Escape' || e.key === 'Backspace') {
-        if (currentView === 'content') { backToCategories(); e.preventDefault(); return; }
+    if (isBack) {
+        if (currentView === 'content') { window.backToCategories(); e.preventDefault(); return; }
     }
     
     // Navegação por setas
-    if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
+    if (isArrow) {
         const focusables = Array.from(document.querySelectorAll('button, [tabindex="0"]'))
             .filter(el => el.offsetParent !== null && !el.disabled);
         const currentIdx = focusables.indexOf(document.activeElement);
@@ -1907,14 +1949,14 @@ document.addEventListener('keydown', function(e) {
         e.preventDefault();
     }
     
-    // Enter
-    if (e.key === 'Enter' && document.activeElement) {
-        document.activeElement.click();
+    // Enter - dispara ação do elemento focado
+    if (isEnter && document.activeElement) {
+        triggerAction(document.activeElement);
         e.preventDefault();
     }
 });
 
-// Força orientação landscape em TV Box
+// Força orientação landscape
 function forceLandscape() {
     if (screen.orientation && screen.orientation.lock) {
         screen.orientation.lock('landscape').catch(() => {});
@@ -1925,7 +1967,6 @@ function forceLandscape() {
 window.onload = () => {
     forceLandscape();
     
-    // Detecta TV Box e ajusta zoom
     const isTV = /TV|Android TV|SmartTV|Box|FireTV/i.test(navigator.userAgent) || 
                  (window.innerWidth >= 1280 && window.innerHeight >= 720);
     

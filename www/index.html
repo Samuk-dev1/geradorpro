@@ -284,21 +284,15 @@ body {
     overflow: hidden;
 }
 
-/* VÍDEO - OTIMIZADO PARA TV BOX */
 #shared-video {
     position: absolute;
     top: 0; left: 0;
     width: 100%;
     height: 100%;
-    /* object-fit: contain para manter proporção */
     object-fit: contain;
     background: #000;
-    /* Aceleração por hardware */
     transform: translateZ(0);
     backface-visibility: hidden;
-    /* Remove qualquer filtro */
-    filter: none;
-    image-rendering: auto;
 }
 
 .player-placeholder {
@@ -1087,7 +1081,6 @@ body {
     <div id="initial-loading-sub">Aguarde, carregando sua lista e EPG</div>
 </div>
 
-<!-- MODAL 1: AVISO -->
 <div id="warning-modal">
     <div class="warning-box">
         <div class="warning-top-bar"></div>
@@ -1123,7 +1116,6 @@ body {
     </div>
 </div>
 
-<!-- MODAL 2: DOAÇÃO -->
 <div id="donation-modal" class="hidden">
     <div class="donation-box">
         <div class="warning-top-bar"></div>
@@ -1167,7 +1159,6 @@ body {
     </div>
 </div>
 
-<!-- MENU SUPERIOR -->
 <div class="top-menu">
     <div class="top-logo">
         <i class="fa-solid fa-tv icon-tv"></i>
@@ -1181,7 +1172,6 @@ body {
     <div class="top-time" id="topTime">--:--</div>
 </div>
 
-<!-- LAYOUT PRINCIPAL -->
 <div class="main-layout">
     <div class="left-panel">
         <div class="left-panel-title">
@@ -1224,7 +1214,6 @@ body {
     </div>
 </div>
 
-<!-- TELA CHEIA -->
 <div id="fullscreen-player">
     <div class="fs-video-wrap" id="fsVideoWrap">
         <div id="fs-loading"><i class="fa-solid fa-spinner fa-spin"></i></div>
@@ -1241,7 +1230,6 @@ body {
     </div>
 </div>
 
-<!-- PAINEL LATERAL DE CANAIS -->
 <div id="fs-channels-panel">
     <div class="fs-panel-header">
         <span class="fs-panel-title"><i class="fa-solid fa-list"></i> TROCAR CANAL</span>
@@ -1253,7 +1241,6 @@ body {
     <div class="fs-panel-list" id="fsPanelList"></div>
 </div>
 
-<!-- MODAL DE EPISÓDIOS -->
 <div id="episodes-modal">
     <div class="episodes-header">
         <div class="back-btn" id="btnCloseEpisodes" data-tv="btn"><i class="fa-solid fa-arrow-left"></i></div>
@@ -1276,33 +1263,6 @@ const XMLTV_URL     = `${SERVER}/xmltv.php?username=${USER}&password=${PASS}`;
 const LIVE_M3U8_URL = id => `${SERVER}/live/${USER}/${PASS}/${id}.m3u8`;
 const LIVE_TS_URL   = id => `${SERVER}/live/${USER}/${PASS}/${id}.ts`;
 const PIX_KEY = '1ea6ae84-f545-4dd3-8488-d6bcd1be7dd4';
-
-// ==========================================
-// DETECÇÃO DE RESOLUÇÃO E OTIMIZAÇÃO
-// ==========================================
-const screenW = window.screen.width || window.innerWidth;
-const screenH = window.screen.height || window.innerHeight;
-const screenPixels = screenW * screenH;
-
-// Limita resolução do vídeo baseado no tamanho da tela
-// TV Box fraca: 1080p ou menos
-// TV Android moderna: 1080p
-// Telas pequenas: resolução nativa
-function getOptimalVideoSize() {
-    if (screenPixels > 1920 * 1080) {
-        // 4K+ → limita a 1080p
-        return { w: 1920, h: 1080 };
-    } else if (screenPixels > 1280 * 720) {
-        // 1080p-1440p → limita a 1080p
-        return { w: 1920, h: 1080 };
-    } else {
-        // 720p e menores → usa nativo
-        return { w: 1280, h: 720 };
-    }
-}
-
-const OPTIMAL = getOptimalVideoSize();
-console.log('[OTIMIZAÇÃO] Tela detectada:', screenW + 'x' + screenH, '→ Vídeo:', OPTIMAL.w + 'x' + OPTIMAL.h);
 
 // ==========================================
 // EPG
@@ -1408,7 +1368,6 @@ let mpegtsInstance = null;
 let isLiveStream = false;
 let appInitialized = false;
 let epgUpdateInterval = null;
-let bufferCleanupInterval = null;
 
 let fsPanelCategoryId = null;
 let fsPanelItems = [];
@@ -1506,7 +1465,6 @@ function hideFsControls() {
     }
 }
 
-// Relógio
 setInterval(() => {
     const now = new Date();
     document.getElementById('topTime').innerText = 
@@ -1521,49 +1479,21 @@ setInterval(() => {
 })();
 
 // ==========================================
-// PLAYER ÚNICO OTIMIZADO
+// PLAYER ÚNICO - OTIMIZADO PARA FLUIDEZ
 // ==========================================
 const sharedVideo = document.getElementById('shared-video');
 
-// APLICA LIMITAÇÃO DE RESOLUÇÃO
-function applyVideoConstraints() {
-    // Não define width/height fixos - deixa o CSS controlar
-    // Mas garante que o vídeo não decodifique mais do que precisa
-    sharedVideo.setAttribute('playsinline', '');
-    sharedVideo.setAttribute('webkit-playsinline', '');
-    sharedVideo.setAttribute('preload', 'none');
-    sharedVideo.setAttribute('disablePictureInPicture', '');
-    sharedVideo.setAttribute('controlslist', 'nodownload noplaybackrate');
-    sharedVideo.style.width = '100%';
-    sharedVideo.style.height = '100%';
-    sharedVideo.style.objectFit = 'contain';
-    sharedVideo.style.background = '#000';
-}
-applyVideoConstraints();
+// Atributos
+sharedVideo.setAttribute('playsinline', '');
+sharedVideo.setAttribute('webkit-playsinline', '');
+sharedVideo.setAttribute('preload', 'none');
+sharedVideo.setAttribute('disablePictureInPicture', '');
+sharedVideo.setAttribute('controlslist', 'nodownload noplaybackrate');
 
 function attachVideoTo(container) {
     if (sharedVideo.parentElement !== container) {
         container.appendChild(sharedVideo);
     }
-}
-
-// LIMPEZA PERIÓDICA DE BUFFER (evita travamento em TV Box fraca)
-function startBufferCleanup() {
-    if (bufferCleanupInterval) clearInterval(bufferCleanupInterval);
-    bufferCleanupInterval = setInterval(() => {
-        if (!sharedVideo || sharedVideo.paused) return;
-        try {
-            const buffered = sharedVideo.buffered;
-            if (buffered.length > 0) {
-                const currentTime = sharedVideo.currentTime;
-                const liveEdge = buffered.end(buffered.length - 1);
-                // Se atrasou mais de 5s, pula pro ao vivo
-                if (liveEdge - currentTime > 5) {
-                    sharedVideo.currentTime = liveEdge - 1;
-                }
-            }
-        } catch(e) {}
-    }, 5000);
 }
 
 function stopPlayer() {
@@ -1576,6 +1506,7 @@ function stopPlayer() {
     } catch(e) {}
 }
 
+// FILMES E SÉRIES - MP4 DIRETO
 function playMp4(item, type) {
     stopPlayer();
     isLiveStream = false;
@@ -1594,6 +1525,7 @@ function playMp4(item, type) {
     });
 }
 
+// CANAIS AO VIVO - TS COM BUFFER GRANDE (30s de delay)
 function playTs(tsUrl, streamId) {
     if (typeof mpegts === 'undefined' || !mpegts.isSupported()) {
         playHls(streamId);
@@ -1605,17 +1537,16 @@ function playTs(tsUrl, streamId) {
             isLive: true,
             url: tsUrl
         }, {
-            // CONFIGURAÇÕES ULTRA LEVES PARA TV BOX FRACA
+            // BUFFER GRANDE - PRIORIZA FLUIDEZ SOBRE TEMPO REAL
             enableWorker: true,
-            enableStashBuffer: false,       // SEM stash (economiza RAM)
-            stashInitialSize: 32,            // Stash mínimo
+            enableStashBuffer: true,          // ATIVADO - acumula buffer
+            stashInitialSize: 2048,            // 2MB inicial (era 64 bytes)
             lazyLoad: false,
-            liveBufferLatencyChasing: true,  // Persegue o ao vivo
-            liveBufferLatencyMaxLatency: 3,  // Máx 3s atrás
-            liveBufferLatencyMinRemain: 0.5,
-            autoCleanupSourceBuffer: true,   // Limpa buffer antigo
-            autoCleanupMaxBackwardDuration: 8,  // 8s máximo pra trás
-            autoCleanupMinBackwardDuration: 4,   // Limpa abaixo de 4s
+            liveBufferLatencyChasing: false,   // DESLIGADO - não persegue o ao vivo
+            liveBufferLatencyChasingOnPaused: false,
+            autoCleanupSourceBuffer: false,    // DESLIGADO - não limpa buffer
+            autoCleanupMaxBackwardDuration: 60, // 60s máximo
+            autoCleanupMinBackwardDuration: 30, // 30s mínimo
             reuseRedirectedURL: true
         });
         mpegtsInstance.attachMediaElement(sharedVideo);
@@ -1627,11 +1558,9 @@ function playTs(tsUrl, streamId) {
         mpegtsInstance.play().then(() => {
             document.getElementById('player-loading').style.display = 'none';
             document.getElementById('fs-loading').style.display = 'none';
-            startBufferCleanup();
         }).catch(() => {
             document.getElementById('player-loading').style.display = 'none';
             document.getElementById('fs-loading').style.display = 'none';
-            startBufferCleanup();
         });
     } catch(e) {
         playHls(streamId);
@@ -1645,22 +1574,23 @@ function playHls(streamId) {
     }
     const m3u8Url = LIVE_M3U8_URL(streamId);
     hlsInstance = new Hls({
+        // BUFFER GRANDE - PRIORIZA FLUIDEZ
         enableWorker: true,
         lowLatencyMode: false,
-        liveSyncDurationCount: 2,           // Buffer mínimo
-        liveMaxLatencyDurationCount: 4,
+        liveSyncDurationCount: 10,           // 10 segmentos de buffer
+        liveMaxLatencyDurationCount: 30,     // até 30 segmentos
         liveDurationInfinity: true,
-        maxLiveSyncPlaybackRate: 1.5,        // Persegue o ao vivo
-        backBufferLength: 6,                  // 6s atrás
-        maxBufferLength: 6,                   // 6s à frente
-        maxMaxBufferLength: 12,               // Máx 12s
-        maxBufferSize: 12 * 1000 * 1000,      // 12MB
-        manifestLoadingTimeOut: 6000,
-        manifestLoadingMaxRetry: 1,
-        levelLoadingTimeOut: 6000,
-        levelLoadingMaxRetry: 1,
-        fragLoadingTimeOut: 10000,
-        fragLoadingMaxRetry: 2,
+        maxLiveSyncPlaybackRate: 1.0,        // NÃO acelera
+        backBufferLength: 30,                 // 30s de buffer atrás
+        maxBufferLength: 30,                  // 30s de buffer à frente
+        maxMaxBufferLength: 60,               // até 60s
+        maxBufferSize: 60 * 1000 * 1000,      // 60MB
+        manifestLoadingTimeOut: 20000,        // 20s para carregar manifest
+        manifestLoadingMaxRetry: 3,
+        levelLoadingTimeOut: 20000,
+        levelLoadingMaxRetry: 3,
+        fragLoadingTimeOut: 30000,            // 30s para carregar fragmento
+        fragLoadingMaxRetry: 6,               // 6 tentativas
         startLevel: -1
     });
     hlsInstance.loadSource(m3u8Url);
@@ -1669,7 +1599,6 @@ function playHls(streamId) {
         document.getElementById('player-loading').style.display = 'none';
         document.getElementById('fs-loading').style.display = 'none';
         sharedVideo.play().catch(()=>{});
-        startBufferCleanup();
     });
     hlsInstance.on(Hls.Events.ERROR, (event, data) => {
         if (data.fatal) {
@@ -1764,7 +1693,6 @@ function openFullscreen() {
     if (!currentPlayingItem) return;
     isFullscreen = true;
     document.getElementById('fullscreen-player').classList.add('active');
-    
     attachVideoTo(document.getElementById('fsVideoWrap'));
     
     document.getElementById('fsTitle').innerText = currentPlayingItem.name;
@@ -1779,11 +1707,8 @@ function closeFullscreen() {
     isFullscreen = false;
     document.getElementById('fullscreen-player').classList.remove('active');
     document.getElementById('fs-channels-panel').classList.remove('active');
-    
     if (fsHideTimer) { clearTimeout(fsHideTimer); fsHideTimer = null; }
-    
     attachVideoTo(document.getElementById('playerWrapper'));
-    
     setTimeout(() => {
         const active = document.querySelector('.list-item.active') || document.querySelector('.list-item');
         if (active) setFocus(active);

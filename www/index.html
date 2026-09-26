@@ -15,7 +15,6 @@
 :root {
     --neon-cyan: #00e5ff;
     --neon-magenta: #ff0080;
-    --neon-purple: #8b5cf6;
     --focus: #ffdd00;
 }
 
@@ -43,7 +42,6 @@ body {
     color: #fff;
     user-select: none;
     font-size: 14px;
-    -webkit-font-smoothing: none;
 }
 
 .tv-focused {
@@ -174,7 +172,6 @@ body {
 .list-container {
     flex: 1;
     overflow-y: auto;
-    overflow-x: hidden;
 }
 .list-container::-webkit-scrollbar { width: 5px; }
 .list-container::-webkit-scrollbar-thumb { background: #8b5cf6; }
@@ -189,7 +186,6 @@ body {
     border-bottom: 1px solid #1a1230;
     background: #0f0a1a;
     min-height: 52px;
-    contain: layout style;
 }
 .list-item.active {
     background: #1a2d4e;
@@ -248,24 +244,9 @@ body {
     font-size: 10px;
     margin-left: 4px;
 }
-.item-epg .epg-progress {
-    display: inline-block;
-    width: 40px;
-    height: 3px;
-    background: #2a1d4e;
-    border-radius: 2px;
-    margin-left: 6px;
-    vertical-align: middle;
-    overflow: hidden;
-}
-.item-epg .epg-progress-fill {
-    height: 100%;
-    background: #00e5ff;
-    border-radius: 2px;
-}
 
 /* ============================================ */
-/* PLAYER ÚNICO                                 */
+/* PLAYER                                       */
 /* ============================================ */
 .right-panel {
     flex: 1;
@@ -293,6 +274,8 @@ body {
     background: #000;
     transform: translateZ(0);
     backface-visibility: hidden;
+    /* FORÇA DECODIFICAÇÃO EM RESOLUÇÃO MENOR */
+    image-rendering: auto;
 }
 
 .player-placeholder {
@@ -342,6 +325,21 @@ body {
     z-index: 40;
 }
 
+/* INDICADOR DE QUALIDADE */
+.quality-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: #0f2a1e;
+    color: #10b981;
+    padding: 4px 10px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 800;
+    z-index: 40;
+    border: 1px solid #10b981;
+}
+
 .live-indicator {
     position: absolute;
     top: 12px; left: 12px;
@@ -361,6 +359,36 @@ body {
     width: 7px; height: 7px;
     background: #fff;
     border-radius: 50%;
+}
+
+.player-warning {
+    position: absolute;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1a0d2e;
+    color: #fff;
+    border: 2px solid #ff0080;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    z-index: 100;
+    display: none;
+    text-align: center;
+    max-width: 90%;
+}
+.player-warning.show { display: block; }
+.player-warning button {
+    background: #ff0080;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 800;
+    cursor: pointer;
+    margin-left: 12px;
+    font-size: 12px;
 }
 
 .player-footer {
@@ -528,7 +556,7 @@ body {
 }
 
 /* ============================================ */
-/* PAINEL LATERAL DE CANAIS                     */
+/* PAINEL DE CANAIS                             */
 /* ============================================ */
 #fs-channels-panel {
     position: fixed;
@@ -606,7 +634,6 @@ body {
 .fs-panel-list {
     flex: 1;
     overflow-y: auto;
-    padding: 0;
 }
 .fs-panel-list::-webkit-scrollbar { width: 5px; }
 .fs-panel-list::-webkit-scrollbar-thumb { background: #8b5cf6; }
@@ -659,37 +686,6 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
     font-weight: 700;
-}
-.fs-panel-item .item-epg {
-    font-size: 10px;
-    color: #8b8ba0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-.fs-panel-item .item-epg .epg-now-title { color: #00e5ff; }
-
-.fs-panel-item.tv-focused {
-    background: var(--focus) !important;
-    border-left-color: #fff !important;
-}
-.fs-panel-item.tv-focused .item-num,
-.fs-panel-item.tv-focused .item-name,
-.fs-panel-item.tv-focused .item-epg,
-.fs-panel-item.tv-focused .item-epg * {
-    color: #000 !important;
-}
-
-.fs-panel-cat.tv-focused {
-    background: var(--focus) !important;
-    color: #000 !important;
-    border-color: #fff !important;
-}
-
-.fs-panel-close.tv-focused {
-    background: var(--focus) !important;
-    color: #000 !important;
-    border-color: #fff !important;
 }
 
 /* ============================================ */
@@ -1021,7 +1017,6 @@ body {
     align-items: center;
     padding: 12px 15px;
     gap: 12px;
-    contain: strict;
     height: 50px;
 }
 .episode-num {
@@ -1078,7 +1073,7 @@ body {
 <div id="initial-loading">
     <div class="spinner-big"></div>
     <div id="initial-loading-text">🔌 Conectando ao servidor...</div>
-    <div id="initial-loading-sub">Aguarde, carregando sua lista e EPG</div>
+    <div id="initial-loading-sub">Aguarde, carregando sua lista</div>
 </div>
 
 <div id="warning-modal">
@@ -1134,7 +1129,7 @@ body {
             </div>
             <h2 class="donation-title">Ajude o Projeto</h2>
             <p class="donation-text">
-                Este app é mantido de forma <strong>100% gratuita</strong> graças a pessoas como você. Se puder, faça uma doação via PIX!
+                Este app é mantido de forma <strong>100% gratuita</strong>. Se puder, faça uma doação via PIX!
             </p>
             <div class="pix-box">
                 <div class="pix-label">
@@ -1199,8 +1194,14 @@ body {
                    disablePictureInPicture
                    controlslist="nodownload noplaybackrate"></video>
             <div id="player-loading"><i class="fa-solid fa-spinner fa-spin"></i></div>
+            <div class="quality-badge" id="qualityBadge">SD</div>
             <div class="live-indicator" id="liveIndicator">
                 <span class="dot"></span> AO VIVO
+            </div>
+            <div class="player-warning" id="playerWarning">
+                ⚠️ Travando? Tente trocar o player
+                <button onclick="forceHls()">HLS</button>
+                <button onclick="forceTs()">TS</button>
             </div>
             <button class="btn-fullscreen" id="btnFullscreen" data-tv="btn" title="Tela Cheia">
                 <i class="fa-solid fa-expand"></i>
@@ -1265,6 +1266,25 @@ const LIVE_TS_URL   = id => `${SERVER}/live/${USER}/${PASS}/${id}.ts`;
 const PIX_KEY = '1ea6ae84-f545-4dd3-8488-d6bcd1be7dd4';
 
 // ==========================================
+// CONFIGURAÇÃO DE QUALIDADE MÁXIMA
+// ==========================================
+// Forçar resolução máxima de 720p
+const MAX_WIDTH = 1280;
+const MAX_HEIGHT = 720;
+const MAX_PIXELS = MAX_WIDTH * MAX_HEIGHT;
+
+// Detecta resolução da tela
+const screenW = window.screen.width || window.innerWidth;
+const screenH = window.screen.height || window.innerHeight;
+const screenPixels = screenW * screenH;
+const isTVBox = /TV|Android TV|SmartTV|Box|FireTV|MXQ/i.test(navigator.userAgent) ||
+                (screenW >= 1280 && screenH >= 720);
+
+console.log('[CONFIG] Tela:', screenW + 'x' + screenH);
+console.log('[CONFIG] TV Box:', isTVBox);
+console.log('[CONFIG] Qualidade máxima:', MAX_WIDTH + 'x' + MAX_HEIGHT);
+
+// ==========================================
 // EPG
 // ==========================================
 let epgData = {};
@@ -1300,7 +1320,6 @@ async function loadEpg() {
         if (!text.includes('<tv') && !text.includes('<channel')) throw new Error('XML inválido');
         const xml = new DOMParser().parseFromString(text, 'text/xml');
         const programmes = xml.querySelectorAll('programme');
-        if (programmes.length === 0) throw new Error('Sem programas');
         programmes.forEach(prog => {
             const chId = prog.getAttribute('channel');
             if (!chId) return;
@@ -1368,6 +1387,7 @@ let mpegtsInstance = null;
 let isLiveStream = false;
 let appInitialized = false;
 let epgUpdateInterval = null;
+let stutterCheckInterval = null;
 
 let fsPanelCategoryId = null;
 let fsPanelItems = [];
@@ -1380,6 +1400,8 @@ let lastClickTime = 0;
 const DOUBLE_CLICK_DELAY = 1000;
 
 let isFullscreen = false;
+let currentPlayerType = 'ts';
+let currentQuality = 'SD';
 
 // ==========================================
 // SISTEMA DE FOCO TV
@@ -1479,21 +1501,21 @@ setInterval(() => {
 })();
 
 // ==========================================
-// PLAYER ÚNICO - OTIMIZADO PARA FLUIDEZ
+// PLAYER
 // ==========================================
 const sharedVideo = document.getElementById('shared-video');
-
-// Atributos
-sharedVideo.setAttribute('playsinline', '');
-sharedVideo.setAttribute('webkit-playsinline', '');
-sharedVideo.setAttribute('preload', 'none');
-sharedVideo.setAttribute('disablePictureInPicture', '');
-sharedVideo.setAttribute('controlslist', 'nodownload noplaybackrate');
+const playerWarning = document.getElementById('playerWarning');
+const qualityBadge = document.getElementById('qualityBadge');
 
 function attachVideoTo(container) {
     if (sharedVideo.parentElement !== container) {
         container.appendChild(sharedVideo);
     }
+}
+
+function updateQualityBadge(text) {
+    currentQuality = text;
+    if (qualityBadge) qualityBadge.innerText = text;
 }
 
 function stopPlayer() {
@@ -1504,49 +1526,68 @@ function stopPlayer() {
         sharedVideo.removeAttribute('src');
         sharedVideo.load();
     } catch(e) {}
+    playerWarning.classList.remove('show');
 }
 
-// FILMES E SÉRIES - MP4 DIRETO
+// FILMES E SÉRIES - MP4 com fallback de qualidade
 function playMp4(item, type) {
     stopPlayer();
     isLiveStream = false;
     document.getElementById('liveIndicator').classList.remove('show');
     document.getElementById('fsLive').classList.remove('show');
     
+    // Tenta primeiro .mp4 (geralmente SD)
+    // Se falhar, tenta .mkv (às vezes menor)
     const url = `${SERVER}/${type}/${USER}/${PASS}/${item.stream_id}.mp4`;
+    
+    updateQualityBadge('MP4');
     sharedVideo.src = url;
     sharedVideo.load();
+    
     sharedVideo.play().then(() => {
         document.getElementById('player-loading').style.display = 'none';
         document.getElementById('fs-loading').style.display = 'none';
+        if (isTVBox) startStutterCheck();
     }).catch(() => {
-        document.getElementById('player-loading').style.display = 'none';
-        document.getElementById('fs-loading').style.display = 'none';
+        // Fallback: tenta .mkv
+        const urlMkv = `${SERVER}/${type}/${USER}/${PASS}/${item.stream_id}.mkv`;
+        updateQualityBadge('MKV');
+        sharedVideo.src = urlMkv;
+        sharedVideo.play().then(() => {
+            document.getElementById('player-loading').style.display = 'none';
+            document.getElementById('fs-loading').style.display = 'none';
+            if (isTVBox) startStutterCheck();
+        }).catch(() => {
+            document.getElementById('player-loading').style.display = 'none';
+            document.getElementById('fs-loading').style.display = 'none';
+        });
     });
 }
 
-// CANAIS AO VIVO - TS COM BUFFER GRANDE (30s de delay)
+// CANAIS AO VIVO - HLS COM BAIXA QUALIDADE
 function playTs(tsUrl, streamId) {
+    currentPlayerType = 'ts';
     if (typeof mpegts === 'undefined' || !mpegts.isSupported()) {
         playHls(streamId);
         return;
     }
+    
+    updateQualityBadge('TS-SD');
+    
     try {
         mpegtsInstance = mpegts.createPlayer({
             type: 'mpegts',
             isLive: true,
             url: tsUrl
         }, {
-            // BUFFER GRANDE - PRIORIZA FLUIDEZ SOBRE TEMPO REAL
             enableWorker: true,
-            enableStashBuffer: true,          // ATIVADO - acumula buffer
-            stashInitialSize: 2048,            // 2MB inicial (era 64 bytes)
+            enableStashBuffer: true,
+            stashInitialSize: isTVBox ? 2048 : 512,
             lazyLoad: false,
-            liveBufferLatencyChasing: false,   // DESLIGADO - não persegue o ao vivo
-            liveBufferLatencyChasingOnPaused: false,
-            autoCleanupSourceBuffer: false,    // DESLIGADO - não limpa buffer
-            autoCleanupMaxBackwardDuration: 60, // 60s máximo
-            autoCleanupMinBackwardDuration: 30, // 30s mínimo
+            liveBufferLatencyChasing: false,
+            autoCleanupSourceBuffer: true,
+            autoCleanupMaxBackwardDuration: 20,
+            autoCleanupMinBackwardDuration: 10,
             reuseRedirectedURL: true
         });
         mpegtsInstance.attachMediaElement(sharedVideo);
@@ -1558,6 +1599,7 @@ function playTs(tsUrl, streamId) {
         mpegtsInstance.play().then(() => {
             document.getElementById('player-loading').style.display = 'none';
             document.getElementById('fs-loading').style.display = 'none';
+            if (isTVBox) startStutterCheck();
         }).catch(() => {
             document.getElementById('player-loading').style.display = 'none';
             document.getElementById('fs-loading').style.display = 'none';
@@ -1567,44 +1609,118 @@ function playTs(tsUrl, streamId) {
     }
 }
 
+// HLS COM SELEÇÃO DE QUALIDADE BAIXA
 function playHls(streamId) {
+    currentPlayerType = 'hls';
     if (!Hls.isSupported()) {
         document.getElementById('player-loading').innerHTML = '<p style="color:#ff0080;">Não compatível</p>';
         return;
     }
+    
+    updateQualityBadge('HLS-SD');
+    
     const m3u8Url = LIVE_M3U8_URL(streamId);
     hlsInstance = new Hls({
-        // BUFFER GRANDE - PRIORIZA FLUIDEZ
         enableWorker: true,
         lowLatencyMode: false,
-        liveSyncDurationCount: 10,           // 10 segmentos de buffer
-        liveMaxLatencyDurationCount: 30,     // até 30 segmentos
+        liveSyncDurationCount: 8,
+        liveMaxLatencyDurationCount: 20,
         liveDurationInfinity: true,
-        maxLiveSyncPlaybackRate: 1.0,        // NÃO acelera
-        backBufferLength: 30,                 // 30s de buffer atrás
-        maxBufferLength: 30,                  // 30s de buffer à frente
-        maxMaxBufferLength: 60,               // até 60s
-        maxBufferSize: 60 * 1000 * 1000,      // 60MB
-        manifestLoadingTimeOut: 20000,        // 20s para carregar manifest
+        maxLiveSyncPlaybackRate: 1.0,
+        backBufferLength: 20,
+        maxBufferLength: 20,
+        maxMaxBufferLength: 40,
+        maxBufferSize: 40 * 1000 * 1000,
+        manifestLoadingTimeOut: 15000,
         manifestLoadingMaxRetry: 3,
-        levelLoadingTimeOut: 20000,
+        levelLoadingTimeOut: 15000,
         levelLoadingMaxRetry: 3,
-        fragLoadingTimeOut: 30000,            // 30s para carregar fragmento
-        fragLoadingMaxRetry: 6,               // 6 tentativas
-        startLevel: -1
+        fragLoadingTimeOut: 25000,
+        fragLoadingMaxRetry: 5,
+        // FORÇA BAIXA QUALIDADE
+        startLevel: 0,              // Pega a versão MAIS BAIXA disponível
+        capLevelToPlayerSize: true  // Limita ao tamanho do player
     });
     hlsInstance.loadSource(m3u8Url);
     hlsInstance.attachMedia(sharedVideo);
-    hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
+    
+    // Quando carregar o manifest, força o nível mais baixo
+    hlsInstance.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
+        // Pega o nível mais baixo (primeiro da lista ordenada)
+        if (data.levels && data.levels.length > 0) {
+            // Ordena por bandwidth (menor primeiro)
+            const levels = data.levels.slice().sort((a, b) => (a.bitrate || 0) - (b.bitrate || 0));
+            const lowestLevel = data.levels.indexOf(levels[0]);
+            hlsInstance.currentLevel = lowestLevel;
+            
+            const bitrate = levels[0].bitrate ? Math.round(levels[0].bitrate / 1000) + 'kbps' : 'SD';
+            updateQualityBadge('HLS ' + bitrate);
+            
+            console.log('[HLS] Níveis disponíveis:', data.levels.length);
+            console.log('[HLS] Forçado para nível:', lowestLevel, 'bitrate:', levels[0].bitrate);
+        }
+        
         document.getElementById('player-loading').style.display = 'none';
         document.getElementById('fs-loading').style.display = 'none';
         sharedVideo.play().catch(()=>{});
+        if (isTVBox) startStutterCheck();
     });
+    
     hlsInstance.on(Hls.Events.ERROR, (event, data) => {
         if (data.fatal) {
             document.getElementById('player-loading').innerHTML = '<p style="color:#ff0080;">⚠️ Canal offline</p>';
         }
     });
+}
+
+// ==========================================
+// MONITOR DE TRAVAMENTO
+// ==========================================
+let lastVideoTime = 0;
+let stutterCount = 0;
+
+function startStutterCheck() {
+    if (stutterCheckInterval) clearInterval(stutterCheckInterval);
+    lastVideoTime = 0;
+    stutterCount = 0;
+    
+    stutterCheckInterval = setInterval(() => {
+        if (!sharedVideo || sharedVideo.paused || sharedVideo.ended) return;
+        
+        const currentTime = sharedVideo.currentTime;
+        
+        if (Math.abs(currentTime - lastVideoTime) < 0.1) {
+            stutterCount++;
+            if (stutterCount >= 3 && currentPlayingItem && currentTab === 'live') {
+                playerWarning.classList.add('show');
+            }
+        } else {
+            stutterCount = 0;
+            playerWarning.classList.remove('show');
+        }
+        
+        lastVideoTime = currentTime;
+    }, 2000);
+}
+
+function forceHls() {
+    playerWarning.classList.remove('show');
+    if (currentPlayingItem && currentTab === 'live') {
+        stopPlayer();
+        document.getElementById('player-loading').style.display = 'block';
+        document.getElementById('fs-loading').style.display = 'block';
+        playHls(currentPlayingItem.stream_id);
+    }
+}
+
+function forceTs() {
+    playerWarning.classList.remove('show');
+    if (currentPlayingItem && currentTab === 'live') {
+        stopPlayer();
+        document.getElementById('player-loading').style.display = 'block';
+        document.getElementById('fs-loading').style.display = 'block';
+        playTs(LIVE_TS_URL(currentPlayingItem.stream_id), currentPlayingItem.stream_id);
+    }
 }
 
 function startPlayback(item, type) {
@@ -1723,9 +1839,6 @@ function closeEpisodes() {
     }, 100);
 }
 
-// ==========================================
-// PAINEL LATERAL DE CANAIS
-// ==========================================
 async function openFsChannelsPanel() {
     showFsControls();
     const panel = document.getElementById('fs-channels-panel');
@@ -1854,14 +1967,6 @@ function renderFsPanelChannels() {
         const num = item.num || (index + 1);
         const imgUrl = item.stream_icon || '';
         
-        let epgHtml = '';
-        if (epgLoaded) {
-            const epg = getEpgForChannel(item);
-            if (epg) {
-                epgHtml = `<div class="item-epg"><span class="epg-now-title">${epg.now.title}</span></div>`;
-            }
-        }
-        
         let imgHtml = imgUrl ? `<img class="item-logo" src="${imgUrl}" loading="lazy" onerror="this.style.visibility='hidden'">` : '';
         
         el.innerHTML = `
@@ -1869,7 +1974,6 @@ function renderFsPanelChannels() {
             ${imgHtml}
             <div class="item-info">
                 <div class="item-name">${item.name}</div>
-                ${epgHtml}
             </div>
         `;
         
@@ -1989,6 +2093,13 @@ async function changeTab(tab, element) {
     document.querySelectorAll('.top-nav-item').forEach(el => el.classList.remove('active'));
     if (element) element.classList.add('active');
     
+    const channelsBtn = document.getElementById('btnFsChannels');
+    if (tab === 'live') {
+        channelsBtn.style.display = 'flex';
+    } else {
+        channelsBtn.style.display = 'none';
+    }
+    
     let action = tab === 'live' ? 'get_live_categories' : 
                  tab === 'movie' ? 'get_vod_categories' : 'get_series_categories';
     
@@ -2083,14 +2194,12 @@ function renderContent() {
         if (currentTab === 'live' && epgLoaded) {
             const epg = getEpgForChannel(item);
             if (epg) {
-                const progress = Math.round((epg.progress || 0) * 100);
                 const prefix = epg.isNext ? 'PRÓX' : 'AGORA';
                 epgHtml = `
                     <div class="item-epg">
                         <span style="color:#666;font-size:10px;font-weight:700;">${prefix}</span>
                         <span class="epg-now-title"> ${epg.now.title}</span>
                         <span class="epg-now-time">${formatTime(epg.now.start)}</span>
-                        <span class="epg-progress"><span class="epg-progress-fill" style="width:${progress}%"></span></span>
                     </div>
                 `;
             } else {

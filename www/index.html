@@ -47,7 +47,7 @@ body {
 }
 
 /* ============================================ */
-/* CLASSES DE FOCO VISUAL (gerenciadas por JS)  */
+/* CLASSES DE FOCO TV                          */
 /* ============================================ */
 .tv-focused {
     background: var(--focus) !important;
@@ -192,6 +192,7 @@ body {
 .list-container {
     flex: 1;
     overflow-y: auto;
+    will-change: scroll-position;
 }
 .list-container::-webkit-scrollbar { width: 8px; }
 .list-container::-webkit-scrollbar-thumb { background: var(--neon-purple); border-radius: 4px; }
@@ -205,6 +206,7 @@ body {
     gap: 14px;
     border-left: 5px solid transparent;
     border-bottom: 1px solid rgba(255,255,255,0.05);
+    contain: layout style;
 }
 .list-item.active {
     background: rgba(0, 229, 255, 0.15);
@@ -253,6 +255,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
 }
 
 #main-video {
@@ -970,7 +973,7 @@ body {
                 <i class="fa-solid fa-tv"></i>
                 <p>Selecione um conteúdo para assistir</p>
             </div>
-            <video id="main-video" controls playsinline style="display:none;"></video>
+            <video id="main-video" controls playsinline preload="none" style="display:none;"></video>
             <div id="player-loading"><i class="fa-solid fa-spinner fa-spin"></i></div>
             <div class="live-indicator" id="liveIndicator">
                 <span class="dot"></span> AO VIVO
@@ -990,7 +993,7 @@ body {
 <!-- TELA CHEIA -->
 <div id="fullscreen-player">
     <div class="fs-video-wrap">
-        <video id="fs-video" controls playsinline></video>
+        <video id="fs-video" controls playsinline preload="none"></video>
         <div id="fs-loading"><i class="fa-solid fa-spinner fa-spin"></i></div>
         <div class="fs-live" id="fsLive"><span class="dot"></span> AO VIVO</div>
         <div class="fs-title" id="fsTitle">Carregando...</div>
@@ -1045,7 +1048,6 @@ let appInitialized = false;
 let focusedElement = null;
 let focusableElements = [];
 
-// Atualiza a lista de elementos focáveis baseado no contexto atual
 function updateFocusables(context) {
     let selector = '';
     
@@ -1058,7 +1060,6 @@ function updateFocusables(context) {
     } else if (context === 'fullscreen') {
         selector = '#btnCloseFs';
     } else {
-        // Contexto principal
         selector = '.top-nav-item, #btnBackToCats, .list-item, #btnFullscreen';
     }
     
@@ -1068,7 +1069,6 @@ function updateFocusables(context) {
     return focusableElements;
 }
 
-// Aplica foco visual
 function setFocus(element) {
     if (focusedElement) {
         focusedElement.classList.remove('tv-focused');
@@ -1076,14 +1076,12 @@ function setFocus(element) {
     focusedElement = element;
     if (element) {
         element.classList.add('tv-focused');
-        // Scroll automático
         if (element.scrollIntoView) {
             element.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
         }
     }
 }
 
-// Foca o primeiro elemento
 function focusFirst(context) {
     updateFocusables(context);
     if (focusableElements.length > 0) {
@@ -1091,7 +1089,6 @@ function focusFirst(context) {
     }
 }
 
-// Move o foco
 function moveFocus(direction) {
     updateFocusables(getCurrentContext());
     if (focusableElements.length === 0) return;
@@ -1111,7 +1108,6 @@ function moveFocus(direction) {
     setFocus(focusableElements[newIdx]);
 }
 
-// Retorna o contexto atual
 function getCurrentContext() {
     if (!document.getElementById('warning-modal').classList.contains('hidden')) {
         return 'warning-modal';
@@ -1128,31 +1124,10 @@ function getCurrentContext() {
     return 'main';
 }
 
-// Ativa o elemento focado
 function activateFocused() {
     if (focusedElement && focusedElement.click) {
         focusedElement.click();
     }
-}
-
-// ==========================================
-// DEBUG
-// ==========================================
-const debugBar = document.getElementById('debug-bar') || (() => {
-    const el = document.createElement('div');
-    el.id = 'debug-bar';
-    el.style.cssText = 'position:fixed;top:0;left:0;right:0;height:30px;background:rgba(0,0,0,0.9);color:#00e5ff;font-family:monospace;font-size:14px;display:flex;align-items:center;justify-content:center;z-index:999999;border-bottom:2px solid #00e5ff;';
-    el.innerText = '🎮 Pronto';
-    document.body.appendChild(el);
-    return el;
-})();
-
-function showDebug(msg) {
-    debugBar.innerText = msg;
-    clearTimeout(debugBar._t);
-    debugBar._t = setTimeout(() => {
-        debugBar.innerText = '🎮 Pronto';
-    }, 2500);
 }
 
 // Relógio
@@ -1167,7 +1142,6 @@ setInterval(() => {
 // FUNÇÕES DOS BOTÕES
 // ==========================================
 function closeWarning() {
-    showDebug('✅ Fechando AVISO');
     document.getElementById('warning-modal').classList.add('hidden');
     setTimeout(() => {
         document.getElementById('donation-modal').classList.remove('hidden');
@@ -1176,7 +1150,6 @@ function closeWarning() {
 }
 
 function closeDonation() {
-    showDebug('✅ Fechando DOAÇÃO');
     document.getElementById('donation-modal').classList.add('hidden');
     if (!appInitialized) {
         appInitialized = true;
@@ -1185,13 +1158,11 @@ function closeDonation() {
 }
 
 function copyPix() {
-    showDebug('📋 Copiando PIX...');
     const btn = document.getElementById('btnCopyPix');
     const btnText = document.getElementById('pixBtnText');
     
     const onSuccess = () => {
         btnText.innerText = 'Copiado!';
-        showDebug('✅ PIX Copiado!');
         setTimeout(() => btnText.innerText = 'Copiar', 2500);
     };
     
@@ -1215,7 +1186,6 @@ function copyPix() {
 }
 
 function openTelegram() {
-    showDebug('✈️ Abrindo Telegram...');
     window.open('https://t.me/iptvfree277', '_blank');
 }
 
@@ -1250,8 +1220,14 @@ function openFullscreen() {
                 mpegtsFsInstance = mpegts.createPlayer({
                     type: 'mpegts', isLive: true, url: tsUrl
                 }, {
-                    enableWorker: true, enableStashBuffer: false,
-                    liveBufferLatencyChasing: false
+                    enableWorker: true,
+                    enableStashBuffer: false,
+                    stashInitialSize: 128,
+                    lazyLoad: false,
+                    liveBufferLatencyChasing: false,
+                    autoCleanupSourceBuffer: true,
+                    autoCleanupMaxBackwardDuration: 20,
+                    autoCleanupMinBackwardDuration: 10
                 });
                 mpegtsFsInstance.attachMediaElement(fsVideo);
                 mpegtsFsInstance.load();
@@ -1265,7 +1241,6 @@ function openFullscreen() {
 }
 
 function closeFullscreen() {
-    showDebug('⏹️ Fechando tela cheia');
     document.getElementById('fullscreen-player').classList.remove('active');
     if (mpegtsFsInstance) { try { mpegtsFsInstance.destroy(); } catch(e) {} mpegtsFsInstance = null; }
     if (hlsFsInstance) { try { hlsFsInstance.destroy(); } catch(e) {} hlsFsInstance = null; }
@@ -1309,75 +1284,54 @@ document.getElementById('tabMovie').onclick = function() { changeTab('movie', th
 document.getElementById('tabSeries').onclick = function() { changeTab('series', this); };
 
 // ==========================================
-// CONTROLE REMOTO - PADRÃO DO USUÁRIO
+// CONTROLE REMOTO
 // ==========================================
 document.addEventListener('keydown', function(event) {
     const code = event.keyCode || event.which;
-    const key = event.key || '';
-    
-    showDebug(`⌨️ code: ${code} | key: "${key}"`);
     
     switch (code) {
-        // ============ OK / ENTER ============
         case 13:
         case 23:
         case 66:
         case 176:
-            console.log("OK");
-            showDebug('⚡ OK - Ativando...');
             activateFocused();
             event.preventDefault();
             event.stopPropagation();
             return false;
         
-        // ============ VOLTAR ============
         case 8:
         case 27:
         case 4:
         case 461:
         case 10009:
-            console.log("VOLTAR");
-            showDebug('◀️ VOLTAR');
             handleBack();
             event.preventDefault();
             event.stopPropagation();
             return false;
         
-        // ============ CIMA ============
         case 38:
         case 19:
-            console.log("CIMA");
-            showDebug('⬆️ CIMA');
             moveFocus('up');
             event.preventDefault();
             event.stopPropagation();
             return false;
         
-        // ============ BAIXO ============
         case 40:
         case 20:
-            console.log("BAIXO");
-            showDebug('⬇️ BAIXO');
             moveFocus('down');
             event.preventDefault();
             event.stopPropagation();
             return false;
         
-        // ============ ESQUERDA ============
         case 37:
         case 21:
-            console.log("ESQUERDA");
-            showDebug('⬅️ ESQUERDA');
             moveFocus('left');
             event.preventDefault();
             event.stopPropagation();
             return false;
         
-        // ============ DIREITA ============
         case 39:
         case 22:
-            console.log("DIREITA");
-            showDebug('➡️ DIREITA');
             moveFocus('right');
             event.preventDefault();
             event.stopPropagation();
@@ -1489,6 +1443,9 @@ function renderContent() {
         return;
     }
     
+    // Renderiza em chunks para não travar em listas grandes
+    const fragment = document.createDocumentFragment();
+    
     currentItems.forEach((item, index) => {
         const el = document.createElement('div');
         el.className = 'list-item';
@@ -1499,7 +1456,7 @@ function renderContent() {
         
         el.innerHTML = `
             <div class="item-num">${num}</div>
-            <img class="item-logo" src="${imgUrl}" onerror="this.style.visibility='hidden'">
+            <img class="item-logo" src="${imgUrl}" loading="lazy" onerror="this.style.visibility='hidden'">
             <div class="item-name">${item.name}</div>
         `;
         
@@ -1510,8 +1467,10 @@ function renderContent() {
             else playInRightPanel(item, currentTab);
         };
         
-        listContainer.appendChild(el);
+        fragment.appendChild(el);
     });
+    
+    listContainer.appendChild(fragment);
     
     setTimeout(() => {
         const first = listContainer.querySelector('.list-item');
@@ -1570,6 +1529,7 @@ function selectSeason(seasonNum) {
     
     if (!episodes || episodes.length === 0) return;
     
+    const fragment = document.createDocumentFragment();
     episodes.forEach(ep => {
         const item = document.createElement('div');
         item.className = 'episode-item';
@@ -1585,8 +1545,10 @@ function selectSeason(seasonNum) {
                 name: `T${seasonNum} EP${ep.episode_num} - ${ep.title}`
             }, 'series');
         };
-        list.appendChild(item);
+        fragment.appendChild(item);
     });
+    
+    list.appendChild(fragment);
     
     setTimeout(() => {
         const first = list.querySelector('.episode-item');
@@ -1595,7 +1557,7 @@ function selectSeason(seasonNum) {
 }
 
 // ==========================================
-// PLAYER
+// PLAYER OTIMIZADO - SEM TRAVAR
 // ==========================================
 function playInRightPanel(item, type) {
     currentPlayingItem = item;
@@ -1622,23 +1584,54 @@ function playInRightPanel(item, type) {
         const tsUrl = LIVE_TS_URL(item.stream_id);
         const m3u8Url = LIVE_M3U8_URL(item.stream_id);
         
+        // TENTA HLS PRIMEIRO (mais compatível)
         if (Hls.isSupported()) {
             hlsInstance = new Hls({
-                enableWorker: true, lowLatencyMode: false,
-                liveDurationInfinity: true, backBufferLength: 30
+                enableWorker: true,
+                lowLatencyMode: true,
+                liveSyncDurationCount: 3,
+                liveMaxLatencyDurationCount: 6,
+                liveDurationInfinity: true,
+                maxLiveSyncPlaybackRate: 1.5,
+                backBufferLength: 15,           // Buffer reduzido
+                maxBufferLength: 15,             // Buffer máximo 15s
+                maxMaxBufferLength: 30,          // Nunca passa de 30s
+                maxBufferSize: 30 * 1000 * 1000, // 30MB máximo
+                manifestLoadingTimeOut: 10000,
+                manifestLoadingMaxRetry: 2,
+                levelLoadingTimeOut: 10000,
+                levelLoadingMaxRetry: 2,
+                fragLoadingTimeOut: 20000,
+                fragLoadingMaxRetry: 4,
+                startLevel: -1
             });
             hlsInstance.loadSource(m3u8Url);
             hlsInstance.attachMedia(video);
+            
             hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
                 document.getElementById('player-loading').style.display = 'none';
                 video.play().catch(()=>{});
             });
+            
+            // Se falhar 3 vezes, vai para TS direto
+            let failCount = 0;
             hlsInstance.on(Hls.Events.ERROR, (event, data) => {
                 if (data.fatal) {
+                    failCount++;
+                    if (failCount >= 2) {
+                        if (hlsInstance) { hlsInstance.destroy(); hlsInstance = null; }
+                        playTsDirect(tsUrl);
+                    }
+                }
+            });
+            
+            // Timeout de 8s para trocar para TS
+            setTimeout(() => {
+                if (hlsInstance && video.readyState < 2) {
                     if (hlsInstance) { hlsInstance.destroy(); hlsInstance = null; }
                     playTsDirect(tsUrl);
                 }
-            });
+            }, 8000);
         } else {
             video.src = m3u8Url;
             video.play().catch(() => playTsDirect(tsUrl));
@@ -1654,19 +1647,34 @@ function playTsDirect(tsUrl) {
     }
     try {
         mpegtsInstance = mpegts.createPlayer({
-            type: 'mpegts', isLive: true, url: tsUrl
+            type: 'mpegts',
+            isLive: true,
+            url: tsUrl
         }, {
-            enableWorker: true, enableStashBuffer: false,
-            liveBufferLatencyChasing: false
+            enableWorker: true,
+            enableStashBuffer: false,       // Não acumula buffer
+            stashInitialSize: 128,           // Stash pequeno
+            lazyLoad: false,
+            liveBufferLatencyChasing: false,
+            autoCleanupSourceBuffer: true,   // Limpa buffer antigo
+            autoCleanupMaxBackwardDuration: 15,
+            autoCleanupMinBackwardDuration: 8
         });
         mpegtsInstance.attachMediaElement(video);
         mpegtsInstance.load();
+        
+        mpegtsInstance.on(mpegts.Events.ERROR, () => {
+            document.getElementById('player-loading').innerHTML = '<p style="color:#ff0080;">⚠️ Canal offline</p>';
+        });
+        
         mpegtsInstance.play().then(() => {
             document.getElementById('player-loading').style.display = 'none';
         }).catch(() => {
             document.getElementById('player-loading').style.display = 'none';
         });
-    } catch(e) {}
+    } catch(e) {
+        document.getElementById('player-loading').innerHTML = '<p style="color:#ff0080;">Erro</p>';
+    }
 }
 
 function stopMainPlayer() {
@@ -1713,22 +1721,17 @@ async function initApp() {
     }
 }
 
-// ==========================================
-// INICIALIZAÇÃO - FOCO INICIAL
-// ==========================================
 window.onload = function() {
     if (screen.orientation && screen.orientation.lock) {
         screen.orientation.lock('landscape').catch(() => {});
     }
     
-    // Foca no botão OK do aviso
     setTimeout(() => {
         focusFirst('warning-modal');
     }, 500);
     
-    // Também adiciona suporte a mouse (útil para testes)
+    // Mouse (para testes)
     document.addEventListener('mousemove', function(e) {
-        // Se usar mouse, atualiza o foco visual para o elemento sob o cursor
         const target = e.target.closest('[data-tv]');
         if (target && target !== focusedElement) {
             setFocus(target);

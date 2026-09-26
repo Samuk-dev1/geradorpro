@@ -39,10 +39,6 @@
 html, body {
     width: 100% !important;
     height: 100% !important;
-    min-width: 100% !important;
-    min-height: 100% !important;
-    max-width: 100% !important;
-    max-height: 100% !important;
     overflow: hidden !important;
     position: fixed !important;
     top: 0 !important;
@@ -1252,7 +1248,7 @@ setInterval(updateClock, 1000);
 updateClock();
 
 // ==========================================
-// FUNÇÕES DOS BOTÕES - REGISTRADAS GLOBALMENTE
+// FUNÇÕES DOS BOTÕES
 // ==========================================
 window.closeWarning = function() {
     document.getElementById('warning-modal').classList.add('hidden');
@@ -1421,7 +1417,51 @@ window.changeTab = function(tab, element) {
 };
 
 // ==========================================
-// DELEGAÇÃO DE EVENTOS - FUNCIONA COM CONTROLE
+// FUNÇÃO UNIFICADA DE AÇÃO
+// ==========================================
+function triggerAction(element) {
+    if (!element) return false;
+    
+    console.log('[TRIGGER]', element.tagName, element.className, element.getAttribute('data-action'));
+    
+    // 1. data-action
+    const action = element.getAttribute('data-action');
+    if (action && typeof window[action] === 'function') {
+        try {
+            window[action]();
+            return true;
+        } catch(e) {
+            console.error('[TRIGGER] Erro na função ' + action + ':', e);
+        }
+    }
+    
+    // 2. click() direto
+    try {
+        if (typeof element.click === 'function') {
+            element.click();
+            return true;
+        }
+    } catch(e) {}
+    
+    // 3. MouseEvent
+    try {
+        element.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+        return true;
+    } catch(e) {}
+    
+    // 4. onclick direto
+    try {
+        if (element.onclick) {
+            element.onclick();
+            return true;
+        }
+    } catch(e) {}
+    
+    return false;
+}
+
+// ==========================================
+// DELEGAÇÃO DE EVENTOS DE CLIQUE
 // ==========================================
 document.addEventListener('click', function(e) {
     const btn = e.target.closest('[data-action]');
@@ -1432,6 +1472,212 @@ document.addEventListener('click', function(e) {
         }
     }
 });
+
+// ==========================================
+// DETECÇÃO DE OK/ENTER EM TODAS AS TV BOXES
+// ==========================================
+const OK_CODES = [13, 23, 66, 176, 172, 179]; // 13=Enter, 23=DPAD_CENTER, 66=Enter, 176=OK
+const BACK_CODES = [27, 8, 461, 10009]; // 27=ESC, 8=Backspace, 461=Back, 10009=Android TV Back
+
+let lastTriggerTime = 0;
+
+function isEnterEvent(e) {
+    // keyCode
+    if (OK_CODES.includes(e.keyCode)) return true;
+    if (OK_CODES.includes(e.which)) return true;
+    
+    // key name
+    const k = (e.key || '').toLowerCase();
+    if (k === 'enter' || k === 'ok' || k === 'select' || k === 'accept' || k === ' ') return true;
+    
+    // code
+    if (e.code === 'Enter' || e.code === 'NumpadEnter' || e.code === 'Space') return true;
+    
+    return false;
+}
+
+function isBackEvent(e) {
+    if (BACK_CODES.includes(e.keyCode)) return true;
+    if (BACK_CODES.includes(e.which)) return true;
+    
+    const k = (e.key || '').toLowerCase();
+    if (k === 'escape' || k === 'backspace' || k === 'goback' || k === 'browserback') return true;
+    
+    return false;
+}
+
+function isArrowEvent(e) {
+    const k = e.key || '';
+    const c = e.keyCode;
+    return ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Up', 'Down', 'Left', 'Right'].includes(k) ||
+           [37, 38, 39, 40].includes(c);
+}
+
+// Handler unificado de teclas
+function handleKeyEvent(e, eventType) {
+    // Evita duplicação
+    const now = Date.now();
+    if (now - lastTriggerTime < 200) return;
+    
+    const isEnter = isEnterEvent(e);
+    const isBack = isBackEvent(e);
+    const isArrow = isArrowEvent(e);
+    
+    if (!isEnter && !isBack && !isArrow) return;
+    
+    console.log('[KEY]', eventType, '| key:', e.key, '| code:', e.keyCode, '| isEnter:', isEnter, '| isBack:', isBack, '| isArrow:', isArrow);
+    
+    // MODAL DE AVISO
+    if (!document.getElementById('warning-modal').classList.contains('hidden')) {
+        const focusables = Array.from(document.querySelectorAll('#warning-modal button, #warning-modal [tabindex="0"]'))
+            .filter(el => el.offsetParent !== null);
+        const currentIdx = focusables.indexOf(document.activeElement);
+        
+        if (isArrow) {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.keyCode === 39 || e.keyCode === 40) {
+                const nextIdx = currentIdx === -1 ? 0 : (currentIdx + 1) % focusables.length;
+                focusables[nextIdx]?.focus();
+            } else {
+                const prevIdx = currentIdx === -1 ? 0 : (currentIdx - 1 + focusables.length) % focusables.length;
+                focusables[prevIdx]?.focus();
+            }
+            e.preventDefault();
+            return;
+        }
+        
+        if (isEnter) {
+            lastTriggerTime = now;
+            if (document.activeElement && focusables.includes(document.activeElement)) {
+                triggerAction(document.activeElement);
+            } else if (focusables[0]) {
+                focusables[0].focus();
+                triggerAction(focusables[0]);
+            }
+            e.preventDefault();
+            return;
+        }
+        
+        if (isBack) {
+            lastTriggerTime = now;
+            window.closeWarning();
+            e.preventDefault();
+            return;
+        }
+        return;
+    }
+    
+    // MODAL DE DOAÇÃO
+    if (!document.getElementById('donation-modal').classList.contains('hidden')) {
+        const focusables = Array.from(document.querySelectorAll('#donation-modal button, #donation-modal [tabindex="0"], #donation-modal a'))
+            .filter(el => el.offsetParent !== null);
+        const currentIdx = focusables.indexOf(document.activeElement);
+        
+        if (isArrow) {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.keyCode === 39 || e.keyCode === 40) {
+                const nextIdx = currentIdx === -1 ? 0 : (currentIdx + 1) % focusables.length;
+                focusables[nextIdx]?.focus();
+            } else {
+                const prevIdx = currentIdx === -1 ? 0 : (currentIdx - 1 + focusables.length) % focusables.length;
+                focusables[prevIdx]?.focus();
+            }
+            e.preventDefault();
+            return;
+        }
+        
+        if (isEnter) {
+            lastTriggerTime = now;
+            if (document.activeElement && focusables.includes(document.activeElement)) {
+                triggerAction(document.activeElement);
+            } else if (focusables[0]) {
+                focusables[0].focus();
+                triggerAction(focusables[0]);
+            }
+            e.preventDefault();
+            return;
+        }
+        
+        if (isBack) {
+            lastTriggerTime = now;
+            window.closeDonation();
+            e.preventDefault();
+            return;
+        }
+        return;
+    }
+    
+    // TELA CHEIA
+    if (fsPlayer.classList.contains('active')) {
+        if (isBack) {
+            lastTriggerTime = now;
+            window.closeFullscreen();
+            e.preventDefault();
+            return;
+        }
+        return;
+    }
+    
+    // MODAL DE EPISÓDIOS
+    if (episodesModal.classList.contains('active')) {
+        if (isBack) {
+            lastTriggerTime = now;
+            window.closeEpisodes();
+            e.preventDefault();
+            return;
+        }
+    }
+    
+    // VOLTAR (fora de modais)
+    if (isBack) {
+        lastTriggerTime = now;
+        if (currentView === 'content') {
+            window.backToCategories();
+            e.preventDefault();
+            return;
+        }
+    }
+    
+    // NAVEGAÇÃO POR SETAS (fora de modais)
+    if (isArrow) {
+        const focusables = Array.from(document.querySelectorAll('button, [tabindex="0"], a[tabindex="0"]'))
+            .filter(el => el.offsetParent !== null && !el.disabled);
+        const currentIdx = focusables.indexOf(document.activeElement);
+        
+        if (currentIdx === -1) {
+            focusables[0]?.focus();
+            e.preventDefault();
+            return;
+        }
+        
+        let nextIdx = currentIdx;
+        const k = e.key || '';
+        if (k === 'ArrowRight' || e.keyCode === 39) nextIdx = Math.min(currentIdx + 1, focusables.length - 1);
+        if (k === 'ArrowLeft' || e.keyCode === 37) nextIdx = Math.max(currentIdx - 1, 0);
+        if (k === 'ArrowDown' || e.keyCode === 40) nextIdx = Math.min(currentIdx + 1, focusables.length - 1);
+        if (k === 'ArrowUp' || e.keyCode === 38) nextIdx = Math.max(currentIdx - 1, 0);
+        
+        focusables[nextIdx]?.focus();
+        e.preventDefault();
+        return;
+    }
+    
+    // ENTER (fora de modais)
+    if (isEnter) {
+        lastTriggerTime = now;
+        
+        // Se o foco está em algum item, dispara a ação
+        if (document.activeElement && document.activeElement !== document.body) {
+            triggerAction(document.activeElement);
+        }
+        
+        e.preventDefault();
+        return;
+    }
+}
+
+// Registra em todos os eventos possíveis
+document.addEventListener('keydown', (e) => handleKeyEvent(e, 'keydown'), true);
+document.addEventListener('keyup', (e) => handleKeyEvent(e, 'keyup'), true);
+document.addEventListener('keypress', (e) => handleKeyEvent(e, 'keypress'), true);
 
 // ==========================================
 // INICIALIZAÇÃO
@@ -1826,153 +2072,19 @@ async function apiRequest(actionParams) {
 }
 
 // ==========================================
-// DISPARO UNIFICADO DE AÇÃO
+// FORÇA ORIENTAÇÃO LANDSCAPE
 // ==========================================
-function triggerAction(element) {
-    if (!element) return false;
-    
-    // 1. Verifica data-action
-    const action = element.getAttribute('data-action');
-    if (action && typeof window[action] === 'function') {
-        window[action]();
-        return true;
-    }
-    
-    // 2. Verifica onclick inline
-    if (element.onclick) {
-        try {
-            element.onclick(new MouseEvent('click', { bubbles: true, cancelable: true }));
-            return true;
-        } catch(e) {
-            console.error('Erro no onclick:', e);
-        }
-    }
-    
-    // 3. Dispatch event
-    try {
-        element.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
-        return true;
-    } catch(e) {
-        console.error('Erro no dispatch:', e);
-    }
-    
-    return false;
-}
-
-// ==========================================
-// CONTROLE REMOTO
-// ==========================================
-document.addEventListener('keydown', function(e) {
-    const isEnter = (e.key === 'Enter' || e.key === 'OK' || e.keyCode === 13 || e.keyCode === 23);
-    const isBack = (e.key === 'Escape' || e.key === 'Backspace' || e.key === 'GoBack' || e.keyCode === 27 || e.keyCode === 8 || e.keyCode === 461);
-    const isArrow = ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(e.key);
-    
-    // Modal de aviso
-    if (!document.getElementById('warning-modal').classList.contains('hidden')) {
-        const focusables = Array.from(document.querySelectorAll('#warning-modal button, #warning-modal [tabindex="0"]'))
-            .filter(el => el.offsetParent !== null);
-        const currentIdx = focusables.indexOf(document.activeElement);
-        
-        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-            const nextIdx = currentIdx === -1 ? 0 : (currentIdx + 1) % focusables.length;
-            focusables[nextIdx]?.focus();
-            e.preventDefault(); return;
-        }
-        if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-            const prevIdx = currentIdx === -1 ? 0 : (currentIdx - 1 + focusables.length) % focusables.length;
-            focusables[prevIdx]?.focus();
-            e.preventDefault(); return;
-        }
-        if (isEnter && document.activeElement) {
-            triggerAction(document.activeElement);
-            e.preventDefault(); return;
-        }
-        if (isBack) { window.closeWarning(); e.preventDefault(); return; }
-        return;
-    }
-    
-    // Modal de doação
-    if (!document.getElementById('donation-modal').classList.contains('hidden')) {
-        const focusables = Array.from(document.querySelectorAll('#donation-modal button, #donation-modal [tabindex="0"], #donation-modal a'))
-            .filter(el => el.offsetParent !== null);
-        const currentIdx = focusables.indexOf(document.activeElement);
-        
-        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-            const nextIdx = currentIdx === -1 ? 0 : (currentIdx + 1) % focusables.length;
-            focusables[nextIdx]?.focus();
-            e.preventDefault(); return;
-        }
-        if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-            const prevIdx = currentIdx === -1 ? 0 : (currentIdx - 1 + focusables.length) % focusables.length;
-            focusables[prevIdx]?.focus();
-            e.preventDefault(); return;
-        }
-        if (isEnter && document.activeElement) {
-            triggerAction(document.activeElement);
-            e.preventDefault(); return;
-        }
-        if (isBack) { window.closeDonation(); e.preventDefault(); return; }
-        return;
-    }
-    
-    // Tela cheia
-    if (fsPlayer.classList.contains('active')) {
-        if (isBack) { window.closeFullscreen(); e.preventDefault(); return; }
-        return;
-    }
-    
-    // Modal de episódios
-    if (episodesModal.classList.contains('active')) {
-        if (isBack) { window.closeEpisodes(); e.preventDefault(); return; }
-    }
-    
-    // Voltar
-    if (isBack) {
-        if (currentView === 'content') { window.backToCategories(); e.preventDefault(); return; }
-    }
-    
-    // Navegação por setas
-    if (isArrow) {
-        const focusables = Array.from(document.querySelectorAll('button, [tabindex="0"]'))
-            .filter(el => el.offsetParent !== null && !el.disabled);
-        const currentIdx = focusables.indexOf(document.activeElement);
-        
-        if (currentIdx === -1) { focusables[0]?.focus(); e.preventDefault(); return; }
-        
-        let nextIdx = currentIdx;
-        if (e.key === 'ArrowRight') nextIdx = Math.min(currentIdx + 1, focusables.length - 1);
-        if (e.key === 'ArrowLeft') nextIdx = Math.max(currentIdx - 1, 0);
-        if (e.key === 'ArrowDown') nextIdx = Math.min(currentIdx + 1, focusables.length - 1);
-        if (e.key === 'ArrowUp') nextIdx = Math.max(currentIdx - 1, 0);
-        
-        focusables[nextIdx]?.focus();
-        e.preventDefault();
-    }
-    
-    // Enter - dispara ação do elemento focado
-    if (isEnter && document.activeElement) {
-        triggerAction(document.activeElement);
-        e.preventDefault();
-    }
-});
-
-// Força orientação landscape
 function forceLandscape() {
     if (screen.orientation && screen.orientation.lock) {
         screen.orientation.lock('landscape').catch(() => {});
     }
 }
 
+// ==========================================
 // START
+// ==========================================
 window.onload = () => {
     forceLandscape();
-    
-    const isTV = /TV|Android TV|SmartTV|Box|FireTV/i.test(navigator.userAgent) || 
-                 (window.innerWidth >= 1280 && window.innerHeight >= 720);
-    
-    if (isTV) {
-        document.body.style.fontSize = '15px';
-    }
     
     setTimeout(() => {
         const okBtn = document.querySelector('.warning-ok-btn');

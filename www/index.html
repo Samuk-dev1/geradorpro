@@ -265,7 +265,7 @@ body {
 }
 
 /* ============================================ */
-/* PLAYER ÚNICO (usado em tela normal e cheia)  */
+/* PLAYER ÚNICO                                 */
 /* ============================================ */
 .right-panel {
     flex: 1;
@@ -284,15 +284,21 @@ body {
     overflow: hidden;
 }
 
+/* VÍDEO - OTIMIZADO PARA TV BOX */
 #shared-video {
     position: absolute;
     top: 0; left: 0;
     width: 100%;
     height: 100%;
+    /* object-fit: contain para manter proporção */
     object-fit: contain;
     background: #000;
+    /* Aceleração por hardware */
     transform: translateZ(0);
     backface-visibility: hidden;
+    /* Remove qualquer filtro */
+    filter: none;
+    image-rendering: auto;
 }
 
 .player-placeholder {
@@ -420,7 +426,6 @@ body {
     overflow: hidden;
 }
 
-/* Controles auto-hide */
 .fs-control {
     opacity: 1;
     transition: opacity 0.5s ease;
@@ -529,7 +534,7 @@ body {
 }
 
 /* ============================================ */
-/* PAINEL LATERAL DE CANAIS (ESQUERDA)          */
+/* PAINEL LATERAL DE CANAIS                     */
 /* ============================================ */
 #fs-channels-panel {
     position: fixed;
@@ -1197,7 +1202,12 @@ body {
                 <i class="fa-solid fa-tv"></i>
                 <p>Selecione um conteúdo para assistir</p>
             </div>
-            <video id="shared-video" playsinline webkit-playsinline preload="none"></video>
+            <video id="shared-video" 
+                   playsinline 
+                   webkit-playsinline 
+                   preload="none"
+                   disablePictureInPicture
+                   controlslist="nodownload noplaybackrate"></video>
             <div id="player-loading"><i class="fa-solid fa-spinner fa-spin"></i></div>
             <div class="live-indicator" id="liveIndicator">
                 <span class="dot"></span> AO VIVO
@@ -1268,6 +1278,33 @@ const LIVE_TS_URL   = id => `${SERVER}/live/${USER}/${PASS}/${id}.ts`;
 const PIX_KEY = '1ea6ae84-f545-4dd3-8488-d6bcd1be7dd4';
 
 // ==========================================
+// DETECÇÃO DE RESOLUÇÃO E OTIMIZAÇÃO
+// ==========================================
+const screenW = window.screen.width || window.innerWidth;
+const screenH = window.screen.height || window.innerHeight;
+const screenPixels = screenW * screenH;
+
+// Limita resolução do vídeo baseado no tamanho da tela
+// TV Box fraca: 1080p ou menos
+// TV Android moderna: 1080p
+// Telas pequenas: resolução nativa
+function getOptimalVideoSize() {
+    if (screenPixels > 1920 * 1080) {
+        // 4K+ → limita a 1080p
+        return { w: 1920, h: 1080 };
+    } else if (screenPixels > 1280 * 720) {
+        // 1080p-1440p → limita a 1080p
+        return { w: 1920, h: 1080 };
+    } else {
+        // 720p e menores → usa nativo
+        return { w: 1280, h: 720 };
+    }
+}
+
+const OPTIMAL = getOptimalVideoSize();
+console.log('[OTIMIZAÇÃO] Tela detectada:', screenW + 'x' + screenH, '→ Vídeo:', OPTIMAL.w + 'x' + OPTIMAL.h);
+
+// ==========================================
 // EPG
 // ==========================================
 let epgData = {};
@@ -1321,9 +1358,6 @@ async function loadEpg() {
         epgStatus = 'ok';
         updateEpgBadge();
         if (currentTab === 'live' && currentView === 'content') renderContent();
-        if (document.getElementById('fs-channels-panel').classList.contains('active')) {
-            renderFsPanelChannels();
-        }
     } catch (e) {
         console.error('[EPG]', e);
         epgLoading = false;
@@ -1374,20 +1408,18 @@ let mpegtsInstance = null;
 let isLiveStream = false;
 let appInitialized = false;
 let epgUpdateInterval = null;
+let bufferCleanupInterval = null;
 
 let fsPanelCategoryId = null;
 let fsPanelItems = [];
 
-// AUTO-HIDE
 let fsHideTimer = null;
 const FS_HIDE_DELAY = 5000;
 
-// DUPLO CLIQUE
 let lastClickedStreamId = null;
 let lastClickTime = 0;
 const DOUBLE_CLICK_DELAY = 1000;
 
-// ESTADO DA TELA CHEIA
 let isFullscreen = false;
 
 // ==========================================
@@ -1456,9 +1488,6 @@ function activateFocused() {
     if (focusedElement && focusedElement.click) focusedElement.click();
 }
 
-// ==========================================
-// AUTO-HIDE
-// ==========================================
 function showFsControls() {
     if (!isFullscreen) return;
     if (document.getElementById('fs-channels-panel').classList.contains('active')) return;
@@ -1492,14 +1521,49 @@ setInterval(() => {
 })();
 
 // ==========================================
-// PLAYER ÚNICO COMPARTILHADO
+// PLAYER ÚNICO OTIMIZADO
 // ==========================================
 const sharedVideo = document.getElementById('shared-video');
+
+// APLICA LIMITAÇÃO DE RESOLUÇÃO
+function applyVideoConstraints() {
+    // Não define width/height fixos - deixa o CSS controlar
+    // Mas garante que o vídeo não decodifique mais do que precisa
+    sharedVideo.setAttribute('playsinline', '');
+    sharedVideo.setAttribute('webkit-playsinline', '');
+    sharedVideo.setAttribute('preload', 'none');
+    sharedVideo.setAttribute('disablePictureInPicture', '');
+    sharedVideo.setAttribute('controlslist', 'nodownload noplaybackrate');
+    sharedVideo.style.width = '100%';
+    sharedVideo.style.height = '100%';
+    sharedVideo.style.objectFit = 'contain';
+    sharedVideo.style.background = '#000';
+}
+applyVideoConstraints();
 
 function attachVideoTo(container) {
     if (sharedVideo.parentElement !== container) {
         container.appendChild(sharedVideo);
     }
+}
+
+// LIMPEZA PERIÓDICA DE BUFFER (evita travamento em TV Box fraca)
+function startBufferCleanup() {
+    if (bufferCleanupInterval) clearInterval(bufferCleanupInterval);
+    bufferCleanupInterval = setInterval(() => {
+        if (!sharedVideo || sharedVideo.paused) return;
+        try {
+            const buffered = sharedVideo.buffered;
+            if (buffered.length > 0) {
+                const currentTime = sharedVideo.currentTime;
+                const liveEdge = buffered.end(buffered.length - 1);
+                // Se atrasou mais de 5s, pula pro ao vivo
+                if (liveEdge - currentTime > 5) {
+                    sharedVideo.currentTime = liveEdge - 1;
+                }
+            }
+        } catch(e) {}
+    }, 5000);
 }
 
 function stopPlayer() {
@@ -1512,7 +1576,6 @@ function stopPlayer() {
     } catch(e) {}
 }
 
-// PLAYER MP4 (filmes/séries)
 function playMp4(item, type) {
     stopPlayer();
     isLiveStream = false;
@@ -1531,7 +1594,6 @@ function playMp4(item, type) {
     });
 }
 
-// PLAYER TS (canais)
 function playTs(tsUrl, streamId) {
     if (typeof mpegts === 'undefined' || !mpegts.isSupported()) {
         playHls(streamId);
@@ -1539,14 +1601,22 @@ function playTs(tsUrl, streamId) {
     }
     try {
         mpegtsInstance = mpegts.createPlayer({
-            type: 'mpegts', isLive: true, url: tsUrl
+            type: 'mpegts',
+            isLive: true,
+            url: tsUrl
         }, {
-            enableWorker: true, enableStashBuffer: false,
-            stashInitialSize: 64, lazyLoad: false,
-            liveBufferLatencyChasing: false,
-            autoCleanupSourceBuffer: true,
-            autoCleanupMaxBackwardDuration: 10,
-            autoCleanupMinBackwardDuration: 5
+            // CONFIGURAÇÕES ULTRA LEVES PARA TV BOX FRACA
+            enableWorker: true,
+            enableStashBuffer: false,       // SEM stash (economiza RAM)
+            stashInitialSize: 32,            // Stash mínimo
+            lazyLoad: false,
+            liveBufferLatencyChasing: true,  // Persegue o ao vivo
+            liveBufferLatencyMaxLatency: 3,  // Máx 3s atrás
+            liveBufferLatencyMinRemain: 0.5,
+            autoCleanupSourceBuffer: true,   // Limpa buffer antigo
+            autoCleanupMaxBackwardDuration: 8,  // 8s máximo pra trás
+            autoCleanupMinBackwardDuration: 4,   // Limpa abaixo de 4s
+            reuseRedirectedURL: true
         });
         mpegtsInstance.attachMediaElement(sharedVideo);
         mpegtsInstance.load();
@@ -1557,9 +1627,11 @@ function playTs(tsUrl, streamId) {
         mpegtsInstance.play().then(() => {
             document.getElementById('player-loading').style.display = 'none';
             document.getElementById('fs-loading').style.display = 'none';
+            startBufferCleanup();
         }).catch(() => {
             document.getElementById('player-loading').style.display = 'none';
             document.getElementById('fs-loading').style.display = 'none';
+            startBufferCleanup();
         });
     } catch(e) {
         playHls(streamId);
@@ -1573,14 +1645,22 @@ function playHls(streamId) {
     }
     const m3u8Url = LIVE_M3U8_URL(streamId);
     hlsInstance = new Hls({
-        enableWorker: true, lowLatencyMode: false,
-        liveSyncDurationCount: 3, liveMaxLatencyDurationCount: 6,
+        enableWorker: true,
+        lowLatencyMode: false,
+        liveSyncDurationCount: 2,           // Buffer mínimo
+        liveMaxLatencyDurationCount: 4,
         liveDurationInfinity: true,
-        backBufferLength: 10, maxBufferLength: 10, maxMaxBufferLength: 20,
-        maxBufferSize: 20 * 1000 * 1000,
-        manifestLoadingTimeOut: 8000, manifestLoadingMaxRetry: 1,
-        levelLoadingTimeOut: 8000, levelLoadingMaxRetry: 1,
-        fragLoadingTimeOut: 15000, fragLoadingMaxRetry: 2,
+        maxLiveSyncPlaybackRate: 1.5,        // Persegue o ao vivo
+        backBufferLength: 6,                  // 6s atrás
+        maxBufferLength: 6,                   // 6s à frente
+        maxMaxBufferLength: 12,               // Máx 12s
+        maxBufferSize: 12 * 1000 * 1000,      // 12MB
+        manifestLoadingTimeOut: 6000,
+        manifestLoadingMaxRetry: 1,
+        levelLoadingTimeOut: 6000,
+        levelLoadingMaxRetry: 1,
+        fragLoadingTimeOut: 10000,
+        fragLoadingMaxRetry: 2,
         startLevel: -1
     });
     hlsInstance.loadSource(m3u8Url);
@@ -1589,6 +1669,7 @@ function playHls(streamId) {
         document.getElementById('player-loading').style.display = 'none';
         document.getElementById('fs-loading').style.display = 'none';
         sharedVideo.play().catch(()=>{});
+        startBufferCleanup();
     });
     hlsInstance.on(Hls.Events.ERROR, (event, data) => {
         if (data.fatal) {
@@ -1600,7 +1681,6 @@ function playHls(streamId) {
 function startPlayback(item, type) {
     currentPlayingItem = item;
     
-    // Atualiza UI
     document.getElementById('playerPlaceholder').style.display = 'none';
     document.getElementById('footerName').innerText = item.name || 'Canal';
     document.getElementById('footerTime').innerText = new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
@@ -1685,7 +1765,6 @@ function openFullscreen() {
     isFullscreen = true;
     document.getElementById('fullscreen-player').classList.add('active');
     
-    // Move o vídeo pra tela cheia
     attachVideoTo(document.getElementById('fsVideoWrap'));
     
     document.getElementById('fsTitle').innerText = currentPlayingItem.name;
@@ -1703,7 +1782,6 @@ function closeFullscreen() {
     
     if (fsHideTimer) { clearTimeout(fsHideTimer); fsHideTimer = null; }
     
-    // Move o vídeo de volta pro painel direito
     attachVideoTo(document.getElementById('playerWrapper'));
     
     setTimeout(() => {
@@ -1873,10 +1951,7 @@ function renderFsPanelChannels() {
         el.onclick = () => {
             document.querySelectorAll('.fs-panel-item').forEach(e => e.classList.remove('active'));
             el.classList.add('active');
-            
-            // Troca de canal SEM mexer no layout
             startPlayback(item, 'live');
-            
             closeFsChannelsPanel();
         };
         
@@ -1886,7 +1961,6 @@ function renderFsPanelChannels() {
     container.appendChild(fragment);
 }
 
-// Botões
 document.getElementById('btnCloseWarning').onclick = closeWarning;
 document.getElementById('btnOkWarning').onclick = closeWarning;
 document.getElementById('btnCloseDonation').onclick = closeDonation;
@@ -1904,33 +1978,24 @@ document.getElementById('tabLive').onclick = function() { changeTab('live', this
 document.getElementById('tabMovie').onclick = function() { changeTab('movie', this); };
 document.getElementById('tabSeries').onclick = function() { changeTab('series', this); };
 
-// ==========================================
-// CLIQUE COM DUPLO PARA TELA CHEIA
-// ==========================================
 function handleItemClick(item) {
     const now = Date.now();
     const sameItem = (lastClickedStreamId === String(item.stream_id));
     
     if (sameItem && (now - lastClickTime) < DOUBLE_CLICK_DELAY) {
-        // Duplo clique → inicia e abre em tela cheia
         lastClickedStreamId = null;
         lastClickTime = 0;
         startPlayback(item, currentTab);
         setTimeout(() => openFullscreen(), 100);
     } else {
-        // Clique simples → apenas inicia o player
         lastClickedStreamId = String(item.stream_id);
         lastClickTime = now;
         startPlayback(item, currentTab);
     }
 }
 
-// ==========================================
-// CONTROLE REMOTO
-// ==========================================
 document.addEventListener('keydown', function(event) {
     const code = event.keyCode || event.which;
-    
     if (isFullscreen) showFsControls();
     
     switch (code) {
@@ -1992,9 +2057,6 @@ function handleBack() {
     else if (currentView === 'content') backToCategories();
 }
 
-// ==========================================
-// NAVEGAÇÃO
-// ==========================================
 async function changeTab(tab, element) {
     currentTab = tab;
     currentCategoryId = null;
@@ -2140,9 +2202,6 @@ function renderContent() {
     }, 100);
 }
 
-// ==========================================
-// SÉRIES
-// ==========================================
 async function openSeriesInfo(seriesId, title) {
     document.getElementById('seriesTitle').innerText = title;
     document.getElementById('episodes-modal').classList.add('active');
@@ -2213,9 +2272,6 @@ function selectSeason(seasonNum) {
     }, 100);
 }
 
-// ==========================================
-// API
-// ==========================================
 async function apiRequest(params) {
     const url = `${API}&action=${params}`;
     const response = await fetch(url, { cache: 'no-store' });
@@ -2223,9 +2279,6 @@ async function apiRequest(params) {
     return await response.json();
 }
 
-// ==========================================
-// INICIALIZAÇÃO
-// ==========================================
 async function initApp() {
     document.getElementById('initial-loading').classList.add('show');
     loadEpg();

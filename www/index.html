@@ -69,6 +69,29 @@ body::before {
 }
 
 /* ============================================ */
+/* DEBUG VISUAL                                  */
+/* ============================================ */
+#debug-toast {
+    position: fixed;
+    top: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.92);
+    color: #00e5ff;
+    padding: 10px 22px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: bold;
+    z-index: 99999;
+    border: 2px solid #00e5ff;
+    pointer-events: none;
+    font-family: 'Courier New', monospace;
+    opacity: 0;
+    transition: opacity 0.3s;
+    box-shadow: 0 0 30px rgba(0,229,255,0.6);
+}
+
+/* ============================================ */
 /* HEADER                                       */
 /* ============================================ */
 .top-menu {
@@ -1237,6 +1260,24 @@ const seasonSelector = document.getElementById('seasonSelector');
 const episodeList = document.getElementById('episodeList');
 const initialLoading = document.getElementById('initial-loading');
 
+// ==========================================
+// DEBUG VISUAL
+// ==========================================
+function showDebug(msg) {
+    let debugEl = document.getElementById('debug-toast');
+    if (!debugEl) {
+        debugEl = document.createElement('div');
+        debugEl.id = 'debug-toast';
+        document.body.appendChild(debugEl);
+    }
+    debugEl.innerText = msg;
+    debugEl.style.opacity = '1';
+    clearTimeout(debugEl._timeout);
+    debugEl._timeout = setTimeout(() => {
+        debugEl.style.opacity = '0';
+    }, 2000);
+}
+
 // Relógio
 function updateClock() {
     const now = new Date();
@@ -1251,6 +1292,7 @@ updateClock();
 // FUNÇÕES DOS BOTÕES
 // ==========================================
 window.closeWarning = function() {
+    showDebug('✅ Fechando Aviso...');
     document.getElementById('warning-modal').classList.add('hidden');
     setTimeout(() => {
         document.getElementById('donation-modal').classList.remove('hidden');
@@ -1262,6 +1304,7 @@ window.closeWarning = function() {
 };
 
 window.closeDonation = function() {
+    showDebug('💚 Fechando Doação...');
     document.getElementById('donation-modal').classList.add('hidden');
     if (!appInitialized) {
         appInitialized = true;
@@ -1270,12 +1313,14 @@ window.closeDonation = function() {
 };
 
 window.copyPix = function() {
+    showDebug('📋 Copiando PIX...');
     const btn = document.getElementById('pixCopyBtn');
     const btnText = document.getElementById('pixBtnText');
     
     const onSuccess = () => {
         btn.classList.add('copied');
         btnText.innerText = 'Copiado!';
+        showDebug('✅ PIX Copiado!');
         setTimeout(() => {
             btn.classList.remove('copied');
             btnText.innerText = 'Copiar';
@@ -1290,6 +1335,7 @@ window.copyPix = function() {
 };
 
 window.openTelegram = function() {
+    showDebug('✈️ Abrindo Telegram...');
     window.open('https://t.me/iptvfree277', '_blank');
 };
 
@@ -1420,12 +1466,15 @@ window.changeTab = function(tab, element) {
 // FUNÇÃO UNIFICADA DE AÇÃO
 // ==========================================
 function triggerAction(element) {
-    if (!element) return false;
+    if (!element) {
+        showDebug('⚠️ Nada focado');
+        return false;
+    }
     
-    console.log('[TRIGGER]', element.tagName, element.className, element.getAttribute('data-action'));
+    const action = element.getAttribute('data-action');
+    showDebug(`⚡ OK → ${action || element.className || element.tagName}`);
     
     // 1. data-action
-    const action = element.getAttribute('data-action');
     if (action && typeof window[action] === 'function') {
         try {
             window[action]();
@@ -1435,7 +1484,15 @@ function triggerAction(element) {
         }
     }
     
-    // 2. click() direto
+    // 2. onclick direto
+    if (element.onclick) {
+        try {
+            element.onclick(new Event('click'));
+            return true;
+        } catch(e) {}
+    }
+    
+    // 3. click()
     try {
         if (typeof element.click === 'function') {
             element.click();
@@ -1443,241 +1500,200 @@ function triggerAction(element) {
         }
     } catch(e) {}
     
-    // 3. MouseEvent
+    // 4. MouseEvent
     try {
         element.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
         return true;
-    } catch(e) {}
-    
-    // 4. onclick direto
-    try {
-        if (element.onclick) {
-            element.onclick();
-            return true;
-        }
     } catch(e) {}
     
     return false;
 }
 
 // ==========================================
-// DELEGAÇÃO DE EVENTOS DE CLIQUE
+// DELEGAÇÃO DE CLIQUE
 // ==========================================
 document.addEventListener('click', function(e) {
     const btn = e.target.closest('[data-action]');
     if (btn) {
         const action = btn.getAttribute('data-action');
         if (window[action]) {
+            showDebug(`🖱️ Click: ${action}`);
             window[action]();
         }
     }
 });
 
 // ==========================================
-// DETECÇÃO DE OK/ENTER EM TODAS AS TV BOXES
+// DETECÇÃO DE CONTROLE REMOTO - PADRÃO DO EXEMPLO
 // ==========================================
-const OK_CODES = [13, 23, 66, 176, 172, 179]; // 13=Enter, 23=DPAD_CENTER, 66=Enter, 176=OK
-const BACK_CODES = [27, 8, 461, 10009]; // 27=ESC, 8=Backspace, 461=Back, 10009=Android TV Back
+const KEY_CODES = {
+    OK:     [13, 23, 66, 176, 172, 179],  // Enter, DPAD_CENTER, OK variantes
+    BACK:   [27, 8, 4, 461, 10009],       // ESC, Backspace, Back, Android Back
+    UP:     [38, 19],                     // ArrowUp, TV Up
+    DOWN:   [40, 20],                     // ArrowDown, TV Down
+    LEFT:   [37, 21],                     // ArrowLeft, TV Left
+    RIGHT:  [39, 22]                      // ArrowRight, TV Right
+};
 
-let lastTriggerTime = 0;
-
-function isEnterEvent(e) {
-    // keyCode
-    if (OK_CODES.includes(e.keyCode)) return true;
-    if (OK_CODES.includes(e.which)) return true;
-    
-    // key name
-    const k = (e.key || '').toLowerCase();
-    if (k === 'enter' || k === 'ok' || k === 'select' || k === 'accept' || k === ' ') return true;
-    
-    // code
-    if (e.code === 'Enter' || e.code === 'NumpadEnter' || e.code === 'Space') return true;
-    
-    return false;
+function getKeyType(keyCode) {
+    for (const type in KEY_CODES) {
+        if (KEY_CODES[type].includes(keyCode)) return type;
+    }
+    return null;
 }
 
-function isBackEvent(e) {
-    if (BACK_CODES.includes(e.keyCode)) return true;
-    if (BACK_CODES.includes(e.which)) return true;
-    
-    const k = (e.key || '').toLowerCase();
-    if (k === 'escape' || k === 'backspace' || k === 'goback' || k === 'browserback') return true;
-    
-    return false;
-}
+let lastKeyTime = 0;
+let lastKeyCode = -1;
 
-function isArrowEvent(e) {
-    const k = e.key || '';
-    const c = e.keyCode;
-    return ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Up', 'Down', 'Left', 'Right'].includes(k) ||
-           [37, 38, 39, 40].includes(c);
-}
-
-// Handler unificado de teclas
-function handleKeyEvent(e, eventType) {
-    // Evita duplicação
+function handleRemote(keyCode, event) {
+    const type = getKeyType(keyCode);
+    
+    // Log sempre (aparece na tela)
+    if (keyCode !== lastKeyCode || Date.now() - lastKeyTime > 300) {
+        showDebug(`🎮 keyCode: ${keyCode} → ${type || 'DESCONHECIDO'}`);
+        lastKeyCode = keyCode;
+        lastKeyTime = Date.now();
+    }
+    
+    if (!type) return false;
+    
+    // Anti-repetição
     const now = Date.now();
-    if (now - lastTriggerTime < 200) return;
+    if (now - lastKeyTime < 100 && lastKeyCode === keyCode) return true;
     
-    const isEnter = isEnterEvent(e);
-    const isBack = isBackEvent(e);
-    const isArrow = isArrowEvent(e);
-    
-    if (!isEnter && !isBack && !isArrow) return;
-    
-    console.log('[KEY]', eventType, '| key:', e.key, '| code:', e.keyCode, '| isEnter:', isEnter, '| isBack:', isBack, '| isArrow:', isArrow);
-    
-    // MODAL DE AVISO
+    // ============ MODAL DE AVISO ============
     if (!document.getElementById('warning-modal').classList.contains('hidden')) {
         const focusables = Array.from(document.querySelectorAll('#warning-modal button, #warning-modal [tabindex="0"]'))
             .filter(el => el.offsetParent !== null);
-        const currentIdx = focusables.indexOf(document.activeElement);
         
-        if (isArrow) {
-            if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.keyCode === 39 || e.keyCode === 40) {
-                const nextIdx = currentIdx === -1 ? 0 : (currentIdx + 1) % focusables.length;
-                focusables[nextIdx]?.focus();
-            } else {
-                const prevIdx = currentIdx === -1 ? 0 : (currentIdx - 1 + focusables.length) % focusables.length;
-                focusables[prevIdx]?.focus();
-            }
-            e.preventDefault();
-            return;
-        }
-        
-        if (isEnter) {
-            lastTriggerTime = now;
+        if (type === 'OK') {
             if (document.activeElement && focusables.includes(document.activeElement)) {
                 triggerAction(document.activeElement);
-            } else if (focusables[0]) {
+            } else if (focusables.length > 0) {
                 focusables[0].focus();
                 triggerAction(focusables[0]);
             }
-            e.preventDefault();
-            return;
+            return true;
         }
-        
-        if (isBack) {
-            lastTriggerTime = now;
+        if (type === 'BACK') {
             window.closeWarning();
-            e.preventDefault();
-            return;
+            return true;
         }
-        return;
+        return true;
     }
     
-    // MODAL DE DOAÇÃO
+    // ============ MODAL DE DOAÇÃO ============
     if (!document.getElementById('donation-modal').classList.contains('hidden')) {
         const focusables = Array.from(document.querySelectorAll('#donation-modal button, #donation-modal [tabindex="0"], #donation-modal a'))
             .filter(el => el.offsetParent !== null);
-        const currentIdx = focusables.indexOf(document.activeElement);
         
-        if (isArrow) {
-            if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.keyCode === 39 || e.keyCode === 40) {
-                const nextIdx = currentIdx === -1 ? 0 : (currentIdx + 1) % focusables.length;
-                focusables[nextIdx]?.focus();
-            } else {
-                const prevIdx = currentIdx === -1 ? 0 : (currentIdx - 1 + focusables.length) % focusables.length;
-                focusables[prevIdx]?.focus();
-            }
-            e.preventDefault();
-            return;
-        }
-        
-        if (isEnter) {
-            lastTriggerTime = now;
+        if (type === 'OK') {
             if (document.activeElement && focusables.includes(document.activeElement)) {
                 triggerAction(document.activeElement);
-            } else if (focusables[0]) {
+            } else if (focusables.length > 0) {
                 focusables[0].focus();
                 triggerAction(focusables[0]);
             }
-            e.preventDefault();
-            return;
+            return true;
         }
-        
-        if (isBack) {
-            lastTriggerTime = now;
+        if (type === 'BACK') {
             window.closeDonation();
-            e.preventDefault();
-            return;
+            return true;
         }
-        return;
+        return true;
     }
     
-    // TELA CHEIA
+    // ============ TELA CHEIA ============
     if (fsPlayer.classList.contains('active')) {
-        if (isBack) {
-            lastTriggerTime = now;
+        if (type === 'BACK') {
             window.closeFullscreen();
-            e.preventDefault();
-            return;
+            return true;
         }
-        return;
+        return false;
     }
     
-    // MODAL DE EPISÓDIOS
+    // ============ MODAL DE EPISÓDIOS ============
     if (episodesModal.classList.contains('active')) {
-        if (isBack) {
-            lastTriggerTime = now;
+        if (type === 'BACK') {
             window.closeEpisodes();
-            e.preventDefault();
-            return;
+            return true;
         }
     }
     
-    // VOLTAR (fora de modais)
-    if (isBack) {
-        lastTriggerTime = now;
+    // ============ VOLTAR ============
+    if (type === 'BACK') {
         if (currentView === 'content') {
             window.backToCategories();
-            e.preventDefault();
-            return;
+            return true;
         }
+        return false;
     }
     
-    // NAVEGAÇÃO POR SETAS (fora de modais)
-    if (isArrow) {
-        const focusables = Array.from(document.querySelectorAll('button, [tabindex="0"], a[tabindex="0"]'))
-            .filter(el => el.offsetParent !== null && !el.disabled);
-        const currentIdx = focusables.indexOf(document.activeElement);
-        
-        if (currentIdx === -1) {
-            focusables[0]?.focus();
-            e.preventDefault();
-            return;
-        }
-        
-        let nextIdx = currentIdx;
-        const k = e.key || '';
-        if (k === 'ArrowRight' || e.keyCode === 39) nextIdx = Math.min(currentIdx + 1, focusables.length - 1);
-        if (k === 'ArrowLeft' || e.keyCode === 37) nextIdx = Math.max(currentIdx - 1, 0);
-        if (k === 'ArrowDown' || e.keyCode === 40) nextIdx = Math.min(currentIdx + 1, focusables.length - 1);
-        if (k === 'ArrowUp' || e.keyCode === 38) nextIdx = Math.max(currentIdx - 1, 0);
-        
-        focusables[nextIdx]?.focus();
-        e.preventDefault();
-        return;
-    }
-    
-    // ENTER (fora de modais)
-    if (isEnter) {
-        lastTriggerTime = now;
-        
-        // Se o foco está em algum item, dispara a ação
+    // ============ OK FORA DE MODAIS ============
+    if (type === 'OK') {
         if (document.activeElement && document.activeElement !== document.body) {
             triggerAction(document.activeElement);
         }
-        
-        e.preventDefault();
-        return;
+        return true;
     }
+    
+    return false;
 }
 
-// Registra em todos os eventos possíveis
-document.addEventListener('keydown', (e) => handleKeyEvent(e, 'keydown'), true);
-document.addEventListener('keyup', (e) => handleKeyEvent(e, 'keyup'), true);
-document.addEventListener('keypress', (e) => handleKeyEvent(e, 'keypress'), true);
+// ==========================================
+// LISTENERS - keydown, keyup, keypress
+// ==========================================
+document.addEventListener('keydown', (e) => {
+    const k = e.keyCode || e.which;
+    if (handleRemote(k, e)) {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+    }
+}, true);
+
+document.addEventListener('keyup', (e) => {
+    const k = e.keyCode || e.which;
+    // Alguns controles só disparam keyup para OK
+    const type = getKeyType(k);
+    if (type === 'OK' || type === 'BACK') {
+        if (handleRemote(k, e)) {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        }
+    }
+}, true);
+
+document.addEventListener('keypress', (e) => {
+    const k = e.keyCode || e.which;
+    if (getKeyType(k)) {
+        if (handleRemote(k, e)) {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        }
+    }
+}, true);
+
+// ==========================================
+// FALLBACK: DETECÇÃO POR EVENTO DE CLIQUE NATIVO
+// Se o controle disparar click direto no elemento focado
+// ==========================================
+document.addEventListener('keydown', (e) => {
+    // Detecção extra: se a tecla for 13/23 e nada foi capturado antes
+    if (e.keyCode === 13 || e.keyCode === 23) {
+        const el = document.activeElement;
+        if (el && el.getAttribute && el.getAttribute('data-action')) {
+            const action = el.getAttribute('data-action');
+            if (window[action]) {
+                showDebug(`🔑 Fallback: ${action}`);
+                window[action]();
+                e.preventDefault();
+            }
+        }
+    }
+});
 
 // ==========================================
 // INICIALIZAÇÃO
@@ -2072,7 +2088,7 @@ async function apiRequest(actionParams) {
 }
 
 // ==========================================
-// FORÇA ORIENTAÇÃO LANDSCAPE
+// FORÇA ORIENTAÇÃO
 // ==========================================
 function forceLandscape() {
     if (screen.orientation && screen.orientation.lock) {

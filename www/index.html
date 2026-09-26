@@ -46,9 +46,6 @@ body {
     -webkit-font-smoothing: none;
 }
 
-/* ============================================ */
-/* FOCO TV                                       */
-/* ============================================ */
 .tv-focused {
     background: var(--focus) !important;
     color: #000 !important;
@@ -61,9 +58,7 @@ body {
 .tv-focused .item-epg * {
     color: #000 !important;
 }
-.tv-focused i {
-    color: #000 !important;
-}
+.tv-focused i { color: #000 !important; }
 
 /* ============================================ */
 /* HEADER                                       */
@@ -180,7 +175,6 @@ body {
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
-    -webkit-overflow-scrolling: touch;
 }
 .list-container::-webkit-scrollbar { width: 5px; }
 .list-container::-webkit-scrollbar-thumb { background: #8b5cf6; }
@@ -271,7 +265,7 @@ body {
 }
 
 /* ============================================ */
-/* DIREITA - PLAYER                             */
+/* PLAYER ÚNICO (usado em tela normal e cheia)  */
 /* ============================================ */
 .right-panel {
     flex: 1;
@@ -290,7 +284,9 @@ body {
     overflow: hidden;
 }
 
-#main-video {
+#shared-video {
+    position: absolute;
+    top: 0; left: 0;
     width: 100%;
     height: 100%;
     object-fit: contain;
@@ -308,6 +304,8 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    z-index: 5;
+    pointer-events: none;
 }
 .player-placeholder i {
     font-size: 70px;
@@ -356,6 +354,7 @@ body {
     display: none;
     align-items: center;
     gap: 6px;
+    z-index: 40;
 }
 .live-indicator.show { display: flex; }
 .live-indicator .dot {
@@ -373,6 +372,7 @@ body {
     gap: 18px;
     border-top: 1px solid #2a1d4e;
     font-size: 13px;
+    flex-shrink: 0;
 }
 .footer-name {
     font-weight: 800;
@@ -417,20 +417,10 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
 }
 
-#fs-video {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    background: #000;
-    transform: translateZ(0);
-    backface-visibility: hidden;
-}
-
-/* ============================================ */
-/* CONTROLES DA TELA CHEIA - AUTO-HIDE          */
-/* ============================================ */
+/* Controles auto-hide */
 .fs-control {
     opacity: 1;
     transition: opacity 0.5s ease;
@@ -526,6 +516,18 @@ body {
     border-radius: 50%;
 }
 
+.fs-footer {
+    height: 45px;
+    background: #0a0612;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    gap: 20px;
+    border-top: 1px solid #2a1d4e;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
 /* ============================================ */
 /* PAINEL LATERAL DE CANAIS (ESQUERDA)          */
 /* ============================================ */
@@ -600,11 +602,7 @@ body {
     white-space: nowrap;
     flex-shrink: 0;
 }
-.fs-panel-cat.active {
-    background: #8b5cf6;
-    color: #fff;
-    border-color: transparent;
-}
+.fs-panel-cat.active { background: #8b5cf6; color: #fff; border-color: transparent; }
 
 .fs-panel-list {
     flex: 1;
@@ -693,18 +691,6 @@ body {
     background: var(--focus) !important;
     color: #000 !important;
     border-color: #fff !important;
-}
-
-.fs-footer {
-    height: 45px;
-    background: #0a0612;
-    display: flex;
-    align-items: center;
-    padding: 0 20px;
-    gap: 20px;
-    border-top: 1px solid #2a1d4e;
-    font-size: 14px;
-    flex-shrink: 0;
 }
 
 /* ============================================ */
@@ -1090,7 +1076,6 @@ body {
 </head>
 <body>
 
-<!-- LOADING INICIAL -->
 <div id="initial-loading">
     <div class="spinner-big"></div>
     <div id="initial-loading-text">🔌 Conectando ao servidor...</div>
@@ -1207,12 +1192,12 @@ body {
     </div>
 
     <div class="right-panel">
-        <div class="player-wrapper">
+        <div class="player-wrapper" id="playerWrapper">
             <div class="player-placeholder" id="playerPlaceholder">
                 <i class="fa-solid fa-tv"></i>
                 <p>Selecione um conteúdo para assistir</p>
             </div>
-            <video id="main-video" playsinline preload="none" style="display:none;"></video>
+            <video id="shared-video" playsinline webkit-playsinline preload="none"></video>
             <div id="player-loading"><i class="fa-solid fa-spinner fa-spin"></i></div>
             <div class="live-indicator" id="liveIndicator">
                 <span class="dot"></span> AO VIVO
@@ -1231,8 +1216,7 @@ body {
 
 <!-- TELA CHEIA -->
 <div id="fullscreen-player">
-    <div class="fs-video-wrap">
-        <video id="fs-video" playsinline preload="none"></video>
+    <div class="fs-video-wrap" id="fsVideoWrap">
         <div id="fs-loading"><i class="fa-solid fa-spinner fa-spin"></i></div>
         <div class="fs-live fs-control" id="fsLive"><span class="dot"></span> AO VIVO</div>
         <div class="fs-title fs-control" id="fsTitle">Carregando...</div>
@@ -1247,7 +1231,7 @@ body {
     </div>
 </div>
 
-<!-- PAINEL LATERAL DE CANAIS (ESQUERDA) -->
+<!-- PAINEL LATERAL DE CANAIS -->
 <div id="fs-channels-panel">
     <div class="fs-panel-header">
         <span class="fs-panel-title"><i class="fa-solid fa-list"></i> TROCAR CANAL</span>
@@ -1387,8 +1371,6 @@ let currentPlayingItem = null;
 let seriesDataCache = null;
 let hlsInstance = null;
 let mpegtsInstance = null;
-let hlsFsInstance = null;
-let mpegtsFsInstance = null;
 let isLiveStream = false;
 let appInitialized = false;
 let epgUpdateInterval = null;
@@ -1396,9 +1378,17 @@ let epgUpdateInterval = null;
 let fsPanelCategoryId = null;
 let fsPanelItems = [];
 
-// AUTO-HIDE DA TELA CHEIA
+// AUTO-HIDE
 let fsHideTimer = null;
-const FS_HIDE_DELAY = 5000; // 5 segundos
+const FS_HIDE_DELAY = 5000;
+
+// DUPLO CLIQUE
+let lastClickedStreamId = null;
+let lastClickTime = 0;
+const DOUBLE_CLICK_DELAY = 1000;
+
+// ESTADO DA TELA CHEIA
+let isFullscreen = false;
 
 // ==========================================
 // SISTEMA DE FOCO TV
@@ -1457,7 +1447,7 @@ function getCurrentContext() {
     if (!document.getElementById('warning-modal').classList.contains('hidden')) return 'warning-modal';
     if (!document.getElementById('donation-modal').classList.contains('hidden')) return 'donation-modal';
     if (document.getElementById('fs-channels-panel').classList.contains('active')) return 'fs-panel';
-    if (document.getElementById('fullscreen-player').classList.contains('active')) return 'fullscreen';
+    if (isFullscreen) return 'fullscreen';
     if (document.getElementById('episodes-modal').classList.contains('active')) return 'episodes';
     return 'main';
 }
@@ -1467,44 +1457,23 @@ function activateFocused() {
 }
 
 // ==========================================
-// AUTO-HIDE DOS CONTROLES DA TELA CHEIA
+// AUTO-HIDE
 // ==========================================
 function showFsControls() {
-    // Só mostra se estiver em tela cheia
-    if (!document.getElementById('fullscreen-player').classList.contains('active')) return;
-    
-    // Não mostra se o painel lateral estiver aberto
+    if (!isFullscreen) return;
     if (document.getElementById('fs-channels-panel').classList.contains('active')) return;
-    
-    const controls = document.querySelectorAll('.fs-control');
-    controls.forEach(el => el.classList.remove('fs-hidden'));
-    
-    // Reinicia o timer
+    document.querySelectorAll('.fs-control').forEach(el => el.classList.remove('fs-hidden'));
     if (fsHideTimer) clearTimeout(fsHideTimer);
     fsHideTimer = setTimeout(hideFsControls, FS_HIDE_DELAY);
 }
 
 function hideFsControls() {
-    // Só esconde se estiver em tela cheia
-    if (!document.getElementById('fullscreen-player').classList.contains('active')) return;
-    
-    // Não esconde se o painel lateral estiver aberto
+    if (!isFullscreen) return;
     if (document.getElementById('fs-channels-panel').classList.contains('active')) return;
-    
-    const controls = document.querySelectorAll('.fs-control');
-    controls.forEach(el => el.classList.add('fs-hidden'));
-    
-    // Se o foco estiver em um controle escondido, move para o vídeo
+    document.querySelectorAll('.fs-control').forEach(el => el.classList.add('fs-hidden'));
     if (focusedElement && focusedElement.classList.contains('fs-control')) {
         focusedElement.classList.remove('tv-focused');
         focusedElement = null;
-    }
-}
-
-function resetFsHideTimer() {
-    if (fsHideTimer) clearTimeout(fsHideTimer);
-    if (document.getElementById('fullscreen-player').classList.contains('active')) {
-        fsHideTimer = setTimeout(hideFsControls, FS_HIDE_DELAY);
     }
 }
 
@@ -1523,7 +1492,144 @@ setInterval(() => {
 })();
 
 // ==========================================
-// FUNÇÕES DOS BOTÕES
+// PLAYER ÚNICO COMPARTILHADO
+// ==========================================
+const sharedVideo = document.getElementById('shared-video');
+
+function attachVideoTo(container) {
+    if (sharedVideo.parentElement !== container) {
+        container.appendChild(sharedVideo);
+    }
+}
+
+function stopPlayer() {
+    if (hlsInstance) { try { hlsInstance.destroy(); } catch(e) {} hlsInstance = null; }
+    if (mpegtsInstance) { try { mpegtsInstance.destroy(); } catch(e) {} mpegtsInstance = null; }
+    try {
+        sharedVideo.pause();
+        sharedVideo.removeAttribute('src');
+        sharedVideo.load();
+    } catch(e) {}
+}
+
+// PLAYER MP4 (filmes/séries)
+function playMp4(item, type) {
+    stopPlayer();
+    isLiveStream = false;
+    document.getElementById('liveIndicator').classList.remove('show');
+    document.getElementById('fsLive').classList.remove('show');
+    
+    const url = `${SERVER}/${type}/${USER}/${PASS}/${item.stream_id}.mp4`;
+    sharedVideo.src = url;
+    sharedVideo.load();
+    sharedVideo.play().then(() => {
+        document.getElementById('player-loading').style.display = 'none';
+        document.getElementById('fs-loading').style.display = 'none';
+    }).catch(() => {
+        document.getElementById('player-loading').style.display = 'none';
+        document.getElementById('fs-loading').style.display = 'none';
+    });
+}
+
+// PLAYER TS (canais)
+function playTs(tsUrl, streamId) {
+    if (typeof mpegts === 'undefined' || !mpegts.isSupported()) {
+        playHls(streamId);
+        return;
+    }
+    try {
+        mpegtsInstance = mpegts.createPlayer({
+            type: 'mpegts', isLive: true, url: tsUrl
+        }, {
+            enableWorker: true, enableStashBuffer: false,
+            stashInitialSize: 64, lazyLoad: false,
+            liveBufferLatencyChasing: false,
+            autoCleanupSourceBuffer: true,
+            autoCleanupMaxBackwardDuration: 10,
+            autoCleanupMinBackwardDuration: 5
+        });
+        mpegtsInstance.attachMediaElement(sharedVideo);
+        mpegtsInstance.load();
+        mpegtsInstance.on(mpegts.Events.ERROR, () => {
+            if (mpegtsInstance) { try { mpegtsInstance.destroy(); } catch(e) {} mpegtsInstance = null; }
+            playHls(streamId);
+        });
+        mpegtsInstance.play().then(() => {
+            document.getElementById('player-loading').style.display = 'none';
+            document.getElementById('fs-loading').style.display = 'none';
+        }).catch(() => {
+            document.getElementById('player-loading').style.display = 'none';
+            document.getElementById('fs-loading').style.display = 'none';
+        });
+    } catch(e) {
+        playHls(streamId);
+    }
+}
+
+function playHls(streamId) {
+    if (!Hls.isSupported()) {
+        document.getElementById('player-loading').innerHTML = '<p style="color:#ff0080;">Não compatível</p>';
+        return;
+    }
+    const m3u8Url = LIVE_M3U8_URL(streamId);
+    hlsInstance = new Hls({
+        enableWorker: true, lowLatencyMode: false,
+        liveSyncDurationCount: 3, liveMaxLatencyDurationCount: 6,
+        liveDurationInfinity: true,
+        backBufferLength: 10, maxBufferLength: 10, maxMaxBufferLength: 20,
+        maxBufferSize: 20 * 1000 * 1000,
+        manifestLoadingTimeOut: 8000, manifestLoadingMaxRetry: 1,
+        levelLoadingTimeOut: 8000, levelLoadingMaxRetry: 1,
+        fragLoadingTimeOut: 15000, fragLoadingMaxRetry: 2,
+        startLevel: -1
+    });
+    hlsInstance.loadSource(m3u8Url);
+    hlsInstance.attachMedia(sharedVideo);
+    hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
+        document.getElementById('player-loading').style.display = 'none';
+        document.getElementById('fs-loading').style.display = 'none';
+        sharedVideo.play().catch(()=>{});
+    });
+    hlsInstance.on(Hls.Events.ERROR, (event, data) => {
+        if (data.fatal) {
+            document.getElementById('player-loading').innerHTML = '<p style="color:#ff0080;">⚠️ Canal offline</p>';
+        }
+    });
+}
+
+function startPlayback(item, type) {
+    currentPlayingItem = item;
+    
+    // Atualiza UI
+    document.getElementById('playerPlaceholder').style.display = 'none';
+    document.getElementById('footerName').innerText = item.name || 'Canal';
+    document.getElementById('footerTime').innerText = new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
+    
+    if (isFullscreen) {
+        document.getElementById('fsTitle').innerText = item.name || 'Canal';
+        document.getElementById('fsFooterName').innerText = item.name || 'Canal';
+        document.getElementById('fsFooterTime').innerText = new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
+        document.getElementById('fs-loading').style.display = 'block';
+        attachVideoTo(document.getElementById('fsVideoWrap'));
+    } else {
+        document.getElementById('player-loading').style.display = 'block';
+        attachVideoTo(document.getElementById('playerWrapper'));
+    }
+    
+    stopPlayer();
+    
+    if (type === 'movie' || type === 'series') {
+        playMp4(item, type);
+    } else {
+        isLiveStream = true;
+        document.getElementById('liveIndicator').classList.add('show');
+        document.getElementById('fsLive').classList.add('show');
+        playTs(LIVE_TS_URL(item.stream_id), item.stream_id);
+    }
+}
+
+// ==========================================
+// FUNÇÕES DE INTERFACE
 // ==========================================
 function closeWarning() {
     document.getElementById('warning-modal').classList.add('hidden');
@@ -1576,65 +1682,29 @@ function backToCategories() {
 
 function openFullscreen() {
     if (!currentPlayingItem) return;
-    stopMainPlayer();
-    
+    isFullscreen = true;
     document.getElementById('fullscreen-player').classList.add('active');
+    
+    // Move o vídeo pra tela cheia
+    attachVideoTo(document.getElementById('fsVideoWrap'));
+    
     document.getElementById('fsTitle').innerText = currentPlayingItem.name;
     document.getElementById('fsFooterName').innerText = currentPlayingItem.name;
     document.getElementById('fsFooterTime').innerText = new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
-    document.getElementById('fs-loading').style.display = 'block';
     
-    // Mostra controles e inicia timer
     showFsControls();
-    
-    const fsVideo = document.getElementById('fs-video');
-    let type = currentTab === 'movie' ? 'movie' : (currentTab === 'series' ? 'series' : 'live');
-    
-    if (type === 'movie' || type === 'series') {
-        document.getElementById('fsLive').classList.remove('show');
-        fsVideo.src = `${SERVER}/${type}/${USER}/${PASS}/${currentPlayingItem.stream_id}.mp4`;
-        fsVideo.play().then(() => document.getElementById('fs-loading').style.display = 'none')
-            .catch(() => document.getElementById('fs-loading').style.display = 'none');
-    } else {
-        document.getElementById('fsLive').classList.add('show');
-        const tsUrl = LIVE_TS_URL(currentPlayingItem.stream_id);
-        if (typeof mpegts !== 'undefined' && mpegts.isSupported()) {
-            try {
-                mpegtsFsInstance = mpegts.createPlayer({
-                    type: 'mpegts', isLive: true, url: tsUrl
-                }, {
-                    enableWorker: true, enableStashBuffer: false,
-                    stashInitialSize: 64, lazyLoad: false,
-                    liveBufferLatencyChasing: false,
-                    autoCleanupSourceBuffer: true,
-                    autoCleanupMaxBackwardDuration: 10,
-                    autoCleanupMinBackwardDuration: 5
-                });
-                mpegtsFsInstance.attachMediaElement(fsVideo);
-                mpegtsFsInstance.load();
-                mpegtsFsInstance.play().then(() => document.getElementById('fs-loading').style.display = 'none')
-                    .catch(() => document.getElementById('fs-loading').style.display = 'none');
-            } catch(e) {}
-        }
-    }
     setTimeout(() => focusFirst('fullscreen'), 200);
 }
 
 function closeFullscreen() {
+    isFullscreen = false;
     document.getElementById('fullscreen-player').classList.remove('active');
     document.getElementById('fs-channels-panel').classList.remove('active');
     
-    // Limpa timer
     if (fsHideTimer) { clearTimeout(fsHideTimer); fsHideTimer = null; }
     
-    if (mpegtsFsInstance) { try { mpegtsFsInstance.destroy(); } catch(e) {} mpegtsFsInstance = null; }
-    if (hlsFsInstance) { try { hlsFsInstance.destroy(); } catch(e) {} hlsFsInstance = null; }
-    const fsVideo = document.getElementById('fs-video');
-    fsVideo.pause();
-    fsVideo.removeAttribute('src');
-    fsVideo.load();
-    
-    if (currentPlayingItem) playInRightPanel(currentPlayingItem, currentTab);
+    // Move o vídeo de volta pro painel direito
+    attachVideoTo(document.getElementById('playerWrapper'));
     
     setTimeout(() => {
         const active = document.querySelector('.list-item.active') || document.querySelector('.list-item');
@@ -1651,16 +1721,12 @@ function closeEpisodes() {
 }
 
 // ==========================================
-// PAINEL LATERAL DE CANAIS (ESQUERDA)
+// PAINEL LATERAL DE CANAIS
 // ==========================================
 async function openFsChannelsPanel() {
-    // Mostra controles primeiro
     showFsControls();
-    
     const panel = document.getElementById('fs-channels-panel');
     panel.classList.add('active');
-    
-    // Esconde controles enquanto o painel estiver aberto
     document.querySelectorAll('.fs-control').forEach(el => el.classList.add('fs-hidden'));
     
     if (document.getElementById('fsPanelCategories').children.length === 0) {
@@ -1682,7 +1748,6 @@ async function openFsChannelsPanel() {
 
 function closeFsChannelsPanel() {
     document.getElementById('fs-channels-panel').classList.remove('active');
-    // Reexibe controles e reinicia timer
     showFsControls();
     setTimeout(() => focusFirst('fullscreen'), 100);
 }
@@ -1808,38 +1873,9 @@ function renderFsPanelChannels() {
         el.onclick = () => {
             document.querySelectorAll('.fs-panel-item').forEach(e => e.classList.remove('active'));
             el.classList.add('active');
-            currentPlayingItem = item;
-            document.getElementById('fsTitle').innerText = item.name;
-            document.getElementById('fsFooterName').innerText = item.name;
             
-            if (mpegtsFsInstance) { try { mpegtsFsInstance.destroy(); } catch(e) {} mpegtsFsInstance = null; }
-            if (hlsFsInstance) { try { hlsFsInstance.destroy(); } catch(e) {} hlsFsInstance = null; }
-            const fsVideo = document.getElementById('fs-video');
-            fsVideo.pause();
-            fsVideo.removeAttribute('src');
-            fsVideo.load();
-            
-            document.getElementById('fs-loading').style.display = 'block';
-            const tsUrl = LIVE_TS_URL(item.stream_id);
-            
-            if (typeof mpegts !== 'undefined' && mpegts.isSupported()) {
-                try {
-                    mpegtsFsInstance = mpegts.createPlayer({
-                        type: 'mpegts', isLive: true, url: tsUrl
-                    }, {
-                        enableWorker: true, enableStashBuffer: false,
-                        stashInitialSize: 64, lazyLoad: false,
-                        liveBufferLatencyChasing: false,
-                        autoCleanupSourceBuffer: true,
-                        autoCleanupMaxBackwardDuration: 10,
-                        autoCleanupMinBackwardDuration: 5
-                    });
-                    mpegtsFsInstance.attachMediaElement(fsVideo);
-                    mpegtsFsInstance.load();
-                    mpegtsFsInstance.play().then(() => document.getElementById('fs-loading').style.display = 'none')
-                        .catch(() => document.getElementById('fs-loading').style.display = 'none');
-                } catch(e) {}
-            }
+            // Troca de canal SEM mexer no layout
+            startPlayback(item, 'live');
             
             closeFsChannelsPanel();
         };
@@ -1850,7 +1886,7 @@ function renderFsPanelChannels() {
     container.appendChild(fragment);
 }
 
-// Atribuir ações
+// Botões
 document.getElementById('btnCloseWarning').onclick = closeWarning;
 document.getElementById('btnOkWarning').onclick = closeWarning;
 document.getElementById('btnCloseDonation').onclick = closeDonation;
@@ -1869,15 +1905,33 @@ document.getElementById('tabMovie').onclick = function() { changeTab('movie', th
 document.getElementById('tabSeries').onclick = function() { changeTab('series', this); };
 
 // ==========================================
+// CLIQUE COM DUPLO PARA TELA CHEIA
+// ==========================================
+function handleItemClick(item) {
+    const now = Date.now();
+    const sameItem = (lastClickedStreamId === String(item.stream_id));
+    
+    if (sameItem && (now - lastClickTime) < DOUBLE_CLICK_DELAY) {
+        // Duplo clique → inicia e abre em tela cheia
+        lastClickedStreamId = null;
+        lastClickTime = 0;
+        startPlayback(item, currentTab);
+        setTimeout(() => openFullscreen(), 100);
+    } else {
+        // Clique simples → apenas inicia o player
+        lastClickedStreamId = String(item.stream_id);
+        lastClickTime = now;
+        startPlayback(item, currentTab);
+    }
+}
+
+// ==========================================
 // CONTROLE REMOTO
 // ==========================================
 document.addEventListener('keydown', function(event) {
     const code = event.keyCode || event.which;
     
-    // Qualquer tecla apertada → mostra controles em tela cheia
-    if (document.getElementById('fullscreen-player').classList.contains('active')) {
-        showFsControls();
-    }
+    if (isFullscreen) showFsControls();
     
     switch (code) {
         case 13:
@@ -1918,19 +1972,14 @@ document.addEventListener('keydown', function(event) {
     }
 });
 
-// Mouse também reseta o timer
 document.addEventListener('mousemove', function(e) {
-    if (document.getElementById('fullscreen-player').classList.contains('active')) {
-        showFsControls();
-    }
+    if (isFullscreen) showFsControls();
     const target = e.target.closest('[data-tv]');
     if (target && target !== focusedElement) setFocus(target);
 });
 
 document.addEventListener('click', function(e) {
-    if (document.getElementById('fullscreen-player').classList.contains('active')) {
-        showFsControls();
-    }
+    if (isFullscreen) showFsControls();
 });
 
 function handleBack() {
@@ -2077,7 +2126,7 @@ function renderContent() {
             document.querySelectorAll('.list-item').forEach(e => e.classList.remove('active'));
             el.classList.add('active');
             if (currentTab === 'series') openSeriesInfo(item.series_id, item.name);
-            else playInRightPanel(item, currentTab);
+            else handleItemClick(item);
         };
         
         fragment.appendChild(el);
@@ -2150,7 +2199,7 @@ function selectSeason(seasonNum) {
         `;
         item.onclick = () => {
             closeEpisodes();
-            playInRightPanel({
+            startPlayback({
                 stream_id: ep.id,
                 name: `T${seasonNum} EP${ep.episode_num} - ${ep.title}`
             }, 'series');
@@ -2162,105 +2211,6 @@ function selectSeason(seasonNum) {
         const first = list.querySelector('.episode-item');
         if (first) setFocus(first);
     }, 100);
-}
-
-// ==========================================
-// PLAYER
-// ==========================================
-function playInRightPanel(item, type) {
-    currentPlayingItem = item;
-    document.getElementById('playerPlaceholder').style.display = 'none';
-    const video = document.getElementById('main-video');
-    video.style.display = 'block';
-    document.getElementById('player-loading').style.display = 'block';
-    document.getElementById('footerName').innerText = item.name || 'Canal';
-    document.getElementById('footerTime').innerText = new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
-    stopMainPlayer();
-    if (type === 'series' || type === 'movie') {
-        isLiveStream = false;
-        document.getElementById('liveIndicator').classList.remove('show');
-        video.src = `${SERVER}/${type}/${USER}/${PASS}/${item.stream_id}.mp4`;
-        video.play().then(() => document.getElementById('player-loading').style.display = 'none')
-            .catch(() => document.getElementById('player-loading').style.display = 'none');
-    } else {
-        isLiveStream = true;
-        document.getElementById('liveIndicator').classList.add('show');
-        const tsUrl = LIVE_TS_URL(item.stream_id);
-        playTsDirectOptimized(tsUrl, item.stream_id);
-    }
-}
-
-function playTsDirectOptimized(tsUrl, streamId) {
-    const video = document.getElementById('main-video');
-    if (typeof mpegts === 'undefined' || !mpegts.isSupported()) {
-        tryHlsOptimized(streamId);
-        return;
-    }
-    try {
-        mpegtsInstance = mpegts.createPlayer({
-            type: 'mpegts', isLive: true, url: tsUrl
-        }, {
-            enableWorker: true, enableStashBuffer: false,
-            stashInitialSize: 64, lazyLoad: false,
-            liveBufferLatencyChasing: false,
-            autoCleanupSourceBuffer: true,
-            autoCleanupMaxBackwardDuration: 10,
-            autoCleanupMinBackwardDuration: 5
-        });
-        mpegtsInstance.attachMediaElement(video);
-        mpegtsInstance.load();
-        mpegtsInstance.on(mpegts.Events.ERROR, () => {
-            if (mpegtsInstance) { try { mpegtsInstance.destroy(); } catch(e) {} mpegtsInstance = null; }
-            tryHlsOptimized(streamId);
-        });
-        mpegtsInstance.play().then(() => {
-            document.getElementById('player-loading').style.display = 'none';
-        }).catch(() => {
-            document.getElementById('player-loading').style.display = 'none';
-        });
-    } catch(e) {
-        tryHlsOptimized(streamId);
-    }
-}
-
-function tryHlsOptimized(streamId) {
-    const video = document.getElementById('main-video');
-    if (!Hls.isSupported()) {
-        document.getElementById('player-loading').innerHTML = '<p style="color:#ff0080;">Canal não compatível</p>';
-        return;
-    }
-    const m3u8Url = LIVE_M3U8_URL(streamId);
-    hlsInstance = new Hls({
-        enableWorker: true, lowLatencyMode: false,
-        liveSyncDurationCount: 3, liveMaxLatencyDurationCount: 6,
-        liveDurationInfinity: true,
-        backBufferLength: 10, maxBufferLength: 10, maxMaxBufferLength: 20,
-        maxBufferSize: 20 * 1000 * 1000,
-        manifestLoadingTimeOut: 8000, manifestLoadingMaxRetry: 1,
-        levelLoadingTimeOut: 8000, levelLoadingMaxRetry: 1,
-        fragLoadingTimeOut: 15000, fragLoadingMaxRetry: 2,
-        startLevel: -1
-    });
-    hlsInstance.loadSource(m3u8Url);
-    hlsInstance.attachMedia(video);
-    hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
-        document.getElementById('player-loading').style.display = 'none';
-        video.play().catch(()=>{});
-    });
-    hlsInstance.on(Hls.Events.ERROR, (event, data) => {
-        if (data.fatal) {
-            document.getElementById('player-loading').innerHTML = '<p style="color:#ff0080;">⚠️ Canal offline</p>';
-        }
-    });
-}
-
-function stopMainPlayer() {
-    if (hlsInstance) { try { hlsInstance.destroy(); } catch(e) {} hlsInstance = null; }
-    if (mpegtsInstance) { try { mpegtsInstance.destroy(); } catch(e) {} mpegtsInstance = null; }
-    const video = document.getElementById('main-video');
-    video.pause();
-    video.removeAttribute('src');
-    video.load();
 }
 
 // ==========================================
@@ -2290,9 +2240,6 @@ async function initApp() {
         epgUpdateInterval = setInterval(() => {
             if (currentTab === 'live' && currentView === 'content' && epgLoaded) {
                 renderContent();
-            }
-            if (document.getElementById('fs-channels-panel').classList.contains('active')) {
-                renderFsPanelChannels();
             }
         }, 60000);
     } catch (e) {

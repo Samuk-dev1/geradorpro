@@ -1,4 +1,4 @@
-package com.gestoriptv.iptvfreebox;
+package com.gestoriptv.michaelrun;
 
 import com.getcapacitor.BridgeActivity;
 

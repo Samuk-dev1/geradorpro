@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">IPTV FREE BOX</string>
-    <string name="title_activity_main">IPTV FREE BOX</string>
-    <string name="package_name">com.gestoriptv.iptvfreebox</string>
-    <string name="custom_url_scheme">com.gestoriptv.iptvfreebox</string>
+    <string name="app_name">michael run</string>
+    <string name="title_activity_main">michael run</string>
+    <string name="package_name">com.gestoriptv.michaelrun</string>
+    <string name="custom_url_scheme">com.gestoriptv.michaelrun</string>
 </resources>

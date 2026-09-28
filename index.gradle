@@ -1,0 +1,32 @@
+// Arquivo index.gradle - Ponto de entrada principal para build automatizado
+// Este arquivo garante que sistemas de CI/CD encontrem a configuração raiz
+
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.2.2'
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.22'
+        classpath 'com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:1.9.22-1.0.17'
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+
+// Aplica a configuração do settings.gradle.kts
+println("=== FinanceApp - Build Index Carregado ===")
+println("Root project: " + rootProject.name)
+println("Project dir: " + rootProject.projectDir)

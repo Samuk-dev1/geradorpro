@@ -1,5 +1,17 @@
 {
-  "appId": "com.gestoriptv.michaelrun",
-  "appName": "michael run",
-  "webDir": "www"
+  "appId": "com.gestoriptv.iptv",
+  "appName": "IPTV",
+  "webDir": "www",
+  "plugins": {
+    "LocalNotifications": {
+      "smallIcon": "ic_stat_icon_config_sample",
+      "iconColor": "#00A8E1",
+      "sound": "notificacao.wav",
+      "importance": "high",
+      "priority": "high",
+      "vibrate": true,
+      "ongoing": false,
+      "autoCancel": true
+    }
+  }
 }

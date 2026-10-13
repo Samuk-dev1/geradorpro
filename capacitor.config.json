@@ -1,6 +1,6 @@
 {
-  "appId": "com.gestoriptv.iptv",
-  "appName": "IPTV",
+  "appId": "com.gestoriptv.colheitafeliz",
+  "appName": "Colheita Feliz",
   "webDir": "www",
   "plugins": {
     "LocalNotifications": {

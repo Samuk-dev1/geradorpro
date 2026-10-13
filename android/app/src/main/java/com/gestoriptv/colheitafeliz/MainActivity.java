@@ -1,4 +1,4 @@
-package com.gestoriptv.iptv;
+package com.gestoriptv.colheitafeliz;
 
 import com.getcapacitor.BridgeActivity;
 

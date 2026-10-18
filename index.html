@@ -1,0 +1,2620 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0b0f1a">
+<title>TechMaster OS</title>
+<style>
+/* =========================================================
+   RESET E VARIÁVEIS
+   ========================================================= */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0b0f1a; --bg2:#111827; --surface:#161d2e; --surface2:#1c2539;
+  --border:#25304a; --border2:#2e3a55;
+  --text:#e7edf7; --text2:#9aa7c2; --text3:#6b7894;
+  --primary:#4f7cff; --primary2:#6a5cff; --accent:#22d3ee;
+  --success:#22c55e; --warning:#f59e0b; --danger:#ef4444;
+  --radius:16px; --radius-sm:10px; --radius-lg:22px;
+  --shadow:0 8px 30px rgba(0,0,0,.35);
+  --shadow-sm:0 2px 10px rgba(0,0,0,.25);
+  --sidebar-w:260px;
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+}
+html[data-theme="light"]{
+  --bg:#eef1f8; --bg2:#e4e8f2; --surface:#ffffff; --surface2:#f4f6fb;
+  --border:#dde2ee; --border2:#cdd4e4;
+  --text:#101828; --text2:#4a5573; --text3:#7a849e;
+  --shadow:0 8px 30px rgba(30,50,90,.12);
+  --shadow-sm:0 2px 10px rgba(30,50,90,.08);
+}
+html,body{height:100%}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  background:var(--bg); color:var(--text); overflow-x:hidden;
+  font-size:15px; line-height:1.45;
+  -webkit-font-smoothing:antialiased;
+}
+button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
+button{cursor:pointer;border:none;background:none}
+a{color:var(--primary);text-decoration:none}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:8px}
+::-webkit-scrollbar-track{background:transparent}
+
+/* =========================================================
+   LAYOUT PRINCIPAL E MENU LATERAL (CORRIGIDO)
+   ========================================================= */
+#app{display:none;min-height:100vh;padding-top:var(--safe-top);padding-bottom:var(--safe-bottom)}
+#app.ready{display:block}
+#loader{
+  position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:18px;background:var(--bg);z-index:9999;transition:opacity .4s;
+}
+#loader .logo-spin{
+  width:64px;height:64px;border-radius:18px;
+  background:linear-gradient(135deg,var(--primary),var(--primary2));
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 40px rgba(79,124,255,.5);animation:pulse 1.4s infinite;
+}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+#loader h1{font-size:22px;font-weight:800;letter-spacing:.5px}
+#loader p{color:var(--text2);font-size:13px}
+
+.shell{display:flex;min-height:100vh;position:relative}
+
+/* Fundo escuro (overlay) para mobile */
+#sidebarOverlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(2px);
+  z-index:190;display:none;
+}
+#sidebarOverlay.open{display:block;animation:fadeIn .2s;}
+
+/* Sidebar */
+#sidebar{
+  width:var(--sidebar-w);background:var(--bg2);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:200;
+  transition:transform .28s cubic-bezier(.4,0,.2,1);padding-top:var(--safe-top);
+}
+#sidebar.collapsed{transform:translateX(-100%)}
+.brand{display:flex;align-items:center;gap:12px;padding:18px 16px;border-bottom:1px solid var(--border)}
+.brand .logo{
+  width:42px;height:42px;border-radius:12px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--primary),var(--primary2));
+  display:flex;align-items:center;justify-content:center;color:#fff;
+  box-shadow:0 4px 14px rgba(79,124,255,.4);
+}
+.brand .name{font-weight:800;font-size:16px;letter-spacing:.3px}
+.brand .sub{font-size:11px;color:var(--text2);font-weight:500}
+.nav{flex:1;overflow-y:auto;padding:12px 10px}
+.nav-item{
+  display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:12px;
+  color:var(--text2);font-weight:600;font-size:14px;margin-bottom:3px;
+  transition:background .15s,color .15s;width:100%;text-align:left;
+}
+.nav-item svg{width:20px;height:20px;flex-shrink:0}
+.nav-item:hover{background:var(--surface);color:var(--text)}
+.nav-item.active{
+  background:linear-gradient(90deg,rgba(79,124,255,.18),rgba(106,92,255,.08));
+  color:var(--primary);position:relative;
+}
+.nav-item.active::before{
+  content:"";position:absolute;left:0;top:20%;bottom:20%;width:3px;
+  background:var(--primary);border-radius:0 3px 3px 0;
+}
+.sidebar-footer{padding:12px 14px;border-top:1px solid var(--border);font-size:11px;color:var(--text3)}
+
+/* Main area */
+.main{flex:1;display:flex;flex-direction:column;min-width:0;margin-left:var(--sidebar-w);transition:margin .28s;width:100%}
+.main.full{margin-left:0}
+
+/* Ajustes específicos para Mobile */
+@media(max-width:900px){
+  .main { margin-left: 0; } /* Remove a margem no celular */
+  #sidebar { box-shadow: 4px 0 24px rgba(0,0,0,0.5); } /* Adiciona sombra para parecer gaveta */
+}
+
+/* Topbar */
+.topbar{
+  position:sticky;top:0;z-index:100;background:rgba(11,15,26,.85);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);padding:12px 18px;
+  display:flex;align-items:center;gap:14px;padding-top:calc(12px + var(--safe-top));
+}
+html[data-theme="light"] .topbar{background:rgba(255,255,255,.85)}
+.icon-btn{
+  width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+  color:var(--text2);background:var(--surface);border:1px solid var(--border);
+  transition:transform .1s,background .15s;flex-shrink:0;
+}
+.icon-btn:active{transform:scale(.92)}
+.icon-btn:hover{background:var(--surface2);color:var(--text)}
+.icon-btn svg{width:21px;height:21px}
+#menuBtn{display:none}
+.page-title{font-size:18px;font-weight:800;letter-spacing:.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.search-wrap{flex:1;max-width:440px;position:relative;margin-left:auto}
+.search-wrap svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--text3)}
+#globalSearch{
+  width:100%;padding:11px 14px 11px 42px;border-radius:12px;background:var(--surface);
+  border:1px solid var(--border);color:var(--text);font-size:14px;outline:none;transition:border .15s;
+}
+#globalSearch:focus{border-color:var(--primary)}
+.topbar-actions{display:flex;align-items:center;gap:8px;margin-left:auto}
+.avatar{
+  width:40px;height:40px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--primary),var(--primary2));
+  display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:14px;
+  border:2px solid var(--border2);cursor:pointer;
+}
+.notif-dot{position:relative}
+.notif-dot::after{content:"";position:absolute;top:8px;right:9px;width:8px;height:8px;
+  background:var(--danger);border-radius:50%;border:2px solid var(--surface)}
+
+/* Content */
+.content{padding:22px;max-width:1400px;width:100%;margin:0 auto;flex:1}
+@media(max-width:900px){.content{padding:16px}}
+
+/* =========================================================
+   COMPONENTES
+   ========================================================= */
+.card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  box-shadow:var(--shadow-sm);
+}
+.card-pad{padding:18px}
+.section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.section-head h2{font-size:19px;font-weight:800}
+.section-head p{color:var(--text2);font-size:13px;margin-top:2px}
+
+/* Buttons */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:11px 18px;border-radius:12px;font-weight:700;font-size:14px;
+  transition:transform .1s,filter .15s,background .15s;white-space:nowrap;
+  border:1px solid transparent;min-height:44px;
+}
+.btn:active{transform:scale(.97)}
+.btn svg{width:18px;height:18px}
+.btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;box-shadow:0 4px 16px rgba(79,124,255,.35)}
+.btn-primary:hover{filter:brightness(1.08)}
+.btn-ghost{background:var(--surface2);color:var(--text);border-color:var(--border)}
+.btn-ghost:hover{background:var(--border)}
+.btn-danger{background:rgba(239,68,68,.14);color:var(--danger);border-color:rgba(239,68,68,.3)}
+.btn-danger:hover{background:rgba(239,68,68,.24)}
+.btn-success{background:rgba(34,197,94,.15);color:var(--success);border-color:rgba(34,197,94,.3)}
+.btn-sm{padding:8px 13px;font-size:13px;min-height:38px;border-radius:10px}
+.btn-icon{padding:10px;min-width:44px}
+
+/* Grid helpers */
+.grid{display:grid;gap:16px}
+.grid-4{grid-template-columns:repeat(4,1fr)}
+.grid-3{grid-template-columns:repeat(3,1fr)}
+.grid-2{grid-template-columns:repeat(2,1fr)}
+@media(max-width:1100px){.grid-4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:760px){
+  .grid-4,.grid-3,.grid-2{grid-template-columns:1fr}
+  .topbar{padding:10px 12px}
+  .search-wrap{display:none}
+  #menuBtn{display:flex}
+  .page-title{font-size:16px}
+}
+
+/* Stat cards */
+.stat{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:16px;position:relative;overflow:hidden;transition:transform .15s,border .15s;
+}
+.stat:active{transform:scale(.985)}
+.stat .ic{
+  width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+  margin-bottom:12px;
+}
+.stat .ic svg{width:22px;height:22px}
+.stat .val{font-size:24px;font-weight:800;letter-spacing:-.5px}
+.stat .lbl{font-size:12px;color:var(--text2);font-weight:600;margin-top:2px}
+.stat .trend{font-size:11px;margin-top:8px;font-weight:700}
+
+/* Tags */
+.tag{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;
+  font-size:11px;font-weight:700;white-space:nowrap}
+.tag svg{width:12px;height:12px}
+
+/* Chips / filters */
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{padding:8px 14px;border-radius:20px;background:var(--surface2);border:1px solid var(--border);
+  font-size:13px;font-weight:600;color:var(--text2);transition:.15s;min-height:38px}
+.chip.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+
+/* Forms */
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;font-weight:700;color:var(--text2);margin-bottom:6px;
+  text-transform:uppercase;letter-spacing:.4px}
+.field input,.field select,.field textarea{
+  width:100%;padding:12px 14px;border-radius:12px;background:var(--bg2);
+  border:1px solid var(--border);color:var(--text);outline:none;font-size:14px;
+  transition:border .15s,background .15s;min-height:46px;
+}
+.field textarea{min-height:80px;resize:vertical}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--primary);background:var(--surface)}
+.field .hint{font-size:11px;color:var(--text3);margin-top:5px}
+.row{display:grid;gap:12px}
+.row-2{grid-template-columns:1fr 1fr}
+.row-3{grid-template-columns:1fr 1fr 1fr}
+@media(max-width:640px){.row-2,.row-3{grid-template-columns:1fr}}
+
+/* Modal */
+.modal-back{
+  position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(4px);
+  z-index:1000;display:none;align-items:flex-end;justify-content:center;
+}
+.modal-back.open{display:flex;animation:fadeIn .2s}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{
+  background:var(--surface);width:100%;max-width:640px;max-height:92vh;
+  border-radius:var(--radius-lg) var(--radius-lg) 0 0;overflow:hidden;
+  display:flex;flex-direction:column;animation:slideUp .28s cubic-bezier(.4,0,.2,1);
+  border:1px solid var(--border);border-bottom:none;
+}
+@media(min-width:700px){
+  .modal-back{align-items:center;padding:20px}
+  .modal{border-radius:var(--radius-lg);max-height:88vh;border-bottom:1px solid var(--border)}
+  @keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:none;opacity:1}}
+}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:none}}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;
+  border-bottom:1px solid var(--border);flex-shrink:0;gap:12px}
+.modal-head h3{font-size:17px;font-weight:800}
+.modal-body{padding:18px;overflow-y:auto;flex:1}
+.modal-foot{padding:14px 18px;border-top:1px solid var(--border);display:flex;gap:10px;
+  justify-content:flex-end;flex-shrink:0;padding-bottom:calc(14px + var(--safe-bottom))}
+.modal-foot .btn{flex:1}
+@media(min-width:700px){.modal-foot .btn{flex:0 0 auto}}
+
+/* Tables */
+.table-wrap{overflow-x:auto;border-radius:var(--radius-sm)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{text-align:left;padding:11px 12px;font-size:11px;text-transform:uppercase;
+  letter-spacing:.5px;color:var(--text3);border-bottom:1px solid var(--border);font-weight:700;white-space:nowrap}
+tbody td{padding:12px;border-bottom:1px solid var(--border);vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:var(--surface2)}
+.link{color:var(--primary);font-weight:700;cursor:pointer}
+.link:hover{text-decoration:underline}
+
+/* List / cards for OS */
+.os-list{display:flex;flex-direction:column;gap:10px}
+.os-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:14px;display:flex;flex-direction:column;gap:10px;transition:.15s;cursor:pointer;
+}
+.os-card:hover{border-color:var(--border2);transform:translateY(-1px)}
+.os-card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap}
+.os-num{font-weight:800;font-size:14px;color:var(--primary)}
+.os-device{font-size:13px;color:var(--text2);margin-top:2px}
+.os-meta{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--text3);margin-top:2px}
+.os-meta span{display:inline-flex;align-items:center;gap:5px}
+
+/* Empty */
+.empty{text-align:center;padding:48px 20px;color:var(--text3)}
+.empty svg{width:56px;height:56px;opacity:.4;margin-bottom:12px}
+.empty h4{font-size:15px;color:var(--text2);margin-bottom:4px}
+.empty p{font-size:13px}
+
+/* Timeline */
+.timeline{position:relative;padding-left:22px}
+.timeline::before{content:"";position:absolute;left:6px;top:6px;bottom:6px;width:2px;background:var(--border)}
+.tl-item{position:relative;padding-bottom:16px}
+.tl-item:last-child{padding-bottom:0}
+.tl-item::before{content:"";position:absolute;left:-22px;top:4px;width:12px;height:12px;
+  border-radius:50%;background:var(--primary);border:2px solid var(--surface);box-shadow:0 0 0 2px var(--primary)}
+.tl-item .tl-date{font-size:11px;color:var(--text3);font-weight:600}
+.tl-item .tl-title{font-size:13px;font-weight:700;margin-top:2px}
+.tl-item .tl-desc{font-size:12px;color:var(--text2);margin-top:2px}
+
+/* Toast */
+#toast-wrap{position:fixed;bottom:calc(20px + var(--safe-bottom));right:20px;left:20px;
+  z-index:2000;display:flex;flex-direction:column;gap:10px;align-items:flex-end;pointer-events:none}
+.toast{
+  background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--primary);
+  border-radius:12px;padding:13px 16px;box-shadow:var(--shadow);font-size:13px;font-weight:600;
+  display:flex;align-items:center;gap:10px;max-width:340px;animation:toastIn .3s;pointer-events:auto;
+}
+.toast.success{border-left-color:var(--success)}
+.toast.error{border-left-color:var(--danger)}
+.toast.warn{border-left-color:var(--warning)}
+.toast svg{width:18px;height:18px;flex-shrink:0}
+@keyframes toastIn{from{transform:translateX(120%);opacity:0}to{transform:none;opacity:1}}
+
+/* Search results dropdown */
+#searchResults{
+  position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--surface);
+  border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);
+  max-height:420px;overflow-y:auto;display:none;z-index:150;
+}
+#searchResults.open{display:block}
+.sr-group{padding:8px 12px 4px;font-size:10px;text-transform:uppercase;letter-spacing:.5px;
+  color:var(--text3);font-weight:800}
+.sr-item{padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--border);font-size:13px}
+.sr-item:hover{background:var(--surface2)}
+.sr-item small{display:block;color:var(--text3);font-size:11px;margin-top:1px}
+
+/* Charts */
+.chart-box{position:relative;height:220px;width:100%}
+.chart-box canvas{width:100%;height:100%}
+
+/* Print */
+@media print{
+  body{background:#fff;color:#000}
+  #sidebar,.topbar,.no-print,.modal-back,#toast-wrap,#sidebarOverlay{display:none!important}
+  .main{margin:0}
+  .content{padding:0}
+  .print-doc{box-shadow:none;border:none;page-break-after:always}
+}
+.print-doc{background:#fff;color:#111;padding:32px;border-radius:8px;max-width:800px;margin:0 auto;
+  font-family:Arial,Helvetica,sans-serif;line-height:1.5;font-size:13px}
+.print-doc h1,.print-doc h2,.print-doc h3{color:#111}
+.print-doc table{color:#111}
+.print-doc thead th{color:#555;border-color:#ccc}
+.print-doc tbody td{border-color:#ddd}
+.print-doc .doc-head{display:flex;justify-content:space-between;border-bottom:2px solid #111;
+  padding-bottom:14px;margin-bottom:18px;flex-wrap:wrap;gap:12px}
+.print-doc .doc-head h1{font-size:20px;margin:0}
+.print-doc .doc-head .co{font-size:12px;color:#444;line-height:1.6}
+.print-doc .doc-title{text-align:center;font-size:16px;font-weight:800;text-transform:uppercase;
+  letter-spacing:1px;margin:14px 0 18px;background:#f0f0f0;padding:8px;border-radius:4px}
+.print-doc .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:14px}
+.print-doc .block h4{font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:#555;
+  border-bottom:1px solid #ddd;padding-bottom:4px;margin-bottom:6px}
+.print-doc .block p{margin:2px 0;font-size:12px}
+.print-doc .kv{display:flex;justify-content:space-between;padding:4px 0;font-size:12px;border-bottom:1px dotted #ddd}
+.print-doc .kv.total{font-weight:800;font-size:14px;border-top:2px solid #111;border-bottom:none;margin-top:6px;padding-top:8px}
+.print-doc .sign{margin-top:36px;border-top:1px solid #111;padding-top:6px;text-align:center;font-size:12px;width:60%;margin-left:auto;margin-right:auto}
+
+/* Misc */
+.flex{display:flex}.items-center{align-items:center}.gap-8{gap:8px}.gap-12{gap:12px}
+.justify-between{justify-content:space-between}.flex-wrap{flex-wrap:wrap}
+.mt-8{margin-top:8px}.mt-16{margin-top:16px}.mb-8{margin-bottom:8px}.mb-16{margin-bottom:16px}
+.text-sm{font-size:13px}.text-xs{font-size:11px}.text-muted{color:var(--text2)}
+.text-danger{color:var(--danger)}.text-success{color:var(--success)}.text-warn{color:var(--warning)}
+.fw-800{font-weight:800}.w-full{width:100%}
+.hidden{display:none!important}
+
+/* Privacy notice */
+.privacy{
+  background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.25);border-radius:12px;
+  padding:12px 14px;font-size:12px;color:var(--text2);display:flex;gap:10px;margin-bottom:14px;
+}
+.privacy svg{width:18px;height:18px;flex-shrink:0;color:var(--accent);margin-top:1px}
+
+/* Role selector */
+.role-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;
+  background:var(--surface2);border:1px solid var(--border);font-size:12px;font-weight:700;cursor:pointer}
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="logo-spin">
+    <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 3-3 3-3-3 3-3z"/><path d="M19 9l3 3-3 3-3-3 3-3z"/><path d="M5 9l3 3-3 3-3-3 3-3z"/><path d="M12 16l3 3-3 3-3-3 3-3z"/></svg>
+  </div>
+  <h1>TechMaster OS</h1>
+  <p>Carregando sistema…</p>
+</div>
+
+<!-- APP -->
+<div id="app">
+<div class="shell">
+
+  <!-- OVERLAY DO MENU (celular) -->
+  <div id="sidebarOverlay" onclick="window.toggleSidebar()"></div>
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar" class="collapsed">
+    <div class="brand">
+      <div class="logo">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 3-3 3-3-3 3-3z"/><path d="M19 9l3 3-3 3-3-3 3-3z"/><path d="M5 9l3 3-3 3-3-3 3-3z"/><path d="M12 16l3 3-3 3-3-3 3-3z"/></svg>
+      </div>
+      <div>
+        <div class="name">TechMaster OS</div>
+        <div class="sub">Assistência Técnica</div>
+      </div>
+    </div>
+    <nav class="nav" id="navMenu">
+      <!-- populated by JS -->
+    </nav>
+    <div class="sidebar-footer">
+      <div>Versão 1.0 · Demo Local</div>
+      <div style="margin-top:4px">Dados salvos no dispositivo</div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main" id="mainArea">
+    <header class="topbar">
+      <button class="icon-btn" id="menuBtn" aria-label="Menu" onclick="window.toggleSidebar()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+      <div class="page-title" id="pageTitle">Dashboard</div>
+      <div class="search-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input id="globalSearch" placeholder="Buscar cliente, OS, IMEI, peça…" autocomplete="off">
+        <div id="searchResults"></div>
+      </div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="Alternar tema">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        </button>
+        <button class="icon-btn notif-dot" id="notifBtn" title="Notificações">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>
+        </button>
+        <div class="avatar" id="avatarBtn" title="Usuário">AD</div>
+      </div>
+    </header>
+
+    <main class="content" id="content"><!-- rendered by JS --></main>
+  </div>
+</div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-back" id="modalBack">
+  <div class="modal" id="modalBox">
+    <div class="modal-head">
+      <h3 id="modalTitle">Título</h3>
+      <button class="icon-btn" onclick="window.closeModal()" aria-label="Fechar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-foot" id="modalFoot"></div>
+  </div>
+</div>
+
+<div id="toast-wrap"></div>
+
+<script>
+/* =========================================================
+   TECHMASTER OS — SISTEMA COMPLETO
+   ========================================================= */
+
+window.STORE_KEY = 'techmaster_os_v1';
+window.THEME_KEY = 'techmaster_theme';
+window.SETTINGS_KEY = 'techmaster_settings';
+window.currentSection = 'dashboard';
+window.lastSection = 'dashboard';
+window.osFilterStatus = 'all';
+window.modalConfirmCb = null;
+
+window.OS_STATUS = [
+  {id:'recebido',   label:'Recebido',           color:'#64748b', icon:'inbox'},
+  {id:'diagnostico',label:'Em diagnóstico',     color:'#3b82f6', icon:'search'},
+  {id:'aprovacao',  label:'Aguard. aprovação',  color:'#f59e0b', icon:'clock'},
+  {id:'peca',       label:'Aguardando peça',    color:'#a855f7', icon:'package'},
+  {id:'reparo',     label:'Em reparo',          color:'#06b6d4', icon:'tool'},
+  {id:'testes',     label:'Em testes',          color:'#14b8a6', icon:'check'},
+  {id:'pronto',     label:'Pronto p/ retirada', color:'#22c55e', icon:'check-circle'},
+  {id:'entregue',   label:'Entregue',           color:'#16a34a', icon:'truck'},
+  {id:'cancelado',  label:'Cancelado',          color:'#ef4444', icon:'x-circle'}
+];
+
+window.PAYMENT_METHODS = ['Dinheiro','Pix','Cartão de Débito','Cartão de Crédito','Transferência','Outro'];
+
+window.state = {
+  clients: [],
+  orders: [],
+  parts: [],
+  movs: [],
+  technicians: [],
+  expenses: [],
+  payments: [],
+  settings: {},
+  counters: { order: 0 }
+};
+
+// =========================================================
+// UTILITÁRIOS GERAIS
+// =========================================================
+window.uid = function(prefix='id'){
+  return prefix + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2,8);
+};
+window.brl = function(v){
+  const n = Number(v)||0;
+  return 'R$ ' + n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+};
+window.fmtDate = function(iso){
+  if(!iso) return '—';
+  const d = new Date(iso);
+  if(isNaN(d)) return '—';
+  return d.toLocaleDateString('pt-BR');
+};
+window.fmtDateTime = function(iso){
+  if(!iso) return '—';
+  const d = new Date(iso);
+  if(isNaN(d)) return '—';
+  return d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+};
+window.todayISO = function(){ return new Date().toISOString(); };
+window.todayDate = function(){ return new Date().toISOString().slice(0,10); };
+window.daysAgoISO = function(n){ const d=new Date(); d.setDate(d.getDate()-n); return d.toISOString(); };
+window.esc = function(s){
+  if(s==null) return '';
+  return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+};
+window.maskPhone = function(v){
+  v = String(v||'').replace(/\D/g,'').slice(0,11);
+  if(v.length<=2) return v;
+  if(v.length<=6) return '('+v.slice(0,2)+') '+v.slice(2);
+  if(v.length<=10) return '('+v.slice(0,2)+') '+v.slice(2,6)+'-'+v.slice(6);
+  return '('+v.slice(0,2)+') '+v.slice(2,7)+'-'+v.slice(7);
+};
+window.maskCPF = function(v){
+  v = String(v||'').replace(/\D/g,'').slice(0,14);
+  if(v.length<=11){
+    return v.replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d{1,2})$/,'$1-$2');
+  }
+  return v.replace(/(\d{2})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1/$2').replace(/(\d{4})(\d{1,2})$/,'$1-$2');
+};
+window.onlyDigits = function(v){ return String(v||'').replace(/\D/g,''); };
+
+// =========================================================
+// PERSISTÊNCIA
+// =========================================================
+window.saveState = function(){
+  try{
+    localStorage.setItem(window.STORE_KEY, JSON.stringify(window.state));
+    return true;
+  }catch(e){
+    console.error('Erro ao salvar', e);
+    window.toast('Erro ao salvar dados no dispositivo','error');
+    return false;
+  }
+};
+
+window.loadState = function(){
+  try{
+    const raw = localStorage.getItem(window.STORE_KEY);
+    if(!raw) return false;
+    const data = JSON.parse(raw);
+    if(!data || typeof data!=='object') return false;
+    Object.assign(window.state, data);
+    ['clients','orders','parts','movs','technicians','expenses','payments'].forEach(k=>{
+      if(!Array.isArray(window.state[k])) window.state[k]=[];
+    });
+    if(!window.state.counters) window.state.counters={order:0};
+    if(!window.state.settings) window.state.settings={};
+    return true;
+  }catch(e){
+    console.error('Erro ao carregar', e);
+    return false;
+  }
+};
+
+window.loadSettings = function(){
+  try{ const r=localStorage.getItem(window.SETTINGS_KEY); if(r) window.state.settings=JSON.parse(r)||{}; }catch(e){}
+};
+
+// =========================================================
+// DADOS DE DEMONSTRAÇÃO
+// =========================================================
+window.seedDemo = function(){
+  const now = new Date();
+  const y = now.getFullYear();
+  const s = window.state;
+
+  s.clients = [
+    {id:window.uid('cli'), name:'Ana Beatriz Souza', cpf:'123.456.789-00', phone:'(11) 98765-4321',
+     email:'ana@example.com', address:'Rua das Flores, 120', city:'São Paulo', state:'SP',
+     notes:'Cliente preferencial.', createdAt: window.daysAgoISO(40)},
+    {id:window.uid('cli'), name:'Carlos Henrique Lima', cpf:'987.654.321-00', phone:'(11) 91234-5678',
+     email:'carlos@example.com', address:'Av. Paulista, 1500', city:'São Paulo', state:'SP',
+     notes:'', createdAt: window.daysAgoISO(30)},
+    {id:window.uid('cli'), name:'Marina Oliveira', cpf:'', phone:'(21) 99888-7766',
+     email:'marina@example.com', address:'Rua do Sol, 45', city:'Rio de Janeiro', state:'RJ',
+     notes:'Prefere contato por WhatsApp.', createdAt: window.daysAgoISO(20)},
+    {id:window.uid('cli'), name:'Pedro Santos Almeida', cpf:'', phone:'(31) 97777-1122',
+     email:'', address:'Rua da Paz, 890', city:'Belo Horizonte', state:'MG',
+     notes:'', createdAt: window.daysAgoISO(10)},
+    {id:window.uid('cli'), name:'Juliana Ferreira', cpf:'', phone:'(11) 96666-3344',
+     email:'ju@example.com', address:'Rua A, 10', city:'São Paulo', state:'SP',
+     notes:'', createdAt: window.daysAgoISO(5)}
+  ];
+
+  s.technicians = [
+    {id:window.uid('tec'), name:'Rafael Técnico', phone:'(11) 99999-0001', specialty:'Hardware', commission:10, active:true},
+    {id:window.uid('tec'), name:'Bruno Silva', phone:'(11) 99999-0002', specialty:'Software', commission:8, active:true},
+    {id:window.uid('tec'), name:'Camila Rocha', phone:'(11) 99999-0003', specialty:'Micro-solda', commission:12, active:true}
+  ];
+
+  s.parts = [
+    {id:window.uid('part'), name:'Tela iPhone 11', sku:'SCR-IP11', category:'Tela', brand:'Apple', model:'iPhone 11',
+     qty:5, minQty:2, cost:180, price:350, supplier:'Fornecedor A', location:'A1', createdAt:window.daysAgoISO(50)},
+    {id:window.uid('part'), name:'Bateria Samsung A50', sku:'BAT-SA50', category:'Bateria', brand:'Samsung', model:'Galaxy A50',
+     qty:8, minQty:3, cost:35, price:90, supplier:'Fornecedor B', location:'B2', createdAt:window.daysAgoISO(45)},
+    {id:window.uid('part'), name:'Conector de Carga Type-C', sku:'CON-TC', category:'Conector', brand:'Universal', model:'Type-C',
+     qty:2, minQty:5, cost:8, price:35, supplier:'Fornecedor A', location:'C3', createdAt:window.daysAgoISO(40)},
+    {id:window.uid('part'), name:'Tela Moto G8', sku:'SCR-MG8', category:'Tela', brand:'Motorola', model:'Moto G8',
+     qty:3, minQty:2, cost:120, price:260, supplier:'Fornecedor C', location:'A2', createdAt:window.daysAgoISO(35)},
+    {id:window.uid('part'), name:'Película de Vidro', sku:'PEL-UNI', category:'Acessório', brand:'Universal', model:'Universal',
+     qty:20, minQty:10, cost:2, price:15, supplier:'Fornecedor B', location:'D1', createdAt:window.daysAgoISO(30)}
+  ];
+
+  const statuses = ['recebido','diagnostico','aprovacao','peca','reparo','testes','pronto','entregue','entregue','entregue'];
+  const devices = [
+    {type:'Smartphone', brand:'Apple', model:'iPhone 11', color:'Preto'},
+    {type:'Smartphone', brand:'Samsung', model:'Galaxy A50', color:'Azul'},
+    {type:'Smartphone', brand:'Motorola', model:'Moto G8', color:'Preto'},
+    {type:'Smartphone', brand:'Xiaomi', model:'Redmi Note 10', color:'Branco'},
+    {type:'Smartphone', brand:'Apple', model:'iPhone 12', color:'Roxo'},
+    {type:'Tablet', brand:'Samsung', model:'Galaxy Tab A', color:'Cinza'},
+    {type:'Smartphone', brand:'Realme', model:'C25', color:'Verde'},
+    {type:'Smartphone', brand:'Apple', model:'iPhone 8', color:'Branco'},
+    {type:'Smartphone', brand:'Samsung', model:'Galaxy S21', color:'Preto'},
+    {type:'Smartphone', brand:'Motorola', model:'Edge 20', color:'Azul'}
+  ];
+  const defects = ['Tela quebrada','Não carrega','Não liga','Bateria descarregando rápido',
+    'Problema no áudio','Aparelho molhado','Conector de carga danificado','Tela com manchas'];
+
+  s.orders = [];
+  s.counters.order = 0;
+
+  for(let i=0;i<12;i++){
+    const cli = s.clients[i % s.clients.length];
+    const dev = devices[i % devices.length];
+    const st = statuses[i % statuses.length];
+    const mdo = 60 + (i*13)%120;
+    const pecas = 40 + (i*17)%200;
+    const desc = i%4===0 ? 20 : 0;
+    const total = mdo + pecas - desc;
+    const createdAt = window.daysAgoISO(60 - i*4);
+    s.counters.order++;
+    const num = `OS-${y}-${String(s.counters.order).padStart(4,'0')}`;
+    const order = {
+      id: window.uid('os'),
+      number: num,
+      clientId: cli.id,
+      technicianId: s.technicians[i%s.technicians.length].id,
+      device: {
+        type: dev.type, brand: dev.brand, model: dev.model, color: dev.color,
+        imei1: '35' + String(100000000000 + i*123456789).slice(0,13),
+        imei2: '', serial: 'SN'+String(10000+i),
+        password: '', passwordRecorded: false,
+        physicalState: 'Bom estado geral, com marcas de uso.',
+        accessories: i%2===0 ? 'Carregador e cabo' : 'Nenhum',
+        photos: [], notes: ''
+      },
+      reportedDefect: defects[i % defects.length],
+      diagnosis: {
+        initial: st==='recebido' ? '' : 'Diagnóstico realizado.',
+        tests: st==='recebido' ? '' : 'Testes de bancada.',
+        identified: st==='recebido' ? '' : 'Defeito confirmado: ' + defects[i % defects.length],
+        solution: st==='recebido' ? '' : 'Substituição do componente danificado.',
+        techNotes: ''
+      },
+      budget: { labor: mdo, parts: pecas, discount: desc, total: total, downPayment: 0, remaining: total },
+      status: st,
+      priority: i%5===0 ? 'alta' : 'normal',
+      createdAt,
+      updatedAt: createdAt,
+      statusHistory: [
+        {from:'', to:'recebido', at:createdAt, by:'Sistema'},
+        ...(st!=='recebido' ? [{from:'recebido', to:st, at:window.daysAgoISO(55 - i*4), by:'Rafael Técnico'}] : [])
+      ],
+      warranty: st==='entregue' ? {
+        completedAt: window.daysAgoISO(10 - i%5),
+        days: 90,
+        conditions: 'Garantia de 90 dias sobre o serviço realizado.',
+        notes: ''
+      } : null,
+      linkedOrderId: null,
+      deliveryDate: st==='entregue' ? window.daysAgoISO(10 - i%5) : null
+    };
+    s.orders.push(order);
+  }
+
+  s.payments = [];
+  s.orders.filter(o=>o.status==='entregue').forEach((o,idx)=>{
+    s.payments.push({
+      id: window.uid('pay'), orderId: o.id, amount: o.budget.total, method: window.PAYMENT_METHODS[idx%3],
+      date: o.deliveryDate || window.todayISO(), notes: ''
+    });
+  });
+
+  s.expenses = [
+    {id:window.uid('exp'), description:'Aluguel da loja', amount:1800, category:'Aluguel', date:window.daysAgoISO(15), supplier:'Imobiliária X'},
+    {id:window.uid('exp'), description:'Energia elétrica', amount:340, category:'Energia', date:window.daysAgoISO(10), supplier:'Concessionária'},
+    {id:window.uid('exp'), description:'Compra de peças', amount:1200, category:'Peças', date:window.daysAgoISO(7), supplier:'Fornecedor A'}
+  ];
+
+  s.movs = [];
+  s.movs.push({id:window.uid('mv'), partId:s.parts[0].id, type:'entrada', qty:5, date:window.daysAgoISO(50), notes:'Compra inicial'});
+  s.movs.push({id:window.uid('mv'), partId:s.parts[1].id, type:'entrada', qty:8, date:window.daysAgoISO(45), notes:'Compra inicial'});
+
+  s.settings = {
+    companyName: 'TechMaster Assistência',
+    cnpj: '12.345.678/0001-90',
+    phone: '(11) 4000-1234',
+    whatsapp: '(11) 98765-0000',
+    email: 'contato@techmaster.com',
+    address: 'Rua Principal, 100 - Centro',
+    site: 'www.techmaster.com',
+    primaryColor: '#4f7cff',
+    defaultWarrantyDays: 90,
+    defaultDiagnosisDays: 3,
+    serviceTerms: 'O cliente declara estar ciente dos termos de serviço e autoriza o diagnóstico e reparo do aparelho conforme descrito.',
+    printNotes: 'Obrigado pela preferência!',
+    waMessages: {
+      received: 'Olá, [nome]! Recebemos seu [modelo]. Número da OS: [os]. Avisaremos assim que o diagnóstico estiver pronto. Obrigado!',
+      budget: 'Olá, [nome]! Seu orçamento para o [modelo] está pronto. OS: [os]. Valor total: [valor]. Aguardamos sua aprovação!',
+      approved: 'Olá, [nome]! Recebemos sua aprovação. O reparo do [modelo] já foi iniciado. OS: [os].',
+      partAvailable: 'Olá, [nome]! A peça para o seu [modelo] chegou. Em breve iniciaremos o reparo. OS: [os].',
+      ready: 'Olá, [nome]! Seu aparelho [modelo] está pronto para retirada. Número da OS: [os]. Valor pendente: [valor]. Aguardamos você!',
+      paymentReminder: 'Olá, [nome]! Lembrete de pagamento referente à OS [os] no valor de [valor]. Qualquer dúvida estamos à disposição.',
+      delivered: 'Olá, [nome]! Confirmamos a entrega do seu [modelo]. OS: [os]. Obrigado pela confiança!'
+    }
+  };
+};
+
+// =========================================================
+// TOASTS E MODAIS
+// =========================================================
+window.toast = function(msg, type='info'){
+  const wrap = document.getElementById('toast-wrap');
+  if(!wrap) return;
+  const t = document.createElement('div');
+  t.className = 'toast ' + (type==='success'?'success':type==='error'?'error':type==='warn'?'warn':'');
+  const iconMap = {
+    success:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>',
+    error:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>',
+    warn:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 9v4M12 17h.01M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/></svg>',
+    info:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 12v4"/></svg>'
+  };
+  t.innerHTML = (iconMap[type]||iconMap.info) + '<span>'+window.esc(msg)+'</span>';
+  wrap.appendChild(t);
+  setTimeout(()=>{ t.style.opacity='0'; t.style.transform='translateX(120%)'; t.style.transition='.3s'; }, 2600);
+  setTimeout(()=>t.remove(), 3000);
+};
+
+window.openModal = function(title, bodyHTML, footHTML){
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalBody').innerHTML = bodyHTML;
+  document.getElementById('modalFoot').innerHTML = footHTML || '';
+  document.getElementById('modalBack').classList.add('open');
+};
+window.closeModal = function(){
+  document.getElementById('modalBack').classList.remove('open');
+  window.modalConfirmCb = null;
+};
+window.confirmDialog = function(title, message, onConfirm, danger=true){
+  window.modalConfirmCb = onConfirm;
+  window.openModal(title,
+    `<p style="font-size:14px;line-height:1.6;color:var(--text2)">${window.esc(message)}</p>`,
+    `<button class="btn btn-ghost" onclick="window.closeModal()">Cancelar</button>
+     <button class="btn ${danger?'btn-danger':'btn-primary'}" onclick="(function(){const cb=window.modalConfirmCb;window.closeModal();if(cb)cb();})()">Confirmar</button>`
+  );
+};
+
+// =========================================================
+// NAVEGAÇÃO E MENU LATERAL
+// =========================================================
+window.toggleSidebar = function() {
+  const sb = document.getElementById('sidebar');
+  const ov = document.getElementById('sidebarOverlay');
+  
+  if (sb.classList.contains('collapsed')) {
+    // Abrir
+    sb.classList.remove('collapsed');
+    if (window.innerWidth <= 900) ov.classList.add('open');
+  } else {
+    // Fechar
+    sb.classList.add('collapsed');
+    ov.classList.remove('open');
+  }
+};
+
+window.NAV_ITEMS = [
+  {id:'dashboard', label:'Dashboard', icon:'grid'},
+  {id:'orders', label:'Ordens de Serviço', icon:'clipboard'},
+  {id:'clients', label:'Clientes', icon:'users'},
+  {id:'stock', label:'Estoque', icon:'package'},
+  {id:'finance', label:'Financeiro', icon:'dollar'},
+  {id:'technicians', label:'Técnicos', icon:'wrench'},
+  {id:'warranty', label:'Garantias', icon:'shield'},
+  {id:'reports', label:'Relatórios', icon:'chart'},
+  {id:'settings', label:'Configurações', icon:'settings'}
+];
+
+window.ICONS = {
+  grid:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
+  clipboard:'<rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><path d="M9 12h6M9 16h6"/>',
+  users:'<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>',
+  package:'<path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><path d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12"/>',
+  dollar:'<line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>',
+  wrench:'<path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/>',
+  shield:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+  chart:'<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>',
+  settings:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"/>',
+  inbox:'<path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z"/>',
+  search:'<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  tool:'<path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/>',
+  check:'<path d="M20 6L9 17l-5-5"/>',
+  'check-circle':'<circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/>',
+  truck:'<rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>',
+  'x-circle':'<circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  edit:'<path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>',
+  trash:'<path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>',
+  eye:'<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>',
+  print:'<path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>',
+  whatsapp:'<path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/>',
+  back:'<path d="M19 12H5M12 19l-7-7 7-7"/>',
+  download:'<path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/>',
+  upload:'<path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5M12 3v12"/>',
+  lock:'<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>',
+  info:'<circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 12v4"/>',
+  camera:'<path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/>',
+  arrowUp:'<path d="M12 19V5M5 12l7-7 7 7"/>',
+  arrowDown:'<path d="M12 5v14M19 12l-7 7-7-7"/>'
+};
+
+window.icon = function(name, size=20){
+  const p = window.ICONS[name] || window.ICONS.info;
+  return `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+};
+
+window.renderNav = function(){
+  const nav = document.getElementById('navMenu');
+  nav.innerHTML = window.NAV_ITEMS.map(item=>`
+    <button class="nav-item ${window.currentSection===item.id?'active':''}" onclick="window.navigate('${item.id}')">
+      ${window.icon(item.icon)}<span>${item.label}</span>
+    </button>
+  `).join('');
+};
+
+window.navigate = function(section){
+  if(section!==window.currentSection) window.lastSection = window.currentSection;
+  window.currentSection = section;
+  const item = window.NAV_ITEMS.find(n=>n.id===section);
+  document.getElementById('pageTitle').textContent = item ? item.label : 'TechMaster';
+  window.renderNav();
+  window.renderSection();
+  
+  // No mobile, fechar a sidebar automaticamente ao navegar
+  if (window.innerWidth <= 900) {
+    document.getElementById('sidebar').classList.add('collapsed');
+    document.getElementById('sidebarOverlay').classList.remove('open');
+  }
+
+  window.scrollTo({top:0,behavior:'smooth'});
+};
+
+// =========================================================
+// RENDER SECTION ROUTER E HELPERS
+// =========================================================
+window.renderSection = function(){
+  const c = document.getElementById('content');
+  try {
+    switch(window.currentSection){
+      case 'dashboard': c.innerHTML = window.renderDashboard(); window.bindDashboard(); break;
+      case 'orders': c.innerHTML = window.renderOrders(); window.bindOrders(); break;
+      case 'clients': c.innerHTML = window.renderClients(); window.bindClients(); break;
+      case 'stock': c.innerHTML = window.renderStock(); window.bindStock(); break;
+      case 'finance': c.innerHTML = window.renderFinance(); window.bindFinance(); break;
+      case 'technicians': c.innerHTML = window.renderTechnicians(); window.bindTechnicians(); break;
+      case 'warranty': c.innerHTML = window.renderWarranty(); window.bindWarranty(); break;
+      case 'reports': c.innerHTML = window.renderReports(); window.bindReports(); break;
+      case 'settings': c.innerHTML = window.renderSettings(); window.bindSettings(); break;
+      default: c.innerHTML = window.renderDashboard();
+    }
+  } catch(e) {
+    console.error(e);
+    c.innerHTML = `<div class="empty"><h4>Ocorreu um erro</h4><p>${e.message}</p></div>`;
+  }
+};
+
+window.clientById = function(id){ return window.state.clients.find(c=>c.id===id); };
+window.techById = function(id){ return window.state.technicians.find(t=>t.id===id); };
+window.partById = function(id){ return window.state.parts.find(p=>p.id===id); };
+window.orderById = function(id){ return window.state.orders.find(o=>o.id===id); };
+window.statusMeta = function(id){ return window.OS_STATUS.find(s=>s.id===id) || window.OS_STATUS[0]; };
+window.paymentsForOrder = function(orderId){ return window.state.payments.filter(p=>p.orderId===orderId); };
+window.paidForOrder = function(orderId){ return window.paymentsForOrder(orderId).reduce((s,p)=>s+Number(p.amount||0),0); };
+window.pendingForOrder = function(orderId){
+  const o = window.orderById(orderId); if(!o) return 0;
+  return Math.max(0, Number(o.budget.total||0) - window.paidForOrder(orderId));
+};
+window.statusTag = function(id){
+  const m = window.statusMeta(id);
+  return `<span class="tag" style="background:${m.color}22;color:${m.color}">${window.icon(m.icon,12)} ${m.label}</span>`;
+};
+window.nextOrderNumber = function(){
+  const y = new Date().getFullYear();
+  window.state.counters.order = (window.state.counters.order||0) + 1;
+  return `OS-${y}-${String(window.state.counters.order).padStart(4,'0')}`;
+};
+
+// =========================================================
+// DASHBOARD
+// =========================================================
+window.statCard = function(icName, label, value, color, sub){
+  return `<div class="stat">
+    <div class="ic" style="background:${color}1f;color:${color}">${window.icon(icName,22)}</div>
+    <div class="val">${window.esc(value)}</div>
+    <div class="lbl">${window.esc(label)}</div>
+    <div class="trend" style="color:var(--text3)">${window.esc(sub)}</div>
+  </div>`;
+};
+
+window.renderDashboard = function(){
+  const s = window.state;
+  const totalOS = s.orders.length;
+  const emAndamento = s.orders.filter(o=>['diagnostico','aprovacao','peca','reparo','testes'].includes(o.status)).length;
+  const aguardAprov = s.orders.filter(o=>o.status==='aprovacao').length;
+  const prontos = s.orders.filter(o=>o.status==='pronto').length;
+  const entreguesHoje = s.orders.filter(o=>o.status==='entregue' && o.deliveryDate && o.deliveryDate.slice(0,10)===window.todayDate()).length;
+  const monthKey = new Date().toISOString().slice(0,7);
+  const faturamentoMes = s.payments.filter(p=>String(p.date).slice(0,7)===monthKey).reduce((a,p)=>a+Number(p.amount||0),0);
+  const pendenteTotal = s.orders.reduce((a,o)=>a+window.pendingForOrder(o.id),0);
+  const totalClientes = s.clients.length;
+
+  const recent = [...s.orders].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).slice(0,6);
+  const lowStock = s.parts.filter(p=>Number(p.qty)<=Number(p.minQty));
+
+  return `
+  <div class="section-head">
+    <div>
+      <h2>Dashboard</h2>
+      <p>Visão geral da assistência em tempo real</p>
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="window.openOrderForm()">${window.icon('plus',16)} Nova OS</button>
+  </div>
+
+  <div class="grid grid-4" style="margin-bottom:20px">
+    ${window.statCard('clipboard','Total de OS', totalOS, 'var(--primary)', 'Registros no sistema')}
+    ${window.statCard('tool','Em andamento', emAndamento, 'var(--warning)', 'Serviços ativos')}
+    ${window.statCard('clock','Aguard. aprovação', aguardAprov, '#a855f7', 'Aguardando cliente')}
+    ${window.statCard('check-circle','Prontos p/ retirada', prontos, 'var(--success)', 'Aguardando entrega')}
+    ${window.statCard('truck','Entregues hoje', entreguesHoje, 'var(--success)', 'Saídas do dia')}
+    ${window.statCard('dollar','Faturamento do mês', window.brl(faturamentoMes), 'var(--accent)', 'Recebidos no mês')}
+    ${window.statCard('arrowDown','Pendente de recebimento', window.brl(pendenteTotal), 'var(--danger)', 'A receber em aberto')}
+    ${window.statCard('users','Clientes cadastrados', totalClientes, 'var(--primary2)', 'Base total')}
+  </div>
+
+  <div class="grid grid-2" style="margin-bottom:20px">
+    <div class="card card-pad">
+      <div class="section-head"><div><h2 style="font-size:16px">Faturamento (últimos 7 dias)</h2><p>Recebimentos por dia</p></div></div>
+      <div class="chart-box"><canvas id="chartRevenue"></canvas></div>
+    </div>
+    <div class="card card-pad">
+      <div class="section-head"><div><h2 style="font-size:16px">Ordens por status</h2><p>Distribuição atual</p></div></div>
+      <div class="chart-box"><canvas id="chartStatus"></canvas></div>
+    </div>
+  </div>
+
+  <div class="grid grid-2" style="margin-bottom:20px">
+    <div class="card card-pad">
+      <div class="section-head"><div><h2 style="font-size:16px">Serviços mais realizados</h2><p>Top 5 defeitos relatados</p></div></div>
+      <div id="topDefects"></div>
+    </div>
+    <div class="card card-pad">
+      <div class="section-head"><div><h2 style="font-size:16px">Ações rápidas</h2><p>Atalhos do dia a dia</p></div></div>
+      <div class="grid grid-2" style="gap:10px">
+        <button class="btn btn-ghost w-full" onclick="window.openOrderForm()">${window.icon('plus',16)} Nova OS</button>
+        <button class="btn btn-ghost w-full" onclick="window.openClientForm()">${window.icon('users',16)} Novo Cliente</button>
+        <button class="btn btn-ghost w-full" onclick="window.openPaymentForm()">${window.icon('dollar',16)} Pagamento</button>
+        <button class="btn btn-ghost w-full" onclick="window.openPartForm()">${window.icon('package',16)} Nova Peça</button>
+        <button class="btn btn-ghost w-full" style="grid-column:1/-1" onclick="window.navigate('orders')">${window.icon('search',16)} Consultar OS</button>
+      </div>
+      ${lowStock.length ? `<div class="mt-16" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:12px;padding:12px;font-size:12px;color:var(--warning)">${window.icon('package',16)} ${lowStock.length} peça(s) com estoque baixo</div>` : ''}
+    </div>
+  </div>
+
+  <div class="card card-pad">
+    <div class="section-head"><div><h2 style="font-size:16px">Atividades recentes</h2><p>Últimas ordens abertas</p></div>
+    <button class="btn btn-ghost btn-sm" onclick="window.navigate('orders')">Ver todas</button></div>
+    ${recent.length ? `<div class="os-list">${recent.map(o=>{
+      const cli = window.clientById(o.clientId);
+      return `<div class="os-card" onclick="window.openOrderDetail('${o.id}')">
+        <div class="os-card-top">
+          <div>
+            <div class="os-num">${o.number}</div>
+            <div class="os-device">${window.esc(o.device.brand)} ${window.esc(o.device.model)} · ${window.esc(cli?cli.name:'—')}</div>
+          </div>
+          ${window.statusTag(o.status)}
+        </div>
+        <div class="os-meta">
+          <span>${window.icon('clock',12)} ${window.fmtDate(o.createdAt)}</span>
+          <span>${window.icon('dollar',12)} ${window.brl(o.budget.total)}</span>
+        </div>
+      </div>`;
+    }).join('')}</div>` : `<div class="empty">${window.icon('inbox',48)}<h4>Nenhuma OS ainda</h4><p>Clique em "Nova OS" para começar</p></div>`}
+  </div>
+  `;
+};
+
+window.bindDashboard = function(){
+  try {
+    const days = [];
+    for(let i=6;i>=0;i--){
+      const d = new Date(); d.setDate(d.getDate()-i);
+      const key = d.toISOString().slice(0,10);
+      const total = window.state.payments.filter(p=>String(p.date).slice(0,10)===key).reduce((a,p)=>a+Number(p.amount||0),0);
+      days.push({label: d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}), value: total});
+    }
+    window.drawBarChart('chartRevenue', days.map(d=>d.label), days.map(d=>d.value), 'var(--primary)');
+
+    const counts = window.OS_STATUS.map(s=>({label:s.label, value: window.state.orders.filter(o=>o.status===s.id).length, color:s.color}));
+    window.drawDonutChart('chartStatus', counts.filter(c=>c.value>0));
+
+    const map = {};
+    window.state.orders.forEach(o=>{ const d = o.reportedDefect||'Outros'; map[d]=(map[d]||0)+1; });
+    const top = Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,5);
+    const el = document.getElementById('topDefects');
+    if(el){
+      el.innerHTML = top.length ? top.map(([d,n],i)=>`
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
+          <div style="width:26px;height:26px;border-radius:8px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:var(--primary)">${i+1}</div>
+          <div style="flex:1;font-size:13px;font-weight:600">${window.esc(d)}</div>
+          <div style="font-weight:800;color:var(--text2)">${n}</div>
+        </div>
+      `).join('') : `<div class="empty"><h4>Sem dados</h4></div>`;
+    }
+  } catch(e) { console.error("Erro nos gráficos", e); }
+};
+
+// CANVAS CHARTS
+window.setupCanvas = function(canvas){
+  const dpr = window.devicePixelRatio||1;
+  const rect = canvas.getBoundingClientRect();
+  if(rect.width === 0 || rect.height === 0) return null;
+  canvas.width = rect.width*dpr;
+  canvas.height = rect.height*dpr;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr,dpr);
+  return {ctx, w: rect.width, h: rect.height};
+};
+window.cssVar = function(name){
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim() || '#888';
+};
+window.drawBarChart = function(id, labels, values, color){
+  const canvas = document.getElementById(id); if(!canvas) return;
+  const setup = window.setupCanvas(canvas); if(!setup) return;
+  const {ctx,w,h} = setup;
+  ctx.clearRect(0,0,w,h);
+  const padL=40, padB=26, padT=14, padR=10;
+  const cw = w-padL-padR, ch = h-padT-padB;
+  const max = Math.max(...values, 1);
+  const bw = cw / labels.length * 0.6;
+  const gap = cw / labels.length;
+  ctx.strokeStyle = window.cssVar('--border')||'#2e3a55';
+  ctx.fillStyle = window.cssVar('--text3')||'#6b7894';
+  ctx.font = '10px sans-serif';
+  ctx.lineWidth = 1;
+  for(let i=0;i<=4;i++){
+    const y = padT + ch - (i/4)*ch;
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(w-padR,y); ctx.stroke();
+    const val = (max*i/4);
+    ctx.fillText('R$'+Math.round(val), 4, y-2);
+  }
+  const grad = ctx.createLinearGradient(0,padT,0,padT+ch);
+  grad.addColorStop(0, color);
+  grad.addColorStop(1, color+'55');
+  values.forEach((v,i)=>{
+    const x = padL + gap*i + (gap-bw)/2;
+    const bh = (v/max)*ch;
+    const y = padT + ch - bh;
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.roundRect ? ctx.roundRect(x, y, bw, bh, 4) : ctx.rect(x, y, bw, bh);
+    ctx.fill();
+    ctx.fillStyle = window.cssVar('--text3')||'#6b7894';
+    ctx.textAlign='center';
+    ctx.fillText(labels[i], x+bw/2, h-8);
+    ctx.textAlign='left';
+  });
+};
+window.drawDonutChart = function(id, items){
+  const canvas = document.getElementById(id); if(!canvas) return;
+  const setup = window.setupCanvas(canvas); if(!setup) return;
+  const {ctx,w,h} = setup;
+  ctx.clearRect(0,0,w,h);
+  const cx = w/2, cy = h/2, r = Math.min(w,h)/2 - 16;
+  const inner = r*0.6;
+  const total = items.reduce((a,b)=>a+b.value,0)||1;
+  let start = -Math.PI/2;
+  items.forEach(it=>{
+    const angle = (it.value/total)*Math.PI*2;
+    ctx.beginPath();
+    ctx.arc(cx,cy,r,start,start+angle);
+    ctx.arc(cx,cy,inner,start+angle,start,true);
+    ctx.closePath();
+    ctx.fillStyle = it.color;
+    ctx.fill();
+    start += angle;
+  });
+  ctx.fillStyle = window.cssVar('--text')||'#fff';
+  ctx.font = 'bold 18px sans-serif';
+  ctx.textAlign='center';
+  ctx.fillText(total, cx, cy+2);
+  ctx.font = '10px sans-serif';
+  ctx.fillStyle = window.cssVar('--text3')||'#6b7894';
+  ctx.fillText('ORDENS', cx, cy+16);
+  let ly = 12;
+  ctx.textAlign='left';
+  items.slice(0,6).forEach(it=>{
+    ctx.fillStyle = it.color;
+    ctx.fillRect(w-130, ly-8, 8, 8);
+    ctx.fillStyle = window.cssVar('--text2')||'#9aa7c2';
+    ctx.font = '10px sans-serif';
+    ctx.fillText(it.label.slice(0,16)+' ('+it.value+')', w-118, ly);
+    ly += 16;
+  });
+};
+
+// =========================================================
+// ORDENS
+// =========================================================
+window.renderOrders = function(){
+  let orders = [...window.state.orders].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+  if(window.osFilterStatus!=='all') orders = orders.filter(o=>o.status===window.osFilterStatus);
+  const statusChips = `<div class="chips" style="margin-bottom:16px">
+    <button class="chip ${window.osFilterStatus==='all'?'active':''}" onclick="window.osFilterStatus='all';window.renderSection()">Todas (${window.state.orders.length})</button>
+    ${window.OS_STATUS.map(s=>{
+      const n = window.state.orders.filter(o=>o.status===s.id).length;
+      return `<button class="chip ${window.osFilterStatus===s.id?'active':''}" onclick="window.osFilterStatus='${s.id}';window.renderSection()">${s.label} (${n})</button>`;
+    }).join('')}
+  </div>`;
+
+  const listHTML = orders.length ? `<div class="os-list">${orders.map(o=>{
+    const cli = window.clientById(o.clientId);
+    const tech = window.techById(o.technicianId);
+    return `<div class="os-card" onclick="window.openOrderDetail('${o.id}')">
+      <div class="os-card-top">
+        <div>
+          <div class="os-num">${o.number}</div>
+          <div class="os-device">${window.esc(o.device.brand)} ${window.esc(o.device.model)} · ${window.esc(cli?cli.name:'—')}</div>
+        </div>
+        ${window.statusTag(o.status)}
+      </div>
+      <div class="os-meta">
+        <span>${window.icon('clock',12)} ${window.fmtDate(o.createdAt)}</span>
+        <span>${window.icon('wrench',12)} ${window.esc(tech?tech.name:'—')}</span>
+        <span>${window.icon('dollar',12)} ${window.brl(o.budget.total)}</span>
+      </div>
+    </div>`;
+  }).join('')}</div>` : `<div class="empty">${window.icon('inbox',48)}<h4>Nenhuma ordem encontrada</h4><p>Ajuste o filtro ou crie uma nova OS</p></div>`;
+
+  return `
+  <div class="section-head">
+    <div><h2>Ordens de Serviço</h2><p>Gerencie todos os reparos</p></div>
+    <button class="btn btn-primary btn-sm" onclick="window.openOrderForm()">${window.icon('plus',16)} Nova OS</button>
+  </div>
+  ${statusChips}
+  ${listHTML}`;
+};
+
+window.bindOrders = function(){};
+
+window.openOrderForm = function(orderId){
+  try {
+    const editing = orderId ? window.orderById(orderId) : null;
+    const o = editing || {
+      id:null, number:'', clientId:'', technicianId:'',
+      device:{type:'Smartphone', brand:'', model:'', color:'', imei1:'', imei2:'', serial:'',
+        password:'', passwordRecorded:false, physicalState:'', accessories:'', photos:[], notes:''},
+      reportedDefect:'', diagnosis:{initial:'',tests:'',identified:'',solution:'',techNotes:''},
+      budget:{labor:0,parts:0,discount:0,total:0,downPayment:0,remaining:0},
+      status:'recebido', priority:'normal', createdAt: window.todayISO(), updatedAt: window.todayISO(), statusHistory:[]
+    };
+    const clientOptions = window.state.clients.map(c=>`<option value="${c.id}" ${o.clientId===c.id?'selected':''}>${window.esc(c.name)}</option>`).join('');
+    const techOptions = window.state.technicians.filter(t=>t.active).map(t=>`<option value="${t.id}" ${o.technicianId===t.id?'selected':''}>${window.esc(t.name)}</option>`).join('');
+
+    const body = `
+    <div class="privacy">${window.icon('lock')}<span>Dados sensíveis como senhas de desbloqueio não devem ser registrados por padrão.</span></div>
+    <div class="field"><label>Cliente *</label>
+      <div style="display:flex;gap:8px">
+        <select id="fClient" style="flex:1"><option value="">— Selecione —</option>${clientOptions}</select>
+        <button class="btn btn-ghost btn-sm" type="button" onclick="window.openClientForm(null, true)">${window.icon('plus',16)}</button>
+      </div>
+    </div>
+    <div class="field"><label>Técnico responsável</label>
+      <select id="fTech"><option value="">— Selecione —</option>${techOptions}</select>
+    </div>
+    <div class="row row-3">
+      <div class="field"><label>Tipo</label><select id="fDevType">
+        ${['Celular','Smartphone','Tablet','Outro'].map(t=>`<option ${o.device.type===t?'selected':''}>${t}</option>`).join('')}
+      </select></div>
+      <div class="field"><label>Marca</label><input id="fDevBrand" value="${window.esc(o.device.brand)}"></div>
+      <div class="field"><label>Modelo</label><input id="fDevModel" value="${window.esc(o.device.model)}"></div>
+    </div>
+    <div class="row row-3">
+      <div class="field"><label>Cor</label><input id="fDevColor" value="${window.esc(o.device.color)}"></div>
+      <div class="field"><label>IMEI 1</label><input id="fDevImei1" value="${window.esc(o.device.imei1)}"></div>
+      <div class="field"><label>IMEI 2</label><input id="fDevImei2" value="${window.esc(o.device.imei2)}"></div>
+    </div>
+    <div class="row row-2">
+      <div class="field"><label>Nº de série</label><input id="fDevSerial" value="${window.esc(o.device.serial)}"></div>
+      <div class="field"><label>Acessórios entregues</label><input id="fDevAcc" value="${window.esc(o.device.accessories)}" placeholder="Carregador, capa…"></div>
+    </div>
+    <div class="field"><label>Estado físico</label><textarea id="fDevState" placeholder="Descreva marcas, riscos, trincas…">${window.esc(o.device.physicalState)}</textarea></div>
+    <div class="field"><label>Senha de desbloqueio (opcional)</label>
+      <input id="fDevPwd" type="password" value="${window.esc(o.device.password)}" placeholder="Deixe em branco para não registrar">
+      <div class="hint">Campo protegido. Por privacidade, não registre senhas por padrão.</div>
+    </div>
+    <div class="field"><label>Defeito relatado *</label>
+      <textarea id="fDefect" placeholder="Ex: tela quebrada, não carrega…">${window.esc(o.reportedDefect)}</textarea>
+    </div>
+    <hr style="border:none;border-top:1px solid var(--border);margin:16px 0">
+    <h4 style="margin-bottom:12px;font-size:13px;color:var(--text2)">DIAGNÓSTICO TÉCNICO</h4>
+    <div class="field"><label>Diagnóstico inicial</label><textarea id="fDiagInit">${window.esc(o.diagnosis.initial)}</textarea></div>
+    <div class="field"><label>Testes realizados</label><textarea id="fDiagTests">${window.esc(o.diagnosis.tests)}</textarea></div>
+    <div class="field"><label>Defeito identificado</label><textarea id="fDiagIdent">${window.esc(o.diagnosis.identified)}</textarea></div>
+    <div class="field"><label>Solução recomendada</label><textarea id="fDiagSol">${window.esc(o.diagnosis.solution)}</textarea></div>
+    <hr style="border:none;border-top:1px solid var(--border);margin:16px 0">
+    <h4 style="margin-bottom:12px;font-size:13px;color:var(--text2)">ORÇAMENTO</h4>
+    <div class="row row-3">
+      <div class="field"><label>Mão de obra (R$)</label><input id="fBudLabor" type="number" step="0.01" value="${o.budget.labor||0}" oninput="window.calcBudget()"></div>
+      <div class="field"><label>Peças (R$)</label><input id="fBudParts" type="number" step="0.01" value="${o.budget.parts||0}" oninput="window.calcBudget()"></div>
+      <div class="field"><label>Desconto (R$)</label><input id="fBudDisc" type="number" step="0.01" value="${o.budget.discount||0}" oninput="window.calcBudget()"></div>
+    </div>
+    <div class="row row-2">
+      <div class="field"><label>Sinal / entrada (R$)</label><input id="fBudDown" type="number" step="0.01" value="${o.budget.downPayment||0}" oninput="window.calcBudget()"></div>
+      <div class="field"><label>Total (R$)</label><input id="fBudTotal" readonly value="${o.budget.total||0}" style="font-weight:800;color:var(--primary)"></div>
+    </div>
+    <div class="field"><label>Status</label>
+      <select id="fStatus">${window.OS_STATUS.map(s=>`<option value="${s.id}" ${o.status===s.id?'selected':''}>${s.label}</option>`).join('')}</select>
+    </div>
+    `;
+    const foot = `
+      <button class="btn btn-ghost" onclick="window.closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="window.saveOrder('${editing?editing.id:''}')">${window.icon('check',16)} ${editing?'Salvar':'Criar OS'}</button>
+    `;
+    window.openModal(editing?'Editar OS '+o.number:'Nova Ordem de Serviço', body, foot);
+    if(editing){
+      document.getElementById('fTech').value = o.technicianId||'';
+      document.getElementById('fStatus').value = o.status||'recebido';
+    }
+  } catch(e) {
+    console.error(e);
+    window.toast("Erro ao abrir formulário", "error");
+  }
+};
+
+window.calcBudget = function(){
+  const labor = Number(document.getElementById('fBudLabor').value)||0;
+  const parts = Number(document.getElementById('fBudParts').value)||0;
+  const disc = Number(document.getElementById('fBudDisc').value)||0;
+  const down = Number(document.getElementById('fBudDown').value)||0;
+  const total = Math.max(0, labor+parts-disc);
+  const rem = Math.max(0, total-down);
+  document.getElementById('fBudTotal').value = total.toFixed(2);
+};
+
+window.saveOrder = function(editId){
+  try {
+    const clientId = document.getElementById('fClient').value;
+    const defect = document.getElementById('fDefect').value.trim();
+    const brand = document.getElementById('fDevBrand').value.trim();
+    const model = document.getElementById('fDevModel').value.trim();
+    if(!clientId){ window.toast('Selecione um cliente','error'); return; }
+    if(!defect){ window.toast('Informe o defeito relatado','error'); return; }
+    if(!brand || !model){ window.toast('Informe marca e modelo do aparelho','error'); return; }
+
+    const labor = Number(document.getElementById('fBudLabor').value)||0;
+    const parts = Number(document.getElementById('fBudParts').value)||0;
+    const disc = Number(document.getElementById('fBudDisc').value)||0;
+    const down = Number(document.getElementById('fBudDown').value)||0;
+    const total = Math.max(0, labor+parts-disc);
+
+    const data = {
+      clientId,
+      technicianId: document.getElementById('fTech').value || '',
+      device:{
+        type:document.getElementById('fDevType').value,
+        brand, model,
+        color:document.getElementById('fDevColor').value.trim(),
+        imei1:document.getElementById('fDevImei1').value.trim(),
+        imei2:document.getElementById('fDevImei2').value.trim(),
+        serial:document.getElementById('fDevSerial').value.trim(),
+        password:document.getElementById('fDevPwd').value,
+        passwordRecorded: !!document.getElementById('fDevPwd').value,
+        physicalState:document.getElementById('fDevState').value.trim(),
+        accessories:document.getElementById('fDevAcc').value.trim(),
+        photos:[], notes:''
+      },
+      reportedDefect: defect,
+      diagnosis:{
+        initial:document.getElementById('fDiagInit').value.trim(),
+        tests:document.getElementById('fDiagTests').value.trim(),
+        identified:document.getElementById('fDiagIdent').value.trim(),
+        solution:document.getElementById('fDiagSol').value.trim(),
+        techNotes:''
+      },
+      budget:{labor, parts, discount:disc, total, downPayment:down, remaining: Math.max(0,total-down)},
+      status: document.getElementById('fStatus').value || 'recebido'
+    };
+
+    if(editId){
+      const o = window.orderById(editId);
+      if(!o){ window.toast('OS não encontrada','error'); return; }
+      const prevStatus = o.status;
+      Object.assign(o, data);
+      o.updatedAt = window.todayISO();
+      if(prevStatus !== data.status){
+        o.statusHistory.push({from:prevStatus, to:data.status, at: window.todayISO(), by:'Usuário'});
+      }
+      window.saveState();
+      window.toast('OS atualizada com sucesso','success');
+    } else {
+      const num = window.nextOrderNumber();
+      const newOrder = Object.assign({
+        id:window.uid('os'),
+        number: num,
+        createdAt: window.todayISO(),
+        updatedAt: window.todayISO(),
+        statusHistory:[{from:'', to:data.status, at: window.todayISO(), by:'Usuário'}],
+        priority:'normal',
+        warranty:null,
+        linkedOrderId:null,
+        deliveryDate:null
+      }, data);
+      window.state.orders.push(newOrder);
+      window.saveState();
+      window.toast('OS '+num+' criada com sucesso','success');
+    }
+    window.closeModal();
+    window.renderSection();
+  } catch(e) {
+    console.error(e);
+    window.toast("Erro ao salvar OS", "error");
+  }
+};
+
+window.openOrderDetail = function(orderId){
+  const o = window.orderById(orderId); if(!o){ window.toast('OS não encontrada','error'); return; }
+  const cli = window.clientById(o.clientId);
+  const tech = window.techById(o.technicianId);
+  const paid = window.paidForOrder(o.id);
+  const pending = window.pendingForOrder(o.id);
+
+  const body = `
+  <div class="os-card-top" style="margin-bottom:16px">
+    <div><div class="os-num" style="font-size:18px">${o.number}</div>
+    <div class="os-device">${window.esc(o.device.brand)} ${window.esc(o.device.model)}</div></div>
+    ${window.statusTag(o.status)}
+  </div>
+  <div class="grid grid-2" style="gap:12px;margin-bottom:16px">
+    <div class="card card-pad" style="padding:12px">
+      <div class="text-xs text-muted" style="font-weight:700;margin-bottom:4px">CLIENTE</div>
+      <div style="font-weight:700">${window.esc(cli?cli.name:'—')}</div>
+      <div class="text-sm text-muted">${window.esc(cli?cli.phone:'')}</div>
+    </div>
+    <div class="card card-pad" style="padding:12px">
+      <div class="text-xs text-muted" style="font-weight:700;margin-bottom:4px">TÉCNICO</div>
+      <div style="font-weight:700">${window.esc(tech?tech.name:'—')}</div>
+    </div>
+  </div>
+
+  <div class="card card-pad" style="padding:14px;margin-bottom:12px">
+    <div class="text-xs text-muted" style="font-weight:700;margin-bottom:8px">APARELHO</div>
+    <div class="text-sm"><b>${window.esc(o.device.type)}</b> · ${window.esc(o.device.brand)} ${window.esc(o.device.model)} ${o.device.color?'· '+window.esc(o.device.color):''}</div>
+    ${o.device.imei1?`<div class="text-sm text-muted">IMEI 1: ${window.esc(o.device.imei1)}</div>`:''}
+    ${o.device.imei2?`<div class="text-sm text-muted">IMEI 2: ${window.esc(o.device.imei2)}</div>`:''}
+    ${o.device.accessories?`<div class="text-sm text-muted">Acessórios: ${window.esc(o.device.accessories)}</div>`:''}
+    ${o.device.physicalState?`<div class="text-sm text-muted">Estado: ${window.esc(o.device.physicalState)}</div>`:''}
+    ${o.device.passwordRecorded?`<div class="text-sm" style="color:var(--warning)">${window.icon('lock',12)} Senha registrada (protegida)</div>`:''}
+  </div>
+
+  <div class="card card-pad" style="padding:14px;margin-bottom:12px">
+    <div class="text-xs text-muted" style="font-weight:700;margin-bottom:8px">DEFEITO RELATADO</div>
+    <div class="text-sm">${window.esc(o.reportedDefect)}</div>
+    ${o.diagnosis.identified?`<div class="mt-8 text-xs text-muted" style="font-weight:700">DIAGNÓSTICO</div><div class="text-sm">${window.esc(o.diagnosis.identified)}</div>`:''}
+  </div>
+
+  <div class="card card-pad" style="padding:14px;margin-bottom:12px">
+    <div class="text-xs text-muted" style="font-weight:700;margin-bottom:8px">ORÇAMENTO</div>
+    <div class="kv" style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span>Mão de obra</span><b>${window.brl(o.budget.labor)}</b></div>
+    <div class="kv" style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span>Peças</span><b>${window.brl(o.budget.parts)}</b></div>
+    ${o.budget.discount?`<div class="kv" style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span>Desconto</span><b class="text-danger">- ${window.brl(o.budget.discount)}</b></div>`:''}
+    <div class="kv" style="display:flex;justify-content:space-between;padding:4px 0;font-size:15px"><b>Total</b><b>${window.brl(o.budget.total)}</b></div>
+    <div class="kv" style="display:flex;justify-content:space-between;padding:4px 0;border-top:1px solid var(--border)"><span>Pago</span><b class="text-success">${window.brl(paid)}</b></div>
+    <div class="kv" style="display:flex;justify-content:space-between;padding:4px 0;"><span>Pendente</span><b class="${pending>0?'text-danger':'text-success'}">${window.brl(pending)}</b></div>
+  </div>
+
+  <div class="card card-pad" style="padding:14px;margin-bottom:12px">
+    <div class="text-xs text-muted" style="font-weight:700;margin-bottom:8px">ALTERAR STATUS</div>
+    <select id="detailStatus" style="width:100%;padding:10px;border-radius:10px;background:var(--bg2);border:1px solid var(--border);color:var(--text)">
+      ${window.OS_STATUS.map(s=>`<option value="${s.id}" ${o.status===s.id?'selected':''}>${s.label}</option>`).join('')}
+    </select>
+    <button class="btn btn-primary btn-sm w-full mt-8" onclick="window.changeOrderStatus('${o.id}')">Atualizar status</button>
+  </div>
+
+  <div class="card card-pad" style="padding:14px;margin-bottom:12px">
+    <div class="text-xs text-muted" style="font-weight:700;margin-bottom:8px">HISTÓRICO DE STATUS</div>
+    <div class="timeline">
+      ${(o.statusHistory||[]).slice().reverse().map(h=>`
+        <div class="tl-item">
+          <div class="tl-date">${window.fmtDateTime(h.at)}</div>
+          <div class="tl-title">${h.from?window.statusMeta(h.from).label+' → ':''}${window.statusMeta(h.to).label}</div>
+          <div class="tl-desc">por ${window.esc(h.by||'Sistema')}</div>
+        </div>
+      `).join('')}
+    </div>
+  </div>
+
+  <div class="grid grid-2" style="gap:8px">
+    <button class="btn btn-ghost btn-sm" onclick="window.openOrderForm('${o.id}')">${window.icon('edit',16)} Editar</button>
+    <button class="btn btn-success btn-sm" onclick="window.openPaymentForm('${o.id}')">${window.icon('dollar',16)} Pagamento</button>
+    <button class="btn btn-ghost btn-sm" onclick="window.printDoc('receipt','${o.id}')">${window.icon('print',16)} Comprovante</button>
+    <button class="btn btn-ghost btn-sm" onclick="window.printDoc('budget','${o.id}')">${window.icon('print',16)} Orçamento</button>
+    <button class="btn btn-ghost btn-sm" onclick="window.printDoc('delivery','${o.id}')">${window.icon('print',16)} Entrega</button>
+    <button class="btn btn-ghost btn-sm" onclick="window.openWhatsApp('${o.id}')">${window.icon('whatsapp',16)} WhatsApp</button>
+  </div>
+  <button class="btn btn-danger btn-sm w-full mt-8" onclick="window.deleteOrder('${o.id}')">${window.icon('trash',16)} Excluir OS</button>
+  `;
+
+  window.openModal('Detalhes da OS', body, `<button class="btn btn-ghost w-full" onclick="window.closeModal()">Fechar</button>`);
+};
+
+window.changeOrderStatus = function(id){
+  const o = window.orderById(id); if(!o) return;
+  const newStatus = document.getElementById('detailStatus').value;
+  if(newStatus === o.status){ window.closeModal(); return; }
+  const prev = o.status;
+  o.status = newStatus;
+  o.updatedAt = window.todayISO();
+  o.statusHistory.push({from:prev, to:newStatus, at:window.todayISO(), by:'Usuário'});
+  if(newStatus==='entregue' && !o.deliveryDate) o.deliveryDate = window.todayISO();
+  window.saveState();
+  window.toast('Status atualizado para '+window.statusMeta(newStatus).label,'success');
+  window.closeModal();
+  window.renderSection();
+};
+
+window.deleteOrder = function(id){
+  const o = window.orderById(id); if(!o) return;
+  window.confirmDialog('Excluir OS', `Tem certeza que deseja excluir a OS ${o.number}? Esta ação não pode ser desfeita.`, ()=>{
+    window.state.orders = window.state.orders.filter(x=>x.id!==id);
+    window.state.payments = window.state.payments.filter(p=>p.orderId!==id);
+    window.saveState();
+    window.toast('OS excluída','success');
+    window.closeModal();
+    window.renderSection();
+  });
+};
+
+// =========================================================
+// CLIENTES
+// =========================================================
+window.renderClients = function(){
+  const list = [...window.state.clients].sort((a,b)=>a.name.localeCompare(b.name));
+  return `
+  <div class="section-head">
+    <div><h2>Clientes</h2><p>${window.state.clients.length} cadastrado(s)</p></div>
+    <button class="btn btn-primary btn-sm" onclick="window.openClientForm()">${window.icon('plus',16)} Novo Cliente</button>
+  </div>
+  ${list.length ? `<div class="os-list">${list.map(c=>{
+    const orders = window.state.orders.filter(o=>o.clientId===c.id);
+    return `<div class="os-card" onclick="window.openClientDetail('${c.id}')">
+      <div class="os-card-top">
+        <div>
+          <div style="font-weight:800;font-size:15px">${window.esc(c.name)}</div>
+          <div class="os-device">${window.esc(c.phone)} ${c.city?'· '+window.esc(c.city)+'/'+window.esc(c.state):''}</div>
+        </div>
+        <span class="tag" style="background:var(--primary)22;color:var(--primary)">${orders.length} OS</span>
+      </div>
+    </div>`;
+  }).join('')}</div>` : `<div class="empty">${window.icon('users',48)}<h4>Nenhum cliente cadastrado</h4><p>Comece adicionando um cliente</p></div>`}`;
+};
+window.bindClients = function(){};
+
+window.openClientForm = function(clientId, fromOrder=false){
+  const c = clientId ? window.clientById(clientId) : {id:null,name:'',cpf:'',phone:'',email:'',address:'',city:'',state:'',notes:''};
+  const body = `
+    <div class="field"><label>Nome completo *</label><input id="cName" value="${window.esc(c.name)}"></div>
+    <div class="row row-2">
+      <div class="field"><label>CPF / CNPJ</label><input id="cCpf" value="${window.esc(c.cpf)}" oninput="this.value=window.maskCPF(this.value)"></div>
+      <div class="field"><label>Telefone / WhatsApp *</label><input id="cPhone" value="${window.esc(c.phone)}" oninput="this.value=window.maskPhone(this.value)"></div>
+    </div>
+    <div class="field"><label>E-mail</label><input id="cEmail" type="email" value="${window.esc(c.email)}"></div>
+    <div class="field"><label>Endereço</label><input id="cAddress" value="${window.esc(c.address)}"></div>
+    <div class="row row-2">
+      <div class="field"><label>Cidade</label><input id="cCity" value="${window.esc(c.city)}"></div>
+      <div class="field"><label>Estado</label><input id="cState" value="${window.esc(c.state)}" maxlength="2"></div>
+    </div>
+    <div class="field"><label>Observações internas</label><textarea id="cNotes">${window.esc(c.notes)}</textarea></div>
+  `;
+  const foot = `
+    <button class="btn btn-ghost" onclick="window.closeModal()">Cancelar</button>
+    <button class="btn btn-primary" onclick="window.saveClient('${clientId||''}', ${fromOrder})">${window.icon('check',16)} Salvar</button>
+  `;
+  window.openModal(clientId?'Editar Cliente':'Novo Cliente', body, foot);
+};
+
+window.saveClient = function(editId, fromOrder){
+  const name = document.getElementById('cName').value.trim();
+  const phone = document.getElementById('cPhone').value.trim();
+  if(!name){ window.toast('Informe o nome do cliente','error'); return; }
+  if(!phone){ window.toast('Informe o telefone','error'); return; }
+  const data = {
+    name, cpf:document.getElementById('cCpf').value.trim(),
+    phone, email:document.getElementById('cEmail').value.trim(),
+    address:document.getElementById('cAddress').value.trim(),
+    city:document.getElementById('cCity').value.trim(),
+    state:document.getElementById('cState').value.trim().toUpperCase(),
+    notes:document.getElementById('cNotes').value.trim()
+  };
+  if(editId){
+    const c = window.clientById(editId);
+    Object.assign(c, data);
+    window.toast('Cliente atualizado','success');
+  } else {
+    const c = Object.assign({id:window.uid('cli'), createdAt: window.todayISO()}, data);
+    window.state.clients.push(c);
+    window.toast('Cliente cadastrado','success');
+    if(fromOrder){
+      window.saveState();
+      window.closeModal();
+      setTimeout(()=>{ window.openOrderForm(); }, 200);
+      return;
+    }
+  }
+  window.saveState();
+  window.closeModal();
+  window.renderSection();
+};
+
+window.openClientDetail = function(id){
+  const c = window.clientById(id); if(!c) return;
+  const orders = window.state.orders.filter(o=>o.clientId===id).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+  const payments = window.state.payments.filter(p=>orders.some(o=>o.id===p.orderId));
+  const body = `
+    <div style="font-size:18px;font-weight:800;margin-bottom:4px">${window.esc(c.name)}</div>
+    <div class="text-sm text-muted mb-16">${window.esc(c.phone)} ${c.email?'· '+window.esc(c.email):''}</div>
+    ${c.address?`<div class="text-sm text-muted">${window.esc(c.address)}${c.city?' - '+window.esc(c.city)+'/'+window.esc(c.state):''}</div>`:''}
+    ${c.cpf?`<div class="text-sm text-muted">CPF/CNPJ: ${window.esc(c.cpf)}</div>`:''}
+    ${c.notes?`<div class="card card-pad mt-16" style="padding:10px;font-size:13px"><b>Obs:</b> ${window.esc(c.notes)}</div>`:''}
+
+    <div class="grid grid-2 mt-16" style="gap:8px">
+      <button class="btn btn-success btn-sm" onclick="window.openWhatsApp('','${id}')">${window.icon('whatsapp',16)} WhatsApp</button>
+      <button class="btn btn-primary btn-sm" onclick="window.openOrderFormForClient('${id}')">${window.icon('plus',16)} Nova OS</button>
+    </div>
+
+    <h4 style="margin:18px 0 10px;font-size:13px;color:var(--text2)">HISTÓRICO DE OS (${orders.length})</h4>
+    ${orders.length ? orders.map(o=>`
+      <div class="os-card mb-8" onclick="window.openOrderDetail('${o.id}')" style="padding:10px">
+        <div class="os-card-top">
+          <div><div class="os-num" style="font-size:13px">${o.number}</div>
+          <div class="text-xs text-muted">${window.esc(o.device.brand)} ${window.esc(o.device.model)}</div></div>
+          ${window.statusTag(o.status)}
+        </div>
+        <div class="text-xs text-muted mt-8">${window.fmtDate(o.createdAt)} · ${window.brl(o.budget.total)}</div>
+      </div>
+    `).join('') : `<div class="text-sm text-muted">Nenhuma OS ainda.</div>`}
+
+    <h4 style="margin:18px 0 10px;font-size:13px;color:var(--text2)">PAGAMENTOS (${payments.length})</h4>
+    ${payments.length ? payments.map(p=>`
+      <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border);font-size:13px"><span>${window.fmtDate(p.date)} · ${p.method}</span><b>${window.brl(p.amount)}</b></div>
+    `).join('') : `<div class="text-sm text-muted">Nenhum pagamento registrado.</div>`}
+
+    <button class="btn btn-danger btn-sm w-full mt-16" onclick="window.deleteClient('${c.id}')">${window.icon('trash',16)} Excluir Cliente</button>
+  `;
+  window.openModal('Perfil do Cliente', body, `<button class="btn btn-ghost w-full" onclick="window.closeModal()">Fechar</button>`);
+};
+
+window.openOrderFormForClient = function(clientId){
+  window.closeModal();
+  setTimeout(()=>{
+    window.openOrderForm();
+    setTimeout(()=>{
+      const sel = document.getElementById('fClient');
+      if(sel) sel.value = clientId;
+    },50);
+  },100);
+};
+
+window.deleteClient = function(id){
+  const c = window.clientById(id); if(!c) return;
+  const hasOrders = window.state.orders.some(o=>o.clientId===id);
+  const msg = hasOrders
+    ? `O cliente ${c.name} possui ordens de serviço vinculadas. Excluir mesmo assim?`
+    : `Excluir o cliente ${c.name}?`;
+  window.confirmDialog('Excluir Cliente', msg, ()=>{
+    window.state.clients = window.state.clients.filter(x=>x.id!==id);
+    window.saveState();
+    window.toast('Cliente excluído','success');
+    window.closeModal();
+    window.renderSection();
+  });
+};
+
+// =========================================================
+// ESTOQUE
+// =========================================================
+window.renderStock = function(){
+  const parts = [...window.state.parts].sort((a,b)=>a.name.localeCompare(b.name));
+  return `
+  <div class="section-head">
+    <div><h2>Estoque</h2><p>${window.state.parts.length} peça(s) cadastrada(s)</p></div>
+    <button class="btn btn-primary btn-sm" onclick="window.openPartForm()">${window.icon('plus',16)} Nova Peça</button>
+  </div>
+  ${parts.length ? `<div class="os-list">${parts.map(p=>{
+    const low = Number(p.qty) <= Number(p.minQty);
+    return `<div class="os-card" onclick="window.openPartDetail('${p.id}')">
+      <div class="os-card-top">
+        <div>
+          <div style="font-weight:800">${window.esc(p.name)}</div>
+          <div class="os-device">${window.esc(p.sku)} · ${window.esc(p.brand||'')} ${window.esc(p.model?'· '+p.model:'')}</div>
+        </div>
+        <span class="tag" style="background:${low?'var(--danger)':'var(--success)'}22;color:${low?'var(--danger)':'var(--success)'}">${p.qty} un</span>
+      </div>
+      <div class="os-meta">
+        <span>${window.icon('dollar',12)} Custo: ${window.brl(p.cost)}</span>
+        <span>Venda: ${window.brl(p.price)}</span>
+        <span>Mín: ${p.minQty}</span>
+      </div>
+    </div>`;
+  }).join('')}</div>` : `<div class="empty">${window.icon('package',48)}<h4>Nenhuma peça cadastrada</h4><p>Adicione peças para controlar o estoque</p></div>`}`;
+};
+window.bindStock = function(){};
+
+window.openPartForm = function(partId){
+  const p = partId ? window.partById(partId) : {id:null,name:'',sku:'',category:'',brand:'',model:'',qty:0,minQty:0,cost:0,price:0,supplier:'',location:''};
+  const body = `
+    <div class="field"><label>Nome da peça *</label><input id="pName" value="${window.esc(p.name)}"></div>
+    <div class="row row-2">
+      <div class="field"><label>SKU / Código</label><input id="pSku" value="${window.esc(p.sku)}"></div>
+      <div class="field"><label>Categoria</label><input id="pCat" value="${window.esc(p.category)}" placeholder="Tela, Bateria…"></div>
+    </div>
+    <div class="row row-2">
+      <div class="field"><label>Marca compatível</label><input id="pBrand" value="${window.esc(p.brand)}"></div>
+      <div class="field"><label>Modelo compatível</label><input id="pModel" value="${window.esc(p.model)}"></div>
+    </div>
+    <div class="row row-3">
+      <div class="field"><label>Qtd. estoque</label><input id="pQty" type="number" value="${p.qty||0}"></div>
+      <div class="field"><label>Estoque mínimo</label><input id="pMin" type="number" value="${p.minQty||0}"></div>
+      <div class="field"><label>Localização</label><input id="pLoc" value="${window.esc(p.location)}"></div>
+    </div>
+    <div class="row row-2">
+      <div class="field"><label>Custo (R$)</label><input id="pCost" type="number" step="0.01" value="${p.cost||0}"></div>
+      <div class="field"><label>Preço de venda (R$)</label><input id="pPrice" type="number" step="0.01" value="${p.price||0}"></div>
+    </div>
+    <div class="field"><label>Fornecedor</label><input id="pSupplier" value="${window.esc(p.supplier)}"></div>
+  `;
+  const foot = `
+    <button class="btn btn-ghost" onclick="window.closeModal()">Cancelar</button>
+    <button class="btn btn-primary" onclick="window.savePart('${partId||''}')">${window.icon('check',16)} Salvar</button>
+  `;
+  window.openModal(partId?'Editar Peça':'Nova Peça', body, foot);
+};
+
+window.savePart = function(editId){
+  const name = document.getElementById('pName').value.trim();
+  if(!name){ window.toast('Informe o nome da peça','error'); return; }
+  const data = {
+    name,
+    sku: document.getElementById('pSku').value.trim(),
+    category: document.getElementById('pCat').value.trim(),
+    brand: document.getElementById('pBrand').value.trim(),
+    model: document.getElementById('pModel').value.trim(),
+    qty: Number(document.getElementById('pQty').value)||0,
+    minQty: Number(document.getElementById('pMin').value)||0,
+    cost: Number(document.getElementById('pCost').value)||0,
+    price: Number(document.getElementById('pPrice').value)||0,
+    supplier: document.getElementById('pSupplier').value.trim(),
+    location: document.getElementById('pLoc').value.trim()
+  };
+  if(editId){
+    const p = window.partById(editId);
+    Object.assign(p, data);
+    window.toast('Peça atualizada','success');
+  } else {
+    window.state.parts.push(Object.assign({id:window.uid('part'), createdAt:window.todayISO()}, data));
+    window.toast('Peça cadastrada','success');
+  }
+  window.saveState();
+  window.closeModal();
+  window.renderSection();
+};
+
+window.openPartDetail = function(id){
+  const p = window.partById(id); if(!p) return;
+  const movs = window.state.movs.filter(m=>m.partId===id).sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const low = Number(p.qty)<=Number(p.minQty);
+  const body = `
+    <div style="font-size:18px;font-weight:800">${window.esc(p.name)}</div>
+    <div class="text-sm text-muted mb-16">${window.esc(p.sku)} · ${window.esc(p.category)}</div>
+    <div class="card card-pad mb-16" style="padding:12px">
+      <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span>Estoque atual</span><b class="${low?'text-danger':'text-success'}">${p.qty} un ${low?'(baixo)':''}</b></div>
+      <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span>Estoque mínimo</span><b>${p.minQty}</b></div>
+      <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span>Custo</span><b>${window.brl(p.cost)}</b></div>
+      <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span>Preço de venda</span><b>${window.brl(p.price)}</b></div>
+      <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span>Fornecedor</span><b>${window.esc(p.supplier||'—')}</b></div>
+      <div style="display:flex;justify-content:space-between;padding:4px 0;"><span>Local</span><b>${window.esc(p.location||'—')}</b></div>
+    </div>
+    <div class="grid grid-2" style="gap:8px;margin-bottom:16px">
+      <button class="btn btn-success btn-sm" onclick="window.stockMove('${p.id}','entrada')">${window.icon('arrowUp',16)} Entrada</button>
+      <button class="btn btn-danger btn-sm" onclick="window.stockMove('${p.id}','saida')">${window.icon('arrowDown',16)} Saída</button>
+      <button class="btn btn-ghost btn-sm" onclick="window.openPartForm('${p.id}')">${window.icon('edit',16)} Editar</button>
+      <button class="btn btn-ghost btn-sm" onclick="window.deletePart('${p.id}')">${window.icon('trash',16)} Excluir</button>
+    </div>
+    <h4 style="margin-bottom:10px;font-size:13px;color:var(--text2)">MOVIMENTAÇÕES (${movs.length})</h4>
+    ${movs.length ? `<div class="timeline">${movs.map(m=>`
+      <div class="tl-item">
+        <div class="tl-date">${window.fmtDateTime(m.date)}</div>
+        <div class="tl-title">${m.type==='entrada'?'Entrada':'Saída'} · ${m.qty} un</div>
+        ${m.notes?`<div class="tl-desc">${window.esc(m.notes)}</div>`:''}
+      </div>
+    `).join('')}</div>` : `<div class="text-sm text-muted">Nenhuma movimentação.</div>`}
+  `;
+  window.openModal('Detalhes da Peça', body, `<button class="btn btn-ghost w-full" onclick="window.closeModal()">Fechar</button>`);
+};
+
+window.stockMove = function(id, type){
+  const p = window.partById(id); if(!p) return;
+  const qtyStr = prompt(type==='entrada'?'Quantidade a adicionar:':'Quantidade a retirar:','1');
+  if(qtyStr===null) return;
+  const qty = parseInt(qtyStr,10);
+  if(!qty || qty<=0){ window.toast('Quantidade inválida','error'); return; }
+  if(type==='saida' && qty>Number(p.qty)){
+    if(!confirm('A quantidade excede o estoque. Prosseguir mesmo assim?')) return;
+  }
+  p.qty = Number(p.qty) + (type==='entrada'?qty:-qty);
+  window.state.movs.push({id:window.uid('mv'), partId:id, type, qty, date:window.todayISO(), notes:''});
+  window.saveState();
+  window.toast('Movimentação registrada','success');
+  window.closeModal();
+  window.renderSection();
+};
+
+window.deletePart = function(id){
+  const p = window.partById(id); if(!p) return;
+  window.confirmDialog('Excluir Peça', `Excluir a peça "${p.name}"?`, ()=>{
+    window.state.parts = window.state.parts.filter(x=>x.id!==id);
+    window.state.movs = window.state.movs.filter(m=>m.partId!==id);
+    window.saveState();
+    window.toast('Peça excluída','success');
+    window.closeModal();
+    window.renderSection();
+  });
+};
+
+// =========================================================
+// FINANCEIRO
+// =========================================================
+window.renderFinance = function(){
+  const totalRecebido = window.state.payments.reduce((a,p)=>a+Number(p.amount||0),0);
+  const totalDespesas = window.state.expenses.reduce((a,e)=>a+Number(e.amount||0),0);
+  const aReceber = window.state.orders.reduce((a,o)=>a+window.pendingForOrder(o.id),0);
+  const faturamentoBruto = window.state.orders.reduce((a,o)=>a+Number(o.budget.total||0),0);
+  const resultado = totalRecebido - totalDespesas;
+
+  const pendingOrders = window.state.orders.filter(o=>window.pendingForOrder(o.id)>0 && o.status!=='cancelado');
+
+  return `
+  <div class="section-head">
+    <div><h2>Financeiro</h2><p>Controle de recebimentos e despesas</p></div>
+    <div class="flex gap-8">
+      <button class="btn btn-ghost btn-sm" onclick="window.openExpenseForm()">${window.icon('plus',16)} Despesa</button>
+      <button class="btn btn-primary btn-sm" onclick="window.openPaymentForm()">${window.icon('dollar',16)} Pagamento</button>
+    </div>
+  </div>
+
+  <div class="grid grid-4" style="margin-bottom:20px">
+    ${window.statCard('dollar','Recebido', window.brl(totalRecebido), 'var(--success)', 'Total de pagamentos')}
+    ${window.statCard('arrowDown','A receber', window.brl(aReceber), 'var(--warning)', 'Pendente em OS')}
+    ${window.statCard('clipboard','Faturamento bruto', window.brl(faturamentoBruto), 'var(--primary)', 'Soma das OS')}
+    ${window.statCard('chart','Resultado estimado', window.brl(resultado), resultado>=0?'var(--accent)':'var(--danger)', 'Recebido - Despesas')}
+  </div>
+
+  <div class="card card-pad mb-16">
+    <div class="section-head"><div><h2 style="font-size:16px">Contas a receber</h2><p>OS com pagamento pendente</p></div></div>
+    ${pendingOrders.length ? `<div class="table-wrap"><table>
+      <thead><tr><th>OS</th><th>Cliente</th><th>Total</th><th>Pago</th><th>Pendente</th><th></th></tr></thead>
+      <tbody>${pendingOrders.map(o=>{
+        const cli = window.clientById(o.clientId);
+        return `<tr>
+          <td><span class="link" onclick="window.openOrderDetail('${o.id}')">${o.number}</span></td>
+          <td>${window.esc(cli?cli.name:'—')}</td>
+          <td>${window.brl(o.budget.total)}</td>
+          <td class="text-success">${window.brl(window.paidForOrder(o.id))}</td>
+          <td class="text-danger fw-800">${window.brl(window.pendingForOrder(o.id))}</td>
+          <td><button class="btn btn-success btn-sm" onclick="window.openPaymentForm('${o.id}')">Pagar</button></td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table></div>` : `<div class="empty"><h4>Nenhuma conta pendente</h4></div>`}
+  </div>
+
+  <div class="grid grid-2">
+    <div class="card card-pad">
+      <div class="section-head"><div><h2 style="font-size:16px">Despesas</h2><p>Controle de saídas</p></div>
+      <button class="btn btn-ghost btn-sm" onclick="window.openExpenseForm()">${window.icon('plus',16)}</button></div>
+      ${window.state.expenses.length ? `<div class="table-wrap"><table>
+        <thead><tr><th>Descrição</th><th>Valor</th><th>Data</th><th></th></tr></thead>
+        <tbody>${[...window.state.expenses].sort((a,b)=>new Date(b.date)-new Date(a.date)).map(e=>`
+          <tr>
+            <td>${window.esc(e.description)}<div class="text-xs text-muted">${window.esc(e.category||'')}</div></td>
+            <td class="text-danger fw-800">${window.brl(e.amount)}</td>
+            <td class="text-sm">${window.fmtDate(e.date)}</td>
+            <td><button class="icon-btn" style="width:34px;height:34px" onclick="window.deleteExpense('${e.id}')">${window.icon('trash',14)}</button></td>
+          </tr>`).join('')}</tbody>
+      </table></div>` : `<div class="empty"><h4>Sem despesas</h4></div>`}
+    </div>
+
+    <div class="card card-pad">
+      <div class="section-head"><div><h2 style="font-size:16px">Pagamentos recentes</h2><p>Últimos recebimentos</p></div></div>
+      ${window.state.payments.length ? `<div class="table-wrap"><table>
+        <thead><tr><th>OS</th><th>Valor</th><th>Método</th><th>Data</th></tr></thead>
+        <tbody>${[...window.state.payments].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,10).map(p=>{
+          const o = window.orderById(p.orderId);
+          return `<tr>
+            <td>${o?`<span class="link" onclick="window.openOrderDetail('${o.id}')">${o.number}</span>`:'—'}</td>
+            <td class="text-success fw-800">${window.brl(p.amount)}</td>
+            <td class="text-sm">${window.esc(p.method)}</td>
+            <td class="text-sm">${window.fmtDate(p.date)}</td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table></div>` : `<div class="empty"><h4>Sem pagamentos</h4></div>`}
+    </div>
+  </div>
+  `;
+};
+window.bindFinance = function(){};
+
+window.openPaymentForm = function(orderId){
+  const openOrders = window.state.orders.filter(o=>o.status!=='cancelado' && window.pendingForOrder(o.id)>0);
+  const opts = openOrders.map(o=>{
+    const cli = window.clientById(o.clientId);
+    const pend = window.pendingForOrder(o.id);
+    return `<option value="${o.id}" ${orderId===o.id?'selected':''}>${o.number} · ${window.esc(cli?cli.name:'—')} · Pend: ${window.brl(pend)}</option>`;
+  }).join('');
+  const selectedOrder = orderId ? window.orderById(orderId) : (openOrders[0]||null);
+  const suggested = selectedOrder ? window.pendingForOrder(selectedOrder.id) : 0;
+  const body = `
+    <div class="field"><label>Ordem de Serviço *</label>
+      <select id="payOrder">${opts||'<option value="">Nenhuma OS com pendência</option>'}</select>
+    </div>
+    <div class="row row-2">
+      <div class="field"><label>Valor (R$) *</label><input id="payAmount" type="number" step="0.01" value="${suggested}"></div>
+      <div class="field"><label>Forma de pagamento</label>
+        <select id="payMethod">${window.PAYMENT_METHODS.map(m=>`<option>${m}</option>`).join('')}</select>
+      </div>
+    </div>
+    <div class="field"><label>Data</label><input id="payDate" type="date" value="${window.todayDate()}"></div>
+    <div class="field"><label>Observações</label><textarea id="payNotes"></textarea></div>
+  `;
+  const foot = `
+    <button class="btn btn-ghost" onclick="window.closeModal()">Cancelar</button>
+    <button class="btn btn-primary" onclick="window.savePayment()">${window.icon('check',16)} Registrar</button>
+  `;
+  window.openModal('Registrar Pagamento', body, foot);
+};
+
+window.savePayment = function(){
+  const orderId = document.getElementById('payOrder').value;
+  const amount = Number(document.getElementById('payAmount').value)||0;
+  if(!orderId){ window.toast('Nenhuma OS selecionada','error'); return; }
+  if(amount<=0){ window.toast('Informe um valor válido','error'); return; }
+  const o = window.orderById(orderId);
+  if(!o){ window.toast('OS não encontrada','error'); return; }
+  window.state.payments.push({
+    id:window.uid('pay'), orderId, amount,
+    method: document.getElementById('payMethod').value,
+    date: document.getElementById('payDate').value || window.todayISO(),
+    notes: document.getElementById('payNotes').value.trim()
+  });
+  window.saveState();
+  window.toast('Pagamento de '+window.brl(amount)+' registrado','success');
+  window.closeModal();
+  window.renderSection();
+};
+
+window.openExpenseForm = function(){
+  const body = `
+    <div class="field"><label>Descrição *</label><input id="expDesc"></div>
+    <div class="row row-2">
+      <div class="field"><label>Valor (R$) *</label><input id="expAmount" type="number" step="0.01"></div>
+      <div class="field"><label>Categoria</label>
+        <select id="expCat">${['Peças','Aluguel','Energia','Internet','Salários','Outras'].map(c=>`<option>${c}</option>`).join('')}</select>
+      </div>
+    </div>
+    <div class="row row-2">
+      <div class="field"><label>Data</label><input id="expDate" type="date" value="${window.todayDate()}"></div>
+      <div class="field"><label>Fornecedor</label><input id="expSupplier"></div>
+    </div>
+  `;
+  const foot = `
+    <button class="btn btn-ghost" onclick="window.closeModal()">Cancelar</button>
+    <button class="btn btn-primary" onclick="window.saveExpense()">${window.icon('check',16)} Salvar</button>
+  `;
+  window.openModal('Nova Despesa', body, foot);
+};
+
+window.saveExpense = function(){
+  const desc = document.getElementById('expDesc').value.trim();
+  const amount = Number(document.getElementById('expAmount').value)||0;
+  if(!desc){ window.toast('Informe a descrição','error'); return; }
+  if(amount<=0){ window.toast('Valor inválido','error'); return; }
+  window.state.expenses.push({
+    id:window.uid('exp'), description:desc, amount,
+    category:document.getElementById('expCat').value,
+    date:document.getElementById('expDate').value||window.todayISO(),
+    supplier:document.getElementById('expSupplier').value.trim()
+  });
+  window.saveState();
+  window.toast('Despesa registrada','success');
+  window.closeModal();
+  window.renderSection();
+};
+
+window.deleteExpense = function(id){
+  window.confirmDialog('Excluir Despesa','Tem certeza que deseja excluir esta despesa?',()=>{
+    window.state.expenses = window.state.expenses.filter(e=>e.id!==id);
+    window.saveState();
+    window.toast('Despesa excluída','success');
+    window.renderSection();
+  });
+};
+
+// =========================================================
+// TÉCNICOS
+// =========================================================
+window.renderTechnicians = function(){
+  const techs = window.state.technicians;
+  const activeOrders = o=>['diagnostico','aprovacao','peca','reparo','testes'].includes(o.status);
+  return `
+  <div class="section-head">
+    <div><h2>Técnicos</h2><p>${techs.length} cadastrado(s)</p></div>
+    <button class="btn btn-primary btn-sm" onclick="window.openTechForm()">${window.icon('plus',16)} Novo Técnico</button>
+  </div>
+  <div class="grid grid-2">
+    ${techs.length ? techs.map(t=>{
+      const assigned = window.state.orders.filter(o=>o.technicianId===t.id);
+      const inProgress = assigned.filter(activeOrders).length;
+      const done = assigned.filter(o=>o.status==='entregue').length;
+      const comissao = assigned.filter(o=>o.status==='entregue').reduce((a,o)=>a+Number(o.budget.total||0),0)*(Number(t.commission||0)/100);
+      return `<div class="card card-pad">
+        <div class="flex justify-between items-center mb-8">
+          <div style="font-weight:800;font-size:15px">${window.esc(t.name)}</div>
+          <span class="tag" style="background:${t.active?'var(--success)':'var(--text3)'}22;color:${t.active?'var(--success)':'var(--text3)'}">${t.active?'Ativo':'Inativo'}</span>
+        </div>
+        <div class="text-sm text-muted">${window.esc(t.specialty||'—')} · ${window.esc(t.phone||'')}</div>
+        <div class="grid grid-3 mt-16" style="gap:8px;text-align:center">
+          <div><div style="font-weight:800;font-size:16px">${assigned.length}</div><div class="text-xs text-muted">OS</div></div>
+          <div><div style="font-weight:800;font-size:16px;color:var(--warning)">${inProgress}</div><div class="text-xs text-muted">Em curso</div></div>
+          <div><div style="font-weight:800;font-size:16px;color:var(--success)">${done}</div><div class="text-xs text-muted">Concluídas</div></div>
+        </div>
+        ${t.commission?`<div class="mt-8 text-sm text-muted">Comissão: ${t.commission}% · Estimada: ${window.brl(comissao)}</div>`:''}
+        <div class="flex gap-8 mt-16">
+          <button class="btn btn-ghost btn-sm" onclick="window.openTechForm('${t.id}')">${window.icon('edit',14)} Editar</button>
+          <button class="btn btn-ghost btn-sm" onclick="window.toggleTech('${t.id}')">${t.active?'Desativar':'Ativar'}</button>
+          <button class="btn btn-ghost btn-sm" onclick="window.deleteTech('${t.id}')">${window.icon('trash',14)}</button>
+        </div>
+      </div>`;
+    }).join('') : `<div class="empty">${window.icon('wrench',48)}<h4>Nenhum técnico</h4><p>Cadastre um técnico para começar</p></div>`}
+  </div>
+  `;
+};
+window.bindTechnicians = function(){};
+
+window.openTechForm = function(editId){
+  const t = editId ? window.techById(editId) : {id:null,name:'',phone:'',specialty:'',commission:0,active:true};
+  const body = `
+    <div class="field"><label>Nome *</label><input id="tName" value="${window.esc(t.name)}"></div>
+    <div class="field"><label>Telefone</label><input id="tPhone" value="${window.esc(t.phone)}" oninput="this.value=window.maskPhone(this.value)"></div>
+    <div class="row row-2">
+      <div class="field"><label>Especialidade</label><input id="tSpec" value="${window.esc(t.specialty)}"></div>
+      <div class="field"><label>Comissão (%)</label><input id="tComm" type="number" step="0.1" value="${t.commission||0}"></div>
+    </div>
+    <div class="field"><label>Status</label>
+      <select id="tActive"><option value="true" ${t.active?'selected':''}>Ativo</option><option value="false" ${!t.active?'selected':''}>Inativo</option></select>
+    </div>
+  `;
+  const foot = `
+    <button class="btn btn-ghost" onclick="window.closeModal()">Cancelar</button>
+    <button class="btn btn-primary" onclick="window.saveTech('${editId||''}')">${window.icon('check',16)} Salvar</button>
+  `;
+  window.openModal(editId?'Editar Técnico':'Novo Técnico', body, foot);
+};
+
+window.saveTech = function(editId){
+  const name = document.getElementById('tName').value.trim();
+  if(!name){ window.toast('Informe o nome','error'); return; }
+  const data = {
+    name,
+    phone: document.getElementById('tPhone').value.trim(),
+    specialty: document.getElementById('tSpec').value.trim(),
+    commission: Number(document.getElementById('tComm').value)||0,
+    active: document.getElementById('tActive').value==='true'
+  };
+  if(editId){
+    Object.assign(window.techById(editId), data);
+    window.toast('Técnico atualizado','success');
+  } else {
+    window.state.technicians.push(Object.assign({id:window.uid('tec')}, data));
+    window.toast('Técnico cadastrado','success');
+  }
+  window.saveState();
+  window.closeModal();
+  window.renderSection();
+};
+
+window.toggleTech = function(id){
+  const t = window.techById(id); if(!t) return;
+  t.active = !t.active;
+  window.saveState();
+  window.renderSection();
+};
+
+window.deleteTech = function(id){
+  const t = window.techById(id); if(!t) return;
+  window.confirmDialog('Excluir Técnico', `Excluir ${t.name}? As OS vinculadas permanecerão.`, ()=>{
+    window.state.technicians = window.state.technicians.filter(x=>x.id!==id);
+    window.state.orders.forEach(o=>{ if(o.technicianId===id) o.technicianId=''; });
+    window.saveState();
+    window.toast('Técnico excluído','success');
+    window.renderSection();
+  });
+};
+
+// =========================================================
+// GARANTIAS
+// =========================================================
+window.renderWarranty = function(){
+  const delivered = window.state.orders.filter(o=>o.status==='entregue' && o.warranty);
+  const now = new Date();
+  const list = delivered.map(o=>{
+    const end = new Date(o.warranty.completedAt);
+    end.setDate(end.getDate() + Number(o.warranty.days||0));
+    const daysLeft = Math.ceil((end - now)/(1000*60*60*24));
+    return {o, end, daysLeft};
+  }).sort((a,b)=>a.daysLeft-b.daysLeft);
+  return `
+  <div class="section-head">
+    <div><h2>Garantias</h2><p>Controle de garantia dos serviços entregues</p></div>
+  </div>
+  ${list.length ? `<div class="os-list">${list.map(({o,end,daysLeft})=>{
+    const cli = window.clientById(o.clientId);
+    const active = daysLeft>=0;
+    return `<div class="os-card" onclick="window.openOrderDetail('${o.id}')">
+      <div class="os-card-top">
+        <div>
+          <div class="os-num">${o.number}</div>
+          <div class="os-device">${window.esc(o.device.brand)} ${window.esc(o.device.model)} · ${window.esc(cli?cli.name:'—')}</div>
+        </div>
+        <span class="tag" style="background:${active?'var(--success)':'var(--danger)'}22;color:${active?'var(--success)':'var(--danger)'}">${active?daysLeft+' dias restantes':'Expirada'}</span>
+      </div>
+      <div class="os-meta">
+        <span>${window.icon('shield',12)} ${o.warranty.days} dias</span>
+        <span>Concluído: ${window.fmtDate(o.warranty.completedAt)}</span>
+        <span>Vence: ${window.fmtDate(end.toISOString())}</span>
+      </div>
+    </div>`;
+  }).join('')}</div>` : `<div class="empty">${window.icon('shield',48)}<h4>Nenhuma garantia registrada</h4><p>Garantias são criadas ao entregar OS com garantia</p></div>`}`;
+};
+window.bindWarranty = function(){};
+
+// =========================================================
+// RELATÓRIOS
+// =========================================================
+window.renderReports = function(){
+  const totalOS = window.state.orders.length;
+  const entregues = window.state.orders.filter(o=>o.status==='entregue').length;
+  const canceladas = window.state.orders.filter(o=>o.status==='cancelado').length;
+  const faturamento = window.state.payments.reduce((a,p)=>a+Number(p.amount||0),0);
+  const despesas = window.state.expenses.reduce((a,e)=>a+Number(e.amount||0),0);
+  const lucro = faturamento-despesas;
+  return `
+  <div class="section-head">
+    <div><h2>Relatórios</h2><p>Resumo operacional e financeiro</p></div>
+    <button class="btn btn-ghost btn-sm" onclick="window.print()">${window.icon('print',16)} Imprimir</button>
+  </div>
+  <div class="card card-pad mb-16">
+    <h3 style="font-size:15px;margin-bottom:12px">Resumo geral</h3>
+    <div class="grid grid-4">
+      ${window.statCard('clipboard','Total de OS', totalOS, 'var(--primary)', '')}
+      ${window.statCard('check-circle','Entregues', entregues, 'var(--success)', '')}
+      ${window.statCard('x-circle','Canceladas', canceladas, 'var(--danger)', '')}
+      ${window.statCard('dollar','Faturamento', window.brl(faturamento), 'var(--accent)', '')}
+    </div>
+    <div class="grid grid-2 mt-16">
+      ${window.statCard('arrowDown','Despesas', window.brl(despesas), 'var(--danger)', '')}
+      ${window.statCard('chart','Resultado estimado', window.brl(lucro), lucro>=0?'var(--success)':'var(--danger)', 'Recebido - Despesas')}
+    </div>
+  </div>
+  <div class="card card-pad">
+    <h3 style="font-size:15px;margin-bottom:12px">Ordens por status</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Status</th><th>Quantidade</th><th>%</th></tr></thead>
+      <tbody>${window.OS_STATUS.map(s=>{
+        const n = window.state.orders.filter(o=>o.status===s.id).length;
+        const pct = totalOS? ((n/totalOS)*100).toFixed(1) : '0.0';
+        return `<tr><td>${window.statusTag(s.id)}</td><td>${n}</td><td>${pct}%</td></tr>`;
+      }).join('')}</tbody>
+    </table></div>
+  </div>
+  `;
+};
+window.bindReports = function(){};
+
+// =========================================================
+// CONFIGURAÇÕES
+// =========================================================
+window.renderSettings = function(){
+  const s = window.state.settings;
+  return `
+  <div class="section-head"><div><h2>Configurações</h2><p>Personalize sua assistência</p></div></div>
+
+  <div class="card card-pad mb-16">
+    <h3 style="font-size:15px;margin-bottom:12px">Dados da empresa</h3>
+    <div class="row row-2">
+      <div class="field"><label>Nome da assistência</label><input id="sCompany" value="${window.esc(s.companyName||'')}"></div>
+      <div class="field"><label>CNPJ / CPF</label><input id="sCnpj" value="${window.esc(s.cnpj||'')}"></div>
+    </div>
+    <div class="row row-2">
+      <div class="field"><label>Telefone</label><input id="sPhone" value="${window.esc(s.phone||'')}"></div>
+      <div class="field"><label>WhatsApp</label><input id="sWa" value="${window.esc(s.whatsapp||'')}"></div>
+    </div>
+    <div class="field"><label>Endereço</label><input id="sAddr" value="${window.esc(s.address||'')}"></div>
+    <div class="row row-2">
+      <div class="field"><label>E-mail</label><input id="sEmail" value="${window.esc(s.email||'')}"></div>
+      <div class="field"><label>Site</label><input id="sSite" value="${window.esc(s.site||'')}"></div>
+    </div>
+  </div>
+
+  <div class="card card-pad mb-16">
+    <h3 style="font-size:15px;margin-bottom:12px">Preferências</h3>
+    <div class="row row-2">
+      <div class="field"><label>Tema</label>
+        <select id="sTheme">
+          <option value="dark" ${document.documentElement.dataset.theme!=='light'?'selected':''}>Escuro</option>
+          <option value="light" ${document.documentElement.dataset.theme==='light'?'selected':''}>Claro</option>
+        </select>
+      </div>
+      <div class="field"><label>Cor principal</label><input id="sColor" type="color" value="${s.primaryColor||'#4f7cff'}"></div>
+    </div>
+    <div class="row row-2">
+      <div class="field"><label>Garantia padrão (dias)</label><input id="sWarranty" type="number" value="${s.defaultWarrantyDays||90}"></div>
+      <div class="field"><label>Prazo diagnóstico (dias)</label><input id="sDiag" type="number" value="${s.defaultDiagnosisDays||3}"></div>
+    </div>
+    <div class="field"><label>Termos de serviço</label><textarea id="sTerms">${window.esc(s.serviceTerms||'')}</textarea></div>
+    <div class="field"><label>Observações padrão para impressão</label><textarea id="sPrint">${window.esc(s.printNotes||'')}</textarea></div>
+    <button class="btn btn-primary" onclick="window.saveCompanySettings()">${window.icon('check',16)} Salvar configurações</button>
+  </div>
+
+  <div class="card card-pad mb-16">
+    <h3 style="font-size:15px;margin-bottom:12px">Mensagens de WhatsApp</h3>
+    <p class="text-xs text-muted mb-16">Use [nome], [modelo], [os], [valor] como variáveis.</p>
+    ${Object.entries(s.waMessages||{}).map(([k,v])=>{
+      const labels = {received:'Recebimento',budget:'Orçamento',approved:'Aprovação',partAvailable:'Peça disponível',ready:'Pronto p/ retirada',paymentReminder:'Lembrete pagamento',delivered:'Entrega'};
+      return `<div class="field"><label>${labels[k]||k}</label><textarea id="wa_${k}">${window.esc(v)}</textarea></div>`;
+    }).join('')}
+    <button class="btn btn-primary" onclick="window.saveWaMessages()">${window.icon('check',16)} Salvar mensagens</button>
+  </div>
+
+  <div class="card card-pad mb-16">
+    <h3 style="font-size:15px;margin-bottom:12px">Backup e Dados</h3>
+    <p class="text-sm text-muted mb-16">Exporte todos os dados em JSON ou restaure um backup anterior.</p>
+    <div class="grid grid-2" style="gap:8px">
+      <button class="btn btn-success" onclick="window.exportBackup()">${window.icon('download',16)} Exportar Backup</button>
+      <button class="btn btn-ghost" onclick="document.getElementById('importFile').click()">${window.icon('upload',16)} Importar Backup</button>
+    </div>
+    <input type="file" id="importFile" accept=".json" class="hidden" onchange="window.importBackup(event)">
+    <div class="mt-16 text-xs text-muted">Último backup: <b id="lastBackup">${window.esc(localStorage.getItem('techmaster_last_backup')||'Nunca')}</b></div>
+    <button class="btn btn-danger w-full mt-16" onclick="window.clearAllData()">${window.icon('trash',16)} Apagar todos os dados</button>
+  </div>
+
+  <div class="card card-pad mb-16">
+    <h3 style="font-size:15px;margin-bottom:12px">Dados de demonstração</h3>
+    <button class="btn btn-ghost w-full" onclick="window.loadDemoData()">${window.icon('arrowDown',16)} Carregar dados de demonstração</button>
+  </div>
+
+  <div class="card card-pad">
+    <h3 style="font-size:15px;margin-bottom:12px">Privacidade</h3>
+    <div class="privacy">${window.icon('lock')}<span>Todos os dados são armazenados localmente no dispositivo. Faça backups regulares.</span></div>
+  </div>
+  `;
+};
+window.bindSettings = function(){};
+
+window.saveCompanySettings = function(){
+  window.state.settings.companyName = document.getElementById('sCompany').value.trim();
+  window.state.settings.cnpj = document.getElementById('sCnpj').value.trim();
+  window.state.settings.phone = document.getElementById('sPhone').value.trim();
+  window.state.settings.whatsapp = document.getElementById('sWa').value.trim();
+  window.state.settings.address = document.getElementById('sAddr').value.trim();
+  window.state.settings.email = document.getElementById('sEmail').value.trim();
+  window.state.settings.site = document.getElementById('sSite').value.trim();
+  window.state.settings.defaultWarrantyDays = Number(document.getElementById('sWarranty').value)||90;
+  window.state.settings.defaultDiagnosisDays = Number(document.getElementById('sDiag').value)||3;
+  window.state.settings.serviceTerms = document.getElementById('sTerms').value;
+  window.state.settings.printNotes = document.getElementById('sPrint').value;
+  window.state.settings.primaryColor = document.getElementById('sColor').value;
+  const theme = document.getElementById('sTheme').value;
+  window.setTheme(theme);
+  window.applyPrimaryColor(window.state.settings.primaryColor);
+  window.saveState();
+  window.toast('Configurações salvas','success');
+};
+
+window.saveWaMessages = function(){
+  const keys = ['received','budget','approved','partAvailable','ready','paymentReminder','delivered'];
+  window.state.settings.waMessages = window.state.settings.waMessages || {};
+  keys.forEach(k=>{
+    const el = document.getElementById('wa_'+k);
+    if(el) window.state.settings.waMessages[k] = el.value;
+  });
+  window.saveState();
+  window.toast('Mensagens salvas','success');
+};
+
+window.applyPrimaryColor = function(color){
+  document.documentElement.style.setProperty('--primary', color);
+};
+
+// =========================================================
+// WHATSAPP
+// =========================================================
+window.openWhatsApp = function(orderId, clientId){
+  let cli, o;
+  if(orderId){ o = window.orderById(orderId); cli = window.clientById(o.clientId); }
+  else if(clientId){ cli = window.clientById(clientId); }
+  if(!cli){ window.toast('Cliente não encontrado','error'); return; }
+  const phone = window.onlyDigits(cli.phone);
+  if(!phone){ window.toast('Cliente sem telefone','error'); return; }
+  let msg = '';
+  if(o){
+    const key = o.status==='pronto'?'ready':o.status==='entregue'?'delivered':o.status==='aprovacao'?'budget':'received';
+    msg = (window.state.settings.waMessages&&window.state.settings.waMessages[key]) || 'Olá, [nome]!';
+    msg = msg.replace(/\[nome\]/g, cli.name.split(' ')[0])
+             .replace(/\[modelo\]/g, o.device.brand+' '+o.device.model)
+             .replace(/\[os\]/g, o.number)
+             .replace(/\[valor\]/g, window.brl(window.pendingForOrder(o.id)));
+  } else {
+    msg = `Olá, ${cli.name.split(' ')[0]}! Tudo bem?`;
+  }
+  const body = `
+    <div class="field"><label>Mensagem</label><textarea id="waMsg" rows="5">${window.esc(msg)}</textarea></div>
+    <p class="text-xs text-muted">O WhatsApp será aberto para você revisar e enviar.</p>
+  `;
+  const foot = `
+    <button class="btn btn-ghost" onclick="window.closeModal()">Cancelar</button>
+    <button class="btn btn-success" onclick="window.sendWhatsApp('${phone}')">${window.icon('whatsapp',16)} Abrir WhatsApp</button>
+  `;
+  window.openModal('Enviar WhatsApp', body, foot);
+};
+
+window.sendWhatsApp = function(phone){
+  const msg = document.getElementById('waMsg').value;
+  const url = 'https://wa.me/55'+phone+'?text='+encodeURIComponent(msg);
+  window.open(url,'_blank');
+  window.closeModal();
+};
+
+// =========================================================
+// IMPRESSÃO / DOCUMENTOS
+// =========================================================
+window.printDoc = function(type, orderId){
+  const o = window.orderById(orderId); if(!o) return;
+  const cli = window.clientById(o.clientId);
+  const s = window.state.settings;
+  const company = `
+    <div class="doc-head">
+      <div>
+        <h1>${window.esc(s.companyName||'TechMaster')}</h1>
+        <div class="co">
+          ${s.cnpj?'CNPJ/CPF: '+window.esc(s.cnpj)+'<br>':''}
+          ${s.address?window.esc(s.address)+'<br>':''}
+          ${s.phone?'Tel: '+window.esc(s.phone)+' · ':''}${s.email?window.esc(s.email):''}
+        </div>
+      </div>
+      <div class="co" style="text-align:right">
+        <b>OS: ${o.number}</b><br>
+        Data: ${window.fmtDate(o.createdAt)}
+      </div>
+    </div>
+  `;
+  const clientBlock = `
+    <div class="grid2">
+      <div class="block"><h4>Cliente</h4>
+        <p><b>${window.esc(cli?cli.name:'—')}</b></p>
+        <p>${window.esc(cli?cli.phone:'')}</p>
+        ${cli&&cli.cpf?`<p>CPF/CNPJ: ${window.esc(cli.cpf)}</p>`:''}
+        ${cli&&cli.address?`<p>${window.esc(cli.address)}</p>`:''}
+      </div>
+      <div class="block"><h4>Aparelho</h4>
+        <p>${window.esc(o.device.type)} ${window.esc(o.device.brand)} ${window.esc(o.device.model)}</p>
+        ${o.device.imei1?`<p>IMEI: ${window.esc(o.device.imei1)}</p>`:''}
+        ${o.device.accessories?`<p>Acessórios: ${window.esc(o.device.accessories)}</p>`:''}
+      </div>
+    </div>
+  `;
+  let body = '';
+  let title = '';
+
+  if(type==='receipt'){
+    title = 'Comprovante de Entrada';
+    body = `
+      <div class="block"><h4>Defeito Relatado</h4><p>${window.esc(o.reportedDefect)}</p></div>
+      <div class="block"><h4>Estado Físico</h4><p>${window.esc(o.device.physicalState||'Não informado')}</p></div>
+      <div class="grid2">
+        <div class="block"><h4>Previsão de Entrega</h4><p>${s.defaultDiagnosisDays||3} dias úteis</p></div>
+        <div class="block"><h4>Autorização</h4><p>O cliente autoriza o diagnóstico e reparo do aparelho.</p></div>
+      </div>
+      <div class="block" style="margin-top:16px">
+        <p style="font-size:11px">${window.esc(s.serviceTerms||'')}</p>
+      </div>
+      <div class="sign">Assinatura do Cliente</div>
+    `;
+  } else if(type==='budget'){
+    title = 'Orçamento';
+    body = `
+      <div class="block"><h4>Descrição do Serviço</h4><p>${window.esc(o.diagnosis.solution||o.reportedDefect)}</p></div>
+      <div style="margin-top:14px">
+        <div class="kv"><span>Mão de obra</span><b>${window.brl(o.budget.labor)}</b></div>
+        <div class="kv"><span>Peças</span><b>${window.brl(o.budget.parts)}</b></div>
+        ${o.budget.discount?`<div class="kv"><span>Desconto</span><b>- ${window.brl(o.budget.discount)}</b></div>`:''}
+        <div class="kv total"><span>TOTAL</span><b>${window.brl(o.budget.total)}</b></div>
+      </div>
+      <div class="grid2" style="margin-top:16px">
+        <div class="block"><h4>Validade</h4><p>7 dias a partir da data</p></div>
+        <div class="block"><h4>Aprovação</h4><p>O cliente aprova o serviço acima descrito.</p></div>
+      </div>
+      <div class="sign">Assinatura do Cliente</div>
+    `;
+  } else {
+    title = 'Comprovante de Entrega';
+    const paid = window.paidForOrder(o.id);
+    const pend = window.pendingForOrder(o.id);
+    body = `
+      <div class="block"><h4>Serviços Realizados</h4><p>${window.esc(o.diagnosis.solution||o.reportedDefect)}</p></div>
+      <div style="margin-top:14px">
+        <div class="kv"><span>Valor total</span><b>${window.brl(o.budget.total)}</b></div>
+        <div class="kv"><span>Valor pago</span><b>${window.brl(paid)}</b></div>
+        <div class="kv total"><span>SALDO RESTANTE</span><b>${window.brl(pend)}</b></div>
+      </div>
+      <div class="grid2" style="margin-top:16px">
+        <div class="block"><h4>Data de Entrega</h4><p>${window.fmtDate(o.deliveryDate||window.todayISO())}</p></div>
+        <div class="block"><h4>Garantia</h4><p>${o.warranty?o.warranty.days+' dias':(s.defaultWarrantyDays||90)+' dias'}</p></div>
+      </div>
+      <div class="sign">Assinatura do Cliente</div>
+    `;
+  }
+
+  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${title} - ${o.number}</title>
+    <style>
+      body{font-family:Arial,Helvetica,sans-serif;padding:24px;color:#111;font-size:13px}
+      .doc-head{display:flex;justify-content:space-between;border-bottom:2px solid #111;padding-bottom:14px;margin-bottom:18px;flex-wrap:wrap;gap:12px}
+      .doc-head h1{font-size:20px;margin:0}
+      .co{font-size:12px;color:#444;line-height:1.6}
+      .doc-title{text-align:center;font-size:16px;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin:14px 0 18px;background:#f0f0f0;padding:8px;border-radius:4px}
+      .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:14px}
+      .block h4{font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:#555;border-bottom:1px solid #ddd;padding-bottom:4px;margin-bottom:6px}
+      .block p{margin:2px 0;font-size:12px}
+      .kv{display:flex;justify-content:space-between;padding:4px 0;font-size:12px;border-bottom:1px dotted #ddd}
+      .kv.total{font-weight:800;font-size:14px;border-top:2px solid #111;border-bottom:none;margin-top:6px;padding-top:8px}
+      .sign{margin-top:36px;border-top:1px solid #111;padding-top:6px;text-align:center;font-size:12px;width:60%;margin-left:auto;margin-right:auto}
+      @media print{body{padding:0}}
+    </style></head><body>
+    ${company}
+    <div class="doc-title">${title}</div>
+    ${clientBlock}
+    ${body}
+    <p style="text-align:center;font-size:11px;color:#666;margin-top:24px">${window.esc(s.printNotes||'')}</p>
+    </body></html>`;
+  const w = window.open('','_blank');
+  if(!w){ window.toast('Permita pop-ups para imprimir','error'); return; }
+  w.document.write(html);
+  w.document.close();
+  setTimeout(()=>{ w.focus(); w.print(); }, 400);
+};
+
+// =========================================================
+// BACKUP
+// =========================================================
+window.exportBackup = function(){
+  const data = JSON.stringify(window.state,null,2);
+  const blob = new Blob([data], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'techmaster_backup_'+new Date().toISOString().slice(0,10)+'.json';
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+  localStorage.setItem('techmaster_last_backup', new Date().toLocaleString('pt-BR'));
+  const el = document.getElementById('lastBackup');
+  if(el) el.textContent = localStorage.getItem('techmaster_last_backup');
+  window.toast('Backup exportado com sucesso','success');
+};
+
+window.importBackup = function(ev){
+  const file = ev.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try{
+      const data = JSON.parse(e.target.result);
+      if(!data || !Array.isArray(data.clients) || !Array.isArray(data.orders)){
+        window.toast('Arquivo inválido','error'); return;
+      }
+      window.confirmDialog('Restaurar Backup','Todos os dados atuais serão substituídos pelo backup. Continuar?',()=>{
+        Object.assign(window.state, data);
+        window.saveState();
+        window.toast('Backup restaurado','success');
+        window.renderSection();
+      });
+    }catch(err){
+      window.toast('Erro ao ler o arquivo','error');
+    }
+  };
+  reader.readAsText(file);
+  ev.target.value = '';
+};
+
+window.clearAllData = function(){
+  window.confirmDialog('Apagar todos os dados','Tem CERTEZA? Todos os dados serão apagados permanentemente.',()=>{
+    window.state = {clients:[],orders:[],parts:[],movs:[],technicians:[],expenses:[],payments:[],settings:window.state.settings,counters:{order:0}};
+    window.saveState();
+    window.toast('Dados apagados','success');
+    window.navigate('dashboard');
+  });
+};
+
+window.loadDemoData = function(){
+  window.confirmDialog('Carregar dados de demonstração','Isso substituirá todos os dados atuais. Continuar?',()=>{
+    window.seedDemo();
+    window.saveState();
+    window.toast('Dados de demonstração carregados','success');
+    window.navigate('dashboard');
+  });
+};
+
+// =========================================================
+// BUSCA GLOBAL
+// =========================================================
+window.setupGlobalSearch = function(){
+  const input = document.getElementById('globalSearch');
+  const results = document.getElementById('searchResults');
+  if(!input) return;
+  input.addEventListener('input',()=>{
+    const q = input.value.trim().toLowerCase();
+    if(!q){ results.classList.remove('open'); return; }
+    let html = '';
+    const clients = window.state.clients.filter(c=>
+      c.name.toLowerCase().includes(q) || window.onlyDigits(c.phone).includes(window.onlyDigits(q)) || (c.cpf||'').includes(q)
+    ).slice(0,5);
+    if(clients.length){
+      html += `<div class="sr-group">Clientes</div>`;
+      html += clients.map(c=>`<div class="sr-item" onclick="window.openClientDetail('${c.id}');document.getElementById('searchResults').classList.remove('open');document.getElementById('globalSearch').value=''">${window.esc(c.name)}<small>${window.esc(c.phone)}</small></div>`).join('');
+    }
+    const orders = window.state.orders.filter(o=>
+      o.number.toLowerCase().includes(q) ||
+      (o.device.model||'').toLowerCase().includes(q) ||
+      (o.device.imei1||'').includes(q) ||
+      (o.device.brand||'').toLowerCase().includes(q)
+    ).slice(0,5);
+    if(orders.length){
+      html += `<div class="sr-group">Ordens de Serviço</div>`;
+      html += orders.map(o=>`<div class="sr-item" onclick="window.openOrderDetail('${o.id}');document.getElementById('searchResults').classList.remove('open');document.getElementById('globalSearch').value=''">${o.number} · ${window.esc(o.device.brand)} ${window.esc(o.device.model)}<small>${window.statusMeta(o.status).label}</small></div>`).join('');
+    }
+    const parts = window.state.parts.filter(p=>
+      p.name.toLowerCase().includes(q) || (p.sku||'').toLowerCase().includes(q) || (p.model||'').toLowerCase().includes(q)
+    ).slice(0,5);
+    if(parts.length){
+      html += `<div class="sr-group">Peças</div>`;
+      html += parts.map(p=>`<div class="sr-item" onclick="window.openPartDetail('${p.id}');document.getElementById('searchResults').classList.remove('open');document.getElementById('globalSearch').value=''">${window.esc(p.name)}<small>${window.esc(p.sku)} · ${p.qty} un</small></div>`).join('');
+    }
+    if(!html) html = `<div class="sr-item" style="cursor:default">Nenhum resultado encontrado</div>`;
+    results.innerHTML = html;
+    results.classList.add('open');
+  });
+  document.addEventListener('click',e=>{
+    if(!e.target.closest('.search-wrap')) results.classList.remove('open');
+  });
+};
+
+// =========================================================
+// TEMA E TOPBAR
+// =========================================================
+window.setTheme = function(theme){
+  document.documentElement.dataset.theme = theme;
+  try{ localStorage.setItem(window.THEME_KEY, theme); }catch(e){}
+};
+window.toggleTheme = function(){
+  const cur = document.documentElement.dataset.theme==='light'?'dark':'light';
+  window.setTheme(cur);
+  window.toast('Tema '+(cur==='light'?'claro':'escuro')+' ativado','success');
+};
+window.initTheme = function(){
+  let t = 'dark';
+  try{ t = localStorage.getItem(window.THEME_KEY) || 'dark'; }catch(e){}
+  window.setTheme(t);
+  if(window.state.settings.primaryColor) window.applyPrimaryColor(window.state.settings.primaryColor);
+};
+
+window.setupTopbar = function(){
+  document.getElementById('themeBtn').addEventListener('click',window.toggleTheme);
+  document.getElementById('notifBtn').addEventListener('click',()=>{
+    const lowStock = window.state.parts.filter(p=>Number(p.qty)<=Number(p.minQty));
+    const pending = window.state.orders.filter(o=>window.pendingForOrder(o.id)>0 && o.status!=='cancelado');
+    const body = `
+      <h4 style="margin-bottom:10px;font-size:13px;color:var(--text2)">NOTIFICAÇÕES</h4>
+      ${lowStock.length?`<div class="card card-pad mb-8" style="padding:12px;border-left:3px solid var(--warning)"><b>${lowStock.length} peça(s)</b> com estoque baixo</div>`:''}
+      ${pending.length?`<div class="card card-pad mb-8" style="padding:12px;border-left:3px solid var(--danger)"><b>${pending.length} OS</b> com pagamento pendente</div>`:''}
+      <div class="card card-pad" style="padding:12px;border-left:3px solid var(--primary)">Sistema operando normalmente</div>
+    `;
+    window.openModal('Notificações',body,`<button class="btn btn-ghost w-full" onclick="window.closeModal()">Fechar</button>`);
+  });
+  document.getElementById('avatarBtn').addEventListener('click',()=>{
+    const body = `
+      <p class="text-sm text-muted mb-16">Modo demonstração local. Selecione um perfil para simular a interface:</p>
+      <div class="flex gap-8 flex-wrap">
+        <button class="role-badge" onclick="window.toast('Perfil Administrador selecionado (demo)','success');window.closeModal()">Administrador</button>
+        <button class="role-badge" onclick="window.toast('Perfil Técnico selecionado (demo)','success');window.closeModal()">Técnico</button>
+        <button class="role-badge" onclick="window.toast('Perfil Atendente selecionado (demo)','success');window.closeModal()">Atendente</button>
+      </div>
+      <p class="text-xs text-muted mt-16">Este seletor é apenas ilustrativo.</p>
+    `;
+    window.openModal('Perfil de Acesso',body,`<button class="btn btn-ghost w-full" onclick="window.closeModal()">Fechar</button>`);
+  });
+  document.getElementById('modalBack').addEventListener('click',e=>{
+    if(e.target.id==='modalBack') window.closeModal();
+  });
+};
+
+// =========================================================
+// INICIALIZAÇÃO
+// =========================================================
+window.init = function(){
+  try {
+    window.loadSettings();
+    const loaded = window.loadState();
+    if(!loaded){
+      window.seedDemo();
+      window.saveState();
+    }
+    window.initTheme();
+    window.setupTopbar();
+    window.setupGlobalSearch();
+    window.renderNav();
+    
+    // Configura o estado inicial da sidebar dependendo da tela
+    if(window.innerWidth > 900) {
+       document.getElementById('sidebar').classList.remove('collapsed');
+    } else {
+       document.getElementById('sidebar').classList.add('collapsed');
+    }
+
+    window.navigate('dashboard');
+    
+    // Esconder loader
+    const loader = document.getElementById('loader');
+    if(loader){
+      loader.style.opacity='0';
+      setTimeout(()=>{
+        loader.style.display='none';
+        document.getElementById('app').classList.add('ready');
+      }, 350);
+    }
+  } catch(err) {
+    console.error("Erro na inicialização:", err);
+    document.getElementById('loader').style.display='none';
+    document.getElementById('app').classList.add('ready');
+    alert("Erro ao iniciar o aplicativo: " + err.message);
+  }
+};
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', window.init);
+} else {
+  window.init();
+}
+
+window.addEventListener('resize',()=>{
+  if(window.currentSection==='dashboard') window.bindDashboard();
+});
+</script>
+</body>
+</html>

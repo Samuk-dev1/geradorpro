@@ -1,6 +1,6 @@
 {
-  "appId": "com.gestoriptv.colheitafeliz",
-  "appName": "Colheita Feliz",
+  "appId": "com.gestoriptv.red",
+  "appName": "Red",
   "webDir": "www",
   "plugins": {
     "LocalNotifications": {

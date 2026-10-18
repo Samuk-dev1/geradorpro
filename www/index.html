@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#0b0f1a">
 <title>TechMaster OS</title>
 <style>
@@ -19,7 +19,7 @@
   --radius:16px; --radius-sm:10px; --radius-lg:22px;
   --shadow:0 8px 30px rgba(0,0,0,.35);
   --shadow-sm:0 2px 10px rgba(0,0,0,.25);
-  --sidebar-w:250px;
+  --sidebar-w:260px;
   --safe-top:env(safe-area-inset-top,0px);
   --safe-bottom:env(safe-area-inset-bottom,0px);
 }
@@ -45,7 +45,7 @@ a{color:var(--primary);text-decoration:none}
 ::-webkit-scrollbar-track{background:transparent}
 
 /* =========================================================
-   LAYOUT PRINCIPAL
+   LAYOUT PRINCIPAL E MENU LATERAL (CORRIGIDO)
    ========================================================= */
 #app{display:none;min-height:100vh;padding-top:var(--safe-top);padding-bottom:var(--safe-bottom)}
 #app.ready{display:block}
@@ -63,7 +63,15 @@ a{color:var(--primary);text-decoration:none}
 #loader h1{font-size:22px;font-weight:800;letter-spacing:.5px}
 #loader p{color:var(--text2);font-size:13px}
 
-.shell{display:flex;min-height:100vh}
+.shell{display:flex;min-height:100vh;position:relative}
+
+/* Fundo escuro (overlay) para mobile */
+#sidebarOverlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(2px);
+  z-index:190;display:none;
+}
+#sidebarOverlay.open{display:block;animation:fadeIn .2s;}
+
 /* Sidebar */
 #sidebar{
   width:var(--sidebar-w);background:var(--bg2);border-right:1px solid var(--border);
@@ -96,13 +104,17 @@ a{color:var(--primary);text-decoration:none}
   content:"";position:absolute;left:0;top:20%;bottom:20%;width:3px;
   background:var(--primary);border-radius:0 3px 3px 0;
 }
-.nav-item .badge{margin-left:auto;background:var(--danger);color:#fff;font-size:10px;
-  padding:2px 7px;border-radius:10px;font-weight:700}
 .sidebar-footer{padding:12px 14px;border-top:1px solid var(--border);font-size:11px;color:var(--text3)}
 
 /* Main area */
-.main{flex:1;display:flex;flex-direction:column;min-width:0;margin-left:var(--sidebar-w);transition:margin .28s}
+.main{flex:1;display:flex;flex-direction:column;min-width:0;margin-left:var(--sidebar-w);transition:margin .28s;width:100%}
 .main.full{margin-left:0}
+
+/* Ajustes específicos para Mobile */
+@media(max-width:900px){
+  .main { margin-left: 0; } /* Remove a margem no celular */
+  #sidebar { box-shadow: 4px 0 24px rgba(0,0,0,0.5); } /* Adiciona sombra para parecer gaveta */
+}
 
 /* Topbar */
 .topbar{
@@ -335,7 +347,7 @@ tbody tr:hover{background:var(--surface2)}
 /* Print */
 @media print{
   body{background:#fff;color:#000}
-  #sidebar,.topbar,.no-print,.modal-back,#toast-wrap{display:none!important}
+  #sidebar,.topbar,.no-print,.modal-back,#toast-wrap,#sidebarOverlay{display:none!important}
   .main{margin:0}
   .content{padding:0}
   .print-doc{box-shadow:none;border:none;page-break-after:always}
@@ -368,8 +380,6 @@ tbody tr:hover{background:var(--surface2)}
 .text-danger{color:var(--danger)}.text-success{color:var(--success)}.text-warn{color:var(--warning)}
 .fw-800{font-weight:800}.w-full{width:100%}
 .hidden{display:none!important}
-.skeleton{background:var(--surface2);border-radius:8px;animation:sk 1.2s infinite}
-@keyframes sk{0%,100%{opacity:.5}50%{opacity:1}}
 
 /* Privacy notice */
 .privacy{
@@ -398,8 +408,11 @@ tbody tr:hover{background:var(--surface2)}
 <div id="app">
 <div class="shell">
 
+  <!-- OVERLAY DO MENU (celular) -->
+  <div id="sidebarOverlay" onclick="window.toggleSidebar()"></div>
+
   <!-- SIDEBAR -->
-  <aside id="sidebar">
+  <aside id="sidebar" class="collapsed">
     <div class="brand">
       <div class="logo">
         <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 3-3 3-3-3 3-3z"/><path d="M19 9l3 3-3 3-3-3 3-3z"/><path d="M5 9l3 3-3 3-3-3 3-3z"/><path d="M12 16l3 3-3 3-3-3 3-3z"/></svg>
@@ -421,7 +434,7 @@ tbody tr:hover{background:var(--surface2)}
   <!-- MAIN -->
   <div class="main" id="mainArea">
     <header class="topbar">
-      <button class="icon-btn" id="menuBtn" aria-label="Menu">
+      <button class="icon-btn" id="menuBtn" aria-label="Menu" onclick="window.toggleSidebar()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
       </button>
       <div class="page-title" id="pageTitle">Dashboard</div>
@@ -451,7 +464,7 @@ tbody tr:hover{background:var(--surface2)}
   <div class="modal" id="modalBox">
     <div class="modal-head">
       <h3 id="modalTitle">Título</h3>
-      <button class="icon-btn" onclick="closeModal()" aria-label="Fechar">
+      <button class="icon-btn" onclick="window.closeModal()" aria-label="Fechar">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
       </button>
     </div>
@@ -465,17 +478,17 @@ tbody tr:hover{background:var(--surface2)}
 <script>
 /* =========================================================
    TECHMASTER OS — SISTEMA COMPLETO
-   Armazenamento: localStorage. Sem dependências externas.
    ========================================================= */
 
-/* =========================================================
-   1. ESTADO E UTILITÁRIOS GLOBAIS
-   ========================================================= */
-const STORE_KEY = 'techmaster_os_v1';
-const THEME_KEY = 'techmaster_theme';
-const SETTINGS_KEY = 'techmaster_settings';
+window.STORE_KEY = 'techmaster_os_v1';
+window.THEME_KEY = 'techmaster_theme';
+window.SETTINGS_KEY = 'techmaster_settings';
+window.currentSection = 'dashboard';
+window.lastSection = 'dashboard';
+window.osFilterStatus = 'all';
+window.modalConfirmCb = null;
 
-const OS_STATUS = [
+window.OS_STATUS = [
   {id:'recebido',   label:'Recebido',           color:'#64748b', icon:'inbox'},
   {id:'diagnostico',label:'Em diagnóstico',     color:'#3b82f6', icon:'search'},
   {id:'aprovacao',  label:'Aguard. aprovação',  color:'#f59e0b', icon:'clock'},
@@ -487,10 +500,9 @@ const OS_STATUS = [
   {id:'cancelado',  label:'Cancelado',          color:'#ef4444', icon:'x-circle'}
 ];
 
-const PAYMENT_METHODS = ['Dinheiro','Pix','Cartão de Débito','Cartão de Crédito','Transferência','Outro'];
+window.PAYMENT_METHODS = ['Dinheiro','Pix','Cartão de Débito','Cartão de Crédito','Transferência','Outro'];
 
-/* state principal */
-let state = {
+window.state = {
   clients: [],
   orders: [],
   parts: [],
@@ -502,138 +514,131 @@ let state = {
   counters: { order: 0 }
 };
 
-let currentSection = 'dashboard';
-let lastSection = 'dashboard';
-let osViewMode = 'list';
-let osFilterStatus = 'all';
-
-/* Utilitários */
-function uid(prefix='id'){
+// =========================================================
+// UTILITÁRIOS GERAIS
+// =========================================================
+window.uid = function(prefix='id'){
   return prefix + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2,8);
-}
-function brl(v){
+};
+window.brl = function(v){
   const n = Number(v)||0;
   return 'R$ ' + n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
-}
-function parseMoney(s){
-  if(!s) return 0;
-  s = String(s).replace(/\./g,'').replace(',','.').replace(/[^\d.-]/g,'');
-  return Number(s)||0;
-}
-function fmtDate(iso){
+};
+window.fmtDate = function(iso){
   if(!iso) return '—';
   const d = new Date(iso);
   if(isNaN(d)) return '—';
   return d.toLocaleDateString('pt-BR');
-}
-function fmtDateTime(iso){
+};
+window.fmtDateTime = function(iso){
   if(!iso) return '—';
   const d = new Date(iso);
   if(isNaN(d)) return '—';
   return d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-}
-function todayISO(){ return new Date().toISOString(); }
-function todayDate(){ return new Date().toISOString().slice(0,10); }
-function daysAgoISO(n){ const d=new Date(); d.setDate(d.getDate()-n); return d.toISOString(); }
-function esc(s){
+};
+window.todayISO = function(){ return new Date().toISOString(); };
+window.todayDate = function(){ return new Date().toISOString().slice(0,10); };
+window.daysAgoISO = function(n){ const d=new Date(); d.setDate(d.getDate()-n); return d.toISOString(); };
+window.esc = function(s){
   if(s==null) return '';
   return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-function maskPhone(v){
+};
+window.maskPhone = function(v){
   v = String(v||'').replace(/\D/g,'').slice(0,11);
   if(v.length<=2) return v;
   if(v.length<=6) return '('+v.slice(0,2)+') '+v.slice(2);
   if(v.length<=10) return '('+v.slice(0,2)+') '+v.slice(2,6)+'-'+v.slice(6);
   return '('+v.slice(0,2)+') '+v.slice(2,7)+'-'+v.slice(7);
-}
-function maskCPF(v){
+};
+window.maskCPF = function(v){
   v = String(v||'').replace(/\D/g,'').slice(0,14);
   if(v.length<=11){
     return v.replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d{1,2})$/,'$1-$2');
   }
   return v.replace(/(\d{2})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1/$2').replace(/(\d{4})(\d{1,2})$/,'$1-$2');
-}
-function onlyDigits(v){ return String(v||'').replace(/\D/g,''); }
+};
+window.onlyDigits = function(v){ return String(v||'').replace(/\D/g,''); };
 
-/* =========================================================
-   2. PERSISTÊNCIA
-   ========================================================= */
-function saveState(){
+// =========================================================
+// PERSISTÊNCIA
+// =========================================================
+window.saveState = function(){
   try{
-    localStorage.setItem(STORE_KEY, JSON.stringify(state));
+    localStorage.setItem(window.STORE_KEY, JSON.stringify(window.state));
     return true;
   }catch(e){
     console.error('Erro ao salvar', e);
-    toast('Erro ao salvar dados no dispositivo','error');
+    window.toast('Erro ao salvar dados no dispositivo','error');
     return false;
   }
-}
-function loadState(){
+};
+
+window.loadState = function(){
   try{
-    const raw = localStorage.getItem(STORE_KEY);
+    const raw = localStorage.getItem(window.STORE_KEY);
     if(!raw) return false;
     const data = JSON.parse(raw);
     if(!data || typeof data!=='object') return false;
-    state = Object.assign(state, data);
-    // garantir arrays
+    Object.assign(window.state, data);
     ['clients','orders','parts','movs','technicians','expenses','payments'].forEach(k=>{
-      if(!Array.isArray(state[k])) state[k]=[];
+      if(!Array.isArray(window.state[k])) window.state[k]=[];
     });
-    if(!state.counters) state.counters={order:0};
-    if(!state.settings) state.settings={};
+    if(!window.state.counters) window.state.counters={order:0};
+    if(!window.state.settings) window.state.settings={};
     return true;
   }catch(e){
     console.error('Erro ao carregar', e);
     return false;
   }
-}
-function saveSettings(){ try{ localStorage.setItem(SETTINGS_KEY, JSON.stringify(state.settings)); }catch(e){} }
-function loadSettings(){
-  try{ const r=localStorage.getItem(SETTINGS_KEY); if(r) state.settings=JSON.parse(r)||{}; }catch(e){}
-}
+};
 
-/* =========================================================
-   3. DADOS DE DEMONSTRAÇÃO
-   ========================================================= */
-function seedDemo(){
+window.loadSettings = function(){
+  try{ const r=localStorage.getItem(window.SETTINGS_KEY); if(r) window.state.settings=JSON.parse(r)||{}; }catch(e){}
+};
+
+// =========================================================
+// DADOS DE DEMONSTRAÇÃO
+// =========================================================
+window.seedDemo = function(){
   const now = new Date();
   const y = now.getFullYear();
+  const s = window.state;
 
-  state.clients = [
-    {id:uid('cli'), name:'Ana Beatriz Souza', cpf:'123.456.789-00', phone:'(11) 98765-4321',
+  s.clients = [
+    {id:window.uid('cli'), name:'Ana Beatriz Souza', cpf:'123.456.789-00', phone:'(11) 98765-4321',
      email:'ana@example.com', address:'Rua das Flores, 120', city:'São Paulo', state:'SP',
-     notes:'Cliente preferencial.', createdAt: daysAgoISO(40)},
-    {id:uid('cli'), name:'Carlos Henrique Lima', cpf:'987.654.321-00', phone:'(11) 91234-5678',
+     notes:'Cliente preferencial.', createdAt: window.daysAgoISO(40)},
+    {id:window.uid('cli'), name:'Carlos Henrique Lima', cpf:'987.654.321-00', phone:'(11) 91234-5678',
      email:'carlos@example.com', address:'Av. Paulista, 1500', city:'São Paulo', state:'SP',
-     notes:'', createdAt: daysAgoISO(30)},
-    {id:uid('cli'), name:'Marina Oliveira', cpf:'', phone:'(21) 99888-7766',
+     notes:'', createdAt: window.daysAgoISO(30)},
+    {id:window.uid('cli'), name:'Marina Oliveira', cpf:'', phone:'(21) 99888-7766',
      email:'marina@example.com', address:'Rua do Sol, 45', city:'Rio de Janeiro', state:'RJ',
-     notes:'Prefere contato por WhatsApp.', createdAt: daysAgoISO(20)},
-    {id:uid('cli'), name:'Pedro Santos Almeida', cpf:'', phone:'(31) 97777-1122',
+     notes:'Prefere contato por WhatsApp.', createdAt: window.daysAgoISO(20)},
+    {id:window.uid('cli'), name:'Pedro Santos Almeida', cpf:'', phone:'(31) 97777-1122',
      email:'', address:'Rua da Paz, 890', city:'Belo Horizonte', state:'MG',
-     notes:'', createdAt: daysAgoISO(10)},
-    {id:uid('cli'), name:'Juliana Ferreira', cpf:'', phone:'(11) 96666-3344',
+     notes:'', createdAt: window.daysAgoISO(10)},
+    {id:window.uid('cli'), name:'Juliana Ferreira', cpf:'', phone:'(11) 96666-3344',
      email:'ju@example.com', address:'Rua A, 10', city:'São Paulo', state:'SP',
-     notes:'', createdAt: daysAgoISO(5)}
+     notes:'', createdAt: window.daysAgoISO(5)}
   ];
 
-  state.technicians = [
-    {id:uid('tec'), name:'Rafael Técnico', phone:'(11) 99999-0001', specialty:'Hardware', commission:10, active:true},
-    {id:uid('tec'), name:'Bruno Silva', phone:'(11) 99999-0002', specialty:'Software', commission:8, active:true},
-    {id:uid('tec'), name:'Camila Rocha', phone:'(11) 99999-0003', specialty:'Micro-solda', commission:12, active:true}
+  s.technicians = [
+    {id:window.uid('tec'), name:'Rafael Técnico', phone:'(11) 99999-0001', specialty:'Hardware', commission:10, active:true},
+    {id:window.uid('tec'), name:'Bruno Silva', phone:'(11) 99999-0002', specialty:'Software', commission:8, active:true},
+    {id:window.uid('tec'), name:'Camila Rocha', phone:'(11) 99999-0003', specialty:'Micro-solda', commission:12, active:true}
   ];
 
-  state.parts = [
-    {id:uid('part'), name:'Tela iPhone 11', sku:'SCR-IP11', category:'Tela', brand:'Apple', model:'iPhone 11',
-     qty:5, minQty:2, cost:180, price:350, supplier:'Fornecedor A', location:'A1', createdAt:daysAgoISO(50)},
-    {id:uid('part'), name:'Bateria Samsung A50', sku:'BAT-SA50', category:'Bateria', brand:'Samsung', model:'Galaxy A50',
-     qty:8, minQty:3, cost:35, price:90, supplier:'Fornecedor B', location:'B2', createdAt:daysAgoISO(45)},
-    {id:uid('part'), name:'Conector de Carga Type-C', sku:'CON-TC', category:'Conector', brand:'Universal', model:'Type-C',
-     qty:2, minQty:5, cost:8, price:35, supplier:'Fornecedor A', location:'C3', createdAt:daysAgoISO(40)},
-    {id:uid('part'), name:'Tela Moto G8', sku:'SCR-MG8', category:'Tela', brand:'Motorola', model:'Moto G8',
-     qty:3, minQty:2, cost:120, price:260, supplier:'Fornecedor C', location:'A2', createdAt:daysAgoISO(35)},
-    {id:uid('part'), name:'Película de Vidro', sku:'PEL-UNI', category:'Acessório', brand:'Universal', model:'Universal',
-     qty:20, minQty:10, cost:2, price:15, supplier:'Fornecedor B', location:'D1', createdAt:daysAgoISO(30)}
+  s.parts = [
+    {id:window.uid('part'), name:'Tela iPhone 11', sku:'SCR-IP11', category:'Tela', brand:'Apple', model:'iPhone 11',
+     qty:5, minQty:2, cost:180, price:350, supplier:'Fornecedor A', location:'A1', createdAt:window.daysAgoISO(50)},
+    {id:window.uid('part'), name:'Bateria Samsung A50', sku:'BAT-SA50', category:'Bateria', brand:'Samsung', model:'Galaxy A50',
+     qty:8, minQty:3, cost:35, price:90, supplier:'Fornecedor B', location:'B2', createdAt:window.daysAgoISO(45)},
+    {id:window.uid('part'), name:'Conector de Carga Type-C', sku:'CON-TC', category:'Conector', brand:'Universal', model:'Type-C',
+     qty:2, minQty:5, cost:8, price:35, supplier:'Fornecedor A', location:'C3', createdAt:window.daysAgoISO(40)},
+    {id:window.uid('part'), name:'Tela Moto G8', sku:'SCR-MG8', category:'Tela', brand:'Motorola', model:'Moto G8',
+     qty:3, minQty:2, cost:120, price:260, supplier:'Fornecedor C', location:'A2', createdAt:window.daysAgoISO(35)},
+    {id:window.uid('part'), name:'Película de Vidro', sku:'PEL-UNI', category:'Acessório', brand:'Universal', model:'Universal',
+     qty:20, minQty:10, cost:2, price:15, supplier:'Fornecedor B', location:'D1', createdAt:window.daysAgoISO(30)}
   ];
 
   const statuses = ['recebido','diagnostico','aprovacao','peca','reparo','testes','pronto','entregue','entregue','entregue'];
@@ -652,25 +657,25 @@ function seedDemo(){
   const defects = ['Tela quebrada','Não carrega','Não liga','Bateria descarregando rápido',
     'Problema no áudio','Aparelho molhado','Conector de carga danificado','Tela com manchas'];
 
-  state.orders = [];
-  state.counters.order = 0;
+  s.orders = [];
+  s.counters.order = 0;
 
   for(let i=0;i<12;i++){
-    const cli = state.clients[i % state.clients.length];
+    const cli = s.clients[i % s.clients.length];
     const dev = devices[i % devices.length];
     const st = statuses[i % statuses.length];
     const mdo = 60 + (i*13)%120;
     const pecas = 40 + (i*17)%200;
     const desc = i%4===0 ? 20 : 0;
     const total = mdo + pecas - desc;
-    const createdAt = daysAgoISO(60 - i*4);
-    state.counters.order++;
-    const num = `OS-${y}-${String(state.counters.order).padStart(4,'0')}`;
+    const createdAt = window.daysAgoISO(60 - i*4);
+    s.counters.order++;
+    const num = `OS-${y}-${String(s.counters.order).padStart(4,'0')}`;
     const order = {
-      id: uid('os'),
+      id: window.uid('os'),
       number: num,
       clientId: cli.id,
-      technicianId: state.technicians[i%state.technicians.length].id,
+      technicianId: s.technicians[i%s.technicians.length].id,
       device: {
         type: dev.type, brand: dev.brand, model: dev.model, color: dev.color,
         imei1: '35' + String(100000000000 + i*123456789).slice(0,13),
@@ -695,40 +700,39 @@ function seedDemo(){
       updatedAt: createdAt,
       statusHistory: [
         {from:'', to:'recebido', at:createdAt, by:'Sistema'},
-        ...(st!=='recebido' ? [{from:'recebido', to:st, at:daysAgoISO(55 - i*4), by:'Rafael Técnico'}] : [])
+        ...(st!=='recebido' ? [{from:'recebido', to:st, at:window.daysAgoISO(55 - i*4), by:'Rafael Técnico'}] : [])
       ],
       warranty: st==='entregue' ? {
-        completedAt: daysAgoISO(10 - i%5),
+        completedAt: window.daysAgoISO(10 - i%5),
         days: 90,
         conditions: 'Garantia de 90 dias sobre o serviço realizado.',
         notes: ''
       } : null,
       linkedOrderId: null,
-      deliveryDate: st==='entregue' ? daysAgoISO(10 - i%5) : null
+      deliveryDate: st==='entregue' ? window.daysAgoISO(10 - i%5) : null
     };
-    state.orders.push(order);
+    s.orders.push(order);
   }
 
-  state.payments = [];
-  state.orders.filter(o=>o.status==='entregue').forEach((o,idx)=>{
-    state.payments.push({
-      id: uid('pay'), orderId: o.id, amount: o.budget.total, method: PAYMENT_METHODS[idx%3],
-      date: o.deliveryDate || todayISO(), notes: ''
+  s.payments = [];
+  s.orders.filter(o=>o.status==='entregue').forEach((o,idx)=>{
+    s.payments.push({
+      id: window.uid('pay'), orderId: o.id, amount: o.budget.total, method: window.PAYMENT_METHODS[idx%3],
+      date: o.deliveryDate || window.todayISO(), notes: ''
     });
   });
 
-  state.expenses = [
-    {id:uid('exp'), description:'Aluguel da loja', amount:1800, category:'Aluguel', date:daysAgoISO(15), supplier:'Imobiliária X'},
-    {id:uid('exp'), description:'Energia elétrica', amount:340, category:'Energia', date:daysAgoISO(10), supplier:'Concessionária'},
-    {id:uid('exp'), description:'Compra de peças', amount:1200, category:'Peças', date:daysAgoISO(7), supplier:'Fornecedor A'}
+  s.expenses = [
+    {id:window.uid('exp'), description:'Aluguel da loja', amount:1800, category:'Aluguel', date:window.daysAgoISO(15), supplier:'Imobiliária X'},
+    {id:window.uid('exp'), description:'Energia elétrica', amount:340, category:'Energia', date:window.daysAgoISO(10), supplier:'Concessionária'},
+    {id:window.uid('exp'), description:'Compra de peças', amount:1200, category:'Peças', date:window.daysAgoISO(7), supplier:'Fornecedor A'}
   ];
 
-  state.movs = [];
-  // algumas movimentações fictícias
-  state.movs.push({id:uid('mv'), partId:state.parts[0].id, type:'entrada', qty:5, date:daysAgoISO(50), notes:'Compra inicial'});
-  state.movs.push({id:uid('mv'), partId:state.parts[1].id, type:'entrada', qty:8, date:daysAgoISO(45), notes:'Compra inicial'});
+  s.movs = [];
+  s.movs.push({id:window.uid('mv'), partId:s.parts[0].id, type:'entrada', qty:5, date:window.daysAgoISO(50), notes:'Compra inicial'});
+  s.movs.push({id:window.uid('mv'), partId:s.parts[1].id, type:'entrada', qty:8, date:window.daysAgoISO(45), notes:'Compra inicial'});
 
-  state.settings = {
+  s.settings = {
     companyName: 'TechMaster Assistência',
     cnpj: '12.345.678/0001-90',
     phone: '(11) 4000-1234',
@@ -751,13 +755,14 @@ function seedDemo(){
       delivered: 'Olá, [nome]! Confirmamos a entrega do seu [modelo]. OS: [os]. Obrigado pela confiança!'
     }
   };
-}
+};
 
-/* =========================================================
-   4. TOASTS E MODAIS
-   ========================================================= */
-function toast(msg, type='info'){
+// =========================================================
+// TOASTS E MODAIS
+// =========================================================
+window.toast = function(msg, type='info'){
   const wrap = document.getElementById('toast-wrap');
+  if(!wrap) return;
   const t = document.createElement('div');
   t.className = 'toast ' + (type==='success'?'success':type==='error'?'error':type==='warn'?'warn':'');
   const iconMap = {
@@ -766,36 +771,50 @@ function toast(msg, type='info'){
     warn:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 9v4M12 17h.01M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/></svg>',
     info:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 12v4"/></svg>'
   };
-  t.innerHTML = (iconMap[type]||iconMap.info) + '<span>'+esc(msg)+'</span>';
+  t.innerHTML = (iconMap[type]||iconMap.info) + '<span>'+window.esc(msg)+'</span>';
   wrap.appendChild(t);
   setTimeout(()=>{ t.style.opacity='0'; t.style.transform='translateX(120%)'; t.style.transition='.3s'; }, 2600);
   setTimeout(()=>t.remove(), 3000);
-}
+};
 
-let modalConfirmCb = null;
-function openModal(title, bodyHTML, footHTML){
+window.openModal = function(title, bodyHTML, footHTML){
   document.getElementById('modalTitle').textContent = title;
   document.getElementById('modalBody').innerHTML = bodyHTML;
   document.getElementById('modalFoot').innerHTML = footHTML || '';
   document.getElementById('modalBack').classList.add('open');
-}
-function closeModal(){
+};
+window.closeModal = function(){
   document.getElementById('modalBack').classList.remove('open');
-  modalConfirmCb = null;
-}
-function confirmDialog(title, message, onConfirm, danger=true){
-  modalConfirmCb = onConfirm;
-  openModal(title,
-    `<p style="font-size:14px;line-height:1.6;color:var(--text2)">${esc(message)}</p>`,
-    `<button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
-     <button class="btn ${danger?'btn-danger':'btn-primary'}" onclick="(function(){const cb=modalConfirmCb;closeModal();if(cb)cb();})()">Confirmar</button>`
+  window.modalConfirmCb = null;
+};
+window.confirmDialog = function(title, message, onConfirm, danger=true){
+  window.modalConfirmCb = onConfirm;
+  window.openModal(title,
+    `<p style="font-size:14px;line-height:1.6;color:var(--text2)">${window.esc(message)}</p>`,
+    `<button class="btn btn-ghost" onclick="window.closeModal()">Cancelar</button>
+     <button class="btn ${danger?'btn-danger':'btn-primary'}" onclick="(function(){const cb=window.modalConfirmCb;window.closeModal();if(cb)cb();})()">Confirmar</button>`
   );
-}
+};
 
-/* =========================================================
-   5. NAVEGAÇÃO
-   ========================================================= */
-const NAV_ITEMS = [
+// =========================================================
+// NAVEGAÇÃO E MENU LATERAL
+// =========================================================
+window.toggleSidebar = function() {
+  const sb = document.getElementById('sidebar');
+  const ov = document.getElementById('sidebarOverlay');
+  
+  if (sb.classList.contains('collapsed')) {
+    // Abrir
+    sb.classList.remove('collapsed');
+    if (window.innerWidth <= 900) ov.classList.add('open');
+  } else {
+    // Fechar
+    sb.classList.add('collapsed');
+    ov.classList.remove('open');
+  }
+};
+
+window.NAV_ITEMS = [
   {id:'dashboard', label:'Dashboard', icon:'grid'},
   {id:'orders', label:'Ordens de Serviço', icon:'clipboard'},
   {id:'clients', label:'Clientes', icon:'users'},
@@ -807,7 +826,7 @@ const NAV_ITEMS = [
   {id:'settings', label:'Configurações', icon:'settings'}
 ];
 
-const ICONS = {
+window.ICONS = {
   grid:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
   clipboard:'<rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><path d="M9 12h6M9 16h6"/>',
   users:'<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>',
@@ -841,91 +860,104 @@ const ICONS = {
   arrowDown:'<path d="M12 5v14M19 12l-7 7-7-7"/>'
 };
 
-function icon(name, size=20){
-  const p = ICONS[name] || ICONS.info;
+window.icon = function(name, size=20){
+  const p = window.ICONS[name] || window.ICONS.info;
   return `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
-}
+};
 
-function renderNav(){
+window.renderNav = function(){
   const nav = document.getElementById('navMenu');
-  nav.innerHTML = NAV_ITEMS.map(item=>`
-    <button class="nav-item ${currentSection===item.id?'active':''}" data-nav="${item.id}">
-      ${icon(item.icon)}<span>${item.label}</span>
+  nav.innerHTML = window.NAV_ITEMS.map(item=>`
+    <button class="nav-item ${window.currentSection===item.id?'active':''}" onclick="window.navigate('${item.id}')">
+      ${window.icon(item.icon)}<span>${item.label}</span>
     </button>
   `).join('');
-  nav.querySelectorAll('[data-nav]').forEach(el=>{
-    el.addEventListener('click',()=>{
-      navigate(el.dataset.nav);
-      if(window.innerWidth<900) document.getElementById('sidebar').classList.add('collapsed');
-    });
-  });
-}
+};
 
-function navigate(section){
-  if(section!==currentSection) lastSection = currentSection;
-  currentSection = section;
-  const item = NAV_ITEMS.find(n=>n.id===section);
+window.navigate = function(section){
+  if(section!==window.currentSection) window.lastSection = window.currentSection;
+  window.currentSection = section;
+  const item = window.NAV_ITEMS.find(n=>n.id===section);
   document.getElementById('pageTitle').textContent = item ? item.label : 'TechMaster';
-  renderNav();
-  renderSection();
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-
-/* =========================================================
-   6. RENDER SECTION ROUTER
-   ========================================================= */
-function renderSection(){
-  const c = document.getElementById('content');
-  switch(currentSection){
-    case 'dashboard': c.innerHTML = renderDashboard(); bindDashboard(); break;
-    case 'orders': c.innerHTML = renderOrders(); bindOrders(); break;
-    case 'clients': c.innerHTML = renderClients(); bindClients(); break;
-    case 'stock': c.innerHTML = renderStock(); bindStock(); break;
-    case 'finance': c.innerHTML = renderFinance(); bindFinance(); break;
-    case 'technicians': c.innerHTML = renderTechnicians(); bindTechnicians(); break;
-    case 'warranty': c.innerHTML = renderWarranty(); bindWarranty(); break;
-    case 'reports': c.innerHTML = renderReports(); bindReports(); break;
-    case 'settings': c.innerHTML = renderSettings(); bindSettings(); break;
-    default: c.innerHTML = renderDashboard();
+  window.renderNav();
+  window.renderSection();
+  
+  // No mobile, fechar a sidebar automaticamente ao navegar
+  if (window.innerWidth <= 900) {
+    document.getElementById('sidebar').classList.add('collapsed');
+    document.getElementById('sidebarOverlay').classList.remove('open');
   }
-}
 
-/* =========================================================
-   7. HELPERS DE CONSULTA
-   ========================================================= */
-function clientById(id){ return state.clients.find(c=>c.id===id); }
-function techById(id){ return state.technicians.find(t=>t.id===id); }
-function partById(id){ return state.parts.find(p=>p.id===id); }
-function orderById(id){ return state.orders.find(o=>o.id===id); }
-function statusMeta(id){ return OS_STATUS.find(s=>s.id===id) || OS_STATUS[0]; }
-function paymentsForOrder(orderId){ return state.payments.filter(p=>p.orderId===orderId); }
-function paidForOrder(orderId){ return paymentsForOrder(orderId).reduce((s,p)=>s+Number(p.amount||0),0); }
-function pendingForOrder(orderId){
-  const o = orderById(orderId); if(!o) return 0;
-  return Math.max(0, Number(o.budget.total||0) - paidForOrder(orderId));
-}
-function statusTag(id){
-  const m = statusMeta(id);
-  return `<span class="tag" style="background:${m.color}22;color:${m.color}">${icon(m.icon,12)} ${m.label}</span>`;
-}
-function nextOrderNumber(){
+  window.scrollTo({top:0,behavior:'smooth'});
+};
+
+// =========================================================
+// RENDER SECTION ROUTER E HELPERS
+// =========================================================
+window.renderSection = function(){
+  const c = document.getElementById('content');
+  try {
+    switch(window.currentSection){
+      case 'dashboard': c.innerHTML = window.renderDashboard(); window.bindDashboard(); break;
+      case 'orders': c.innerHTML = window.renderOrders(); window.bindOrders(); break;
+      case 'clients': c.innerHTML = window.renderClients(); window.bindClients(); break;
+      case 'stock': c.innerHTML = window.renderStock(); window.bindStock(); break;
+      case 'finance': c.innerHTML = window.renderFinance(); window.bindFinance(); break;
+      case 'technicians': c.innerHTML = window.renderTechnicians(); window.bindTechnicians(); break;
+      case 'warranty': c.innerHTML = window.renderWarranty(); window.bindWarranty(); break;
+      case 'reports': c.innerHTML = window.renderReports(); window.bindReports(); break;
+      case 'settings': c.innerHTML = window.renderSettings(); window.bindSettings(); break;
+      default: c.innerHTML = window.renderDashboard();
+    }
+  } catch(e) {
+    console.error(e);
+    c.innerHTML = `<div class="empty"><h4>Ocorreu um erro</h4><p>${e.message}</p></div>`;
+  }
+};
+
+window.clientById = function(id){ return window.state.clients.find(c=>c.id===id); };
+window.techById = function(id){ return window.state.technicians.find(t=>t.id===id); };
+window.partById = function(id){ return window.state.parts.find(p=>p.id===id); };
+window.orderById = function(id){ return window.state.orders.find(o=>o.id===id); };
+window.statusMeta = function(id){ return window.OS_STATUS.find(s=>s.id===id) || window.OS_STATUS[0]; };
+window.paymentsForOrder = function(orderId){ return window.state.payments.filter(p=>p.orderId===orderId); };
+window.paidForOrder = function(orderId){ return window.paymentsForOrder(orderId).reduce((s,p)=>s+Number(p.amount||0),0); };
+window.pendingForOrder = function(orderId){
+  const o = window.orderById(orderId); if(!o) return 0;
+  return Math.max(0, Number(o.budget.total||0) - window.paidForOrder(orderId));
+};
+window.statusTag = function(id){
+  const m = window.statusMeta(id);
+  return `<span class="tag" style="background:${m.color}22;color:${m.color}">${window.icon(m.icon,12)} ${m.label}</span>`;
+};
+window.nextOrderNumber = function(){
   const y = new Date().getFullYear();
-  state.counters.order = (state.counters.order||0) + 1;
-  return `OS-${y}-${String(state.counters.order).padStart(4,'0')}`;
-}
+  window.state.counters.order = (window.state.counters.order||0) + 1;
+  return `OS-${y}-${String(window.state.counters.order).padStart(4,'0')}`;
+};
 
-/* =========================================================   8. DASHBOARD
-   ========================================================= */
-function renderDashboard(){
-  const s = state;
+// =========================================================
+// DASHBOARD
+// =========================================================
+window.statCard = function(icName, label, value, color, sub){
+  return `<div class="stat">
+    <div class="ic" style="background:${color}1f;color:${color}">${window.icon(icName,22)}</div>
+    <div class="val">${window.esc(value)}</div>
+    <div class="lbl">${window.esc(label)}</div>
+    <div class="trend" style="color:var(--text3)">${window.esc(sub)}</div>
+  </div>`;
+};
+
+window.renderDashboard = function(){
+  const s = window.state;
   const totalOS = s.orders.length;
   const emAndamento = s.orders.filter(o=>['diagnostico','aprovacao','peca','reparo','testes'].includes(o.status)).length;
   const aguardAprov = s.orders.filter(o=>o.status==='aprovacao').length;
   const prontos = s.orders.filter(o=>o.status==='pronto').length;
-  const entreguesHoje = s.orders.filter(o=>o.status==='entregue' && o.deliveryDate && o.deliveryDate.slice(0,10)===todayDate()).length;
+  const entreguesHoje = s.orders.filter(o=>o.status==='entregue' && o.deliveryDate && o.deliveryDate.slice(0,10)===window.todayDate()).length;
   const monthKey = new Date().toISOString().slice(0,7);
   const faturamentoMes = s.payments.filter(p=>String(p.date).slice(0,7)===monthKey).reduce((a,p)=>a+Number(p.amount||0),0);
-  const pendenteTotal = s.orders.reduce((a,o)=>a+pendingForOrder(o.id),0);
+  const pendenteTotal = s.orders.reduce((a,o)=>a+window.pendingForOrder(o.id),0);
   const totalClientes = s.clients.length;
 
   const recent = [...s.orders].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).slice(0,6);
@@ -937,18 +969,18 @@ function renderDashboard(){
       <h2>Dashboard</h2>
       <p>Visão geral da assistência em tempo real</p>
     </div>
-    <button class="btn btn-primary btn-sm" onclick="openOrderForm()">${icon('plus',16)} Nova OS</button>
+    <button class="btn btn-primary btn-sm" onclick="window.openOrderForm()">${window.icon('plus',16)} Nova OS</button>
   </div>
 
   <div class="grid grid-4" style="margin-bottom:20px">
-    ${statCard('clipboard','Total de OS', totalOS, 'var(--primary)', 'Registros no sistema')}
-    ${statCard('tool','Em andamento', emAndamento, 'var(--warning)', 'Serviços ativos')}
-    ${statCard('clock','Aguard. aprovação', aguardAprov, '#a855f7', 'Aguardando cliente')}
-    ${statCard('check-circle','Prontos p/ retirada', prontos, 'var(--success)', 'Aguardando entrega')}
-    ${statCard('truck','Entregues hoje', entreguesHoje, 'var(--success)', 'Saídas do dia')}
-    ${statCard('dollar','Faturamento do mês', brl(faturamentoMes), 'var(--accent)', 'Recebidos no mês')}
-    ${statCard('arrowDown','Pendente de recebimento', brl(pendenteTotal), 'var(--danger)', 'A receber em aberto')}
-    ${statCard('users','Clientes cadastrados', totalClientes, 'var(--primary2)', 'Base total')}
+    ${window.statCard('clipboard','Total de OS', totalOS, 'var(--primary)', 'Registros no sistema')}
+    ${window.statCard('tool','Em andamento', emAndamento, 'var(--warning)', 'Serviços ativos')}
+    ${window.statCard('clock','Aguard. aprovação', aguardAprov, '#a855f7', 'Aguardando cliente')}
+    ${window.statCard('check-circle','Prontos p/ retirada', prontos, 'var(--success)', 'Aguardando entrega')}
+    ${window.statCard('truck','Entregues hoje', entreguesHoje, 'var(--success)', 'Saídas do dia')}
+    ${window.statCard('dollar','Faturamento do mês', window.brl(faturamentoMes), 'var(--accent)', 'Recebidos no mês')}
+    ${window.statCard('arrowDown','Pendente de recebimento', window.brl(pendenteTotal), 'var(--danger)', 'A receber em aberto')}
+    ${window.statCard('users','Clientes cadastrados', totalClientes, 'var(--primary2)', 'Base total')}
   </div>
 
   <div class="grid grid-2" style="margin-bottom:20px">
@@ -970,106 +1002,95 @@ function renderDashboard(){
     <div class="card card-pad">
       <div class="section-head"><div><h2 style="font-size:16px">Ações rápidas</h2><p>Atalhos do dia a dia</p></div></div>
       <div class="grid grid-2" style="gap:10px">
-        <button class="btn btn-ghost w-full" onclick="openOrderForm()">${icon('plus',16)} Nova OS</button>
-        <button class="btn btn-ghost w-full" onclick="openClientForm()">${icon('users',16)} Novo Cliente</button>
-        <button class="btn btn-ghost w-full" onclick="openPaymentForm()">${icon('dollar',16)} Pagamento</button>
-        <button class="btn btn-ghost w-full" onclick="openPartForm()">${icon('package',16)} Nova Peça</button>
-        <button class="btn btn-ghost w-full" style="grid-column:1/-1" onclick="navigate('orders')">${icon('search',16)} Consultar OS</button>
+        <button class="btn btn-ghost w-full" onclick="window.openOrderForm()">${window.icon('plus',16)} Nova OS</button>
+        <button class="btn btn-ghost w-full" onclick="window.openClientForm()">${window.icon('users',16)} Novo Cliente</button>
+        <button class="btn btn-ghost w-full" onclick="window.openPaymentForm()">${window.icon('dollar',16)} Pagamento</button>
+        <button class="btn btn-ghost w-full" onclick="window.openPartForm()">${window.icon('package',16)} Nova Peça</button>
+        <button class="btn btn-ghost w-full" style="grid-column:1/-1" onclick="window.navigate('orders')">${window.icon('search',16)} Consultar OS</button>
       </div>
-      ${lowStock.length ? `<div class="mt-16" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:12px;padding:12px;font-size:12px;color:var(--warning)">${icon('package',16)} ${lowStock.length} peça(s) com estoque baixo</div>` : ''}
+      ${lowStock.length ? `<div class="mt-16" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:12px;padding:12px;font-size:12px;color:var(--warning)">${window.icon('package',16)} ${lowStock.length} peça(s) com estoque baixo</div>` : ''}
     </div>
   </div>
 
   <div class="card card-pad">
     <div class="section-head"><div><h2 style="font-size:16px">Atividades recentes</h2><p>Últimas ordens abertas</p></div>
-    <button class="btn btn-ghost btn-sm" onclick="navigate('orders')">Ver todas</button></div>
+    <button class="btn btn-ghost btn-sm" onclick="window.navigate('orders')">Ver todas</button></div>
     ${recent.length ? `<div class="os-list">${recent.map(o=>{
-      const cli = clientById(o.clientId);
-      return `<div class="os-card" onclick="openOrderDetail('${o.id}')">
+      const cli = window.clientById(o.clientId);
+      return `<div class="os-card" onclick="window.openOrderDetail('${o.id}')">
         <div class="os-card-top">
           <div>
             <div class="os-num">${o.number}</div>
-            <div class="os-device">${esc(o.device.brand)} ${esc(o.device.model)} · ${esc(cli?cli.name:'—')}</div>
+            <div class="os-device">${window.esc(o.device.brand)} ${window.esc(o.device.model)} · ${window.esc(cli?cli.name:'—')}</div>
           </div>
-          ${statusTag(o.status)}
+          ${window.statusTag(o.status)}
         </div>
         <div class="os-meta">
-          <span>${icon('clock',12)} ${fmtDate(o.createdAt)}</span>
-          <span>${icon('dollar',12)} ${brl(o.budget.total)}</span>
+          <span>${window.icon('clock',12)} ${window.fmtDate(o.createdAt)}</span>
+          <span>${window.icon('dollar',12)} ${window.brl(o.budget.total)}</span>
         </div>
       </div>`;
-    }).join('')}</div>` : `<div class="empty">${icon('inbox',48)}<h4>Nenhuma OS ainda</h4><p>Clique em "Nova OS" para começar</p></div>`}
+    }).join('')}</div>` : `<div class="empty">${window.icon('inbox',48)}<h4>Nenhuma OS ainda</h4><p>Clique em "Nova OS" para começar</p></div>`}
   </div>
   `;
-}
+};
 
-function statCard(icName, label, value, color, sub){
-  return `<div class="stat">
-    <div class="ic" style="background:${color}1f;color:${color}">${icon(icName,22)}</div>
-    <div class="val">${esc(value)}</div>
-    <div class="lbl">${esc(label)}</div>
-    <div class="trend" style="color:var(--text3)">${esc(sub)}</div>
-  </div>`;
-}
+window.bindDashboard = function(){
+  try {
+    const days = [];
+    for(let i=6;i>=0;i--){
+      const d = new Date(); d.setDate(d.getDate()-i);
+      const key = d.toISOString().slice(0,10);
+      const total = window.state.payments.filter(p=>String(p.date).slice(0,10)===key).reduce((a,p)=>a+Number(p.amount||0),0);
+      days.push({label: d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}), value: total});
+    }
+    window.drawBarChart('chartRevenue', days.map(d=>d.label), days.map(d=>d.value), 'var(--primary)');
 
-function bindDashboard(){
-  // Chart faturamento
-  const days = [];
-  for(let i=6;i>=0;i--){
-    const d = new Date(); d.setDate(d.getDate()-i);
-    const key = d.toISOString().slice(0,10);
-    const total = state.payments.filter(p=>String(p.date).slice(0,10)===key).reduce((a,p)=>a+Number(p.amount||0),0);
-    days.push({label: d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}), value: total});
-  }
-  drawBarChart('chartRevenue', days.map(d=>d.label), days.map(d=>d.value), 'var(--primary)');
+    const counts = window.OS_STATUS.map(s=>({label:s.label, value: window.state.orders.filter(o=>o.status===s.id).length, color:s.color}));
+    window.drawDonutChart('chartStatus', counts.filter(c=>c.value>0));
 
-  // Chart status
-  const counts = OS_STATUS.map(s=>({label:s.label, value: state.orders.filter(o=>o.status===s.id).length, color:s.color}));
-  drawDonutChart('chartStatus', counts.filter(c=>c.value>0));
+    const map = {};
+    window.state.orders.forEach(o=>{ const d = o.reportedDefect||'Outros'; map[d]=(map[d]||0)+1; });
+    const top = Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,5);
+    const el = document.getElementById('topDefects');
+    if(el){
+      el.innerHTML = top.length ? top.map(([d,n],i)=>`
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
+          <div style="width:26px;height:26px;border-radius:8px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:var(--primary)">${i+1}</div>
+          <div style="flex:1;font-size:13px;font-weight:600">${window.esc(d)}</div>
+          <div style="font-weight:800;color:var(--text2)">${n}</div>
+        </div>
+      `).join('') : `<div class="empty"><h4>Sem dados</h4></div>`;
+    }
+  } catch(e) { console.error("Erro nos gráficos", e); }
+};
 
-  // Top defeitos
-  const map = {};
-  state.orders.forEach(o=>{ const d = o.reportedDefect||'Outros'; map[d]=(map[d]||0)+1; });
-  const top = Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,5);
-  const el = document.getElementById('topDefects');
-  if(el){
-    el.innerHTML = top.length ? top.map(([d,n],i)=>`
-      <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
-        <div style="width:26px;height:26px;border-radius:8px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:var(--primary)">${i+1}</div>
-        <div style="flex:1;font-size:13px;font-weight:600">${esc(d)}</div>
-        <div style="font-weight:800;color:var(--text2)">${n}</div>
-      </div>
-    `).join('') : `<div class="empty"><h4>Sem dados</h4></div>`;
-  }
-}
-
-/* =========================================================
-   9. CHARTS (Canvas puro)
-   ========================================================= */
-function setupCanvas(canvas){
+// CANVAS CHARTS
+window.setupCanvas = function(canvas){
   const dpr = window.devicePixelRatio||1;
   const rect = canvas.getBoundingClientRect();
+  if(rect.width === 0 || rect.height === 0) return null;
   canvas.width = rect.width*dpr;
   canvas.height = rect.height*dpr;
   const ctx = canvas.getContext('2d');
   ctx.scale(dpr,dpr);
   return {ctx, w: rect.width, h: rect.height};
-}
-function cssVar(name){
+};
+window.cssVar = function(name){
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim() || '#888';
-}
-function drawBarChart(id, labels, values, color){
+};
+window.drawBarChart = function(id, labels, values, color){
   const canvas = document.getElementById(id); if(!canvas) return;
-  const {ctx,w,h} = setupCanvas(canvas);
+  const setup = window.setupCanvas(canvas); if(!setup) return;
+  const {ctx,w,h} = setup;
   ctx.clearRect(0,0,w,h);
   const padL=40, padB=26, padT=14, padR=10;
   const cw = w-padL-padR, ch = h-padT-padB;
   const max = Math.max(...values, 1);
   const bw = cw / labels.length * 0.6;
   const gap = cw / labels.length;
-  // grid
-  ctx.strokeStyle = cssVar('--border')||'#2e3a55';
-  ctx.fillStyle = cssVar('--text3')||'#6b7894';
+  ctx.strokeStyle = window.cssVar('--border')||'#2e3a55';
+  ctx.fillStyle = window.cssVar('--text3')||'#6b7894';
   ctx.font = '10px sans-serif';
   ctx.lineWidth = 1;
   for(let i=0;i<=4;i++){
@@ -1078,7 +1099,6 @@ function drawBarChart(id, labels, values, color){
     const val = (max*i/4);
     ctx.fillText('R$'+Math.round(val), 4, y-2);
   }
-  // bars
   const grad = ctx.createLinearGradient(0,padT,0,padT+ch);
   grad.addColorStop(0, color);
   grad.addColorStop(1, color+'55');
@@ -1087,29 +1107,19 @@ function drawBarChart(id, labels, values, color){
     const bh = (v/max)*ch;
     const y = padT + ch - bh;
     ctx.fillStyle = grad;
-    roundRect(ctx, x, y, bw, bh, 4);
+    ctx.beginPath();
+    ctx.roundRect ? ctx.roundRect(x, y, bw, bh, 4) : ctx.rect(x, y, bw, bh);
     ctx.fill();
-    ctx.fillStyle = cssVar('--text3')||'#6b7894';
+    ctx.fillStyle = window.cssVar('--text3')||'#6b7894';
     ctx.textAlign='center';
     ctx.fillText(labels[i], x+bw/2, h-8);
     ctx.textAlign='left';
   });
-}
-function roundRect(ctx,x,y,w,h,r){
-  if(h<r*2) r=h/2;
-  ctx.beginPath();
-  ctx.moveTo(x+r,y);
-  ctx.lineTo(x+w-r,y);
-  ctx.quadraticCurveTo(x+w,y,x+w,y+r);
-  ctx.lineTo(x+w,y+h);
-  ctx.lineTo(x,y+h);
-  ctx.lineTo(x,y+r);
-  ctx.quadraticCurveTo(x,y,x+r,y);
-  ctx.closePath();
-}
-function drawDonutChart(id, items){
+};
+window.drawDonutChart = function(id, items){
   const canvas = document.getElementById(id); if(!canvas) return;
-  const {ctx,w,h} = setupCanvas(canvas);
+  const setup = window.setupCanvas(canvas); if(!setup) return;
+  const {ctx,w,h} = setup;
   ctx.clearRect(0,0,w,h);
   const cx = w/2, cy = h/2, r = Math.min(w,h)/2 - 16;
   const inner = r*0.6;
@@ -1125,157 +1135,155 @@ function drawDonutChart(id, items){
     ctx.fill();
     start += angle;
   });
-  ctx.fillStyle = cssVar('--text')||'#fff';
+  ctx.fillStyle = window.cssVar('--text')||'#fff';
   ctx.font = 'bold 18px sans-serif';
   ctx.textAlign='center';
   ctx.fillText(total, cx, cy+2);
   ctx.font = '10px sans-serif';
-  ctx.fillStyle = cssVar('--text3')||'#6b7894';
+  ctx.fillStyle = window.cssVar('--text3')||'#6b7894';
   ctx.fillText('ORDENS', cx, cy+16);
-  // legend
   let ly = 12;
   ctx.textAlign='left';
   items.slice(0,6).forEach(it=>{
     ctx.fillStyle = it.color;
     ctx.fillRect(w-130, ly-8, 8, 8);
-    ctx.fillStyle = cssVar('--text2')||'#9aa7c2';
+    ctx.fillStyle = window.cssVar('--text2')||'#9aa7c2';
     ctx.font = '10px sans-serif';
     ctx.fillText(it.label.slice(0,16)+' ('+it.value+')', w-118, ly);
     ly += 16;
   });
-}
+};
 
-/* =========================================================
-   10. ORDENS DE SERVIÇO
-   ========================================================= */
-function renderOrders(){
-  let orders = [...state.orders].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
-  if(osFilterStatus!=='all') orders = orders.filter(o=>o.status===osFilterStatus);
+// =========================================================
+// ORDENS
+// =========================================================
+window.renderOrders = function(){
+  let orders = [...window.state.orders].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+  if(window.osFilterStatus!=='all') orders = orders.filter(o=>o.status===window.osFilterStatus);
   const statusChips = `<div class="chips" style="margin-bottom:16px">
-    <button class="chip ${osFilterStatus==='all'?'active':''}" data-filter="all">Todas (${state.orders.length})</button>
-    ${OS_STATUS.map(s=>{
-      const n = state.orders.filter(o=>o.status===s.id).length;
-      return `<button class="chip ${osFilterStatus===s.id?'active':''}" data-filter="${s.id}">${s.label} (${n})</button>`;
+    <button class="chip ${window.osFilterStatus==='all'?'active':''}" onclick="window.osFilterStatus='all';window.renderSection()">Todas (${window.state.orders.length})</button>
+    ${window.OS_STATUS.map(s=>{
+      const n = window.state.orders.filter(o=>o.status===s.id).length;
+      return `<button class="chip ${window.osFilterStatus===s.id?'active':''}" onclick="window.osFilterStatus='${s.id}';window.renderSection()">${s.label} (${n})</button>`;
     }).join('')}
   </div>`;
 
   const listHTML = orders.length ? `<div class="os-list">${orders.map(o=>{
-    const cli = clientById(o.clientId);
-    const tech = techById(o.technicianId);
-    return `<div class="os-card" onclick="openOrderDetail('${o.id}')">
+    const cli = window.clientById(o.clientId);
+    const tech = window.techById(o.technicianId);
+    return `<div class="os-card" onclick="window.openOrderDetail('${o.id}')">
       <div class="os-card-top">
         <div>
           <div class="os-num">${o.number}</div>
-          <div class="os-device">${esc(o.device.brand)} ${esc(o.device.model)} · ${esc(cli?cli.name:'—')}</div>
+          <div class="os-device">${window.esc(o.device.brand)} ${window.esc(o.device.model)} · ${window.esc(cli?cli.name:'—')}</div>
         </div>
-        ${statusTag(o.status)}
+        ${window.statusTag(o.status)}
       </div>
       <div class="os-meta">
-        <span>${icon('clock',12)} ${fmtDate(o.createdAt)}</span>
-        <span>${icon('wrench',12)} ${esc(tech?tech.name:'—')}</span>
-        <span>${icon('dollar',12)} ${brl(o.budget.total)}</span>
+        <span>${window.icon('clock',12)} ${window.fmtDate(o.createdAt)}</span>
+        <span>${window.icon('wrench',12)} ${window.esc(tech?tech.name:'—')}</span>
+        <span>${window.icon('dollar',12)} ${window.brl(o.budget.total)}</span>
       </div>
     </div>`;
-  }).join('')}</div>` : `<div class="empty">${icon('inbox',48)}<h4>Nenhuma ordem encontrada</h4><p>Ajuste o filtro ou crie uma nova OS</p></div>`;
+  }).join('')}</div>` : `<div class="empty">${window.icon('inbox',48)}<h4>Nenhuma ordem encontrada</h4><p>Ajuste o filtro ou crie uma nova OS</p></div>`;
 
   return `
   <div class="section-head">
     <div><h2>Ordens de Serviço</h2><p>Gerencie todos os reparos</p></div>
-    <button class="btn btn-primary btn-sm" onclick="openOrderForm()">${icon('plus',16)} Nova OS</button>
+    <button class="btn btn-primary btn-sm" onclick="window.openOrderForm()">${window.icon('plus',16)} Nova OS</button>
   </div>
   ${statusChips}
   ${listHTML}`;
-}
+};
 
-function bindOrders(){
-  document.querySelectorAll('[data-filter]').forEach(b=>{
-    b.addEventListener('click',()=>{ osFilterStatus = b.dataset.filter; renderSection(); });
-  });
-}
+window.bindOrders = function(){};
 
-/* ---- Formulário de OS (novo/editar) ---- */
-function openOrderForm(orderId){
-  const editing = orderId ? orderById(orderId) : null;
-  const o = editing || {
-    id:null, number:'', clientId:'', technicianId:'',
-    device:{type:'Smartphone', brand:'', model:'', color:'', imei1:'', imei2:'', serial:'',
-      password:'', passwordRecorded:false, physicalState:'', accessories:'', photos:[], notes:''},
-    reportedDefect:'', diagnosis:{initial:'',tests:'',identified:'',solution:'',techNotes:''},
-    budget:{labor:0,parts:0,discount:0,total:0,downPayment:0,remaining:0},
-    status:'recebido', priority:'normal', createdAt: todayISO(), updatedAt: todayISO(), statusHistory:[]
-  };
-  const clientOptions = state.clients.map(c=>`<option value="${c.id}" ${o.clientId===c.id?'selected':''}>${esc(c.name)}</option>`).join('');
-  const techOptions = state.technicians.filter(t=>t.active).map(t=>`<option value="${t.id}" ${o.technicianId===t.id?'selected':''}>${esc(t.name)}</option>`).join('');
+window.openOrderForm = function(orderId){
+  try {
+    const editing = orderId ? window.orderById(orderId) : null;
+    const o = editing || {
+      id:null, number:'', clientId:'', technicianId:'',
+      device:{type:'Smartphone', brand:'', model:'', color:'', imei1:'', imei2:'', serial:'',
+        password:'', passwordRecorded:false, physicalState:'', accessories:'', photos:[], notes:''},
+      reportedDefect:'', diagnosis:{initial:'',tests:'',identified:'',solution:'',techNotes:''},
+      budget:{labor:0,parts:0,discount:0,total:0,downPayment:0,remaining:0},
+      status:'recebido', priority:'normal', createdAt: window.todayISO(), updatedAt: window.todayISO(), statusHistory:[]
+    };
+    const clientOptions = window.state.clients.map(c=>`<option value="${c.id}" ${o.clientId===c.id?'selected':''}>${window.esc(c.name)}</option>`).join('');
+    const techOptions = window.state.technicians.filter(t=>t.active).map(t=>`<option value="${t.id}" ${o.technicianId===t.id?'selected':''}>${window.esc(t.name)}</option>`).join('');
 
-  const body = `
-  <div class="privacy">${icon('lock')}<span>Dados sensíveis como senhas de desbloqueio não devem ser registrados por padrão. Registre apenas se estritamente necessário.</span></div>
-  <div class="field"><label>Cliente *</label>
-    <div style="display:flex;gap:8px">
-      <select id="fClient" style="flex:1"><option value="">— Selecione —</option>${clientOptions}</select>
-      <button class="btn btn-ghost btn-sm" type="button" onclick="openClientForm(null, true)">${icon('plus',16)}</button>
+    const body = `
+    <div class="privacy">${window.icon('lock')}<span>Dados sensíveis como senhas de desbloqueio não devem ser registrados por padrão.</span></div>
+    <div class="field"><label>Cliente *</label>
+      <div style="display:flex;gap:8px">
+        <select id="fClient" style="flex:1"><option value="">— Selecione —</option>${clientOptions}</select>
+        <button class="btn btn-ghost btn-sm" type="button" onclick="window.openClientForm(null, true)">${window.icon('plus',16)}</button>
+      </div>
     </div>
-  </div>
-  <div class="field"><label>Técnico responsável</label>
-    <select id="fTech"><option value="">— Selecione —</option>${techOptions}</select>
-  </div>
-  <div class="row row-3">
-    <div class="field"><label>Tipo</label><select id="fDevType">
-      ${['Celular','Smartphone','Tablet','Outro'].map(t=>`<option ${o.device.type===t?'selected':''}>${t}</option>`).join('')}
-    </select></div>
-    <div class="field"><label>Marca</label><input id="fDevBrand" value="${esc(o.device.brand)}"></div>
-    <div class="field"><label>Modelo</label><input id="fDevModel" value="${esc(o.device.model)}"></div>
-  </div>
-  <div class="row row-3">
-    <div class="field"><label>Cor</label><input id="fDevColor" value="${esc(o.device.color)}"></div>
-    <div class="field"><label>IMEI 1</label><input id="fDevImei1" value="${esc(o.device.imei1)}"></div>
-    <div class="field"><label>IMEI 2</label><input id="fDevImei2" value="${esc(o.device.imei2)}"></div>
-  </div>
-  <div class="row row-2">
-    <div class="field"><label>Nº de série</label><input id="fDevSerial" value="${esc(o.device.serial)}"></div>
-    <div class="field"><label>Acessórios entregues</label><input id="fDevAcc" value="${esc(o.device.accessories)}" placeholder="Carregador, capa…"></div>
-  </div>
-  <div class="field"><label>Estado físico</label><textarea id="fDevState" placeholder="Descreva marcas, riscos, trincas…">${esc(o.device.physicalState)}</textarea></div>
-  <div class="field"><label>Senha de desbloqueio (opcional)</label>
-    <input id="fDevPwd" type="password" value="${esc(o.device.password)}" placeholder="Deixe em branco para não registrar">
-    <div class="hint">Campo protegido. Por privacidade, não registre senhas por padrão.</div>
-  </div>
-  <div class="field"><label>Defeito relatado *</label>
-    <textarea id="fDefect" placeholder="Ex: tela quebrada, não carrega…">${esc(o.reportedDefect)}</textarea>
-  </div>
-  <hr style="border:none;border-top:1px solid var(--border);margin:16px 0">
-  <h4 style="margin-bottom:12px;font-size:13px;color:var(--text2)">DIAGNÓSTICO TÉCNICO</h4>
-  <div class="field"><label>Diagnóstico inicial</label><textarea id="fDiagInit">${esc(o.diagnosis.initial)}</textarea></div>
-  <div class="field"><label>Testes realizados</label><textarea id="fDiagTests">${esc(o.diagnosis.tests)}</textarea></div>
-  <div class="field"><label>Defeito identificado</label><textarea id="fDiagIdent">${esc(o.diagnosis.identified)}</textarea></div>
-  <div class="field"><label>Solução recomendada</label><textarea id="fDiagSol">${esc(o.diagnosis.solution)}</textarea></div>
-  <hr style="border:none;border-top:1px solid var(--border);margin:16px 0">
-  <h4 style="margin-bottom:12px;font-size:13px;color:var(--text2)">ORÇAMENTO</h4>
-  <div class="row row-3">
-    <div class="field"><label>Mão de obra (R$)</label><input id="fBudLabor" type="number" step="0.01" value="${o.budget.labor||0}" oninput="calcBudget()"></div>
-    <div class="field"><label>Peças (R$)</label><input id="fBudParts" type="number" step="0.01" value="${o.budget.parts||0}" oninput="calcBudget()"></div>
-    <div class="field"><label>Desconto (R$)</label><input id="fBudDisc" type="number" step="0.01" value="${o.budget.discount||0}" oninput="calcBudget()"></div>
-  </div>
-  <div class="row row-2">
-    <div class="field"><label>Sinal / entrada (R$)</label><input id="fBudDown" type="number" step="0.01" value="${o.budget.downPayment||0}" oninput="calcBudget()"></div>
-    <div class="field"><label>Total (R$)</label><input id="fBudTotal" readonly value="${o.budget.total||0}" style="font-weight:800;color:var(--primary)"></div>
-  </div>
-  <div class="field"><label>Status</label>
-    <select id="fStatus">${OS_STATUS.map(s=>`<option value="${s.id}" ${o.status===s.id?'selected':''}>${s.label}</option>`).join('')}</select>
-  </div>
-  `;
-
-  const foot = `
-    <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
-    <button class="btn btn-primary" onclick="saveOrder('${editing?editing.id:''}')">${icon('check',16)} ${editing?'Salvar':'Criar OS'}</button>
-  `;
-  openModal(editing?'Editar OS '+o.number:'Nova Ordem de Serviço', body, foot);
-  if(editing){
-    document.getElementById('fTech').value = o.technicianId||'';
-    document.getElementById('fStatus').value = o.status||'recebido';
+    <div class="field"><label>Técnico responsável</label>
+      <select id="fTech"><option value="">— Selecione —</option>${techOptions}</select>
+    </div>
+    <div class="row row-3">
+      <div class="field"><label>Tipo</label><select id="fDevType">
+        ${['Celular','Smartphone','Tablet','Outro'].map(t=>`<option ${o.device.type===t?'selected':''}>${t}</option>`).join('')}
+      </select></div>
+      <div class="field"><label>Marca</label><input id="fDevBrand" value="${window.esc(o.device.brand)}"></div>
+      <div class="field"><label>Modelo</label><input id="fDevModel" value="${window.esc(o.device.model)}"></div>
+    </div>
+    <div class="row row-3">
+      <div class="field"><label>Cor</label><input id="fDevColor" value="${window.esc(o.device.color)}"></div>
+      <div class="field"><label>IMEI 1</label><input id="fDevImei1" value="${window.esc(o.device.imei1)}"></div>
+      <div class="field"><label>IMEI 2</label><input id="fDevImei2" value="${window.esc(o.device.imei2)}"></div>
+    </div>
+    <div class="row row-2">
+      <div class="field"><label>Nº de série</label><input id="fDevSerial" value="${window.esc(o.device.serial)}"></div>
+      <div class="field"><label>Acessórios entregues</label><input id="fDevAcc" value="${window.esc(o.device.accessories)}" placeholder="Carregador, capa…"></div>
+    </div>
+    <div class="field"><label>Estado físico</label><textarea id="fDevState" placeholder="Descreva marcas, riscos, trincas…">${window.esc(o.device.physicalState)}</textarea></div>
+    <div class="field"><label>Senha de desbloqueio (opcional)</label>
+      <input id="fDevPwd" type="password" value="${window.esc(o.device.password)}" placeholder="Deixe em branco para não registrar">
+      <div class="hint">Campo protegido. Por privacidade, não registre senhas por padrão.</div>
+    </div>
+    <div class="field"><label>Defeito relatado *</label>
+      <textarea id="fDefect" placeholder="Ex: tela quebrada, não carrega…">${window.esc(o.reportedDefect)}</textarea>
+    </div>
+    <hr style="border:none;border-top:1px solid var(--border);margin:16px 0">
+    <h4 style="margin-bottom:12px;font-size:13px;color:var(--text2)">DIAGNÓSTICO TÉCNICO</h4>
+    <div class="field"><label>Diagnóstico inicial</label><textarea id="fDiagInit">${window.esc(o.diagnosis.initial)}</textarea></div>
+    <div class="field"><label>Testes realizados</label><textarea id="fDiagTests">${window.esc(o.diagnosis.tests)}</textarea></div>
+    <div class="field"><label>Defeito identificado</label><textarea id="fDiagIdent">${window.esc(o.diagnosis.identified)}</textarea></div>
+    <div class="field"><label>Solução recomendada</label><textarea id="fDiagSol">${window.esc(o.diagnosis.solution)}</textarea></div>
+    <hr style="border:none;border-top:1px solid var(--border);margin:16px 0">
+    <h4 style="margin-bottom:12px;font-size:13px;color:var(--text2)">ORÇAMENTO</h4>
+    <div class="row row-3">
+      <div class="field"><label>Mão de obra (R$)</label><input id="fBudLabor" type="number" step="0.01" value="${o.budget.labor||0}" oninput="window.calcBudget()"></div>
+      <div class="field"><label>Peças (R$)</label><input id="fBudParts" type="number" step="0.01" value="${o.budget.parts||0}" oninput="window.calcBudget()"></div>
+      <div class="field"><label>Desconto (R$)</label><input id="fBudDisc" type="number" step="0.01" value="${o.budget.discount||0}" oninput="window.calcBudget()"></div>
+    </div>
+    <div class="row row-2">
+      <div class="field"><label>Sinal / entrada (R$)</label><input id="fBudDown" type="number" step="0.01" value="${o.budget.downPayment||0}" oninput="window.calcBudget()"></div>
+      <div class="field"><label>Total (R$)</label><input id="fBudTotal" readonly value="${o.budget.total||0}" style="font-weight:800;color:var(--primary)"></div>
+    </div>
+    <div class="field"><label>Status</label>
+      <select id="fStatus">${window.OS_STATUS.map(s=>`<option value="${s.id}" ${o.status===s.id?'selected':''}>${s.label}</option>`).join('')}</select>
+    </div>
+    `;
+    const foot = `
+      <button class="btn btn-ghost" onclick="window.closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="window.saveOrder('${editing?editing.id:''}')">${window.icon('check',16)} ${editing?'Salvar':'Criar OS'}</button>
+    `;
+    window.openModal(editing?'Editar OS '+o.number:'Nova Ordem de Serviço', body, foot);
+    if(editing){
+      document.getElementById('fTech').value = o.technicianId||'';
+      document.getElementById('fStatus').value = o.status||'recebido';
+    }
+  } catch(e) {
+    console.error(e);
+    window.toast("Erro ao abrir formulário", "error");
   }
-}
+};
 
-function calcBudget(){
+window.calcBudget = function(){
   const labor = Number(document.getElementById('fBudLabor').value)||0;
   const parts = Number(document.getElementById('fBudParts').value)||0;
   const disc = Number(document.getElementById('fBudDisc').value)||0;
@@ -1283,142 +1291,145 @@ function calcBudget(){
   const total = Math.max(0, labor+parts-disc);
   const rem = Math.max(0, total-down);
   document.getElementById('fBudTotal').value = total.toFixed(2);
-}
+};
 
-function saveOrder(editId){
-  const clientId = document.getElementById('fClient').value;
-  const defect = document.getElementById('fDefect').value.trim();
-  const brand = document.getElementById('fDevBrand').value.trim();
-  const model = document.getElementById('fDevModel').value.trim();
-  if(!clientId){ toast('Selecione um cliente','error'); return; }
-  if(!defect){ toast('Informe o defeito relatado','error'); return; }
-  if(!brand || !model){ toast('Informe marca e modelo do aparelho','error'); return; }
+window.saveOrder = function(editId){
+  try {
+    const clientId = document.getElementById('fClient').value;
+    const defect = document.getElementById('fDefect').value.trim();
+    const brand = document.getElementById('fDevBrand').value.trim();
+    const model = document.getElementById('fDevModel').value.trim();
+    if(!clientId){ window.toast('Selecione um cliente','error'); return; }
+    if(!defect){ window.toast('Informe o defeito relatado','error'); return; }
+    if(!brand || !model){ window.toast('Informe marca e modelo do aparelho','error'); return; }
 
-  const labor = Number(document.getElementById('fBudLabor').value)||0;
-  const parts = Number(document.getElementById('fBudParts').value)||0;
-  const disc = Number(document.getElementById('fBudDisc').value)||0;
-  const down = Number(document.getElementById('fBudDown').value)||0;
-  const total = Math.max(0, labor+parts-disc);
+    const labor = Number(document.getElementById('fBudLabor').value)||0;
+    const parts = Number(document.getElementById('fBudParts').value)||0;
+    const disc = Number(document.getElementById('fBudDisc').value)||0;
+    const down = Number(document.getElementById('fBudDown').value)||0;
+    const total = Math.max(0, labor+parts-disc);
 
-  const data = {
-    clientId,
-    technicianId: document.getElementById('fTech').value || '',
-    device:{
-      type:document.getElementById('fDevType').value,
-      brand, model,
-      color:document.getElementById('fDevColor').value.trim(),
-      imei1:document.getElementById('fDevImei1').value.trim(),
-      imei2:document.getElementById('fDevImei2').value.trim(),
-      serial:document.getElementById('fDevSerial').value.trim(),
-      password:document.getElementById('fDevPwd').value,
-      passwordRecorded: !!document.getElementById('fDevPwd').value,
-      physicalState:document.getElementById('fDevState').value.trim(),
-      accessories:document.getElementById('fDevAcc').value.trim(),
-      photos:[], notes:''
-    },
-    reportedDefect: defect,
-    diagnosis:{
-      initial:document.getElementById('fDiagInit').value.trim(),
-      tests:document.getElementById('fDiagTests').value.trim(),
-      identified:document.getElementById('fDiagIdent').value.trim(),
-      solution:document.getElementById('fDiagSol').value.trim(),
-      techNotes:''
-    },
-    budget:{labor, parts, discount:disc, total, downPayment:down, remaining: Math.max(0,total-down)},
-    status: document.getElementById('fStatus').value || 'recebido'
-  };
+    const data = {
+      clientId,
+      technicianId: document.getElementById('fTech').value || '',
+      device:{
+        type:document.getElementById('fDevType').value,
+        brand, model,
+        color:document.getElementById('fDevColor').value.trim(),
+        imei1:document.getElementById('fDevImei1').value.trim(),
+        imei2:document.getElementById('fDevImei2').value.trim(),
+        serial:document.getElementById('fDevSerial').value.trim(),
+        password:document.getElementById('fDevPwd').value,
+        passwordRecorded: !!document.getElementById('fDevPwd').value,
+        physicalState:document.getElementById('fDevState').value.trim(),
+        accessories:document.getElementById('fDevAcc').value.trim(),
+        photos:[], notes:''
+      },
+      reportedDefect: defect,
+      diagnosis:{
+        initial:document.getElementById('fDiagInit').value.trim(),
+        tests:document.getElementById('fDiagTests').value.trim(),
+        identified:document.getElementById('fDiagIdent').value.trim(),
+        solution:document.getElementById('fDiagSol').value.trim(),
+        techNotes:''
+      },
+      budget:{labor, parts, discount:disc, total, downPayment:down, remaining: Math.max(0,total-down)},
+      status: document.getElementById('fStatus').value || 'recebido'
+    };
 
-  if(editId){
-    const o = orderById(editId);
-    if(!o){ toast('OS não encontrada','error'); return; }
-    const prevStatus = o.status;
-    Object.assign(o, data);
-    o.updatedAt = todayISO();
-    if(prevStatus !== data.status){
-      o.statusHistory.push({from:prevStatus, to:data.status, at: todayISO(), by:'Usuário'});
+    if(editId){
+      const o = window.orderById(editId);
+      if(!o){ window.toast('OS não encontrada','error'); return; }
+      const prevStatus = o.status;
+      Object.assign(o, data);
+      o.updatedAt = window.todayISO();
+      if(prevStatus !== data.status){
+        o.statusHistory.push({from:prevStatus, to:data.status, at: window.todayISO(), by:'Usuário'});
+      }
+      window.saveState();
+      window.toast('OS atualizada com sucesso','success');
+    } else {
+      const num = window.nextOrderNumber();
+      const newOrder = Object.assign({
+        id:window.uid('os'),
+        number: num,
+        createdAt: window.todayISO(),
+        updatedAt: window.todayISO(),
+        statusHistory:[{from:'', to:data.status, at: window.todayISO(), by:'Usuário'}],
+        priority:'normal',
+        warranty:null,
+        linkedOrderId:null,
+        deliveryDate:null
+      }, data);
+      window.state.orders.push(newOrder);
+      window.saveState();
+      window.toast('OS '+num+' criada com sucesso','success');
     }
-    saveState();
-    toast('OS atualizada com sucesso','success');
-  } else {
-    const num = nextOrderNumber();
-    const newOrder = Object.assign({
-      id:uid('os'),
-      number: num,
-      createdAt: todayISO(),
-      updatedAt: todayISO(),
-      statusHistory:[{from:'', to:data.status, at: todayISO(), by:'Usuário'}],
-      priority:'normal',
-      warranty:null,
-      linkedOrderId:null,
-      deliveryDate:null
-    }, data);
-    state.orders.push(newOrder);
-    saveState();
-    toast('OS '+num+' criada com sucesso','success');
+    window.closeModal();
+    window.renderSection();
+  } catch(e) {
+    console.error(e);
+    window.toast("Erro ao salvar OS", "error");
   }
-  closeModal();
-  renderSection();
-  if(editId) openOrderDetail(editId);
-}
+};
 
-/* ---- Detalhe da OS ---- */
-function openOrderDetail(orderId){
-  const o = orderById(orderId); if(!o){ toast('OS não encontrada','error'); return; }
-  const cli = clientById(o.clientId);
-  const tech = techById(o.technicianId);
-  const paid = paidForOrder(o.id);
-  const pending = pendingForOrder(o.id);
+window.openOrderDetail = function(orderId){
+  const o = window.orderById(orderId); if(!o){ window.toast('OS não encontrada','error'); return; }
+  const cli = window.clientById(o.clientId);
+  const tech = window.techById(o.technicianId);
+  const paid = window.paidForOrder(o.id);
+  const pending = window.pendingForOrder(o.id);
 
   const body = `
   <div class="os-card-top" style="margin-bottom:16px">
     <div><div class="os-num" style="font-size:18px">${o.number}</div>
-    <div class="os-device">${esc(o.device.brand)} ${esc(o.device.model)}</div></div>
-    ${statusTag(o.status)}
+    <div class="os-device">${window.esc(o.device.brand)} ${window.esc(o.device.model)}</div></div>
+    ${window.statusTag(o.status)}
   </div>
   <div class="grid grid-2" style="gap:12px;margin-bottom:16px">
     <div class="card card-pad" style="padding:12px">
       <div class="text-xs text-muted" style="font-weight:700;margin-bottom:4px">CLIENTE</div>
-      <div style="font-weight:700">${esc(cli?cli.name:'—')}</div>
-      <div class="text-sm text-muted">${esc(cli?cli.phone:'')}</div>
+      <div style="font-weight:700">${window.esc(cli?cli.name:'—')}</div>
+      <div class="text-sm text-muted">${window.esc(cli?cli.phone:'')}</div>
     </div>
     <div class="card card-pad" style="padding:12px">
       <div class="text-xs text-muted" style="font-weight:700;margin-bottom:4px">TÉCNICO</div>
-      <div style="font-weight:700">${esc(tech?tech.name:'—')}</div>
+      <div style="font-weight:700">${window.esc(tech?tech.name:'—')}</div>
     </div>
   </div>
 
   <div class="card card-pad" style="padding:14px;margin-bottom:12px">
     <div class="text-xs text-muted" style="font-weight:700;margin-bottom:8px">APARELHO</div>
-    <div class="text-sm"><b>${esc(o.device.type)}</b> · ${esc(o.device.brand)} ${esc(o.device.model)} ${o.device.color?'· '+esc(o.device.color):''}</div>
-    ${o.device.imei1?`<div class="text-sm text-muted">IMEI 1: ${esc(o.device.imei1)}</div>`:''}
-    ${o.device.imei2?`<div class="text-sm text-muted">IMEI 2: ${esc(o.device.imei2)}</div>`:''}
-    ${o.device.accessories?`<div class="text-sm text-muted">Acessórios: ${esc(o.device.accessories)}</div>`:''}
-    ${o.device.physicalState?`<div class="text-sm text-muted">Estado: ${esc(o.device.physicalState)}</div>`:''}
-    ${o.device.passwordRecorded?`<div class="text-sm" style="color:var(--warning)">${icon('lock',12)} Senha registrada (protegida)</div>`:''}
+    <div class="text-sm"><b>${window.esc(o.device.type)}</b> · ${window.esc(o.device.brand)} ${window.esc(o.device.model)} ${o.device.color?'· '+window.esc(o.device.color):''}</div>
+    ${o.device.imei1?`<div class="text-sm text-muted">IMEI 1: ${window.esc(o.device.imei1)}</div>`:''}
+    ${o.device.imei2?`<div class="text-sm text-muted">IMEI 2: ${window.esc(o.device.imei2)}</div>`:''}
+    ${o.device.accessories?`<div class="text-sm text-muted">Acessórios: ${window.esc(o.device.accessories)}</div>`:''}
+    ${o.device.physicalState?`<div class="text-sm text-muted">Estado: ${window.esc(o.device.physicalState)}</div>`:''}
+    ${o.device.passwordRecorded?`<div class="text-sm" style="color:var(--warning)">${window.icon('lock',12)} Senha registrada (protegida)</div>`:''}
   </div>
 
   <div class="card card-pad" style="padding:14px;margin-bottom:12px">
     <div class="text-xs text-muted" style="font-weight:700;margin-bottom:8px">DEFEITO RELATADO</div>
-    <div class="text-sm">${esc(o.reportedDefect)}</div>
-    ${o.diagnosis.identified?`<div class="mt-8 text-xs text-muted" style="font-weight:700">DIAGNÓSTICO</div><div class="text-sm">${esc(o.diagnosis.identified)}</div>`:''}
+    <div class="text-sm">${window.esc(o.reportedDefect)}</div>
+    ${o.diagnosis.identified?`<div class="mt-8 text-xs text-muted" style="font-weight:700">DIAGNÓSTICO</div><div class="text-sm">${window.esc(o.diagnosis.identified)}</div>`:''}
   </div>
 
   <div class="card card-pad" style="padding:14px;margin-bottom:12px">
     <div class="text-xs text-muted" style="font-weight:700;margin-bottom:8px">ORÇAMENTO</div>
-    <div class="kv"><span>Mão de obra</span><b>${brl(o.budget.labor)}</b></div>
-    <div class="kv"><span>Peças</span><b>${brl(o.budget.parts)}</b></div>
-    ${o.budget.discount?`<div class="kv"><span>Desconto</span><b class="text-danger">- ${brl(o.budget.discount)}</b></div>`:''}
-    <div class="kv" style="font-size:15px"><b>Total</b><b>${brl(o.budget.total)}</b></div>
-    <div class="kv"><span>Pago</span><b class="text-success">${brl(paid)}</b></div>
-    <div class="kv"><span>Pendente</span><b class="${pending>0?'text-danger':'text-success'}">${brl(pending)}</b></div>
+    <div class="kv" style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span>Mão de obra</span><b>${window.brl(o.budget.labor)}</b></div>
+    <div class="kv" style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span>Peças</span><b>${window.brl(o.budget.parts)}</b></div>
+    ${o.budget.discount?`<div class="kv" style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span>Desconto</span><b class="text-danger">- ${window.brl(o.budget.discount)}</b></div>`:''}
+    <div class="kv" style="display:flex;justify-content:space-between;padding:4px 0;font-size:15px"><b>Total</b><b>${window.brl(o.budget.total)}</b></div>
+    <div class="kv" style="display:flex;justify-content:space-between;padding:4px 0;border-top:1px solid var(--border)"><span>Pago</span><b class="text-success">${window.brl(paid)}</b></div>
+    <div class="kv" style="display:flex;justify-content:space-between;padding:4px 0;"><span>Pendente</span><b class="${pending>0?'text-danger':'text-success'}">${window.brl(pending)}</b></div>
   </div>
 
   <div class="card card-pad" style="padding:14px;margin-bottom:12px">
     <div class="text-xs text-muted" style="font-weight:700;margin-bottom:8px">ALTERAR STATUS</div>
     <select id="detailStatus" style="width:100%;padding:10px;border-radius:10px;background:var(--bg2);border:1px solid var(--border);color:var(--text)">
-      ${OS_STATUS.map(s=>`<option value="${s.id}" ${o.status===s.id?'selected':''}>${s.label}</option>`).join('')}
+      ${window.OS_STATUS.map(s=>`<option value="${s.id}" ${o.status===s.id?'selected':''}>${s.label}</option>`).join('')}
     </select>
-    <button class="btn btn-primary btn-sm w-full mt-8" onclick="changeOrderStatus('${o.id}')">Atualizar status</button>
+    <button class="btn btn-primary btn-sm w-full mt-8" onclick="window.changeOrderStatus('${o.id}')">Atualizar status</button>
   </div>
 
   <div class="card card-pad" style="padding:14px;margin-bottom:12px">
@@ -1426,108 +1437,108 @@ function openOrderDetail(orderId){
     <div class="timeline">
       ${(o.statusHistory||[]).slice().reverse().map(h=>`
         <div class="tl-item">
-          <div class="tl-date">${fmtDateTime(h.at)}</div>
-          <div class="tl-title">${h.from?statusMeta(h.from).label+' → ':''}${statusMeta(h.to).label}</div>
-          <div class="tl-desc">por ${esc(h.by||'Sistema')}</div>
+          <div class="tl-date">${window.fmtDateTime(h.at)}</div>
+          <div class="tl-title">${h.from?window.statusMeta(h.from).label+' → ':''}${window.statusMeta(h.to).label}</div>
+          <div class="tl-desc">por ${window.esc(h.by||'Sistema')}</div>
         </div>
       `).join('')}
     </div>
   </div>
 
   <div class="grid grid-2" style="gap:8px">
-    <button class="btn btn-ghost btn-sm" onclick="openOrderForm('${o.id}')">${icon('edit',16)} Editar</button>
-    <button class="btn btn-success btn-sm" onclick="openPaymentForm('${o.id}')">${icon('dollar',16)} Pagamento</button>
-    <button class="btn btn-ghost btn-sm" onclick="printDoc('receipt','${o.id}')">${icon('print',16)} Comprovante</button>
-    <button class="btn btn-ghost btn-sm" onclick="printDoc('budget','${o.id}')">${icon('print',16)} Orçamento</button>
-    <button class="btn btn-ghost btn-sm" onclick="printDoc('delivery','${o.id}')">${icon('print',16)} Entrega</button>
-    <button class="btn btn-ghost btn-sm" onclick="openWhatsApp('${o.id}')">${icon('whatsapp',16)} WhatsApp</button>
+    <button class="btn btn-ghost btn-sm" onclick="window.openOrderForm('${o.id}')">${window.icon('edit',16)} Editar</button>
+    <button class="btn btn-success btn-sm" onclick="window.openPaymentForm('${o.id}')">${window.icon('dollar',16)} Pagamento</button>
+    <button class="btn btn-ghost btn-sm" onclick="window.printDoc('receipt','${o.id}')">${window.icon('print',16)} Comprovante</button>
+    <button class="btn btn-ghost btn-sm" onclick="window.printDoc('budget','${o.id}')">${window.icon('print',16)} Orçamento</button>
+    <button class="btn btn-ghost btn-sm" onclick="window.printDoc('delivery','${o.id}')">${window.icon('print',16)} Entrega</button>
+    <button class="btn btn-ghost btn-sm" onclick="window.openWhatsApp('${o.id}')">${window.icon('whatsapp',16)} WhatsApp</button>
   </div>
-  <button class="btn btn-danger btn-sm w-full mt-8" onclick="deleteOrder('${o.id}')">${icon('trash',16)} Excluir OS</button>
+  <button class="btn btn-danger btn-sm w-full mt-8" onclick="window.deleteOrder('${o.id}')">${window.icon('trash',16)} Excluir OS</button>
   `;
 
-  openModal('Detalhes da OS', body, `<button class="btn btn-ghost w-full" onclick="closeModal()">Fechar</button>`);
-}
+  window.openModal('Detalhes da OS', body, `<button class="btn btn-ghost w-full" onclick="window.closeModal()">Fechar</button>`);
+};
 
-function changeOrderStatus(id){
-  const o = orderById(id); if(!o) return;
+window.changeOrderStatus = function(id){
+  const o = window.orderById(id); if(!o) return;
   const newStatus = document.getElementById('detailStatus').value;
-  if(newStatus === o.status){ closeModal(); return; }
+  if(newStatus === o.status){ window.closeModal(); return; }
   const prev = o.status;
   o.status = newStatus;
-  o.updatedAt = todayISO();
-  o.statusHistory.push({from:prev, to:newStatus, at:todayISO(), by:'Usuário'});
-  if(newStatus==='entregue' && !o.deliveryDate) o.deliveryDate = todayISO();
-  saveState();
-  toast('Status atualizado para '+statusMeta(newStatus).label,'success');
-  closeModal();
-  renderSection();
-}
+  o.updatedAt = window.todayISO();
+  o.statusHistory.push({from:prev, to:newStatus, at:window.todayISO(), by:'Usuário'});
+  if(newStatus==='entregue' && !o.deliveryDate) o.deliveryDate = window.todayISO();
+  window.saveState();
+  window.toast('Status atualizado para '+window.statusMeta(newStatus).label,'success');
+  window.closeModal();
+  window.renderSection();
+};
 
-function deleteOrder(id){
-  const o = orderById(id); if(!o) return;
-  confirmDialog('Excluir OS', `Tem certeza que deseja excluir a OS ${o.number}? Esta ação não pode ser desfeita.`, ()=>{
-    state.orders = state.orders.filter(x=>x.id!==id);
-    state.payments = state.payments.filter(p=>p.orderId!==id);
-    saveState();
-    toast('OS excluída','success');
-    closeModal();
-    renderSection();
+window.deleteOrder = function(id){
+  const o = window.orderById(id); if(!o) return;
+  window.confirmDialog('Excluir OS', `Tem certeza que deseja excluir a OS ${o.number}? Esta ação não pode ser desfeita.`, ()=>{
+    window.state.orders = window.state.orders.filter(x=>x.id!==id);
+    window.state.payments = window.state.payments.filter(p=>p.orderId!==id);
+    window.saveState();
+    window.toast('OS excluída','success');
+    window.closeModal();
+    window.renderSection();
   });
-}
+};
 
-/* =========================================================
-   11. CLIENTES
-   ========================================================= */
-function renderClients(){
-  const list = [...state.clients].sort((a,b)=>a.name.localeCompare(b.name));
+// =========================================================
+// CLIENTES
+// =========================================================
+window.renderClients = function(){
+  const list = [...window.state.clients].sort((a,b)=>a.name.localeCompare(b.name));
   return `
   <div class="section-head">
-    <div><h2>Clientes</h2><p>${state.clients.length} cadastrado(s)</p></div>
-    <button class="btn btn-primary btn-sm" onclick="openClientForm()">${icon('plus',16)} Novo Cliente</button>
+    <div><h2>Clientes</h2><p>${window.state.clients.length} cadastrado(s)</p></div>
+    <button class="btn btn-primary btn-sm" onclick="window.openClientForm()">${window.icon('plus',16)} Novo Cliente</button>
   </div>
   ${list.length ? `<div class="os-list">${list.map(c=>{
-    const orders = state.orders.filter(o=>o.clientId===c.id);
-    return `<div class="os-card" onclick="openClientDetail('${c.id}')">
+    const orders = window.state.orders.filter(o=>o.clientId===c.id);
+    return `<div class="os-card" onclick="window.openClientDetail('${c.id}')">
       <div class="os-card-top">
         <div>
-          <div style="font-weight:800;font-size:15px">${esc(c.name)}</div>
-          <div class="os-device">${esc(c.phone)} ${c.city?'· '+esc(c.city)+'/'+esc(c.state):''}</div>
+          <div style="font-weight:800;font-size:15px">${window.esc(c.name)}</div>
+          <div class="os-device">${window.esc(c.phone)} ${c.city?'· '+window.esc(c.city)+'/'+window.esc(c.state):''}</div>
         </div>
         <span class="tag" style="background:var(--primary)22;color:var(--primary)">${orders.length} OS</span>
       </div>
     </div>`;
-  }).join('')}</div>` : `<div class="empty">${icon('users',48)}<h4>Nenhum cliente cadastrado</h4><p>Comece adicionando um cliente</p></div>`}`;
-}
-function bindClients(){}
+  }).join('')}</div>` : `<div class="empty">${window.icon('users',48)}<h4>Nenhum cliente cadastrado</h4><p>Comece adicionando um cliente</p></div>`}`;
+};
+window.bindClients = function(){};
 
-function openClientForm(clientId, fromOrder=false){
-  const c = clientId ? clientById(clientId) : {id:null,name:'',cpf:'',phone:'',email:'',address:'',city:'',state:'',notes:''};
+window.openClientForm = function(clientId, fromOrder=false){
+  const c = clientId ? window.clientById(clientId) : {id:null,name:'',cpf:'',phone:'',email:'',address:'',city:'',state:'',notes:''};
   const body = `
-    <div class="field"><label>Nome completo *</label><input id="cName" value="${esc(c.name)}"></div>
+    <div class="field"><label>Nome completo *</label><input id="cName" value="${window.esc(c.name)}"></div>
     <div class="row row-2">
-      <div class="field"><label>CPF / CNPJ</label><input id="cCpf" value="${esc(c.cpf)}" oninput="this.value=maskCPF(this.value)"></div>
-      <div class="field"><label>Telefone / WhatsApp *</label><input id="cPhone" value="${esc(c.phone)}" oninput="this.value=maskPhone(this.value)"></div>
+      <div class="field"><label>CPF / CNPJ</label><input id="cCpf" value="${window.esc(c.cpf)}" oninput="this.value=window.maskCPF(this.value)"></div>
+      <div class="field"><label>Telefone / WhatsApp *</label><input id="cPhone" value="${window.esc(c.phone)}" oninput="this.value=window.maskPhone(this.value)"></div>
     </div>
-    <div class="field"><label>E-mail</label><input id="cEmail" type="email" value="${esc(c.email)}"></div>
-    <div class="field"><label>Endereço</label><input id="cAddress" value="${esc(c.address)}"></div>
+    <div class="field"><label>E-mail</label><input id="cEmail" type="email" value="${window.esc(c.email)}"></div>
+    <div class="field"><label>Endereço</label><input id="cAddress" value="${window.esc(c.address)}"></div>
     <div class="row row-2">
-      <div class="field"><label>Cidade</label><input id="cCity" value="${esc(c.city)}"></div>
-      <div class="field"><label>Estado</label><input id="cState" value="${esc(c.state)}" maxlength="2"></div>
+      <div class="field"><label>Cidade</label><input id="cCity" value="${window.esc(c.city)}"></div>
+      <div class="field"><label>Estado</label><input id="cState" value="${window.esc(c.state)}" maxlength="2"></div>
     </div>
-    <div class="field"><label>Observações internas</label><textarea id="cNotes">${esc(c.notes)}</textarea></div>
+    <div class="field"><label>Observações internas</label><textarea id="cNotes">${window.esc(c.notes)}</textarea></div>
   `;
   const foot = `
-    <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
-    <button class="btn btn-primary" onclick="saveClient('${clientId||''}', ${fromOrder})">${icon('check',16)} Salvar</button>
+    <button class="btn btn-ghost" onclick="window.closeModal()">Cancelar</button>
+    <button class="btn btn-primary" onclick="window.saveClient('${clientId||''}', ${fromOrder})">${window.icon('check',16)} Salvar</button>
   `;
-  openModal(clientId?'Editar Cliente':'Novo Cliente', body, foot);
-}
+  window.openModal(clientId?'Editar Cliente':'Novo Cliente', body, foot);
+};
 
-function saveClient(editId, fromOrder){
+window.saveClient = function(editId, fromOrder){
   const name = document.getElementById('cName').value.trim();
   const phone = document.getElementById('cPhone').value.trim();
-  if(!name){ toast('Informe o nome do cliente','error'); return; }
-  if(!phone){ toast('Informe o telefone','error'); return; }
+  if(!name){ window.toast('Informe o nome do cliente','error'); return; }
+  if(!phone){ window.toast('Informe o telefone','error'); return; }
   const data = {
     name, cpf:document.getElementById('cCpf').value.trim(),
     phone, email:document.getElementById('cEmail').value.trim(),
@@ -1537,153 +1548,152 @@ function saveClient(editId, fromOrder){
     notes:document.getElementById('cNotes').value.trim()
   };
   if(editId){
-    const c = clientById(editId);
+    const c = window.clientById(editId);
     Object.assign(c, data);
-    toast('Cliente atualizado','success');
+    window.toast('Cliente atualizado','success');
   } else {
-    const c = Object.assign({id:uid('cli'), createdAt: todayISO()}, data);
-    state.clients.push(c);
-    toast('Cliente cadastrado','success');
+    const c = Object.assign({id:window.uid('cli'), createdAt: window.todayISO()}, data);
+    window.state.clients.push(c);
+    window.toast('Cliente cadastrado','success');
     if(fromOrder){
-      // Recriar o form de OS e selecionar o novo cliente
-      saveState();
-      closeModal();
-      setTimeout(()=>{ openOrderForm(); }, 200);
+      window.saveState();
+      window.closeModal();
+      setTimeout(()=>{ window.openOrderForm(); }, 200);
       return;
     }
   }
-  saveState();
-  closeModal();
-  renderSection();
-}
+  window.saveState();
+  window.closeModal();
+  window.renderSection();
+};
 
-function openClientDetail(id){
-  const c = clientById(id); if(!c) return;
-  const orders = state.orders.filter(o=>o.clientId===id).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
-  const payments = state.payments.filter(p=>orders.some(o=>o.id===p.orderId));
+window.openClientDetail = function(id){
+  const c = window.clientById(id); if(!c) return;
+  const orders = window.state.orders.filter(o=>o.clientId===id).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+  const payments = window.state.payments.filter(p=>orders.some(o=>o.id===p.orderId));
   const body = `
-    <div style="font-size:18px;font-weight:800;margin-bottom:4px">${esc(c.name)}</div>
-    <div class="text-sm text-muted mb-16">${esc(c.phone)} ${c.email?'· '+esc(c.email):''}</div>
-    ${c.address?`<div class="text-sm text-muted">${esc(c.address)}${c.city?' - '+esc(c.city)+'/'+esc(c.state):''}</div>`:''}
-    ${c.cpf?`<div class="text-sm text-muted">CPF/CNPJ: ${esc(c.cpf)}</div>`:''}
-    ${c.notes?`<div class="card card-pad mt-16" style="padding:10px;font-size:13px"><b>Obs:</b> ${esc(c.notes)}</div>`:''}
+    <div style="font-size:18px;font-weight:800;margin-bottom:4px">${window.esc(c.name)}</div>
+    <div class="text-sm text-muted mb-16">${window.esc(c.phone)} ${c.email?'· '+window.esc(c.email):''}</div>
+    ${c.address?`<div class="text-sm text-muted">${window.esc(c.address)}${c.city?' - '+window.esc(c.city)+'/'+window.esc(c.state):''}</div>`:''}
+    ${c.cpf?`<div class="text-sm text-muted">CPF/CNPJ: ${window.esc(c.cpf)}</div>`:''}
+    ${c.notes?`<div class="card card-pad mt-16" style="padding:10px;font-size:13px"><b>Obs:</b> ${window.esc(c.notes)}</div>`:''}
 
     <div class="grid grid-2 mt-16" style="gap:8px">
-      <button class="btn btn-success btn-sm" onclick="openWhatsApp('','${id}')">${icon('whatsapp',16)} WhatsApp</button>
-      <button class="btn btn-primary btn-sm" onclick="openOrderFormForClient('${id}')">${icon('plus',16)} Nova OS</button>
+      <button class="btn btn-success btn-sm" onclick="window.openWhatsApp('','${id}')">${window.icon('whatsapp',16)} WhatsApp</button>
+      <button class="btn btn-primary btn-sm" onclick="window.openOrderFormForClient('${id}')">${window.icon('plus',16)} Nova OS</button>
     </div>
 
     <h4 style="margin:18px 0 10px;font-size:13px;color:var(--text2)">HISTÓRICO DE OS (${orders.length})</h4>
     ${orders.length ? orders.map(o=>`
-      <div class="os-card mb-8" onclick="openOrderDetail('${o.id}')" style="padding:10px">
+      <div class="os-card mb-8" onclick="window.openOrderDetail('${o.id}')" style="padding:10px">
         <div class="os-card-top">
           <div><div class="os-num" style="font-size:13px">${o.number}</div>
-          <div class="text-xs text-muted">${esc(o.device.brand)} ${esc(o.device.model)}</div></div>
-          ${statusTag(o.status)}
+          <div class="text-xs text-muted">${window.esc(o.device.brand)} ${window.esc(o.device.model)}</div></div>
+          ${window.statusTag(o.status)}
         </div>
-        <div class="text-xs text-muted mt-8">${fmtDate(o.createdAt)} · ${brl(o.budget.total)}</div>
+        <div class="text-xs text-muted mt-8">${window.fmtDate(o.createdAt)} · ${window.brl(o.budget.total)}</div>
       </div>
     `).join('') : `<div class="text-sm text-muted">Nenhuma OS ainda.</div>`}
 
     <h4 style="margin:18px 0 10px;font-size:13px;color:var(--text2)">PAGAMENTOS (${payments.length})</h4>
     ${payments.length ? payments.map(p=>`
-      <div class="kv"><span>${fmtDate(p.date)} · ${p.method}</span><b>${brl(p.amount)}</b></div>
+      <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border);font-size:13px"><span>${window.fmtDate(p.date)} · ${p.method}</span><b>${window.brl(p.amount)}</b></div>
     `).join('') : `<div class="text-sm text-muted">Nenhum pagamento registrado.</div>`}
 
-    <button class="btn btn-danger btn-sm w-full mt-16" onclick="deleteClient('${c.id}')">${icon('trash',16)} Excluir Cliente</button>
+    <button class="btn btn-danger btn-sm w-full mt-16" onclick="window.deleteClient('${c.id}')">${window.icon('trash',16)} Excluir Cliente</button>
   `;
-  openModal('Perfil do Cliente', body, `<button class="btn btn-ghost w-full" onclick="closeModal()">Fechar</button>`);
-}
+  window.openModal('Perfil do Cliente', body, `<button class="btn btn-ghost w-full" onclick="window.closeModal()">Fechar</button>`);
+};
 
-function openOrderFormForClient(clientId){
-  closeModal();
+window.openOrderFormForClient = function(clientId){
+  window.closeModal();
   setTimeout(()=>{
-    openOrderForm();
+    window.openOrderForm();
     setTimeout(()=>{
       const sel = document.getElementById('fClient');
       if(sel) sel.value = clientId;
     },50);
   },100);
-}
+};
 
-function deleteClient(id){
-  const c = clientById(id); if(!c) return;
-  const hasOrders = state.orders.some(o=>o.clientId===id);
+window.deleteClient = function(id){
+  const c = window.clientById(id); if(!c) return;
+  const hasOrders = window.state.orders.some(o=>o.clientId===id);
   const msg = hasOrders
-    ? `O cliente ${c.name} possui ordens de serviço vinculadas. Excluir mesmo assim? As OS permanecerão sem cliente.`
+    ? `O cliente ${c.name} possui ordens de serviço vinculadas. Excluir mesmo assim?`
     : `Excluir o cliente ${c.name}?`;
-  confirmDialog('Excluir Cliente', msg, ()=>{
-    state.clients = state.clients.filter(x=>x.id!==id);
-    saveState();
-    toast('Cliente excluído','success');
-    closeModal();
-    renderSection();
+  window.confirmDialog('Excluir Cliente', msg, ()=>{
+    window.state.clients = window.state.clients.filter(x=>x.id!==id);
+    window.saveState();
+    window.toast('Cliente excluído','success');
+    window.closeModal();
+    window.renderSection();
   });
-}
+};
 
-/* =========================================================
-   12. ESTOQUE
-   ========================================================= */
-function renderStock(){
-  const parts = [...state.parts].sort((a,b)=>a.name.localeCompare(b.name));
+// =========================================================
+// ESTOQUE
+// =========================================================
+window.renderStock = function(){
+  const parts = [...window.state.parts].sort((a,b)=>a.name.localeCompare(b.name));
   return `
   <div class="section-head">
-    <div><h2>Estoque</h2><p>${state.parts.length} peça(s) cadastrada(s)</p></div>
-    <button class="btn btn-primary btn-sm" onclick="openPartForm()">${icon('plus',16)} Nova Peça</button>
+    <div><h2>Estoque</h2><p>${window.state.parts.length} peça(s) cadastrada(s)</p></div>
+    <button class="btn btn-primary btn-sm" onclick="window.openPartForm()">${window.icon('plus',16)} Nova Peça</button>
   </div>
   ${parts.length ? `<div class="os-list">${parts.map(p=>{
     const low = Number(p.qty) <= Number(p.minQty);
-    return `<div class="os-card" onclick="openPartDetail('${p.id}')">
+    return `<div class="os-card" onclick="window.openPartDetail('${p.id}')">
       <div class="os-card-top">
         <div>
-          <div style="font-weight:800">${esc(p.name)}</div>
-          <div class="os-device">${esc(p.sku)} · ${esc(p.brand||'')} ${esc(p.model?'· '+p.model:'')}</div>
+          <div style="font-weight:800">${window.esc(p.name)}</div>
+          <div class="os-device">${window.esc(p.sku)} · ${window.esc(p.brand||'')} ${window.esc(p.model?'· '+p.model:'')}</div>
         </div>
         <span class="tag" style="background:${low?'var(--danger)':'var(--success)'}22;color:${low?'var(--danger)':'var(--success)'}">${p.qty} un</span>
       </div>
       <div class="os-meta">
-        <span>${icon('dollar',12)} Custo: ${brl(p.cost)}</span>
-        <span>Venda: ${brl(p.price)}</span>
+        <span>${window.icon('dollar',12)} Custo: ${window.brl(p.cost)}</span>
+        <span>Venda: ${window.brl(p.price)}</span>
         <span>Mín: ${p.minQty}</span>
       </div>
     </div>`;
-  }).join('')}</div>` : `<div class="empty">${icon('package',48)}<h4>Nenhuma peça cadastrada</h4><p>Adicione peças para controlar o estoque</p></div>`}`;
-}
-function bindStock(){}
+  }).join('')}</div>` : `<div class="empty">${window.icon('package',48)}<h4>Nenhuma peça cadastrada</h4><p>Adicione peças para controlar o estoque</p></div>`}`;
+};
+window.bindStock = function(){};
 
-function openPartForm(partId){
-  const p = partId ? partById(partId) : {id:null,name:'',sku:'',category:'',brand:'',model:'',qty:0,minQty:0,cost:0,price:0,supplier:'',location:''};
+window.openPartForm = function(partId){
+  const p = partId ? window.partById(partId) : {id:null,name:'',sku:'',category:'',brand:'',model:'',qty:0,minQty:0,cost:0,price:0,supplier:'',location:''};
   const body = `
-    <div class="field"><label>Nome da peça *</label><input id="pName" value="${esc(p.name)}"></div>
+    <div class="field"><label>Nome da peça *</label><input id="pName" value="${window.esc(p.name)}"></div>
     <div class="row row-2">
-      <div class="field"><label>SKU / Código</label><input id="pSku" value="${esc(p.sku)}"></div>
-      <div class="field"><label>Categoria</label><input id="pCat" value="${esc(p.category)}" placeholder="Tela, Bateria…"></div>
+      <div class="field"><label>SKU / Código</label><input id="pSku" value="${window.esc(p.sku)}"></div>
+      <div class="field"><label>Categoria</label><input id="pCat" value="${window.esc(p.category)}" placeholder="Tela, Bateria…"></div>
     </div>
     <div class="row row-2">
-      <div class="field"><label>Marca compatível</label><input id="pBrand" value="${esc(p.brand)}"></div>
-      <div class="field"><label>Modelo compatível</label><input id="pModel" value="${esc(p.model)}"></div>
+      <div class="field"><label>Marca compatível</label><input id="pBrand" value="${window.esc(p.brand)}"></div>
+      <div class="field"><label>Modelo compatível</label><input id="pModel" value="${window.esc(p.model)}"></div>
     </div>
     <div class="row row-3">
       <div class="field"><label>Qtd. estoque</label><input id="pQty" type="number" value="${p.qty||0}"></div>
       <div class="field"><label>Estoque mínimo</label><input id="pMin" type="number" value="${p.minQty||0}"></div>
-      <div class="field"><label>Localização</label><input id="pLoc" value="${esc(p.location)}"></div>
+      <div class="field"><label>Localização</label><input id="pLoc" value="${window.esc(p.location)}"></div>
     </div>
     <div class="row row-2">
       <div class="field"><label>Custo (R$)</label><input id="pCost" type="number" step="0.01" value="${p.cost||0}"></div>
       <div class="field"><label>Preço de venda (R$)</label><input id="pPrice" type="number" step="0.01" value="${p.price||0}"></div>
     </div>
-    <div class="field"><label>Fornecedor</label><input id="pSupplier" value="${esc(p.supplier)}"></div>
+    <div class="field"><label>Fornecedor</label><input id="pSupplier" value="${window.esc(p.supplier)}"></div>
   `;
   const foot = `
-    <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
-    <button class="btn btn-primary" onclick="savePart('${partId||''}')">${icon('check',16)} Salvar</button>
+    <button class="btn btn-ghost" onclick="window.closeModal()">Cancelar</button>
+    <button class="btn btn-primary" onclick="window.savePart('${partId||''}')">${window.icon('check',16)} Salvar</button>
   `;
-  openModal(partId?'Editar Peça':'Nova Peça', body, foot);
-}
+  window.openModal(partId?'Editar Peça':'Nova Peça', body, foot);
+};
 
-function savePart(editId){
+window.savePart = function(editId){
   const name = document.getElementById('pName').value.trim();
-  if(!name){ toast('Informe o nome da peça','error'); return; }
+  if(!name){ window.toast('Informe o nome da peça','error'); return; }
   const data = {
     name,
     sku: document.getElementById('pSku').value.trim(),
@@ -1698,106 +1708,106 @@ function savePart(editId){
     location: document.getElementById('pLoc').value.trim()
   };
   if(editId){
-    const p = partById(editId);
+    const p = window.partById(editId);
     Object.assign(p, data);
-    toast('Peça atualizada','success');
+    window.toast('Peça atualizada','success');
   } else {
-    state.parts.push(Object.assign({id:uid('part'), createdAt:todayISO()}, data));
-    toast('Peça cadastrada','success');
+    window.state.parts.push(Object.assign({id:window.uid('part'), createdAt:window.todayISO()}, data));
+    window.toast('Peça cadastrada','success');
   }
-  saveState();
-  closeModal();
-  renderSection();
-}
+  window.saveState();
+  window.closeModal();
+  window.renderSection();
+};
 
-function openPartDetail(id){
-  const p = partById(id); if(!p) return;
-  const movs = state.movs.filter(m=>m.partId===id).sort((a,b)=>new Date(b.date)-new Date(a.date));
+window.openPartDetail = function(id){
+  const p = window.partById(id); if(!p) return;
+  const movs = window.state.movs.filter(m=>m.partId===id).sort((a,b)=>new Date(b.date)-new Date(a.date));
   const low = Number(p.qty)<=Number(p.minQty);
   const body = `
-    <div style="font-size:18px;font-weight:800">${esc(p.name)}</div>
-    <div class="text-sm text-muted mb-16">${esc(p.sku)} · ${esc(p.category)}</div>
+    <div style="font-size:18px;font-weight:800">${window.esc(p.name)}</div>
+    <div class="text-sm text-muted mb-16">${window.esc(p.sku)} · ${window.esc(p.category)}</div>
     <div class="card card-pad mb-16" style="padding:12px">
-      <div class="kv"><span>Estoque atual</span><b class="${low?'text-danger':'text-success'}">${p.qty} un ${low?'(baixo)':''}</b></div>
-      <div class="kv"><span>Estoque mínimo</span><b>${p.minQty}</b></div>
-      <div class="kv"><span>Custo</span><b>${brl(p.cost)}</b></div>
-      <div class="kv"><span>Preço de venda</span><b>${brl(p.price)}</b></div>
-      <div class="kv"><span>Fornecedor</span><b>${esc(p.supplier||'—')}</b></div>
-      <div class="kv"><span>Local</span><b>${esc(p.location||'—')}</b></div>
+      <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span>Estoque atual</span><b class="${low?'text-danger':'text-success'}">${p.qty} un ${low?'(baixo)':''}</b></div>
+      <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span>Estoque mínimo</span><b>${p.minQty}</b></div>
+      <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span>Custo</span><b>${window.brl(p.cost)}</b></div>
+      <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span>Preço de venda</span><b>${window.brl(p.price)}</b></div>
+      <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span>Fornecedor</span><b>${window.esc(p.supplier||'—')}</b></div>
+      <div style="display:flex;justify-content:space-between;padding:4px 0;"><span>Local</span><b>${window.esc(p.location||'—')}</b></div>
     </div>
     <div class="grid grid-2" style="gap:8px;margin-bottom:16px">
-      <button class="btn btn-success btn-sm" onclick="stockMove('${p.id}','entrada')">${icon('arrowUp',16)} Entrada</button>
-      <button class="btn btn-danger btn-sm" onclick="stockMove('${p.id}','saida')">${icon('arrowDown',16)} Saída</button>
-      <button class="btn btn-ghost btn-sm" onclick="openPartForm('${p.id}')">${icon('edit',16)} Editar</button>
-      <button class="btn btn-ghost btn-sm" onclick="deletePart('${p.id}')">${icon('trash',16)} Excluir</button>
+      <button class="btn btn-success btn-sm" onclick="window.stockMove('${p.id}','entrada')">${window.icon('arrowUp',16)} Entrada</button>
+      <button class="btn btn-danger btn-sm" onclick="window.stockMove('${p.id}','saida')">${window.icon('arrowDown',16)} Saída</button>
+      <button class="btn btn-ghost btn-sm" onclick="window.openPartForm('${p.id}')">${window.icon('edit',16)} Editar</button>
+      <button class="btn btn-ghost btn-sm" onclick="window.deletePart('${p.id}')">${window.icon('trash',16)} Excluir</button>
     </div>
     <h4 style="margin-bottom:10px;font-size:13px;color:var(--text2)">MOVIMENTAÇÕES (${movs.length})</h4>
     ${movs.length ? `<div class="timeline">${movs.map(m=>`
       <div class="tl-item">
-        <div class="tl-date">${fmtDateTime(m.date)}</div>
+        <div class="tl-date">${window.fmtDateTime(m.date)}</div>
         <div class="tl-title">${m.type==='entrada'?'Entrada':'Saída'} · ${m.qty} un</div>
-        ${m.notes?`<div class="tl-desc">${esc(m.notes)}</div>`:''}
+        ${m.notes?`<div class="tl-desc">${window.esc(m.notes)}</div>`:''}
       </div>
     `).join('')}</div>` : `<div class="text-sm text-muted">Nenhuma movimentação.</div>`}
   `;
-  openModal('Detalhes da Peça', body, `<button class="btn btn-ghost w-full" onclick="closeModal()">Fechar</button>`);
-}
+  window.openModal('Detalhes da Peça', body, `<button class="btn btn-ghost w-full" onclick="window.closeModal()">Fechar</button>`);
+};
 
-function stockMove(id, type){
-  const p = partById(id); if(!p) return;
+window.stockMove = function(id, type){
+  const p = window.partById(id); if(!p) return;
   const qtyStr = prompt(type==='entrada'?'Quantidade a adicionar:':'Quantidade a retirar:','1');
   if(qtyStr===null) return;
   const qty = parseInt(qtyStr,10);
-  if(!qty || qty<=0){ toast('Quantidade inválida','error'); return; }
+  if(!qty || qty<=0){ window.toast('Quantidade inválida','error'); return; }
   if(type==='saida' && qty>Number(p.qty)){
     if(!confirm('A quantidade excede o estoque. Prosseguir mesmo assim?')) return;
   }
   p.qty = Number(p.qty) + (type==='entrada'?qty:-qty);
-  state.movs.push({id:uid('mv'), partId:id, type, qty, date:todayISO(), notes:''});
-  saveState();
-  toast('Movimentação registrada','success');
-  closeModal();
-  renderSection();
-}
+  window.state.movs.push({id:window.uid('mv'), partId:id, type, qty, date:window.todayISO(), notes:''});
+  window.saveState();
+  window.toast('Movimentação registrada','success');
+  window.closeModal();
+  window.renderSection();
+};
 
-function deletePart(id){
-  const p = partById(id); if(!p) return;
-  confirmDialog('Excluir Peça', `Excluir a peça "${p.name}"?`, ()=>{
-    state.parts = state.parts.filter(x=>x.id!==id);
-    state.movs = state.movs.filter(m=>m.partId!==id);
-    saveState();
-    toast('Peça excluída','success');
-    closeModal();
-    renderSection();
+window.deletePart = function(id){
+  const p = window.partById(id); if(!p) return;
+  window.confirmDialog('Excluir Peça', `Excluir a peça "${p.name}"?`, ()=>{
+    window.state.parts = window.state.parts.filter(x=>x.id!==id);
+    window.state.movs = window.state.movs.filter(m=>m.partId!==id);
+    window.saveState();
+    window.toast('Peça excluída','success');
+    window.closeModal();
+    window.renderSection();
   });
-}
+};
 
-/* =========================================================
-   13. FINANCEIRO
-   ========================================================= */
-function renderFinance(){
-  const totalRecebido = state.payments.reduce((a,p)=>a+Number(p.amount||0),0);
-  const totalDespesas = state.expenses.reduce((a,e)=>a+Number(e.amount||0),0);
-  const aReceber = state.orders.reduce((a,o)=>a+pendingForOrder(o.id),0);
-  const faturamentoBruto = state.orders.reduce((a,o)=>a+Number(o.budget.total||0),0);
+// =========================================================
+// FINANCEIRO
+// =========================================================
+window.renderFinance = function(){
+  const totalRecebido = window.state.payments.reduce((a,p)=>a+Number(p.amount||0),0);
+  const totalDespesas = window.state.expenses.reduce((a,e)=>a+Number(e.amount||0),0);
+  const aReceber = window.state.orders.reduce((a,o)=>a+window.pendingForOrder(o.id),0);
+  const faturamentoBruto = window.state.orders.reduce((a,o)=>a+Number(o.budget.total||0),0);
   const resultado = totalRecebido - totalDespesas;
 
-  const pendingOrders = state.orders.filter(o=>pendingForOrder(o.id)>0 && o.status!=='cancelado');
+  const pendingOrders = window.state.orders.filter(o=>window.pendingForOrder(o.id)>0 && o.status!=='cancelado');
 
   return `
   <div class="section-head">
     <div><h2>Financeiro</h2><p>Controle de recebimentos e despesas</p></div>
     <div class="flex gap-8">
-      <button class="btn btn-ghost btn-sm" onclick="openExpenseForm()">${icon('plus',16)} Despesa</button>
-      <button class="btn btn-primary btn-sm" onclick="openPaymentForm()">${icon('dollar',16)} Pagamento</button>
+      <button class="btn btn-ghost btn-sm" onclick="window.openExpenseForm()">${window.icon('plus',16)} Despesa</button>
+      <button class="btn btn-primary btn-sm" onclick="window.openPaymentForm()">${window.icon('dollar',16)} Pagamento</button>
     </div>
   </div>
 
   <div class="grid grid-4" style="margin-bottom:20px">
-    ${statCard('dollar','Recebido', brl(totalRecebido), 'var(--success)', 'Total de pagamentos')}
-    ${statCard('arrowDown','A receber', brl(aReceber), 'var(--warning)', 'Pendente em OS')}
-    ${statCard('clipboard','Faturamento bruto', brl(faturamentoBruto), 'var(--primary)', 'Soma das OS')}
-    ${statCard('chart','Resultado estimado', brl(resultado), resultado>=0?'var(--accent)':'var(--danger)', 'Recebido - Despesas')}
+    ${window.statCard('dollar','Recebido', window.brl(totalRecebido), 'var(--success)', 'Total de pagamentos')}
+    ${window.statCard('arrowDown','A receber', window.brl(aReceber), 'var(--warning)', 'Pendente em OS')}
+    ${window.statCard('clipboard','Faturamento bruto', window.brl(faturamentoBruto), 'var(--primary)', 'Soma das OS')}
+    ${window.statCard('chart','Resultado estimado', window.brl(resultado), resultado>=0?'var(--accent)':'var(--danger)', 'Recebido - Despesas')}
   </div>
 
   <div class="card card-pad mb-16">
@@ -1805,14 +1815,14 @@ function renderFinance(){
     ${pendingOrders.length ? `<div class="table-wrap"><table>
       <thead><tr><th>OS</th><th>Cliente</th><th>Total</th><th>Pago</th><th>Pendente</th><th></th></tr></thead>
       <tbody>${pendingOrders.map(o=>{
-        const cli = clientById(o.clientId);
+        const cli = window.clientById(o.clientId);
         return `<tr>
-          <td><span class="link" onclick="openOrderDetail('${o.id}')">${o.number}</span></td>
-          <td>${esc(cli?cli.name:'—')}</td>
-          <td>${brl(o.budget.total)}</td>
-          <td class="text-success">${brl(paidForOrder(o.id))}</td>
-          <td class="text-danger fw-800">${brl(pendingForOrder(o.id))}</td>
-          <td><button class="btn btn-success btn-sm" onclick="openPaymentForm('${o.id}')">Pagar</button></td>
+          <td><span class="link" onclick="window.openOrderDetail('${o.id}')">${o.number}</span></td>
+          <td>${window.esc(cli?cli.name:'—')}</td>
+          <td>${window.brl(o.budget.total)}</td>
+          <td class="text-success">${window.brl(window.paidForOrder(o.id))}</td>
+          <td class="text-danger fw-800">${window.brl(window.pendingForOrder(o.id))}</td>
+          <td><button class="btn btn-success btn-sm" onclick="window.openPaymentForm('${o.id}')">Pagar</button></td>
         </tr>`;
       }).join('')}</tbody>
     </table></div>` : `<div class="empty"><h4>Nenhuma conta pendente</h4></div>`}
@@ -1821,48 +1831,48 @@ function renderFinance(){
   <div class="grid grid-2">
     <div class="card card-pad">
       <div class="section-head"><div><h2 style="font-size:16px">Despesas</h2><p>Controle de saídas</p></div>
-      <button class="btn btn-ghost btn-sm" onclick="openExpenseForm()">${icon('plus',16)}</button></div>
-      ${state.expenses.length ? `<div class="table-wrap"><table>
+      <button class="btn btn-ghost btn-sm" onclick="window.openExpenseForm()">${window.icon('plus',16)}</button></div>
+      ${window.state.expenses.length ? `<div class="table-wrap"><table>
         <thead><tr><th>Descrição</th><th>Valor</th><th>Data</th><th></th></tr></thead>
-        <tbody>${[...state.expenses].sort((a,b)=>new Date(b.date)-new Date(a.date)).map(e=>`
+        <tbody>${[...window.state.expenses].sort((a,b)=>new Date(b.date)-new Date(a.date)).map(e=>`
           <tr>
-            <td>${esc(e.description)}<div class="text-xs text-muted">${esc(e.category||'')}</div></td>
-            <td class="text-danger fw-800">${brl(e.amount)}</td>
-            <td class="text-sm">${fmtDate(e.date)}</td>
-            <td><button class="icon-btn" style="width:34px;height:34px" onclick="deleteExpense('${e.id}')">${icon('trash',14)}</button></td>
+            <td>${window.esc(e.description)}<div class="text-xs text-muted">${window.esc(e.category||'')}</div></td>
+            <td class="text-danger fw-800">${window.brl(e.amount)}</td>
+            <td class="text-sm">${window.fmtDate(e.date)}</td>
+            <td><button class="icon-btn" style="width:34px;height:34px" onclick="window.deleteExpense('${e.id}')">${window.icon('trash',14)}</button></td>
           </tr>`).join('')}</tbody>
       </table></div>` : `<div class="empty"><h4>Sem despesas</h4></div>`}
     </div>
 
     <div class="card card-pad">
       <div class="section-head"><div><h2 style="font-size:16px">Pagamentos recentes</h2><p>Últimos recebimentos</p></div></div>
-      ${state.payments.length ? `<div class="table-wrap"><table>
+      ${window.state.payments.length ? `<div class="table-wrap"><table>
         <thead><tr><th>OS</th><th>Valor</th><th>Método</th><th>Data</th></tr></thead>
-        <tbody>${[...state.payments].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,10).map(p=>{
-          const o = orderById(p.orderId);
+        <tbody>${[...window.state.payments].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,10).map(p=>{
+          const o = window.orderById(p.orderId);
           return `<tr>
-            <td>${o?`<span class="link" onclick="openOrderDetail('${o.id}')">${o.number}</span>`:'—'}</td>
-            <td class="text-success fw-800">${brl(p.amount)}</td>
-            <td class="text-sm">${esc(p.method)}</td>
-            <td class="text-sm">${fmtDate(p.date)}</td>
+            <td>${o?`<span class="link" onclick="window.openOrderDetail('${o.id}')">${o.number}</span>`:'—'}</td>
+            <td class="text-success fw-800">${window.brl(p.amount)}</td>
+            <td class="text-sm">${window.esc(p.method)}</td>
+            <td class="text-sm">${window.fmtDate(p.date)}</td>
           </tr>`;
         }).join('')}</tbody>
       </table></div>` : `<div class="empty"><h4>Sem pagamentos</h4></div>`}
     </div>
   </div>
   `;
-}
-function bindFinance(){}
+};
+window.bindFinance = function(){};
 
-function openPaymentForm(orderId){
-  const openOrders = state.orders.filter(o=>o.status!=='cancelado' && pendingForOrder(o.id)>0);
+window.openPaymentForm = function(orderId){
+  const openOrders = window.state.orders.filter(o=>o.status!=='cancelado' && window.pendingForOrder(o.id)>0);
   const opts = openOrders.map(o=>{
-    const cli = clientById(o.clientId);
-    const pend = pendingForOrder(o.id);
-    return `<option value="${o.id}" ${orderId===o.id?'selected':''}>${o.number} · ${esc(cli?cli.name:'—')} · Pend: ${brl(pend)}</option>`;
+    const cli = window.clientById(o.clientId);
+    const pend = window.pendingForOrder(o.id);
+    return `<option value="${o.id}" ${orderId===o.id?'selected':''}>${o.number} · ${window.esc(cli?cli.name:'—')} · Pend: ${window.brl(pend)}</option>`;
   }).join('');
-  const selectedOrder = orderId ? orderById(orderId) : (openOrders[0]||null);
-  const suggested = selectedOrder ? pendingForOrder(selectedOrder.id) : 0;
+  const selectedOrder = orderId ? window.orderById(orderId) : (openOrders[0]||null);
+  const suggested = selectedOrder ? window.pendingForOrder(selectedOrder.id) : 0;
   const body = `
     <div class="field"><label>Ordem de Serviço *</label>
       <select id="payOrder">${opts||'<option value="">Nenhuma OS com pendência</option>'}</select>
@@ -1870,39 +1880,39 @@ function openPaymentForm(orderId){
     <div class="row row-2">
       <div class="field"><label>Valor (R$) *</label><input id="payAmount" type="number" step="0.01" value="${suggested}"></div>
       <div class="field"><label>Forma de pagamento</label>
-        <select id="payMethod">${PAYMENT_METHODS.map(m=>`<option>${m}</option>`).join('')}</select>
+        <select id="payMethod">${window.PAYMENT_METHODS.map(m=>`<option>${m}</option>`).join('')}</select>
       </div>
     </div>
-    <div class="field"><label>Data</label><input id="payDate" type="date" value="${todayDate()}"></div>
+    <div class="field"><label>Data</label><input id="payDate" type="date" value="${window.todayDate()}"></div>
     <div class="field"><label>Observações</label><textarea id="payNotes"></textarea></div>
   `;
   const foot = `
-    <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
-    <button class="btn btn-primary" onclick="savePayment()">${icon('check',16)} Registrar</button>
+    <button class="btn btn-ghost" onclick="window.closeModal()">Cancelar</button>
+    <button class="btn btn-primary" onclick="window.savePayment()">${window.icon('check',16)} Registrar</button>
   `;
-  openModal('Registrar Pagamento', body, foot);
-}
+  window.openModal('Registrar Pagamento', body, foot);
+};
 
-function savePayment(){
+window.savePayment = function(){
   const orderId = document.getElementById('payOrder').value;
   const amount = Number(document.getElementById('payAmount').value)||0;
-  if(!orderId){ toast('Nenhuma OS selecionada','error'); return; }
-  if(amount<=0){ toast('Informe um valor válido','error'); return; }
-  const o = orderById(orderId);
-  if(!o){ toast('OS não encontrada','error'); return; }
-  state.payments.push({
-    id:uid('pay'), orderId, amount,
+  if(!orderId){ window.toast('Nenhuma OS selecionada','error'); return; }
+  if(amount<=0){ window.toast('Informe um valor válido','error'); return; }
+  const o = window.orderById(orderId);
+  if(!o){ window.toast('OS não encontrada','error'); return; }
+  window.state.payments.push({
+    id:window.uid('pay'), orderId, amount,
     method: document.getElementById('payMethod').value,
-    date: document.getElementById('payDate').value || todayISO(),
+    date: document.getElementById('payDate').value || window.todayISO(),
     notes: document.getElementById('payNotes').value.trim()
   });
-  saveState();
-  toast('Pagamento de '+brl(amount)+' registrado','success');
-  closeModal();
-  renderSection();
-}
+  window.saveState();
+  window.toast('Pagamento de '+window.brl(amount)+' registrado','success');
+  window.closeModal();
+  window.renderSection();
+};
 
-function openExpenseForm(){
+window.openExpenseForm = function(){
   const body = `
     <div class="field"><label>Descrição *</label><input id="expDesc"></div>
     <div class="row row-2">
@@ -1912,91 +1922,91 @@ function openExpenseForm(){
       </div>
     </div>
     <div class="row row-2">
-      <div class="field"><label>Data</label><input id="expDate" type="date" value="${todayDate()}"></div>
+      <div class="field"><label>Data</label><input id="expDate" type="date" value="${window.todayDate()}"></div>
       <div class="field"><label>Fornecedor</label><input id="expSupplier"></div>
     </div>
   `;
   const foot = `
-    <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
-    <button class="btn btn-primary" onclick="saveExpense()">${icon('check',16)} Salvar</button>
+    <button class="btn btn-ghost" onclick="window.closeModal()">Cancelar</button>
+    <button class="btn btn-primary" onclick="window.saveExpense()">${window.icon('check',16)} Salvar</button>
   `;
-  openModal('Nova Despesa', body, foot);
-}
+  window.openModal('Nova Despesa', body, foot);
+};
 
-function saveExpense(){
+window.saveExpense = function(){
   const desc = document.getElementById('expDesc').value.trim();
   const amount = Number(document.getElementById('expAmount').value)||0;
-  if(!desc){ toast('Informe a descrição','error'); return; }
-  if(amount<=0){ toast('Valor inválido','error'); return; }
-  state.expenses.push({
-    id:uid('exp'), description:desc, amount,
+  if(!desc){ window.toast('Informe a descrição','error'); return; }
+  if(amount<=0){ window.toast('Valor inválido','error'); return; }
+  window.state.expenses.push({
+    id:window.uid('exp'), description:desc, amount,
     category:document.getElementById('expCat').value,
-    date:document.getElementById('expDate').value||todayISO(),
+    date:document.getElementById('expDate').value||window.todayISO(),
     supplier:document.getElementById('expSupplier').value.trim()
   });
-  saveState();
-  toast('Despesa registrada','success');
-  closeModal();
-  renderSection();
-}
+  window.saveState();
+  window.toast('Despesa registrada','success');
+  window.closeModal();
+  window.renderSection();
+};
 
-function deleteExpense(id){
-  confirmDialog('Excluir Despesa','Tem certeza que deseja excluir esta despesa?',()=>{
-    state.expenses = state.expenses.filter(e=>e.id!==id);
-    saveState();
-    toast('Despesa excluída','success');
-    renderSection();
+window.deleteExpense = function(id){
+  window.confirmDialog('Excluir Despesa','Tem certeza que deseja excluir esta despesa?',()=>{
+    window.state.expenses = window.state.expenses.filter(e=>e.id!==id);
+    window.saveState();
+    window.toast('Despesa excluída','success');
+    window.renderSection();
   });
-}
+};
 
-/* =========================================================
-   14. TÉCNICOS
-   ========================================================= */
-function renderTechnicians(){
-  const techs = state.technicians;
+// =========================================================
+// TÉCNICOS
+// =========================================================
+window.renderTechnicians = function(){
+  const techs = window.state.technicians;
   const activeOrders = o=>['diagnostico','aprovacao','peca','reparo','testes'].includes(o.status);
   return `
   <div class="section-head">
     <div><h2>Técnicos</h2><p>${techs.length} cadastrado(s)</p></div>
-    <button class="btn btn-primary btn-sm" onclick="openTechForm()">${icon('plus',16)} Novo Técnico</button>
+    <button class="btn btn-primary btn-sm" onclick="window.openTechForm()">${window.icon('plus',16)} Novo Técnico</button>
   </div>
   <div class="grid grid-2">
     ${techs.length ? techs.map(t=>{
-      const assigned = state.orders.filter(o=>o.technicianId===t.id);
+      const assigned = window.state.orders.filter(o=>o.technicianId===t.id);
       const inProgress = assigned.filter(activeOrders).length;
       const done = assigned.filter(o=>o.status==='entregue').length;
       const comissao = assigned.filter(o=>o.status==='entregue').reduce((a,o)=>a+Number(o.budget.total||0),0)*(Number(t.commission||0)/100);
       return `<div class="card card-pad">
         <div class="flex justify-between items-center mb-8">
-          <div style="font-weight:800;font-size:15px">${esc(t.name)}</div>
+          <div style="font-weight:800;font-size:15px">${window.esc(t.name)}</div>
           <span class="tag" style="background:${t.active?'var(--success)':'var(--text3)'}22;color:${t.active?'var(--success)':'var(--text3)'}">${t.active?'Ativo':'Inativo'}</span>
         </div>
-        <div class="text-sm text-muted">${esc(t.specialty||'—')} · ${esc(t.phone||'')}</div>
+        <div class="text-sm text-muted">${window.esc(t.specialty||'—')} · ${window.esc(t.phone||'')}</div>
         <div class="grid grid-3 mt-16" style="gap:8px;text-align:center">
           <div><div style="font-weight:800;font-size:16px">${assigned.length}</div><div class="text-xs text-muted">OS</div></div>
           <div><div style="font-weight:800;font-size:16px;color:var(--warning)">${inProgress}</div><div class="text-xs text-muted">Em curso</div></div>
           <div><div style="font-weight:800;font-size:16px;color:var(--success)">${done}</div><div class="text-xs text-muted">Concluídas</div></div>
         </div>
-        ${t.commission?`<div class="mt-8 text-sm text-muted">Comissão: ${t.commission}% · Estimada: ${brl(comissao)}</div>`:''}
+        ${t.commission?`<div class="mt-8 text-sm text-muted">Comissão: ${t.commission}% · Estimada: ${window.brl(comissao)}</div>`:''}
         <div class="flex gap-8 mt-16">
-          <button class="btn btn-ghost btn-sm" onclick="openTechForm('${t.id}')">${icon('edit',14)} Editar</button>
-          <button class="btn btn-ghost btn-sm" onclick="toggleTech('${t.id}')">${t.active?'Desativar':'Ativar'}</button>
-          <button class="btn btn-ghost btn-sm" onclick="deleteTech('${t.id}')">${icon('trash',14)}</button>
+          <button class="btn btn-ghost btn-sm" onclick="window.openTechForm('${t.id}')">${window.icon('edit',14)} Editar</button>
+          <button class="btn btn-ghost btn-sm" onclick="window.toggleTech('${t.id}')">${t.active?'Desativar':'Ativar'}</button>
+          <button class="btn btn-ghost btn-sm" onclick="window.deleteTech('${t.id}')">${window.icon('trash',14)}</button>
         </div>
       </div>`;
-    }).join('') : `<div class="empty">${icon('wrench',48)}<h4>Nenhum técnico</h4><p>Cadastre um técnico para começar</p></div>`}
+    }).join('') : `<div class="empty">${window.icon('wrench',48)}<h4>Nenhum técnico</h4><p>Cadastre um técnico para começar</p></div>`}
   </div>
   `;
-}
-function bindTechnicians(){}
+};
+window.bindTechnicians = function(){};
 
-function openTechForm(editId){
-  const t = editId ? techById(editId) : {id:null,name:'',phone:'',specialty:'',commission:0,active:true};
+window.openTechForm = function(editId){
+  const t = editId ? window.techById(editId) : {id:null,name:'',phone:'',specialty:'',commission:0,active:true};
   const body = `
-    <div class="field"><label>Nome *</label><input id="tName" value="${esc(t.name)}"></div>
-    <div class="field"><label>Telefone</label><input id="tPhone" value="${esc(t.phone)}" oninput="this.value=maskPhone(this.value)"></div>
+    <div class="field"><label>Nome *</label><input id="tName" value="${window.esc(t.name)}"></div>
+    <div class="field"><label>Telefone</label><input id="tPhone" value="${window.esc(t.phone)}" oninput="this.value=window.maskPhone(this.value)"></div>
     <div class="row row-2">
-      <div class="field"><label>Especialidade</label><input id="tSpec" value="${esc(t.specialty)}"></div>
+      <div class="field"><label>Especialidade</label><input id="tSpec" value="${window.esc(t.specialty)}"></div>
       <div class="field"><label>Comissão (%)</label><input id="tComm" type="number" step="0.1" value="${t.commission||0}"></div>
     </div>
     <div class="field"><label>Status</label>
@@ -2004,15 +2014,15 @@ function openTechForm(editId){
     </div>
   `;
   const foot = `
-    <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
-    <button class="btn btn-primary" onclick="saveTech('${editId||''}')">${icon('check',16)} Salvar</button>
+    <button class="btn btn-ghost" onclick="window.closeModal()">Cancelar</button>
+    <button class="btn btn-primary" onclick="window.saveTech('${editId||''}')">${window.icon('check',16)} Salvar</button>
   `;
-  openModal(editId?'Editar Técnico':'Novo Técnico', body, foot);
-}
+  window.openModal(editId?'Editar Técnico':'Novo Técnico', body, foot);
+};
 
-function saveTech(editId){
+window.saveTech = function(editId){
   const name = document.getElementById('tName').value.trim();
-  if(!name){ toast('Informe o nome','error'); return; }
+  if(!name){ window.toast('Informe o nome','error'); return; }
   const data = {
     name,
     phone: document.getElementById('tPhone').value.trim(),
@@ -2021,40 +2031,40 @@ function saveTech(editId){
     active: document.getElementById('tActive').value==='true'
   };
   if(editId){
-    Object.assign(techById(editId), data);
-    toast('Técnico atualizado','success');
+    Object.assign(window.techById(editId), data);
+    window.toast('Técnico atualizado','success');
   } else {
-    state.technicians.push(Object.assign({id:uid('tec')}, data));
-    toast('Técnico cadastrado','success');
+    window.state.technicians.push(Object.assign({id:window.uid('tec')}, data));
+    window.toast('Técnico cadastrado','success');
   }
-  saveState();
-  closeModal();
-  renderSection();
-}
+  window.saveState();
+  window.closeModal();
+  window.renderSection();
+};
 
-function toggleTech(id){
-  const t = techById(id); if(!t) return;
+window.toggleTech = function(id){
+  const t = window.techById(id); if(!t) return;
   t.active = !t.active;
-  saveState();
-  renderSection();
-}
+  window.saveState();
+  window.renderSection();
+};
 
-function deleteTech(id){
-  const t = techById(id); if(!t) return;
-  confirmDialog('Excluir Técnico', `Excluir ${t.name}? As OS vinculadas permanecerão.`, ()=>{
-    state.technicians = state.technicians.filter(x=>x.id!==id);
-    state.orders.forEach(o=>{ if(o.technicianId===id) o.technicianId=''; });
-    saveState();
-    toast('Técnico excluído','success');
-    renderSection();
+window.deleteTech = function(id){
+  const t = window.techById(id); if(!t) return;
+  window.confirmDialog('Excluir Técnico', `Excluir ${t.name}? As OS vinculadas permanecerão.`, ()=>{
+    window.state.technicians = window.state.technicians.filter(x=>x.id!==id);
+    window.state.orders.forEach(o=>{ if(o.technicianId===id) o.technicianId=''; });
+    window.saveState();
+    window.toast('Técnico excluído','success');
+    window.renderSection();
   });
-}
+};
 
-/* =========================================================
-   15. GARANTIAS
-   ========================================================= */
-function renderWarranty(){
-  const delivered = state.orders.filter(o=>o.status==='entregue' && o.warranty);
+// =========================================================
+// GARANTIAS
+// =========================================================
+window.renderWarranty = function(){
+  const delivered = window.state.orders.filter(o=>o.status==='entregue' && o.warranty);
   const now = new Date();
   const list = delivered.map(o=>{
     const end = new Date(o.warranty.completedAt);
@@ -2067,91 +2077,91 @@ function renderWarranty(){
     <div><h2>Garantias</h2><p>Controle de garantia dos serviços entregues</p></div>
   </div>
   ${list.length ? `<div class="os-list">${list.map(({o,end,daysLeft})=>{
-    const cli = clientById(o.clientId);
+    const cli = window.clientById(o.clientId);
     const active = daysLeft>=0;
-    return `<div class="os-card" onclick="openOrderDetail('${o.id}')">
+    return `<div class="os-card" onclick="window.openOrderDetail('${o.id}')">
       <div class="os-card-top">
         <div>
           <div class="os-num">${o.number}</div>
-          <div class="os-device">${esc(o.device.brand)} ${esc(o.device.model)} · ${esc(cli?cli.name:'—')}</div>
+          <div class="os-device">${window.esc(o.device.brand)} ${window.esc(o.device.model)} · ${window.esc(cli?cli.name:'—')}</div>
         </div>
         <span class="tag" style="background:${active?'var(--success)':'var(--danger)'}22;color:${active?'var(--success)':'var(--danger)'}">${active?daysLeft+' dias restantes':'Expirada'}</span>
       </div>
       <div class="os-meta">
-        <span>${icon('shield',12)} ${o.warranty.days} dias</span>
-        <span>Concluído: ${fmtDate(o.warranty.completedAt)}</span>
-        <span>Vence: ${fmtDate(end.toISOString())}</span>
+        <span>${window.icon('shield',12)} ${o.warranty.days} dias</span>
+        <span>Concluído: ${window.fmtDate(o.warranty.completedAt)}</span>
+        <span>Vence: ${window.fmtDate(end.toISOString())}</span>
       </div>
     </div>`;
-  }).join('')}</div>` : `<div class="empty">${icon('shield',48)}<h4>Nenhuma garantia registrada</h4><p>Garantias são criadas ao entregar OS com garantia</p></div>`}`;
-}
-function bindWarranty(){}
+  }).join('')}</div>` : `<div class="empty">${window.icon('shield',48)}<h4>Nenhuma garantia registrada</h4><p>Garantias são criadas ao entregar OS com garantia</p></div>`}`;
+};
+window.bindWarranty = function(){};
 
-/* =========================================================
-   16. RELATÓRIOS
-   ========================================================= */
-function renderReports(){
-  const totalOS = state.orders.length;
-  const entregues = state.orders.filter(o=>o.status==='entregue').length;
-  const canceladas = state.orders.filter(o=>o.status==='cancelado').length;
-  const faturamento = state.payments.reduce((a,p)=>a+Number(p.amount||0),0);
-  const despesas = state.expenses.reduce((a,e)=>a+Number(e.amount||0),0);
+// =========================================================
+// RELATÓRIOS
+// =========================================================
+window.renderReports = function(){
+  const totalOS = window.state.orders.length;
+  const entregues = window.state.orders.filter(o=>o.status==='entregue').length;
+  const canceladas = window.state.orders.filter(o=>o.status==='cancelado').length;
+  const faturamento = window.state.payments.reduce((a,p)=>a+Number(p.amount||0),0);
+  const despesas = window.state.expenses.reduce((a,e)=>a+Number(e.amount||0),0);
   const lucro = faturamento-despesas;
   return `
   <div class="section-head">
     <div><h2>Relatórios</h2><p>Resumo operacional e financeiro</p></div>
-    <button class="btn btn-ghost btn-sm" onclick="window.print()">${icon('print',16)} Imprimir</button>
+    <button class="btn btn-ghost btn-sm" onclick="window.print()">${window.icon('print',16)} Imprimir</button>
   </div>
   <div class="card card-pad mb-16">
     <h3 style="font-size:15px;margin-bottom:12px">Resumo geral</h3>
     <div class="grid grid-4">
-      ${statCard('clipboard','Total de OS', totalOS, 'var(--primary)', '')}
-      ${statCard('check-circle','Entregues', entregues, 'var(--success)', '')}
-      ${statCard('x-circle','Canceladas', canceladas, 'var(--danger)', '')}
-      ${statCard('dollar','Faturamento', brl(faturamento), 'var(--accent)', '')}
+      ${window.statCard('clipboard','Total de OS', totalOS, 'var(--primary)', '')}
+      ${window.statCard('check-circle','Entregues', entregues, 'var(--success)', '')}
+      ${window.statCard('x-circle','Canceladas', canceladas, 'var(--danger)', '')}
+      ${window.statCard('dollar','Faturamento', window.brl(faturamento), 'var(--accent)', '')}
     </div>
     <div class="grid grid-2 mt-16">
-      ${statCard('arrowDown','Despesas', brl(despesas), 'var(--danger)', '')}
-      ${statCard('chart','Resultado estimado', brl(lucro), lucro>=0?'var(--success)':'var(--danger)', 'Recebido - Despesas')}
+      ${window.statCard('arrowDown','Despesas', window.brl(despesas), 'var(--danger)', '')}
+      ${window.statCard('chart','Resultado estimado', window.brl(lucro), lucro>=0?'var(--success)':'var(--danger)', 'Recebido - Despesas')}
     </div>
   </div>
   <div class="card card-pad">
     <h3 style="font-size:15px;margin-bottom:12px">Ordens por status</h3>
     <div class="table-wrap"><table>
       <thead><tr><th>Status</th><th>Quantidade</th><th>%</th></tr></thead>
-      <tbody>${OS_STATUS.map(s=>{
-        const n = state.orders.filter(o=>o.status===s.id).length;
+      <tbody>${window.OS_STATUS.map(s=>{
+        const n = window.state.orders.filter(o=>o.status===s.id).length;
         const pct = totalOS? ((n/totalOS)*100).toFixed(1) : '0.0';
-        return `<tr><td>${statusTag(s.id)}</td><td>${n}</td><td>${pct}%</td></tr>`;
+        return `<tr><td>${window.statusTag(s.id)}</td><td>${n}</td><td>${pct}%</td></tr>`;
       }).join('')}</tbody>
     </table></div>
   </div>
   `;
-}
-function bindReports(){}
+};
+window.bindReports = function(){};
 
-/* =========================================================
-   17. CONFIGURAÇÕES
-   ========================================================= */
-function renderSettings(){
-  const s = state.settings;
+// =========================================================
+// CONFIGURAÇÕES
+// =========================================================
+window.renderSettings = function(){
+  const s = window.state.settings;
   return `
   <div class="section-head"><div><h2>Configurações</h2><p>Personalize sua assistência</p></div></div>
 
   <div class="card card-pad mb-16">
     <h3 style="font-size:15px;margin-bottom:12px">Dados da empresa</h3>
     <div class="row row-2">
-      <div class="field"><label>Nome da assistência</label><input id="sCompany" value="${esc(s.companyName||'')}"></div>
-      <div class="field"><label>CNPJ / CPF</label><input id="sCnpj" value="${esc(s.cnpj||'')}"></div>
+      <div class="field"><label>Nome da assistência</label><input id="sCompany" value="${window.esc(s.companyName||'')}"></div>
+      <div class="field"><label>CNPJ / CPF</label><input id="sCnpj" value="${window.esc(s.cnpj||'')}"></div>
     </div>
     <div class="row row-2">
-      <div class="field"><label>Telefone</label><input id="sPhone" value="${esc(s.phone||'')}"></div>
-      <div class="field"><label>WhatsApp</label><input id="sWa" value="${esc(s.whatsapp||'')}"></div>
+      <div class="field"><label>Telefone</label><input id="sPhone" value="${window.esc(s.phone||'')}"></div>
+      <div class="field"><label>WhatsApp</label><input id="sWa" value="${window.esc(s.whatsapp||'')}"></div>
     </div>
-    <div class="field"><label>Endereço</label><input id="sAddr" value="${esc(s.address||'')}"></div>
+    <div class="field"><label>Endereço</label><input id="sAddr" value="${window.esc(s.address||'')}"></div>
     <div class="row row-2">
-      <div class="field"><label>E-mail</label><input id="sEmail" value="${esc(s.email||'')}"></div>
-      <div class="field"><label>Site</label><input id="sSite" value="${esc(s.site||'')}"></div>
+      <div class="field"><label>E-mail</label><input id="sEmail" value="${window.esc(s.email||'')}"></div>
+      <div class="field"><label>Site</label><input id="sSite" value="${window.esc(s.site||'')}"></div>
     </div>
   </div>
 
@@ -2170,9 +2180,9 @@ function renderSettings(){
       <div class="field"><label>Garantia padrão (dias)</label><input id="sWarranty" type="number" value="${s.defaultWarrantyDays||90}"></div>
       <div class="field"><label>Prazo diagnóstico (dias)</label><input id="sDiag" type="number" value="${s.defaultDiagnosisDays||3}"></div>
     </div>
-    <div class="field"><label>Termos de serviço</label><textarea id="sTerms">${esc(s.serviceTerms||'')}</textarea></div>
-    <div class="field"><label>Observações padrão para impressão</label><textarea id="sPrint">${esc(s.printNotes||'')}</textarea></div>
-    <button class="btn btn-primary" onclick="saveCompanySettings()">${icon('check',16)} Salvar configurações</button>
+    <div class="field"><label>Termos de serviço</label><textarea id="sTerms">${window.esc(s.serviceTerms||'')}</textarea></div>
+    <div class="field"><label>Observações padrão para impressão</label><textarea id="sPrint">${window.esc(s.printNotes||'')}</textarea></div>
+    <button class="btn btn-primary" onclick="window.saveCompanySettings()">${window.icon('check',16)} Salvar configurações</button>
   </div>
 
   <div class="card card-pad mb-16">
@@ -2180,143 +2190,145 @@ function renderSettings(){
     <p class="text-xs text-muted mb-16">Use [nome], [modelo], [os], [valor] como variáveis.</p>
     ${Object.entries(s.waMessages||{}).map(([k,v])=>{
       const labels = {received:'Recebimento',budget:'Orçamento',approved:'Aprovação',partAvailable:'Peça disponível',ready:'Pronto p/ retirada',paymentReminder:'Lembrete pagamento',delivered:'Entrega'};
-      return `<div class="field"><label>${labels[k]||k}</label><textarea id="wa_${k}">${esc(v)}</textarea></div>`;
+      return `<div class="field"><label>${labels[k]||k}</label><textarea id="wa_${k}">${window.esc(v)}</textarea></div>`;
     }).join('')}
-    <button class="btn btn-primary" onclick="saveWaMessages()">${icon('check',16)} Salvar mensagens</button>
+    <button class="btn btn-primary" onclick="window.saveWaMessages()">${window.icon('check',16)} Salvar mensagens</button>
   </div>
 
   <div class="card card-pad mb-16">
     <h3 style="font-size:15px;margin-bottom:12px">Backup e Dados</h3>
-    <p class="text-sm text-muted mb-16">Exporte todos os dados em JSON ou restaure um backup anterior. Os dados são armazenados localmente no dispositivo.</p>
+    <p class="text-sm text-muted mb-16">Exporte todos os dados em JSON ou restaure um backup anterior.</p>
     <div class="grid grid-2" style="gap:8px">
-      <button class="btn btn-success" onclick="exportBackup()">${icon('download',16)} Exportar Backup</button>
-      <button class="btn btn-ghost" onclick="document.getElementById('importFile').click()">${icon('upload',16)} Importar Backup</button>
+      <button class="btn btn-success" onclick="window.exportBackup()">${window.icon('download',16)} Exportar Backup</button>
+      <button class="btn btn-ghost" onclick="document.getElementById('importFile').click()">${window.icon('upload',16)} Importar Backup</button>
     </div>
-    <input type="file" id="importFile" accept=".json" class="hidden" onchange="importBackup(event)">
-    <div class="mt-16 text-xs text-muted">Último backup: <b id="lastBackup">${esc(localStorage.getItem('techmaster_last_backup')||'Nunca')}</b></div>
-    <button class="btn btn-danger w-full mt-16" onclick="clearAllData()">${icon('trash',16)} Apagar todos os dados</button>
+    <input type="file" id="importFile" accept=".json" class="hidden" onchange="window.importBackup(event)">
+    <div class="mt-16 text-xs text-muted">Último backup: <b id="lastBackup">${window.esc(localStorage.getItem('techmaster_last_backup')||'Nunca')}</b></div>
+    <button class="btn btn-danger w-full mt-16" onclick="window.clearAllData()">${window.icon('trash',16)} Apagar todos os dados</button>
   </div>
 
   <div class="card card-pad mb-16">
     <h3 style="font-size:15px;margin-bottom:12px">Dados de demonstração</h3>
-    <p class="text-sm text-muted mb-16">Se você acabou de instalar, pode carregar dados fictícios para explorar o sistema. Isso substituirá os dados atuais.</p>
-    <button class="btn btn-ghost w-full" onclick="loadDemoData()">${icon('arrowDown',16)} Carregar dados de demonstração</button>
+    <button class="btn btn-ghost w-full" onclick="window.loadDemoData()">${window.icon('arrowDown',16)} Carregar dados de demonstração</button>
   </div>
 
   <div class="card card-pad">
     <h3 style="font-size:15px;margin-bottom:12px">Privacidade</h3>
-    <div class="privacy">${icon('lock')}<span>Todos os dados são armazenados localmente no dispositivo (localStorage). Não há sincronização entre dispositivos nem criptografia. Faça backups regulares.</span></div>
+    <div class="privacy">${window.icon('lock')}<span>Todos os dados são armazenados localmente no dispositivo. Faça backups regulares.</span></div>
   </div>
   `;
-}
-function bindSettings(){}
+};
+window.bindSettings = function(){};
 
-function saveCompanySettings(){
-  state.settings.companyName = document.getElementById('sCompany').value.trim();
-  state.settings.cnpj = document.getElementById('sCnpj').value.trim();
-  state.settings.phone = document.getElementById('sPhone').value.trim();
-  state.settings.whatsapp = document.getElementById('sWa').value.trim();
-  state.settings.address = document.getElementById('sAddr').value.trim();
-  state.settings.email = document.getElementById('sEmail').value.trim();
-  state.settings.site = document.getElementById('sSite').value.trim();
-  state.settings.defaultWarrantyDays = Number(document.getElementById('sWarranty').value)||90;
-  state.settings.defaultDiagnosisDays = Number(document.getElementById('sDiag').value)||3;
-  state.settings.serviceTerms = document.getElementById('sTerms').value;
-  state.settings.printNotes = document.getElementById('sPrint').value;
-  state.settings.primaryColor = document.getElementById('sColor').value;
+window.saveCompanySettings = function(){
+  window.state.settings.companyName = document.getElementById('sCompany').value.trim();
+  window.state.settings.cnpj = document.getElementById('sCnpj').value.trim();
+  window.state.settings.phone = document.getElementById('sPhone').value.trim();
+  window.state.settings.whatsapp = document.getElementById('sWa').value.trim();
+  window.state.settings.address = document.getElementById('sAddr').value.trim();
+  window.state.settings.email = document.getElementById('sEmail').value.trim();
+  window.state.settings.site = document.getElementById('sSite').value.trim();
+  window.state.settings.defaultWarrantyDays = Number(document.getElementById('sWarranty').value)||90;
+  window.state.settings.defaultDiagnosisDays = Number(document.getElementById('sDiag').value)||3;
+  window.state.settings.serviceTerms = document.getElementById('sTerms').value;
+  window.state.settings.printNotes = document.getElementById('sPrint').value;
+  window.state.settings.primaryColor = document.getElementById('sColor').value;
   const theme = document.getElementById('sTheme').value;
-  setTheme(theme);
-  applyPrimaryColor(state.settings.primaryColor);
-  saveState();
-  toast('Configurações salvas','success');
-}
-function saveWaMessages(){
+  window.setTheme(theme);
+  window.applyPrimaryColor(window.state.settings.primaryColor);
+  window.saveState();
+  window.toast('Configurações salvas','success');
+};
+
+window.saveWaMessages = function(){
   const keys = ['received','budget','approved','partAvailable','ready','paymentReminder','delivered'];
-  state.settings.waMessages = state.settings.waMessages || {};
+  window.state.settings.waMessages = window.state.settings.waMessages || {};
   keys.forEach(k=>{
     const el = document.getElementById('wa_'+k);
-    if(el) state.settings.waMessages[k] = el.value;
+    if(el) window.state.settings.waMessages[k] = el.value;
   });
-  saveState();
-  toast('Mensagens salvas','success');
-}
-function applyPrimaryColor(color){
-  document.documentElement.style.setProperty('--primary', color);
-}
+  window.saveState();
+  window.toast('Mensagens salvas','success');
+};
 
-/* =========================================================
-   18. WHATSAPP
-   ========================================================= */
-function openWhatsApp(orderId, clientId){
+window.applyPrimaryColor = function(color){
+  document.documentElement.style.setProperty('--primary', color);
+};
+
+// =========================================================
+// WHATSAPP
+// =========================================================
+window.openWhatsApp = function(orderId, clientId){
   let cli, o;
-  if(orderId){ o = orderById(orderId); cli = clientById(o.clientId); }
-  else if(clientId){ cli = clientById(clientId); }
-  if(!cli){ toast('Cliente não encontrado','error'); return; }
-  const phone = onlyDigits(cli.phone);
-  if(!phone){ toast('Cliente sem telefone','error'); return; }
+  if(orderId){ o = window.orderById(orderId); cli = window.clientById(o.clientId); }
+  else if(clientId){ cli = window.clientById(clientId); }
+  if(!cli){ window.toast('Cliente não encontrado','error'); return; }
+  const phone = window.onlyDigits(cli.phone);
+  if(!phone){ window.toast('Cliente sem telefone','error'); return; }
   let msg = '';
   if(o){
     const key = o.status==='pronto'?'ready':o.status==='entregue'?'delivered':o.status==='aprovacao'?'budget':'received';
-    msg = (state.settings.waMessages&&state.settings.waMessages[key]) || 'Olá, [nome]!';
+    msg = (window.state.settings.waMessages&&window.state.settings.waMessages[key]) || 'Olá, [nome]!';
     msg = msg.replace(/\[nome\]/g, cli.name.split(' ')[0])
              .replace(/\[modelo\]/g, o.device.brand+' '+o.device.model)
              .replace(/\[os\]/g, o.number)
-             .replace(/\[valor\]/g, brl(pendingForOrder(o.id)));
+             .replace(/\[valor\]/g, window.brl(window.pendingForOrder(o.id)));
   } else {
     msg = `Olá, ${cli.name.split(' ')[0]}! Tudo bem?`;
   }
   const body = `
-    <div class="field"><label>Mensagem</label><textarea id="waMsg" rows="5">${esc(msg)}</textarea></div>
+    <div class="field"><label>Mensagem</label><textarea id="waMsg" rows="5">${window.esc(msg)}</textarea></div>
     <p class="text-xs text-muted">O WhatsApp será aberto para você revisar e enviar.</p>
   `;
   const foot = `
-    <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
-    <button class="btn btn-success" onclick="sendWhatsApp('${phone}')">${icon('whatsapp',16)} Abrir WhatsApp</button>
+    <button class="btn btn-ghost" onclick="window.closeModal()">Cancelar</button>
+    <button class="btn btn-success" onclick="window.sendWhatsApp('${phone}')">${window.icon('whatsapp',16)} Abrir WhatsApp</button>
   `;
-  openModal('Enviar WhatsApp', body, foot);
-}
-function sendWhatsApp(phone){
+  window.openModal('Enviar WhatsApp', body, foot);
+};
+
+window.sendWhatsApp = function(phone){
   const msg = document.getElementById('waMsg').value;
   const url = 'https://wa.me/55'+phone+'?text='+encodeURIComponent(msg);
   window.open(url,'_blank');
-  closeModal();
-}
+  window.closeModal();
+};
 
-/* =========================================================
-   19. IMPRESSÃO / DOCUMENTOS
-   ========================================================= */
-function printDoc(type, orderId){
-  const o = orderById(orderId); if(!o) return;
-  const cli = clientById(o.clientId);
-  const s = state.settings;
+// =========================================================
+// IMPRESSÃO / DOCUMENTOS
+// =========================================================
+window.printDoc = function(type, orderId){
+  const o = window.orderById(orderId); if(!o) return;
+  const cli = window.clientById(o.clientId);
+  const s = window.state.settings;
   const company = `
     <div class="doc-head">
       <div>
-        <h1>${esc(s.companyName||'TechMaster')}</h1>
+        <h1>${window.esc(s.companyName||'TechMaster')}</h1>
         <div class="co">
-          ${s.cnpj?'CNPJ/CPF: '+esc(s.cnpj)+'<br>':''}
-          ${s.address?esc(s.address)+'<br>':''}
-          ${s.phone?'Tel: '+esc(s.phone)+' · ':''}${s.email?esc(s.email):''}
+          ${s.cnpj?'CNPJ/CPF: '+window.esc(s.cnpj)+'<br>':''}
+          ${s.address?window.esc(s.address)+'<br>':''}
+          ${s.phone?'Tel: '+window.esc(s.phone)+' · ':''}${s.email?window.esc(s.email):''}
         </div>
       </div>
       <div class="co" style="text-align:right">
         <b>OS: ${o.number}</b><br>
-        Data: ${fmtDate(o.createdAt)}
+        Data: ${window.fmtDate(o.createdAt)}
       </div>
     </div>
   `;
   const clientBlock = `
     <div class="grid2">
       <div class="block"><h4>Cliente</h4>
-        <p><b>${esc(cli?cli.name:'—')}</b></p>
-        <p>${esc(cli?cli.phone:'')}</p>
-        ${cli&&cli.cpf?`<p>CPF/CNPJ: ${esc(cli.cpf)}</p>`:''}
-        ${cli&&cli.address?`<p>${esc(cli.address)}</p>`:''}
+        <p><b>${window.esc(cli?cli.name:'—')}</b></p>
+        <p>${window.esc(cli?cli.phone:'')}</p>
+        ${cli&&cli.cpf?`<p>CPF/CNPJ: ${window.esc(cli.cpf)}</p>`:''}
+        ${cli&&cli.address?`<p>${window.esc(cli.address)}</p>`:''}
       </div>
       <div class="block"><h4>Aparelho</h4>
-        <p>${esc(o.device.type)} ${esc(o.device.brand)} ${esc(o.device.model)}</p>
-        ${o.device.imei1?`<p>IMEI: ${esc(o.device.imei1)}</p>`:''}
-        ${o.device.accessories?`<p>Acessórios: ${esc(o.device.accessories)}</p>`:''}
+        <p>${window.esc(o.device.type)} ${window.esc(o.device.brand)} ${window.esc(o.device.model)}</p>
+        ${o.device.imei1?`<p>IMEI: ${window.esc(o.device.imei1)}</p>`:''}
+        ${o.device.accessories?`<p>Acessórios: ${window.esc(o.device.accessories)}</p>`:''}
       </div>
     </div>
   `;
@@ -2326,26 +2338,26 @@ function printDoc(type, orderId){
   if(type==='receipt'){
     title = 'Comprovante de Entrada';
     body = `
-      <div class="block"><h4>Defeito Relatado</h4><p>${esc(o.reportedDefect)}</p></div>
-      <div class="block"><h4>Estado Físico</h4><p>${esc(o.device.physicalState||'Não informado')}</p></div>
+      <div class="block"><h4>Defeito Relatado</h4><p>${window.esc(o.reportedDefect)}</p></div>
+      <div class="block"><h4>Estado Físico</h4><p>${window.esc(o.device.physicalState||'Não informado')}</p></div>
       <div class="grid2">
         <div class="block"><h4>Previsão de Entrega</h4><p>${s.defaultDiagnosisDays||3} dias úteis</p></div>
         <div class="block"><h4>Autorização</h4><p>O cliente autoriza o diagnóstico e reparo do aparelho.</p></div>
       </div>
       <div class="block" style="margin-top:16px">
-        <p style="font-size:11px">${esc(s.serviceTerms||'')}</p>
+        <p style="font-size:11px">${window.esc(s.serviceTerms||'')}</p>
       </div>
       <div class="sign">Assinatura do Cliente</div>
     `;
   } else if(type==='budget'){
     title = 'Orçamento';
     body = `
-      <div class="block"><h4>Descrição do Serviço</h4><p>${esc(o.diagnosis.solution||o.reportedDefect)}</p></div>
+      <div class="block"><h4>Descrição do Serviço</h4><p>${window.esc(o.diagnosis.solution||o.reportedDefect)}</p></div>
       <div style="margin-top:14px">
-        <div class="kv"><span>Mão de obra</span><b>${brl(o.budget.labor)}</b></div>
-        <div class="kv"><span>Peças</span><b>${brl(o.budget.parts)}</b></div>
-        ${o.budget.discount?`<div class="kv"><span>Desconto</span><b>- ${brl(o.budget.discount)}</b></div>`:''}
-        <div class="kv total"><span>TOTAL</span><b>${brl(o.budget.total)}</b></div>
+        <div class="kv"><span>Mão de obra</span><b>${window.brl(o.budget.labor)}</b></div>
+        <div class="kv"><span>Peças</span><b>${window.brl(o.budget.parts)}</b></div>
+        ${o.budget.discount?`<div class="kv"><span>Desconto</span><b>- ${window.brl(o.budget.discount)}</b></div>`:''}
+        <div class="kv total"><span>TOTAL</span><b>${window.brl(o.budget.total)}</b></div>
       </div>
       <div class="grid2" style="margin-top:16px">
         <div class="block"><h4>Validade</h4><p>7 dias a partir da data</p></div>
@@ -2355,17 +2367,17 @@ function printDoc(type, orderId){
     `;
   } else {
     title = 'Comprovante de Entrega';
-    const paid = paidForOrder(o.id);
-    const pend = pendingForOrder(o.id);
+    const paid = window.paidForOrder(o.id);
+    const pend = window.pendingForOrder(o.id);
     body = `
-      <div class="block"><h4>Serviços Realizados</h4><p>${esc(o.diagnosis.solution||o.reportedDefect)}</p></div>
+      <div class="block"><h4>Serviços Realizados</h4><p>${window.esc(o.diagnosis.solution||o.reportedDefect)}</p></div>
       <div style="margin-top:14px">
-        <div class="kv"><span>Valor total</span><b>${brl(o.budget.total)}</b></div>
-        <div class="kv"><span>Valor pago</span><b>${brl(paid)}</b></div>
-        <div class="kv total"><span>SALDO RESTANTE</span><b>${brl(pend)}</b></div>
+        <div class="kv"><span>Valor total</span><b>${window.brl(o.budget.total)}</b></div>
+        <div class="kv"><span>Valor pago</span><b>${window.brl(paid)}</b></div>
+        <div class="kv total"><span>SALDO RESTANTE</span><b>${window.brl(pend)}</b></div>
       </div>
       <div class="grid2" style="margin-top:16px">
-        <div class="block"><h4>Data de Entrega</h4><p>${fmtDate(o.deliveryDate||todayISO())}</p></div>
+        <div class="block"><h4>Data de Entrega</h4><p>${window.fmtDate(o.deliveryDate||window.todayISO())}</p></div>
         <div class="block"><h4>Garantia</h4><p>${o.warranty?o.warranty.days+' dias':(s.defaultWarrantyDays||90)+' dias'}</p></div>
       </div>
       <div class="sign">Assinatura do Cliente</div>
@@ -2391,20 +2403,20 @@ function printDoc(type, orderId){
     <div class="doc-title">${title}</div>
     ${clientBlock}
     ${body}
-    <p style="text-align:center;font-size:11px;color:#666;margin-top:24px">${esc(s.printNotes||'')}</p>
+    <p style="text-align:center;font-size:11px;color:#666;margin-top:24px">${window.esc(s.printNotes||'')}</p>
     </body></html>`;
   const w = window.open('','_blank');
-  if(!w){ toast('Permita pop-ups para imprimir','error'); return; }
+  if(!w){ window.toast('Permita pop-ups para imprimir','error'); return; }
   w.document.write(html);
   w.document.close();
   setTimeout(()=>{ w.focus(); w.print(); }, 400);
-}
+};
 
-/* =========================================================
-   20. BACKUP
-   ========================================================= */
-function exportBackup(){
-  const data = JSON.stringify(state,null,2);
+// =========================================================
+// BACKUP
+// =========================================================
+window.exportBackup = function(){
+  const data = JSON.stringify(window.state,null,2);
   const blob = new Blob([data], {type:'application/json'});
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -2415,54 +2427,54 @@ function exportBackup(){
   localStorage.setItem('techmaster_last_backup', new Date().toLocaleString('pt-BR'));
   const el = document.getElementById('lastBackup');
   if(el) el.textContent = localStorage.getItem('techmaster_last_backup');
-  toast('Backup exportado com sucesso','success');
-}
+  window.toast('Backup exportado com sucesso','success');
+};
 
-function importBackup(ev){
+window.importBackup = function(ev){
   const file = ev.target.files[0]; if(!file) return;
   const reader = new FileReader();
   reader.onload = e => {
     try{
       const data = JSON.parse(e.target.result);
       if(!data || !Array.isArray(data.clients) || !Array.isArray(data.orders)){
-        toast('Arquivo inválido','error'); return;
+        window.toast('Arquivo inválido','error'); return;
       }
-      confirmDialog('Restaurar Backup','Todos os dados atuais serão substituídos pelo backup. Continuar?',()=>{
-        state = Object.assign(state, data);
-        saveState();
-        toast('Backup restaurado','success');
-        renderSection();
+      window.confirmDialog('Restaurar Backup','Todos os dados atuais serão substituídos pelo backup. Continuar?',()=>{
+        Object.assign(window.state, data);
+        window.saveState();
+        window.toast('Backup restaurado','success');
+        window.renderSection();
       });
     }catch(err){
-      toast('Erro ao ler o arquivo','error');
+      window.toast('Erro ao ler o arquivo','error');
     }
   };
   reader.readAsText(file);
   ev.target.value = '';
-}
+};
 
-function clearAllData(){
-  confirmDialog('Apagar todos os dados','Tem CERTEZA? Todos os clientes, ordens, peças e pagamentos serão apagados permanentemente. Esta ação não pode ser desfeita.',()=>{
-    state = {clients:[],orders:[],parts:[],movs:[],technicians:[],expenses:[],payments:[],settings:state.settings,counters:{order:0}};
-    saveState();
-    toast('Dados apagados','success');
-    navigate('dashboard');
+window.clearAllData = function(){
+  window.confirmDialog('Apagar todos os dados','Tem CERTEZA? Todos os dados serão apagados permanentemente.',()=>{
+    window.state = {clients:[],orders:[],parts:[],movs:[],technicians:[],expenses:[],payments:[],settings:window.state.settings,counters:{order:0}};
+    window.saveState();
+    window.toast('Dados apagados','success');
+    window.navigate('dashboard');
   });
-}
+};
 
-function loadDemoData(){
-  confirmDialog('Carregar dados de demonstração','Isso substituirá todos os dados atuais. Continuar?',()=>{
-    seedDemo();
-    saveState();
-    toast('Dados de demonstração carregados','success');
-    navigate('dashboard');
+window.loadDemoData = function(){
+  window.confirmDialog('Carregar dados de demonstração','Isso substituirá todos os dados atuais. Continuar?',()=>{
+    window.seedDemo();
+    window.saveState();
+    window.toast('Dados de demonstração carregados','success');
+    window.navigate('dashboard');
   });
-}
+};
 
-/* =========================================================
-   21. BUSCA GLOBAL
-   ========================================================= */
-function setupGlobalSearch(){
+// =========================================================
+// BUSCA GLOBAL
+// =========================================================
+window.setupGlobalSearch = function(){
   const input = document.getElementById('globalSearch');
   const results = document.getElementById('searchResults');
   if(!input) return;
@@ -2470,16 +2482,14 @@ function setupGlobalSearch(){
     const q = input.value.trim().toLowerCase();
     if(!q){ results.classList.remove('open'); return; }
     let html = '';
-    // clientes
-    const clients = state.clients.filter(c=>
-      c.name.toLowerCase().includes(q) || onlyDigits(c.phone).includes(onlyDigits(q)) || (c.cpf||'').includes(q)
+    const clients = window.state.clients.filter(c=>
+      c.name.toLowerCase().includes(q) || window.onlyDigits(c.phone).includes(window.onlyDigits(q)) || (c.cpf||'').includes(q)
     ).slice(0,5);
     if(clients.length){
       html += `<div class="sr-group">Clientes</div>`;
-      html += clients.map(c=>`<div class="sr-item" onclick="openClientDetail('${c.id}');document.getElementById('searchResults').classList.remove('open');document.getElementById('globalSearch').value=''">${esc(c.name)}<small>${esc(c.phone)}</small></div>`).join('');
+      html += clients.map(c=>`<div class="sr-item" onclick="window.openClientDetail('${c.id}');document.getElementById('searchResults').classList.remove('open');document.getElementById('globalSearch').value=''">${window.esc(c.name)}<small>${window.esc(c.phone)}</small></div>`).join('');
     }
-    // ordens
-    const orders = state.orders.filter(o=>
+    const orders = window.state.orders.filter(o=>
       o.number.toLowerCase().includes(q) ||
       (o.device.model||'').toLowerCase().includes(q) ||
       (o.device.imei1||'').includes(q) ||
@@ -2487,15 +2497,14 @@ function setupGlobalSearch(){
     ).slice(0,5);
     if(orders.length){
       html += `<div class="sr-group">Ordens de Serviço</div>`;
-      html += orders.map(o=>`<div class="sr-item" onclick="openOrderDetail('${o.id}');document.getElementById('searchResults').classList.remove('open');document.getElementById('globalSearch').value=''">${o.number} · ${esc(o.device.brand)} ${esc(o.device.model)}<small>${statusMeta(o.status).label}</small></div>`).join('');
+      html += orders.map(o=>`<div class="sr-item" onclick="window.openOrderDetail('${o.id}');document.getElementById('searchResults').classList.remove('open');document.getElementById('globalSearch').value=''">${o.number} · ${window.esc(o.device.brand)} ${window.esc(o.device.model)}<small>${window.statusMeta(o.status).label}</small></div>`).join('');
     }
-    // peças
-    const parts = state.parts.filter(p=>
+    const parts = window.state.parts.filter(p=>
       p.name.toLowerCase().includes(q) || (p.sku||'').toLowerCase().includes(q) || (p.model||'').toLowerCase().includes(q)
     ).slice(0,5);
     if(parts.length){
       html += `<div class="sr-group">Peças</div>`;
-      html += parts.map(p=>`<div class="sr-item" onclick="openPartDetail('${p.id}');document.getElementById('searchResults').classList.remove('open');document.getElementById('globalSearch').value=''">${esc(p.name)}<small>${esc(p.sku)} · ${p.qty} un</small></div>`).join('');
+      html += parts.map(p=>`<div class="sr-item" onclick="window.openPartDetail('${p.id}');document.getElementById('searchResults').classList.remove('open');document.getElementById('globalSearch').value=''">${window.esc(p.name)}<small>${window.esc(p.sku)} · ${p.qty} un</small></div>`).join('');
     }
     if(!html) html = `<div class="sr-item" style="cursor:default">Nenhum resultado encontrado</div>`;
     results.innerHTML = html;
@@ -2504,96 +2513,107 @@ function setupGlobalSearch(){
   document.addEventListener('click',e=>{
     if(!e.target.closest('.search-wrap')) results.classList.remove('open');
   });
-}
+};
 
-/* =========================================================
-   22. TEMA
-   ========================================================= */
-function setTheme(theme){
+// =========================================================
+// TEMA E TOPBAR
+// =========================================================
+window.setTheme = function(theme){
   document.documentElement.dataset.theme = theme;
-  try{ localStorage.setItem(THEME_KEY, theme); }catch(e){}
-}
-function toggleTheme(){
+  try{ localStorage.setItem(window.THEME_KEY, theme); }catch(e){}
+};
+window.toggleTheme = function(){
   const cur = document.documentElement.dataset.theme==='light'?'dark':'light';
-  setTheme(cur);
-  toast('Tema '+(cur==='light'?'claro':'escuro')+' ativado','success');
-}
-function initTheme(){
+  window.setTheme(cur);
+  window.toast('Tema '+(cur==='light'?'claro':'escuro')+' ativado','success');
+};
+window.initTheme = function(){
   let t = 'dark';
-  try{ t = localStorage.getItem(THEME_KEY) || 'dark'; }catch(e){}
-  setTheme(t);
-  if(state.settings.primaryColor) applyPrimaryColor(state.settings.primaryColor);
-}
+  try{ t = localStorage.getItem(window.THEME_KEY) || 'dark'; }catch(e){}
+  window.setTheme(t);
+  if(window.state.settings.primaryColor) window.applyPrimaryColor(window.state.settings.primaryColor);
+};
 
-/* =========================================================
-   23. MENU LATERAL / TOPBAR
-   ========================================================= */
-function setupTopbar(){
-  document.getElementById('menuBtn').addEventListener('click',()=>{
-    document.getElementById('sidebar').classList.toggle('collapsed');
-  });
-  document.getElementById('themeBtn').addEventListener('click',toggleTheme);
+window.setupTopbar = function(){
+  document.getElementById('themeBtn').addEventListener('click',window.toggleTheme);
   document.getElementById('notifBtn').addEventListener('click',()=>{
-    const lowStock = state.parts.filter(p=>Number(p.qty)<=Number(p.minQty));
-    const pending = state.orders.filter(o=>pendingForOrder(o.id)>0 && o.status!=='cancelado');
+    const lowStock = window.state.parts.filter(p=>Number(p.qty)<=Number(p.minQty));
+    const pending = window.state.orders.filter(o=>window.pendingForOrder(o.id)>0 && o.status!=='cancelado');
     const body = `
       <h4 style="margin-bottom:10px;font-size:13px;color:var(--text2)">NOTIFICAÇÕES</h4>
       ${lowStock.length?`<div class="card card-pad mb-8" style="padding:12px;border-left:3px solid var(--warning)"><b>${lowStock.length} peça(s)</b> com estoque baixo</div>`:''}
       ${pending.length?`<div class="card card-pad mb-8" style="padding:12px;border-left:3px solid var(--danger)"><b>${pending.length} OS</b> com pagamento pendente</div>`:''}
       <div class="card card-pad" style="padding:12px;border-left:3px solid var(--primary)">Sistema operando normalmente</div>
     `;
-    openModal('Notificações',body,`<button class="btn btn-ghost w-full" onclick="closeModal()">Fechar</button>`);
+    window.openModal('Notificações',body,`<button class="btn btn-ghost w-full" onclick="window.closeModal()">Fechar</button>`);
   });
   document.getElementById('avatarBtn').addEventListener('click',()=>{
     const body = `
       <p class="text-sm text-muted mb-16">Modo demonstração local. Selecione um perfil para simular a interface:</p>
       <div class="flex gap-8 flex-wrap">
-        <button class="role-badge" onclick="toast('Perfil Administrador selecionado (demo)','success');closeModal()">Administrador</button>
-        <button class="role-badge" onclick="toast('Perfil Técnico selecionado (demo)','success');closeModal()">Técnico</button>
-        <button class="role-badge" onclick="toast('Perfil Atendente selecionado (demo)','success');closeModal()">Atendente</button>
+        <button class="role-badge" onclick="window.toast('Perfil Administrador selecionado (demo)','success');window.closeModal()">Administrador</button>
+        <button class="role-badge" onclick="window.toast('Perfil Técnico selecionado (demo)','success');window.closeModal()">Técnico</button>
+        <button class="role-badge" onclick="window.toast('Perfil Atendente selecionado (demo)','success');window.closeModal()">Atendente</button>
       </div>
-      <p class="text-xs text-muted mt-16">Este seletor é apenas ilustrativo e não representa autenticação segura.</p>
+      <p class="text-xs text-muted mt-16">Este seletor é apenas ilustrativo.</p>
     `;
-    openModal('Perfil de Acesso',body,`<button class="btn btn-ghost w-full" onclick="closeModal()">Fechar</button>`);
+    window.openModal('Perfil de Acesso',body,`<button class="btn btn-ghost w-full" onclick="window.closeModal()">Fechar</button>`);
   });
-  // fechar modal ao clicar fora
   document.getElementById('modalBack').addEventListener('click',e=>{
-    if(e.target.id==='modalBack') closeModal();
+    if(e.target.id==='modalBack') window.closeModal();
   });
-}
+};
 
-/* =========================================================
-   24. INICIALIZAÇÃO
-   ========================================================= */
-function init(){
-  // carregar configurações e estado
-  loadSettings();
-  const loaded = loadState();
-  if(!loaded){
-    // primeira vez: carregar demo
-    seedDemo();
-    saveState();
-  }
-  initTheme();
-  setupTopbar();
-  setupGlobalSearch();
-  renderNav();
-  // render inicial
-  navigate('dashboard');
-  // esconder loader
-  const loader = document.getElementById('loader');
-  loader.style.opacity='0';
-  setTimeout(()=>{
-    loader.style.display='none';
+// =========================================================
+// INICIALIZAÇÃO
+// =========================================================
+window.init = function(){
+  try {
+    window.loadSettings();
+    const loaded = window.loadState();
+    if(!loaded){
+      window.seedDemo();
+      window.saveState();
+    }
+    window.initTheme();
+    window.setupTopbar();
+    window.setupGlobalSearch();
+    window.renderNav();
+    
+    // Configura o estado inicial da sidebar dependendo da tela
+    if(window.innerWidth > 900) {
+       document.getElementById('sidebar').classList.remove('collapsed');
+    } else {
+       document.getElementById('sidebar').classList.add('collapsed');
+    }
+
+    window.navigate('dashboard');
+    
+    // Esconder loader
+    const loader = document.getElementById('loader');
+    if(loader){
+      loader.style.opacity='0';
+      setTimeout(()=>{
+        loader.style.display='none';
+        document.getElementById('app').classList.add('ready');
+      }, 350);
+    }
+  } catch(err) {
+    console.error("Erro na inicialização:", err);
+    document.getElementById('loader').style.display='none';
     document.getElementById('app').classList.add('ready');
-  }, 350);
+    alert("Erro ao iniciar o aplicativo: " + err.message);
+  }
+};
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', window.init);
+} else {
+  window.init();
 }
 
-// aguardar DOM
-document.addEventListener('DOMContentLoaded', init);
 window.addEventListener('resize',()=>{
-  // redesenhar gráficos do dashboard
-  if(currentSection==='dashboard') bindDashboard();
+  if(window.currentSection==='dashboard') window.bindDashboard();
 });
 </script>
 </body>

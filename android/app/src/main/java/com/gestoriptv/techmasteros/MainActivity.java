@@ -1,4 +1,4 @@
-package com.gestoriptv.red;
+package com.gestoriptv.techmasteros;
 
 import com.getcapacitor.BridgeActivity;
 

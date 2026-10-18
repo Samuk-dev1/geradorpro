@@ -1,6 +1,6 @@
 {
-  "appId": "com.gestoriptv.red",
-  "appName": "Red",
+  "appId": "com.gestoriptv.techmasteros",
+  "appName": "TechMaster OS",
   "webDir": "www",
   "plugins": {
     "LocalNotifications": {

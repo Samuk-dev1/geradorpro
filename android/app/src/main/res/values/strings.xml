@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Red</string>
-    <string name="title_activity_main">Red</string>
-    <string name="package_name">com.gestoriptv.red</string>
-    <string name="custom_url_scheme">com.gestoriptv.red</string>
+    <string name="app_name">TechMaster OS</string>
+    <string name="title_activity_main">TechMaster OS</string>
+    <string name="package_name">com.gestoriptv.techmasteros</string>
+    <string name="custom_url_scheme">com.gestoriptv.techmasteros</string>
 </resources>

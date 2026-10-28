@@ -1,4 +1,4 @@
-package com.gestoriptv.gestordeclientes;
+package com.gestoriptv.anotaes;
 
 import com.getcapacitor.BridgeActivity;
 

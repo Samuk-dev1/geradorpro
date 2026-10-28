@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Gestor De Clientes</string>
-    <string name="title_activity_main">Gestor De Clientes</string>
-    <string name="package_name">com.gestoriptv.gestordeclientes</string>
-    <string name="custom_url_scheme">com.gestoriptv.gestordeclientes</string>
+    <string name="app_name">Anotações</string>
+    <string name="title_activity_main">Anotações</string>
+    <string name="package_name">com.gestoriptv.anotaes</string>
+    <string name="custom_url_scheme">com.gestoriptv.anotaes</string>
 </resources>

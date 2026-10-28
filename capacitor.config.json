@@ -1,6 +1,6 @@
 {
-  "appId": "com.gestoriptv.gestordeclientes",
-  "appName": "Gestor De Clientes",
+  "appId": "com.gestoriptv.anotaes",
+  "appName": "Anotações",
   "webDir": "www",
   "plugins": {
     "LocalNotifications": {

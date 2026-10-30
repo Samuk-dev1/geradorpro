@@ -1,6 +1,6 @@
 {
-  "appId": "com.gestoriptv.anotaes",
-  "appName": "Anotações",
+  "appId": "com.gestoriptv.seila",
+  "appName": "Seila",
   "webDir": "www",
   "plugins": {
     "LocalNotifications": {

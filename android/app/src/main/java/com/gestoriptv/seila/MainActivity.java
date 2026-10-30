@@ -1,4 +1,4 @@
-package com.gestoriptv.anotaes;
+package com.gestoriptv.seila;
 
 import com.getcapacitor.BridgeActivity;
 

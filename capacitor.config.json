@@ -1,6 +1,6 @@
 {
-  "appId": "com.gestoriptv.seila",
-  "appName": "Seila",
+  "appId": "com.gestoriptv.petsgop",
+  "appName": "Petsgop",
   "webDir": "www",
   "plugins": {
     "LocalNotifications": {

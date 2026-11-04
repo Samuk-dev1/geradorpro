@@ -1,4 +1,4 @@
-package com.gestoriptv.seila;
+package com.gestoriptv.petsgop;
 
 import com.getcapacitor.BridgeActivity;
 

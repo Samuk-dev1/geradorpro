@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Petsgop</string>
-    <string name="title_activity_main">Petsgop</string>
-    <string name="package_name">com.gestoriptv.petsgop</string>
-    <string name="custom_url_scheme">com.gestoriptv.petsgop</string>
+    <string name="app_name">Gerenciamento Studio 33</string>
+    <string name="title_activity_main">Gerenciamento Studio 33</string>
+    <string name="package_name">com.gestoriptv.gerenciamentostudio33</string>
+    <string name="custom_url_scheme">com.gestoriptv.gerenciamentostudio33</string>
 </resources>

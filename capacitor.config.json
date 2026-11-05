@@ -1,6 +1,6 @@
 {
-  "appId": "com.gestoriptv.petsgop",
-  "appName": "Petsgop",
+  "appId": "com.gestoriptv.gerenciamentostudio33",
+  "appName": "Gerenciamento Studio 33",
   "webDir": "www",
   "plugins": {
     "LocalNotifications": {

@@ -1,1954 +1,597 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="dark">
+<html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#070b12">
-<meta name="description" content="REPAIR FORCA — Jogo da forca educativo para técnicos de videogames. Leia a descrição e descubra o termo técnico.">
-<title>🎮 REPAIR FORCA — Leia, descubra, repare</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#ff7a45">
+<title>PetLovers • Pet Shop</title>
 <style>
 :root{
-  --bg:#070b12;--bg2:#0a1120;--card:#101a2b;--card2:#152238;--card3:#1a2b45;
-  --line:#1f2f4a;--line2:#2a3f61;--txt:#e7eefc;--muted:#8ba2c4;
-  --acc:#00e0a4;--acc2:#31a8ff;--acc3:#a06bff;--warn:#ffb020;--bad:#ff5470;--gold:#ffd166;
-  --radius:16px;--radius-s:10px;--shadow:0 10px 30px rgba(0,0,0,.45);
-  --glow:0 0 22px rgba(0,224,164,.18);--fs:16px;
+  --primary:#ff7a45;
+  --primary-dark:#e85d2a;
+  --secondary:#3ba7ff;
+  --bg:#f7f8fb;
+  --card:#ffffff;
+  --text:#1f2430;
+  --muted:#7a8194;
+  --success:#2ecc71;
+  --radius:18px;
+  --shadow:0 8px 24px rgba(31,36,48,.08);
 }
-[data-theme="light"]{
-  --bg:#eef3fb;--bg2:#e2eaf6;--card:#ffffff;--card2:#f3f7fd;--card3:#e6eefa;
-  --line:#cfdcf0;--line2:#b9cbe6;--txt:#0d1a2b;--muted:#5a6f8c;
-  --shadow:0 10px 26px rgba(20,40,80,.14);
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{
+  font-family:'Segoe UI',system-ui,-apple-system,Roboto,sans-serif;
+  background:var(--bg);color:var(--text);
+  max-width:480px;margin:0 auto;min-height:100vh;
+  position:relative;overflow-x:hidden;
+  padding-bottom:84px;
 }
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html{font-size:var(--fs);scroll-behavior:smooth}
-body{margin:0;padding:0;font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;
-  background:radial-gradient(1200px 600px at 12% -10%,rgba(0,224,164,.10),transparent 60%),
-    radial-gradient(900px 500px at 100% 0%,rgba(49,168,255,.10),transparent 55%),
-    radial-gradient(800px 600px at 50% 120%,rgba(160,107,255,.08),transparent 60%),var(--bg);
-  color:var(--txt);min-height:100vh;overflow-x:hidden}
-body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
-  background-image:linear-gradient(rgba(49,168,255,.035) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(49,168,255,.035) 1px,transparent 1px);
-  background-size:44px 44px;
-  mask-image:radial-gradient(circle at 50% 30%,#000 0%,transparent 75%);
-  -webkit-mask-image:radial-gradient(circle at 50% 30%,#000 0%,transparent 75%)}
-button{font-family:inherit;font-size:1rem;cursor:pointer;border:none;background:none;color:inherit}
-input,select,textarea{font-family:inherit;font-size:1rem}
-.hidden{display:none!important}
-.screen{display:none;position:relative;z-index:1;min-height:100vh;padding:18px;align-items:center;justify-content:center;flex-direction:column}
-.screen.active{display:flex}
-.view{display:none;animation:fadeIn .28s ease}
-.view.active{display:block}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.85rem 1.25rem;
-  border-radius:var(--radius-s);background:var(--card2);color:var(--txt);border:1px solid var(--line2);
-  font-weight:700;letter-spacing:.02em;transition:transform .12s,box-shadow .18s,background .18s,border-color .18s;
-  min-height:48px;text-align:center}
-.btn:hover{background:var(--card3);border-color:var(--acc2);transform:translateY(-1px)}
-.btn:active{transform:scale(.97)}
-.btn.primary{background:linear-gradient(135deg,var(--acc),#0bbd8f);color:#04140f;border-color:transparent;box-shadow:0 8px 24px rgba(0,224,164,.25)}
-.btn.primary:hover{box-shadow:0 10px 30px rgba(0,224,164,.4)}
-.btn.blue{background:linear-gradient(135deg,var(--acc2),#1f7ad6);color:#03111f;border-color:transparent}
-.btn.purple{background:linear-gradient(135deg,var(--acc3),#7a45e0);color:#fff;border-color:transparent}
-.btn.ghost{background:transparent}
-.btn.bad{background:linear-gradient(135deg,var(--bad),#d63a55);color:#fff;border-color:transparent}
-.btn.big{font-size:1.15rem;padding:1.05rem 2rem;width:100%;max-width:420px}
-.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
-#splash{text-align:center}
-.logo-big{font-size:clamp(1.9rem,7vw,3.4rem);font-weight:900;letter-spacing:.04em;
-  background:linear-gradient(120deg,#00e0a4,#31a8ff 55%,#a06bff);
-  -webkit-background-clip:text;background-clip:text;color:transparent;
-  filter:drop-shadow(0 0 26px rgba(0,224,164,.28));line-height:1.1}
-.splash-inner{max-width:640px;display:flex;flex-direction:column;align-items:center;gap:14px;padding:26px 6px}
-.tagline{color:var(--acc);font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-size:.82rem;margin:0}
-.sub{color:var(--muted);font-size:1.02rem;margin:0;line-height:1.5}
-.pcb-deco{width:min(420px,90%);height:64px;margin-top:8px;border-radius:12px;
-  background:linear-gradient(90deg,transparent 0 12%,var(--line2) 12% 13%,transparent 13% 40%,var(--line2) 40% 41%,transparent 41% 70%,var(--line2) 70% 71%,transparent 71%),
-    linear-gradient(180deg,transparent 48%,var(--line) 48% 52%,transparent 52%);
-  opacity:.65;border:1px solid var(--line);position:relative;overflow:hidden}
-.pcb-deco::after{content:"";position:absolute;inset:0;background:
-  radial-gradient(circle at 20% 50%,var(--acc) 0 3px,transparent 4px),
-  radial-gradient(circle at 60% 30%,var(--acc2) 0 3px,transparent 4px),
-  radial-gradient(circle at 85% 70%,var(--acc3) 0 3px,transparent 4px);opacity:.8}
-#app{position:relative;z-index:1;min-height:100vh;padding-bottom:86px}
-.topbar{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  background:rgba(7,11,18,.86);border-bottom:1px solid var(--line);padding:10px 14px}
-[data-theme="light"] .topbar{background:rgba(238,243,251,.9)}
-.topbar-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:space-between;max-width:1180px;margin:0 auto}
-.brand{font-weight:900;letter-spacing:.03em;font-size:1rem;white-space:nowrap;
-  background:linear-gradient(120deg,#00e0a4,#31a8ff);-webkit-background-clip:text;background-clip:text;color:transparent}
-.hud{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.chip{display:inline-flex;align-items:center;gap:.35rem;background:var(--card);border:1px solid var(--line);
-  padding:.32rem .6rem;border-radius:999px;font-size:.76rem;font-weight:700;color:var(--muted);white-space:nowrap}
-.chip b{color:var(--txt)}
-.chip.acc{border-color:rgba(0,224,164,.4);color:var(--acc)}
-.chip.gold{border-color:rgba(255,209,102,.4);color:var(--gold)}
-.xpbar{width:100%;max-width:1180px;margin:8px auto 0;height:6px;background:var(--card2);border-radius:99px;overflow:hidden;border:1px solid var(--line)}
-.xpbar>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--acc),var(--acc2));transition:width .5s ease;border-radius:99px}
-.topnav{display:none;gap:6px;flex-wrap:wrap;max-width:1180px;margin:8px auto 0;justify-content:center}
-.topnav .navbtn{font-size:.82rem;padding:.45rem .8rem}
-.navbtn{display:inline-flex;align-items:center;gap:.4rem;padding:.5rem .7rem;border-radius:10px;
-  background:transparent;border:1px solid transparent;color:var(--muted);font-weight:700;font-size:.78rem;
-  transition:.18s;flex-direction:column;min-width:60px}
-.navbtn:hover{color:var(--txt);background:var(--card)}
-.navbtn.on{color:var(--acc);background:rgba(0,224,164,.1);border-color:rgba(0,224,164,.3)}
-.bottomnav{position:fixed;left:0;right:0;bottom:0;z-index:60;display:flex;justify-content:space-around;align-items:center;
-  background:rgba(9,15,25,.96);border-top:1px solid var(--line);
-  padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px));
-  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
-[data-theme="light"] .bottomnav{background:rgba(255,255,255,.96)}
-.bottomnav .navbtn{font-size:.62rem;min-width:54px;padding:.4rem .2rem}
-.bottomnav .navbtn span.ico{font-size:1.15rem;line-height:1}
-.wrap{max-width:1180px;margin:0 auto;padding:18px 14px 40px}
-.page-title{font-size:1.5rem;font-weight:900;margin:0 0 4px;letter-spacing:.01em}
-.page-sub{color:var(--muted);margin:0 0 18px;font-size:.92rem}
-.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(170px,1fr))}
-.card{background:linear-gradient(160deg,var(--card),var(--card2));border:1px solid var(--line);
-  border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);position:relative;overflow:hidden;
-  transition:transform .16s,border-color .18s,box-shadow .2s}
-.card:hover{border-color:var(--line2)}
-.menu-card{cursor:pointer;display:flex;flex-direction:column;gap:6px;align-items:flex-start}
-.menu-card:hover{transform:translateY(-3px);border-color:var(--acc);box-shadow:var(--glow),var(--shadow)}
-.menu-card .ico{font-size:1.7rem;line-height:1}
-.menu-card .ttl{font-weight:800;font-size:1rem}
-.menu-card .dsc{color:var(--muted);font-size:.8rem;line-height:1.35}
-.sec-title{font-size:1.02rem;font-weight:800;margin:26px 0 10px;display:flex;align-items:center;gap:.5rem;color:var(--txt)}
-.sec-title::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--line2),transparent)}
-.game-shell{max-width:760px;margin:0 auto}
-.game-head{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:center;margin-bottom:14px}
-.badge{display:inline-flex;align-items:center;gap:.35rem;padding:.38rem .72rem;border-radius:999px;
-  font-size:.74rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;
-  background:var(--card2);border:1px solid var(--line2);color:var(--muted)}
-.badge.cat{color:var(--acc2);border-color:rgba(49,168,255,.35)}
-.badge.dif{color:var(--warn);border-color:rgba(255,176,32,.35)}
-.badge.mode{color:var(--acc3);border-color:rgba(160,107,255,.35)}
-.badge.timer{color:var(--bad);border-color:rgba(255,84,112,.4);font-variant-numeric:tabular-nums}
+/* HEADER */
+header{
+  position:sticky;top:0;z-index:50;
+  background:linear-gradient(135deg,var(--primary),#ff9a6b);
+  color:#fff;padding:18px 20px 22px;
+  border-bottom-left-radius:24px;border-bottom-right-radius:24px;
+  box-shadow:0 6px 18px rgba(255,122,69,.3);
+}
+.top-bar{display:flex;justify-content:space-between;align-items:center}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.25rem}
+.brand .logo{
+  width:38px;height:38px;border-radius:50%;
+  background:#fff;color:var(--primary);
+  display:grid;place-items:center;font-size:1.3rem;
+}
+.header-icons{display:flex;gap:14px;font-size:1.2rem;cursor:pointer}
+.location{margin-top:12px;font-size:.85rem;opacity:.92;display:flex;align-items:center;gap:6px}
+.search{
+  margin-top:14px;background:rgba(255,255,255,.22);
+  border-radius:14px;padding:11px 16px;display:flex;align-items:center;gap:10px;
+  backdrop-filter:blur(6px);
+}
+.search input{
+  border:none;background:transparent;color:#fff;width:100%;outline:none;font-size:.95rem;
+}
+.search input::placeholder{color:rgba(255,255,255,.75)}
 
-/* ===== CAIXA DE DESCRIÇÃO (LEIA E DESCUBRA) ===== */
-.descbox{
-  background:linear-gradient(135deg,rgba(49,168,255,.10),rgba(0,224,164,.06));
-  border:1px solid rgba(49,168,255,.35);
-  border-radius:14px;padding:14px 16px;margin-bottom:12px;
-  box-shadow:0 4px 18px rgba(49,168,255,.08);
+/* MAIN */
+main{padding:18px 16px}
+.section-title{
+  display:flex;justify-content:space-between;align-items:center;
+  margin:22px 4px 12px;font-size:1.05rem;font-weight:700;
 }
-.descbox .desc-lbl{
-  display:block;font-size:.68rem;font-weight:800;letter-spacing:.12em;
-  text-transform:uppercase;color:var(--acc2);margin-bottom:6px;
-}
-.descbox .desc-text{margin:0;font-size:1rem;line-height:1.55;color:var(--txt);font-weight:500}
-.descbox.desc-case{background:linear-gradient(135deg,rgba(255,176,32,.10),rgba(255,84,112,.05));border-color:rgba(255,176,32,.4)}
-.descbox.desc-case .desc-lbl{color:var(--warn)}
-.descbox.desc-train{background:linear-gradient(135deg,rgba(160,107,255,.10),rgba(49,168,255,.05));border-color:rgba(160,107,255,.4)}
-.descbox.desc-train .desc-lbl{color:var(--acc3)}
+.section-title a{color:var(--primary);font-size:.82rem;font-weight:600;text-decoration:none}
 
-.hintbox{background:rgba(49,168,255,.07);border:1px solid rgba(49,168,255,.28);
-  border-radius:var(--radius-s);padding:12px 14px;margin-bottom:12px;font-size:.9rem;line-height:1.5;color:var(--txt)}
-.hintbox .hlbl{color:var(--acc2);font-weight:800;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:4px}
-.hintbox ul{margin:6px 0 0;padding-left:1.1rem}
-.hintbox li{margin-bottom:4px;color:var(--muted)}
-.canvas-wrap{display:flex;justify-content:center;margin:4px 0 10px}
-.canvas-wrap svg{width:min(230px,64vw);height:auto;filter:drop-shadow(0 6px 18px rgba(0,0,0,.35))}
-.stroke-main{stroke:var(--acc2);stroke-width:5;stroke-linecap:round;fill:none}
-.stroke-part{stroke:var(--acc);stroke-width:4.5;stroke-linecap:round;fill:none;animation:pop .28s ease}
-.stroke-head{fill:none;stroke:var(--acc);stroke-width:4.5;animation:pop .28s ease}
-@keyframes pop{from{opacity:0;transform:scale(.7);transform-origin:center}to{opacity:1;transform:none}}
-.word{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:16px 0 10px;min-height:52px}
-.letter{min-width:34px;height:46px;display:flex;align-items:center;justify-content:center;
-  border-bottom:3px solid var(--line2);font-size:1.5rem;font-weight:900;color:var(--txt);padding:0 4px;transition:.2s}
-.letter.rev{color:var(--acc);border-bottom-color:var(--acc);animation:flipIn .3s ease}
-.letter.space{border-bottom:none;min-width:14px}
-@keyframes flipIn{from{transform:rotateX(90deg);opacity:.2}to{transform:none;opacity:1}}
-.keyboard{display:grid;grid-template-columns:repeat(7,1fr);gap:7px;margin:14px 0 8px;max-width:560px;margin-left:auto;margin-right:auto}
-.key{aspect-ratio:1/1.08;min-height:44px;border-radius:10px;background:var(--card2);border:1px solid var(--line2);
-  font-weight:900;font-size:1rem;color:var(--txt);display:flex;align-items:center;justify-content:center;transition:.14s;user-select:none}
-.key:hover:not(:disabled){background:var(--card3);border-color:var(--acc2);transform:translateY(-2px)}
-.key:active:not(:disabled){transform:scale(.93)}
-.key:disabled{opacity:.42;cursor:not-allowed}
-.key.ok{background:rgba(0,224,164,.18);border-color:var(--acc);color:var(--acc)}
-.key.no{background:rgba(255,84,112,.16);border-color:var(--bad);color:var(--bad)}
-.game-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:14px}
-.game-actions .btn{flex:1 1 auto;min-width:130px;font-size:.86rem;padding:.7rem .9rem;min-height:46px}
-.duo-board{display:flex;gap:10px;justify-content:center;margin-bottom:12px}
-.duo-p{flex:1;max-width:220px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 10px;text-align:center;transition:.2s}
-.duo-p.on{border-color:var(--acc);box-shadow:var(--glow)}
-.duo-p .nm{font-weight:800;font-size:.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.duo-p .sc{font-size:1.3rem;font-weight:900;color:var(--acc)}
-.overlay{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;padding:16px;
-  background:rgba(4,8,14,.82);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
-.overlay.on{display:flex;animation:fadeIn .2s ease}
-.overlay .panel{width:100%;max-width:520px;max-height:88vh;overflow-y:auto;
-  background:linear-gradient(160deg,var(--card),var(--card2));border:1px solid var(--line2);
-  border-radius:20px;padding:22px;box-shadow:0 24px 60px rgba(0,0,0,.6);animation:pop .3s ease}
-.ov-title{font-size:1.35rem;font-weight:900;text-align:center;margin:0 0 4px}
-.ov-word{text-align:center;font-size:1.6rem;font-weight:900;letter-spacing:.12em;color:var(--acc);margin:8px 0 14px;word-break:break-word}
-.ov-sec{margin-bottom:12px}
-.ov-sec h4{margin:0 0 4px;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--acc2)}
-.ov-sec p{margin:0;font-size:.92rem;line-height:1.55;color:var(--muted)}
-.ov-note{font-size:.78rem;color:var(--muted);border-left:3px solid var(--warn);padding-left:10px;margin-top:10px;line-height:1.5}
-.list{display:flex;flex-direction:column;gap:9px}
-.row{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);
-  border-radius:12px;padding:12px 14px;transition:.15s;cursor:pointer}
-.row:hover{border-color:var(--acc2);background:var(--card2)}
-.row .r-ico{font-size:1.35rem;flex:0 0 auto}
-.row .r-main{flex:1;min-width:0}
-.row .r-ttl{font-weight:800;font-size:.94rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.row .r-sub{font-size:.76rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.row .r-right{font-size:.8rem;color:var(--muted);font-weight:700;flex:0 0 auto}
-.field{margin-bottom:14px}
-.field label{display:block;font-size:.76rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
-.input,select.input,textarea.input{width:100%;padding:.85rem 1rem;border-radius:12px;background:var(--bg2);
-  border:1px solid var(--line2);color:var(--txt);outline:none;transition:.16s;font-size:1rem}
-[data-theme="light"] .input{background:#fff}
-.input:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(0,224,164,.13)}
-textarea.input{resize:vertical;min-height:70px;line-height:1.5}
-.switch{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;
-  background:var(--card);border:1px solid var(--line);border-radius:12px;margin-bottom:9px}
-.switch .sw-txt{font-weight:700;font-size:.9rem}
-.switch .sw-sub{font-size:.74rem;color:var(--muted)}
-.toggle{width:52px;height:30px;border-radius:99px;background:var(--card3);border:1px solid var(--line2);position:relative;flex:0 0 auto;transition:.2s;cursor:pointer}
-.toggle::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:var(--muted);transition:.2s}
-.toggle.on{background:rgba(0,224,164,.25);border-color:var(--acc)}
-.toggle.on::after{left:25px;background:var(--acc)}
-.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
-.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;text-align:center}
-.stat .v{font-size:1.35rem;font-weight:900;color:var(--acc);font-variant-numeric:tabular-nums}
-.stat .k{font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:2px}
-.ach{display:flex;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;transition:.18s}
-.ach.on{border-color:rgba(255,209,102,.45);background:linear-gradient(120deg,rgba(255,209,102,.09),var(--card))}
-.ach .a-ico{font-size:1.6rem;filter:grayscale(1);opacity:.4}
-.ach.on .a-ico{filter:none;opacity:1}
-.ach .a-ttl{font-weight:800;font-size:.9rem}
-.ach .a-dsc{font-size:.75rem;color:var(--muted)}
-#toasts{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:500;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none;width:calc(100% - 24px);max-width:420px}
-.toast{background:linear-gradient(135deg,var(--card3),var(--card));border:1px solid var(--acc);border-radius:12px;
-  padding:11px 16px;font-size:.86rem;font-weight:700;box-shadow:var(--shadow);animation:toastIn .3s ease;
-  display:flex;gap:8px;align-items:center;max-width:100%}
-.toast.gold{border-color:var(--gold)}
-.toast.bad{border-color:var(--bad)}
-@keyframes toastIn{from{opacity:0;transform:translateY(-14px)}to{opacity:1;transform:none}}
-.confetti{position:fixed;top:-14px;width:9px;height:14px;z-index:400;pointer-events:none;border-radius:2px;animation:fall linear forwards}
-@keyframes fall{to{transform:translateY(105vh) rotate(720deg);opacity:.9}}
-.shake{animation:shake .35s}
-@keyframes shake{0%,100%{transform:none}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
-.pulse{animation:pulseA .45s}
-@keyframes pulseA{0%{transform:scale(1)}50%{transform:scale(1.06)}100%{transform:scale(1)}}
-@media(min-width:860px){
-  .topnav{display:flex}.bottomnav{display:none}#app{padding-bottom:24px}
-  .keyboard{grid-template-columns:repeat(9,1fr);max-width:640px}
-  .letter{min-width:40px;height:52px;font-size:1.7rem}
-  .duo-board{max-width:520px;margin-left:auto;margin-right:auto}
+/* BANNER */
+.banner{
+  background:linear-gradient(135deg,#ffe0c9,#ffd0e0);
+  border-radius:var(--radius);padding:22px;position:relative;overflow:hidden;
+  box-shadow:var(--shadow);
 }
-@media(max-width:420px){
-  .keyboard{grid-template-columns:repeat(6,1fr);gap:6px}
-  .letter{min-width:27px;height:42px;font-size:1.28rem}
-  .btn.big{font-size:1.02rem;padding:.95rem 1.2rem}
-  .hud .chip{font-size:.68rem;padding:.26rem .5rem}
-  .descbox{padding:12px 14px}
-  .descbox .desc-text{font-size:.94rem}
+.banner h2{font-size:1.15rem;line-height:1.35;max-width:65%}
+.banner p{font-size:.82rem;color:#7a5a48;margin:8px 0 14px;max-width:70%}
+.banner button{
+  background:var(--primary);color:#fff;border:none;
+  padding:10px 20px;border-radius:30px;font-weight:700;font-size:.85rem;
+  cursor:pointer;transition:.2s;
 }
+.banner button:active{transform:scale(.95)}
+.banner .emoji{
+  position:absolute;right:-6px;bottom:-14px;font-size:6rem;opacity:.9;transform:rotate(-8deg);
+}
+
+/* QUICK ACTIONS */
+.quick-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}
+.quick{
+  background:var(--card);border-radius:16px;padding:14px 6px;text-align:center;
+  box-shadow:var(--shadow);cursor:pointer;transition:.2s;border:none;
+}
+.quick:active{transform:scale(.94)}
+.quick .ico{font-size:1.55rem;display:block;margin-bottom:6px}
+.quick span{font-size:.7rem;font-weight:600;color:var(--muted)}
+
+/* CARDS HORIZONTAIS */
+.h-scroll{display:flex;gap:12px;overflow-x:auto;padding:4px 2px 10px;scrollbar-width:none}
+.h-scroll::-webkit-scrollbar{display:none}
+.card{
+  background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);
+  min-width:160px;flex-shrink:0;overflow:hidden;cursor:pointer;transition:.2s;
+}
+.card:active{transform:scale(.97)}
+.card .thumb{
+  height:100px;display:grid;place-items:center;font-size:2.8rem;
+  background:linear-gradient(135deg,#fff1e8,#ffe0d0);
+}
+.card .thumb.blue{background:linear-gradient(135deg,#e3f2ff,#cfe6ff)}
+.card .thumb.green{background:linear-gradient(135deg,#e6fbef,#cdf3dd)}
+.card .thumb.pink{background:linear-gradient(135deg,#ffe6f2,#ffd0e6)}
+.card .info{padding:12px}
+.card .info h4{font-size:.9rem;margin-bottom:4px}
+.card .info small{color:var(--muted);font-size:.74rem}
+.card .price{margin-top:8px;color:var(--primary);font-weight:800;font-size:.95rem}
+
+/* LISTA SERVIÇOS */
+.service-list{display:flex;flex-direction:column;gap:10px}
+.service{
+  background:var(--card);border-radius:16px;padding:14px;display:flex;align-items:center;gap:14px;
+  box-shadow:var(--shadow);cursor:pointer;transition:.2s;
+}
+.service:active{transform:scale(.98)}
+.service .s-ico{
+  width:52px;height:52px;border-radius:14px;display:grid;place-items:center;
+  font-size:1.5rem;background:#fff1e8;flex-shrink:0;
+}
+.service .s-info{flex:1}
+.service .s-info h4{font-size:.92rem;margin-bottom:3px}
+.service .s-info p{font-size:.75rem;color:var(--muted)}
+.service .s-price{color:var(--primary);font-weight:800;font-size:.9rem}
+
+/* CARRINHO */
+.cart-item{
+  background:var(--card);border-radius:16px;padding:14px;display:flex;align-items:center;
+  gap:12px;box-shadow:var(--shadow);margin-bottom:10px;
+}
+.cart-item .ci-ico{font-size:1.8rem}
+.cart-item .ci-info{flex:1}
+.cart-item .ci-info h4{font-size:.9rem}
+.cart-item .ci-info small{color:var(--muted);font-size:.75rem}
+.qty{display:flex;align-items:center;gap:8px}
+.qty button{
+  width:28px;height:28px;border-radius:50%;border:none;background:#fff1e8;color:var(--primary);
+  font-weight:800;font-size:1rem;cursor:pointer;
+}
+.qty span{font-weight:700;font-size:.9rem;min-width:16px;text-align:center}
+
+/* AGENDAMENTO */
+.form-card{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:.82rem;font-weight:600;margin-bottom:6px;color:#4a5064}
+.form-group input,.form-group select,.form-group textarea{
+  width:100%;padding:12px 14px;border:1.5px solid #e6e9f0;border-radius:12px;
+  font-size:.9rem;font-family:inherit;outline:none;transition:.2s;background:#fbfcfe;
+}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{
+  border-color:var(--primary);background:#fff;
+}
+.btn-primary{
+  width:100%;padding:15px;border:none;border-radius:14px;color:#fff;font-weight:800;
+  font-size:1rem;cursor:pointer;transition:.2s;
+  background:linear-gradient(135deg,var(--primary),#ff9a6b);
+  box-shadow:0 8px 20px rgba(255,122,69,.35);
+}
+.btn-primary:active{transform:scale(.97)}
+
+/* PERFIL */
+.profile-head{
+  background:linear-gradient(135deg,var(--primary),#ff9a6b);
+  border-radius:var(--radius);padding:24px;color:#fff;text-align:center;
+  box-shadow:0 8px 20px rgba(255,122,69,.3);margin-bottom:18px;
+}
+.avatar{
+  width:78px;height:78px;border-radius:50%;background:#fff;margin:0 auto 12px;
+  display:grid;place-items:center;font-size:2.4rem;
+}
+.profile-head h3{font-size:1.15rem}
+.profile-head p{font-size:.82rem;opacity:.9;margin-top:4px}
+.menu-list{display:flex;flex-direction:column;gap:10px}
+.menu-item{
+  background:var(--card);border-radius:14px;padding:16px;display:flex;align-items:center;gap:14px;
+  box-shadow:var(--shadow);cursor:pointer;transition:.2s;
+}
+.menu-item:active{transform:scale(.98)}
+.menu-item .m-ico{font-size:1.3rem}
+.menu-item span{flex:1;font-size:.9rem;font-weight:600}
+.menu-item .arrow{color:var(--muted);font-size:1.1rem}
+
+/* BOTTOM NAV */
+nav{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:480px;background:#fff;
+  display:flex;justify-content:space-around;align-items:center;
+  padding:10px 6px 14px;box-shadow:0 -4px 20px rgba(31,36,48,.08);
+  border-top-left-radius:22px;border-top-right-radius:22px;z-index:100;
+}
+.nav-btn{
+  background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:4px;
+  color:var(--muted);cursor:pointer;font-size:.66rem;font-weight:600;padding:6px 10px;
+  transition:.2s;font-family:inherit;
+}
+.nav-btn .ni{font-size:1.35rem;transition:.2s}
+.nav-btn.active{color:var(--primary)}
+.nav-btn.active .ni{transform:translateY(-3px) scale(1.15)}
+.cart-badge{
+  position:absolute;top:0;right:4px;background:#ff3b5c;color:#fff;
+  font-size:.6rem;padding:1px 5px;border-radius:10px;font-weight:800;
+}
+.nav-btn{position:relative}
+
+/* PAGES */
+.page{display:none;animation:fade .25s ease}
+.page.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* TOAST */
+.toast{
+  position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:#1f2430;color:#fff;padding:12px 22px;border-radius:30px;font-size:.85rem;
+  font-weight:600;opacity:0;pointer-events:none;transition:.3s;z-index:200;white-space:nowrap;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.empty{text-align:center;padding:50px 20px;color:var(--muted)}
+.empty .big{font-size:3.5rem;margin-bottom:12px}
+.total-bar{
+  background:var(--card);border-radius:16px;padding:16px;margin-top:16px;
+  display:flex;justify-content:space-between;align-items:center;box-shadow:var(--shadow);
+}
+.total-bar strong{font-size:1.15rem;color:var(--primary)}
 </style>
 </head>
 <body>
 
-<!-- ===== SPLASH ===== -->
-<div id="splash" class="screen active">
-  <div class="splash-inner">
-    <div class="logo-big">🎮 REPAIR FORCA</div>
-    <p class="tagline">Descubra. Aprenda. Repare.</p>
-    <div class="pcb-deco" aria-hidden="true"></div>
-    <p class="sub">Leia a descrição e descubra o termo técnico da bancada.</p>
-    <button class="btn primary big" id="btnStart" aria-label="Começar o jogo">🚀 COMEÇAR</button>
-    <p class="sub" style="font-size:.78rem;opacity:.7;margin-top:6px">Jogo educativo de reparo de videogames e controles · 200+ termos</p>
-  </div>
-</div>
-
-<!-- ===== NOME ===== -->
-<div id="nameScreen" class="screen">
-  <div class="splash-inner" style="max-width:440px">
-    <div class="logo-big" style="font-size:clamp(1.4rem,5vw,2rem)">👤 QUAL É O SEU NOME?</div>
-    <p class="sub">Seu nome será usado durante toda a sessão.</p>
-    <div class="field" style="width:100%;margin-top:8px">
-      <label for="inpName">Nome do jogador</label>
-      <input class="input" id="inpName" type="text" maxlength="18" placeholder="Digite seu nome" autocomplete="off" aria-label="Digite seu nome">
+<header>
+  <div class="top-bar">
+    <div class="brand">
+      <div class="logo">🐾</div>
+      <span>PetLovers</span>
     </div>
-    <button class="btn primary big" id="btnNameGo">🚀 COMEÇAR DESAFIO</button>
-  </div>
-</div>
-
-<!-- ===== BOAS-VINDAS ===== -->
-<div id="welcomeBack" class="screen">
-  <div class="splash-inner" style="max-width:440px">
-    <div class="logo-big" style="font-size:clamp(1.3rem,5vw,1.9rem)">👋 OLÁ NOVAMENTE!</div>
-    <p class="sub" id="wbName" style="font-size:1.3rem;font-weight:900;color:var(--acc)">JOGADOR</p>
-    <div style="display:flex;flex-direction:column;gap:10px;width:100%;max-width:380px;margin-top:10px">
-      <button class="btn primary big" id="btnContinue">CONTINUAR</button>
-      <button class="btn big" id="btnChangeName">ALTERAR NOME</button>
+    <div class="header-icons">
+      <span onclick="go('carrinho')">🛒</span>
+      <span onclick="go('perfil')">👤</span>
     </div>
   </div>
-</div>
+  <div class="location">📍 Av. dos Pets, 120 — Centro</div>
+  <div class="search">
+    <span>🔍</span>
+    <input type="text" placeholder="Buscar produtos e serviços...">
+  </div>
+</header>
 
-<!-- ===== APP ===== -->
-<div id="app" class="hidden">
+<main>
 
-  <header class="topbar">
-    <div class="topbar-row">
-      <div class="brand">🎮 REPAIR FORCA</div>
-      <div class="hud">
-        <span class="chip" id="hudNameChip">👤 <b id="hudName">—</b></span>
-        <span class="chip acc" id="hudLevelChip">🏆 <b id="hudLevel">Nível 1</b></span>
-        <span class="chip">⚡ <b id="hudXp">0 XP</b></span>
-        <span class="chip gold">⭐ <b id="hudScore">0</b></span>
-        <span class="chip" id="hudStreakChip">🔥 <b id="hudStreak">0</b></span>
+  <!-- ========== HOME ========== -->
+  <section id="home" class="page active">
+    <div class="banner">
+      <h2>Banho & Tosa com 20% OFF 🛁</h2>
+      <p>Agende hoje e deixe seu pet cheiroso e lindo!</p>
+      <button onclick="go('agendar')">Agendar agora</button>
+      <div class="emoji">🐶</div>
+    </div>
+
+    <div class="quick-grid">
+      <button class="quick" onclick="go('agendar')"><span class="ico">🛁</span><span>Banho</span></button>
+      <button class="quick" onclick="go('agendar')"><span class="ico">✂️</span><span>Tosa</span></button>
+      <button class="quick" onclick="go('loja')"><span class="ico">🦴</span><span>Ração</span></button>
+      <button class="quick" onclick="go('agendar')"><span class="ico">💉</span><span>Vacina</span></button>
+    </div>
+
+    <div class="section-title">
+      <span>Serviços populares</span>
+      <a onclick="go('servicos')">Ver todos</a>
+    </div>
+    <div class="h-scroll">
+      <div class="card" onclick="go('agendar')">
+        <div class="thumb">🛁</div>
+        <div class="info"><h4>Banho Completo</h4><small>45 min</small><div class="price">R$ 45</div></div>
+      </div>
+      <div class="card" onclick="go('agendar')">
+        <div class="thumb blue">✂️</div>
+        <div class="info"><h4>Tosa Higiênica</h4><small>30 min</small><div class="price">R$ 35</div></div>
+      </div>
+      <div class="card" onclick="go('agendar')">
+        <div class="thumb green">💉</div>
+        <div class="info"><h4>Vacina V10</h4><small>15 min</small><div class="price">R$ 80</div></div>
+      </div>
+      <div class="card" onclick="go('agendar')">
+        <div class="thumb pink">🐕</div>
+        <div class="info"><h4>Passeio</h4><small>1 hora</small><div class="price">R$ 25</div></div>
       </div>
     </div>
-    <div class="xpbar"><i id="xpFill"></i></div>
-    <nav class="topnav" id="topnav">
-      <button class="navbtn" data-go="home">🏠 Início</button>
-      <button class="navbtn" data-go="play">🎮 Jogar</button>
-      <button class="navbtn" data-go="training">🧠 Treinamento</button>
-      <button class="navbtn" data-go="cases">🔧 Casos</button>
-      <button class="navbtn" data-go="encyclopedia">📚 Enciclopédia</button>
-      <button class="navbtn" data-go="achievements">🏆 Conquistas</button>
-      <button class="navbtn" data-go="stats">📊 Estatísticas</button>
-      <button class="navbtn" data-go="settings">⚙️ Configurações</button>
-    </nav>
-  </header>
 
-  <main>
-
-    <section id="view-home" class="view active">
-      <div class="wrap">
-        <h1 class="page-title" id="homeGreet">Bem-vindo!</h1>
-        <p class="page-sub" id="homeSub">Descubra. Aprenda. Repare.</p>
-        <div class="grid">
-          <div class="card menu-card" data-go="play"><div class="ico">🎮</div><div class="ttl">JOGAR</div><div class="dsc">Leia a descrição e descubra o termo</div></div>
-          <div class="card menu-card" data-go="training"><div class="ico">🧠</div><div class="ttl">TREINAMENTO</div><div class="dsc">Aprender jogando, sem pressão</div></div>
-          <div class="card menu-card" data-go="cases"><div class="ico">🔧</div><div class="ttl">CASOS DE BANCADA</div><div class="dsc">Situações reais simuladas</div></div>
-          <div class="card menu-card" data-go="encyclopedia"><div class="ico">📚</div><div class="ttl">ENCICLOPÉDIA</div><div class="dsc">200+ termos pesquisáveis</div></div>
-          <div class="card menu-card" data-go="achievements"><div class="ico">🏆</div><div class="ttl">CONQUISTAS</div><div class="dsc"><span id="achCount">0</span> de <span id="achTotal">0</span> desbloqueadas</div></div>
-          <div class="card menu-card" data-go="stats"><div class="ico">📊</div><div class="ttl">ESTATÍSTICAS</div><div class="dsc">Seu desempenho na bancada</div></div>
-          <div class="card menu-card" data-go="settings"><div class="ico">⚙️</div><div class="ttl">CONFIGURAÇÕES</div><div class="dsc">Som, tema, backup e mais</div></div>
-        </div>
-        <h2 class="sec-title">⚡ Modos especiais</h2>
-        <div class="grid">
-          <div class="card menu-card" data-mode="timed"><div class="ico">⏱️</div><div class="ttl">DESAFIO RÁPIDO</div><div class="dsc">60 segundos · máximo de palavras</div></div>
-          <div class="card menu-card" data-mode="hard"><div class="ico">☠️</div><div class="ttl">MODO TÉCNICO</div><div class="dsc">Palavras difíceis · 4 tentativas</div></div>
-          <div class="card menu-card" data-mode="duo"><div class="ico">👥</div><div class="ttl">2 JOGADORES</div><div class="dsc">Dispute em turnos alternados</div></div>
-          <div class="card menu-card" data-go="favorites"><div class="ico">⭐</div><div class="ttl">MEUS FAVORITOS</div><div class="dsc">Termos que você marcou</div></div>
-          <div class="card menu-card" data-go="history"><div class="ico">🕘</div><div class="ttl">HISTÓRICO</div><div class="dsc">Últimos termos estudados</div></div>
-          <div class="card menu-card" data-go="editor"><div class="ico">🛠️</div><div class="ttl">BANCO TÉCNICO</div><div class="dsc">Crie e edite seus próprios termos</div></div>
-        </div>
-        <p class="page-sub" style="margin-top:22px;font-size:.76rem;line-height:1.6">
-          ⚠️ Os casos apresentados são educativos. Um sintoma pode possuir várias causas.
-          Não condene um componente sem realizar medições. Valores de tensão podem variar
-          conforme modelo e revisão da placa.
-        </p>
+    <div class="section-title">
+      <span>Mais vendidos</span>
+      <a onclick="go('loja')">Ver loja</a>
+    </div>
+    <div class="h-scroll">
+      <div class="card" onclick="addCart('Ração Premium 10kg',189)">
+        <div class="thumb">🥫</div>
+        <div class="info"><h4>Ração Premium</h4><small>10kg · Adulto</small><div class="price">R$ 189</div></div>
       </div>
-    </section>
-
-    <!-- ===== JOGO ===== -->
-    <section id="view-game" class="view">
-      <div class="wrap game-shell">
-        <div class="game-head" id="gameHead"></div>
-        <div class="duo-board hidden" id="duoBoard"></div>
-
-        <!-- NOVO: caixa de descrição (leia e descubra) -->
-        <div class="descbox hidden" id="descBox" aria-live="polite"></div>
-
-        <div class="hintbox hidden" id="hintBox"></div>
-        <div class="canvas-wrap" id="canvasWrap"></div>
-        <div class="word" id="wordDisplay" aria-live="polite"></div>
-        <div class="keyboard" id="keyboard" role="group" aria-label="Teclado virtual"></div>
-        <div class="game-actions">
-          <button class="btn" id="btnHint">💡 DICA (3)</button>
-          <button class="btn" id="btnSkip">⏭️ PULAR</button>
-          <button class="btn ghost" id="btnQuit">✖ SAIR</button>
-        </div>
+      <div class="card" onclick="addCart('Brinquedo Osso',29)">
+        <div class="thumb blue">🦴</div>
+        <div class="info"><h4>Brinquedo Osso</h4><small>Borracha</small><div class="price">R$ 29</div></div>
       </div>
-    </section>
-
-    <!-- ===== CASOS ===== -->
-    <section id="view-cases" class="view">
-      <div class="wrap">
-        <h1 class="page-title">🔧 Casos de Bancada</h1>
-        <p class="page-sub">Leia o sintoma e descubra o termo relacionado. Um sintoma pode ter várias causas.</p>
-        <div class="list" id="casesList"></div>
-        <p class="page-sub" style="font-size:.76rem;margin-top:18px;line-height:1.6">
-          ⚠️ Conteúdo educativo. Não ensinamos pinagem, tensões ou localização de componentes
-          específicos, pois variam conforme modelo e revisão de placa.
-        </p>
+      <div class="card" onclick="addCart('Cama Pet',119)">
+        <div class="thumb green">🛏️</div>
+        <div class="info"><h4>Cama Confort</h4><small>Tamanho M</small><div class="price">R$ 119</div></div>
       </div>
-    </section>
-
-    <!-- ===== TREINAMENTO ===== -->
-    <section id="view-training" class="view">
-      <div class="wrap">
-        <h1 class="page-title">🧠 Aprender Jogando</h1>
-        <p class="page-sub">Leia a situação, use a dica e descubra a palavra.</p>
-        <div class="list" id="trainingList"></div>
+      <div class="card" onclick="addCart('Coleira Antipulgas',59)">
+        <div class="thumb pink">🦮</div>
+        <div class="info"><h4>Coleira Antipulgas</h4><small>3 meses</small><div class="price">R$ 59</div></div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- ===== ENCICLOPÉDIA ===== -->
-    <section id="view-encyclopedia" class="view">
-      <div class="wrap">
-        <h1 class="page-title">📚 Enciclopédia Técnica</h1>
-        <p class="page-sub">Pesquise componentes, defeitos, medições e consoles.</p>
-        <div class="field"><input class="input" id="encSearch" type="search" placeholder="🔎 Pesquisar termo, categoria..." aria-label="Pesquisar termo"></div>
-        <div class="list" id="encList"></div>
+  <!-- ========== SERVIÇOS ========== -->
+  <section id="servicos" class="page">
+    <div class="section-title"><span>Nossos Serviços</span></div>
+    <div class="service-list">
+      <div class="service" onclick="agendar('Banho Completo',45)">
+        <div class="s-ico">🛁</div>
+        <div class="s-info"><h4>Banho Completo</h4><p>Shampoo + secagem + perfume</p></div>
+        <div class="s-price">R$ 45</div>
       </div>
-    </section>
-
-    <section id="view-term" class="view">
-      <div class="wrap">
-        <button class="btn ghost" id="btnBackTerm" style="margin-bottom:14px">← Voltar</button>
-        <div id="termDetail"></div>
+      <div class="service" onclick="agendar('Tosa Higiênica',35)">
+        <div class="s-ico">✂️</div>
+        <div class="s-info"><h4>Tosa Higiênica</h4><p>Patas, focinho e região íntima</p></div>
+        <div class="s-price">R$ 35</div>
       </div>
-    </section>
-
-    <section id="view-favorites" class="view">
-      <div class="wrap">
-        <h1 class="page-title">⭐ Meus Favoritos</h1>
-        <p class="page-sub">Termos que você marcou para estudar depois.</p>
-        <div class="list" id="favList"></div>
+      <div class="service" onclick="agendar('Tosa Completa',65)">
+        <div class="s-ico">🐩</div>
+        <div class="s-info"><h4>Tosa Completa</h4><p>Máquina + tesoura</p></div>
+        <div class="s-price">R$ 65</div>
       </div>
-    </section>
-
-    <section id="view-history" class="view">
-      <div class="wrap">
-        <h1 class="page-title">🕘 Histórico</h1>
-        <p class="page-sub">Últimos termos estudados.</p>
-        <div class="list" id="histList"></div>
+      <div class="service" onclick="agendar('Vacinação V10',80)">
+        <div class="s-ico">💉</div>
+        <div class="s-info"><h4>Vacina V10</h4><p>Proteção completa</p></div>
+        <div class="s-price">R$ 80</div>
       </div>
-    </section>
-
-    <section id="view-achievements" class="view">
-      <div class="wrap">
-        <h1 class="page-title">🏆 Conquistas</h1>
-        <p class="page-sub" id="achSub">Desbloqueie conquistas jogando e estudando.</p>
-        <div class="list" id="achList"></div>
+      <div class="service" onclick="agendar('Consulta Veterinária',120)">
+        <div class="s-ico">🩺</div>
+        <div class="s-info"><h4>Consulta Veterinária</h4><p>Avaliação geral do pet</p></div>
+        <div class="s-price">R$ 120</div>
       </div>
-    </section>
-
-    <section id="view-stats" class="view">
-      <div class="wrap">
-        <h1 class="page-title">📊 Estatísticas</h1>
-        <p class="page-sub">Seu desempenho na bancada.</p>
-        <div id="statsBody"></div>
+      <div class="service" onclick="agendar('Passeio 1h',25)">
+        <div class="s-ico">🐕</div>
+        <div class="s-info"><h4>Passeio 1h</h4><p>Profissional treinado</p></div>
+        <div class="s-price">R$ 25</div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section id="view-settings" class="view">
-      <div class="wrap">
-        <h1 class="page-title">⚙️ Configurações</h1>
-        <p class="page-sub">Ajuste o jogo do seu jeito.</p>
-        <div class="card" style="margin-bottom:14px">
-          <div class="field"><label for="setName">Nome do jogador</label><input class="input" id="setName" type="text" maxlength="18" placeholder="Seu nome"></div>
-          <button class="btn blue" id="btnSaveName">💾 Salvar nome</button>
-        </div>
-        <div class="switch"><div><div class="sw-txt">🔊 Som</div><div class="sw-sub">Efeitos sonoros do jogo</div></div><div class="toggle" id="tgSound" role="switch" tabindex="0" aria-label="Som"></div></div>
-        <div class="switch"><div><div class="sw-txt">📳 Vibração</div><div class="sw-sub">Quando o dispositivo suportar</div></div><div class="toggle" id="tgVib" role="switch" tabindex="0" aria-label="Vibração"></div></div>
-        <div class="switch"><div><div class="sw-txt">🌗 Tema claro</div><div class="sw-sub">Alto contraste para ambientes claros</div></div><div class="toggle" id="tgTheme" role="switch" tabindex="0" aria-label="Tema claro"></div></div>
-        <div class="card" style="margin-top:14px">
-          <div class="field"><label for="setFont">Tamanho da fonte</label>
-            <select class="input" id="setFont">
-              <option value="14">Pequena</option><option value="16" selected>Normal</option>
-              <option value="18">Grande</option><option value="20">Muito grande</option>
-            </select>
-          </div>
-        </div>
-        <h2 class="sec-title">💾 Backup</h2>
-        <div style="display:flex;flex-direction:column;gap:9px">
-          <button class="btn" id="btnExport">📤 EXPORTAR PROGRESSO</button>
-          <button class="btn" id="btnImport">📥 IMPORTAR PROGRESSO</button>
-          <input type="file" id="fileImport" accept="application/json,.json" class="hidden">
-          <button class="btn bad" id="btnReset">🗑️ RESETAR PROGRESSO</button>
-        </div>
-        <p class="page-sub" style="font-size:.74rem;margin-top:20px;line-height:1.6">
-          REPAIR FORCA · Jogo educativo.<br>
-          Os casos apresentados são educativos. Um sintoma pode possuir várias causas.
-          Não condene um componente sem realizar medições. Valores de tensão podem variar
-          conforme modelo e revisão da placa.
-        </p>
+  <!-- ========== LOJA ========== -->
+  <section id="loja" class="page">
+    <div class="section-title"><span>Loja Pet</span></div>
+    <div class="service-list">
+      <div class="service" onclick="addCart('Ração Premium 10kg',189)">
+        <div class="s-ico">🥫</div>
+        <div class="s-info"><h4>Ração Premium 10kg</h4><p>Adulto · Frango</p></div>
+        <div class="s-price">R$ 189</div>
       </div>
-    </section>
-
-    <!-- ===== EDITOR ===== -->
-    <section id="view-editor" class="view">
-      <div class="wrap">
-        <h1 class="page-title">🛠️ Banco Técnico</h1>
-        <p class="page-sub">Adicione, edite e exclua seus próprios termos.</p>
-        <div class="card" style="margin-bottom:16px">
-          <div class="field"><label for="edWord">Palavra</label><input class="input" id="edWord" type="text" maxlength="26" placeholder="Ex.: ANALOGICO"></div>
-          <div class="field"><label for="edCat">Categoria</label><select class="input" id="edCat"></select></div>
-          <div class="field"><label for="edDif">Dificuldade</label>
-            <select class="input" id="edDif"><option>Fácil</option><option>Médio</option><option>Difícil</option></select>
-          </div>
-          <div class="field"><label for="edDesc">📖 Descrição (leia e descubra)</label>
-            <textarea class="input" id="edDesc" maxlength="300" placeholder="Texto que o jogador lê para adivinhar a palavra. Não use a própria palavra."></textarea>
-          </div>
-          <div class="field"><label for="edH1">Dica 1</label><input class="input" id="edH1" type="text" maxlength="120" placeholder="Dica 1"></div>
-          <div class="field"><label for="edH2">Dica 2</label><input class="input" id="edH2" type="text" maxlength="120" placeholder="Dica 2"></div>
-          <div class="field"><label for="edH3">Dica 3</label><input class="input" id="edH3" type="text" maxlength="120" placeholder="Dica 3"></div>
-          <div class="field"><label for="edExp">Explicação (após acertar)</label>
-            <textarea class="input" id="edExp" maxlength="500" placeholder="O que é, para que serve..."></textarea>
-          </div>
-          <div class="field"><label for="edObs">Observação (opcional)</label>
-            <textarea class="input" id="edObs" maxlength="300" placeholder="Variações por modelo, cuidados..."></textarea>
-          </div>
-          <div style="display:flex;gap:9px;flex-wrap:wrap">
-            <button class="btn primary" id="btnEdSave" style="flex:1">💾 Salvar termo</button>
-            <button class="btn ghost" id="btnEdClear">✖ Limpar</button>
-          </div>
-          <p class="page-sub" id="edStatus" style="font-size:.76rem;margin-top:10px"></p>
-        </div>
-        <h2 class="sec-title">📋 Meus termos</h2>
-        <div class="list" id="edList"></div>
+      <div class="service" onclick="addCart('Brinquedo Osso',29)">
+        <div class="s-ico">🦴</div>
+        <div class="s-info"><h4>Brinquedo Osso</h4><p>Borracha atóxica</p></div>
+        <div class="s-price">R$ 29</div>
       </div>
-    </section>
+      <div class="service" onclick="addCart('Cama Pet M',119)">
+        <div class="s-ico">🛏️</div>
+        <div class="s-info"><h4>Cama Confort M</h4><p>Lavável</p></div>
+        <div class="s-price">R$ 119</div>
+      </div>
+      <div class="service" onclick="addCart('Coleira Antipulgas',59)">
+        <div class="s-ico">🦮</div>
+        <div class="s-info"><h4>Coleira Antipulgas</h4><p>Dura 3 meses</p></div>
+        <div class="s-price">R$ 59</div>
+      </div>
+      <div class="service" onclick="addCart('Shampoo Neutro',39)">
+        <div class="s-ico">🧴</div>
+        <div class="s-info"><h4>Shampoo Neutro</h4><p>500ml · Pelos macios</p></div>
+        <div class="s-price">R$ 39</div>
+      </div>
+      <div class="service" onclick="addCart('Petiscos Naturais',24)">
+        <div class="s-ico">🍖</div>
+        <div class="s-info"><h4>Petiscos Naturais</h4><p>Sem conservantes</p></div>
+        <div class="s-price">R$ 24</div>
+      </div>
+    </div>
+  </section>
 
-    <section id="view-result" class="view">
-      <div class="wrap" style="max-width:640px"><div id="resultBody"></div></div>
-    </section>
+  <!-- ========== AGENDAR ========== -->
+  <section id="agendar" class="page">
+    <div class="section-title"><span>Agendar Serviço</span></div>
+    <div class="form-card">
+      <div class="form-group">
+        <label>Nome do Pet</label>
+        <input type="text" id="petName" placeholder="Ex: Rex">
+      </div>
+      <div class="form-group">
+        <label>Espécie</label>
+        <select id="petType">
+          <option>Cachorro</option>
+          <option>Gato</option>
+          <option>Outro</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Serviço</label>
+        <select id="petService">
+          <option>Banho Completo — R$ 45</option>
+          <option>Tosa Higiênica — R$ 35</option>
+          <option>Tosa Completa — R$ 65</option>
+          <option>Vacinação V10 — R$ 80</option>
+          <option>Consulta Veterinária — R$ 120</option>
+          <option>Passeio 1h — R$ 25</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Data</label>
+        <input type="date" id="petDate">
+      </div>
+      <div class="form-group">
+        <label>Horário</label>
+        <input type="time" id="petTime">
+      </div>
+      <div class="form-group">
+        <label>Observações</label>
+        <textarea id="petNotes" rows="2" placeholder="Alguma informação extra?"></textarea>
+      </div>
+      <button class="btn-primary" onclick="confirmSchedule()">Confirmar Agendamento</button>
+    </div>
+  </section>
 
-  </main>
+  <!-- ========== CARRINHO ========== -->
+  <section id="carrinho" class="page">
+    <div class="section-title"><span>Meu Carrinho</span></div>
+    <div id="cartList"></div>
+    <div id="cartEmpty" class="empty">
+      <div class="big">🛒</div>
+      <p>Seu carrinho está vazio</p>
+    </div>
+    <div id="cartTotal" style="display:none">
+      <div class="total-bar">
+        <span>Total</span>
+        <strong id="totalValue">R$ 0,00</strong>
+      </div>
+      <button class="btn-primary" style="margin-top:12px" onclick="finishOrder()">Finalizar Pedido</button>
+    </div>
+  </section>
 
-  <nav class="bottomnav">
-    <button class="navbtn" data-go="home"><span class="ico">🏠</span>Início</button>
-    <button class="navbtn" data-go="play"><span class="ico">🎮</span>Jogar</button>
-    <button class="navbtn" data-go="training"><span class="ico">🧠</span>Aprender</button>
-    <button class="navbtn" data-go="achievements"><span class="ico">🏆</span>Conquistas</button>
-    <button class="navbtn" data-go="settings"><span class="ico">⚙️</span>Ajustes</button>
-  </nav>
-</div>
+  <!-- ========== PERFIL ========== -->
+  <section id="perfil" class="page">
+    <div class="profile-head">
+      <div class="avatar">👤</div>
+      <h3>João Silva</h3>
+      <p>joao@email.com</p>
+    </div>
+    <div class="menu-list">
+      <div class="menu-item"><span class="m-ico">🐾</span><span>Meus Pets</span><span class="arrow">›</span></div>
+      <div class="menu-item"><span class="m-ico">📅</span><span>Meus Agendamentos</span><span class="arrow">›</span></div>
+      <div class="menu-item"><span class="m-ico">📦</span><span>Meus Pedidos</span><span class="arrow">›</span></div>
+      <div class="menu-item"><span class="m-ico">💳</span><span>Pagamentos</span><span class="arrow">›</span></div>
+      <div class="menu-item"><span class="m-ico">🎁</span><span>Programa Fidelidade</span><span class="arrow">›</span></div>
+      <div class="menu-item"><span class="m-ico">⚙️</span><span>Configurações</span><span class="arrow">›</span></div>
+      <div class="menu-item" onclick="alert('Saindo...')"><span class="m-ico">🚪</span><span>Sair</span><span class="arrow">›</span></div>
+    </div>
+  </section>
 
-<div class="overlay" id="overlay"><div class="panel" id="overlayPanel"></div></div>
-<div id="toasts"></div>
+</main>
+
+<!-- BOTTOM NAV -->
+<nav>
+  <button class="nav-btn active" data-page="home" onclick="go('home')"><span class="ni">🏠</span>Início</button>
+  <button class="nav-btn" data-page="servicos" onclick="go('servicos')"><span class="ni">🛁</span>Serviços</button>
+  <button class="nav-btn" data-page="loja" onclick="go('loja')"><span class="ni">🛍️</span>Loja</button>
+  <button class="nav-btn" data-page="agendar" onclick="go('agendar')"><span class="ni">📅</span>Agendar</button>
+  <button class="nav-btn" data-page="perfil" onclick="go('perfil')"><span class="ni">👤</span>Perfil</button>
+</nav>
+
+<div class="toast" id="toast"></div>
 
 <script>
-/* ============================================================
-   REPAIR FORCA — JAVASCRIPT
-   ============================================================ */
-const WHATSAPP_DESTINO = "5573999782139";
-const STORAGE_KEY = "repair_forca_v1";
-const APP_NAME = "REPAIR FORCA";
-
-const $  = (s, r) => (r || document).querySelector(s);
-const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
-const clone = o => JSON.parse(JSON.stringify(o));
-
-function norm(s){return String(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toUpperCase();}
-function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
-function fmt(n){return Number(n||0).toLocaleString("pt-BR");}
-function isLetter(ch){return /^[A-Z]$/.test(norm(ch));}
-function rand(n){return Math.floor(Math.random()*n);}
-
-/* ============================================================
-   CATEGORIAS
-   ============================================================ */
-const CATEGORIES = [
-  "Componentes","Controles","Alimentação","Medições","Defeitos","Vídeo","Áudio","USB",
-  "PlayStation","Xbox","Nintendo","Ferramentas","Diagnóstico","Reparo"
-];
-
-const CAT_META = {
-  "Componentes":{ic:"🔧",
-    onde:"Está soldado na placa de circuito impresso do console ou do controle.",
-    teste:"Identifique o componente, consulte o esquema/boardview do modelo e meça com o multímetro.",
-    sintomas:"Falhas causam ausência de tensão, ruído, aquecimento anormal ou o aparelho não ligar."},
-  "Controles":{ic:"🎮",
-    onde:"No controle do videogame: analógicos, gatilhos, membranas, botões e placa interna.",
-    teste:"Teste com outro jogo ou em app de diagnóstico, verifique contatos, meça tensões do controle e inspecione soldas.",
-    sintomas:"Botão que não responde, analógico desviando, gatilho travado, vibração ausente, conexão intermitente."},
-  "Alimentação":{ic:"⚡",
-    onde:"Nas linhas de alimentação da placa, nos conversores DC-DC e no circuito de espera.",
-    teste:"Meça a tensão da linha em relação ao GND, sempre comparando com o esquema da revisão.",
-    sintomas:"Ausência ou oscilação de tensão, desligamentos, consumo excessivo, aparelho não sai do standby."},
-  "Medições":{ic:"📏",
-    onde:"Em qualquer ponto de teste da placa, com o equipamento adequado.",
-    teste:"Use a escala correta do multímetro ou o osciloscópio para sinais variáveis, com referência no GND.",
-    sintomas:"Uma medição fora do esperado indica o setor a investigar, mas não condena o componente sozinha."},
-  "Defeitos":{ic:"💥",
-    onde:"Manifesta-se no comportamento do aparelho, nem sempre visível a olho nu.",
-    teste:"Reproduza o sintoma, meça as linhas suspeitas e compare com o esquema ou aparelho de referência.",
-    sintomas:"É o próprio sintoma. O mesmo sintoma pode ter várias causas diferentes."},
-  "Vídeo":{ic:"📺",
-    onde:"Na cadeia de saída de imagem: GPU/APU, filtros, conectores e cabo flex.",
-    teste:"Teste com outro cabo e outra TV, verifique solda do conector e meça linhas de sinal.",
-    sintomas:"Sem imagem, artefatos, listras, manchas, tela escura ou ausência de backlight."},
-  "Áudio":{ic:"🔊",
-    onde:"No codec de áudio, amplificador, alto-falantes, jack de fone e conexões.",
-    teste:"Teste com fone e com saída HDMI, verifique contatos e meça a linha do amplificador.",
-    sintomas:"Sem áudio, som baixo, chiado, zumbido, áudio em apenas um canal."},
-  "USB":{ic:"🔌",
-    onde:"Nas portas USB, no controlador USB e nas linhas de alimentação e dados.",
-    teste:"Teste com outro periférico, verifique solda dos pinos e meça a alimentação da porta.",
-    sintomas:"Porta não reconhece nada, não carrega, funciona de forma intermitente."},
-  "PlayStation":{ic:"🎮",
-    onde:"Nos consoles e acessórios da família PlayStation, em todas as revisões.",
-    teste:"Consulte o esquema/boardview da revisão exata da placa antes de medir qualquer ponto.",
-    sintomas:"Depende do subsistema. Valores variam conforme modelo e revisão."},
-  "Xbox":{ic:"🟢",
-    onde:"Nos consoles e acessórios da família Xbox, em todas as revisões.",
-    teste:"Consulte o esquema/boardview da revisão exata da placa antes de qualquer medição.",
-    sintomas:"Depende do subsistema. Valores variam conforme modelo e revisão."},
-  "Nintendo":{ic:"🔴",
-    onde:"Nos consoles e acessórios Nintendo, em todas as revisões.",
-    teste:"Consulte o esquema/boardview da revisão exata da placa antes de qualquer medição.",
-    sintomas:"Depende do subsistema. Valores variam conforme modelo e revisão."},
-  "Ferramentas":{ic:"🔬",
-    onde:"Na bancada do técnico.",
-    teste:"Cada ferramenta tem sua função. Use a escala e a ponta corretas e mantenha calibrado.",
-    sintomas:"Ferramenta inadequada ou descalibrada gera diagnóstico errado ou danifica o aparelho."},
-  "Diagnóstico":{ic:"🧠",
-    onde:"Em todo o processo de análise, do sintoma à conclusão.",
-    teste:"Siga um método: ouça o relato, reproduza o sintoma, meça, compare e só então conclua.",
-    sintomas:"Diagnóstico apressado troca peça boa e não resolve o problema."},
-  "Reparo":{ic:"🛠️",
-    onde:"Na execução do serviço: desmontagem, solda, limpeza, teste e entrega.",
-    teste:"Use temperatura adequada, fluxo, limpeza e teste final antes de fechar o aparelho.",
-    sintomas:"Reparo mal executado gera retorno e novos defeitos."}
-};
-
-/* ============================================================
-   BANCO DE TERMOS (video game repair + controllers)
-   desc = texto que o jogador lê para adivinhar (não usa a palavra)
-   ============================================================ */
-const TERMS = [
-/* ---------- COMPONENTES (26) ---------- */
-{p:"RESISTOR",c:"Componentes",d:"Fácil",desc:"Componente passivo com faixas coloridas que indicam seu valor. Limita corrente e divide tensão nas placas de videogame.",h:["Limita a passagem de corrente elétrica.","Sua unidade é o ohm.","Pode ter faixas coloridas ou código SMD."],e:"Componente passivo que oferece oposição à corrente elétrica. Usado para limitar corrente, dividir tensão e polarizar outros componentes."},
-{p:"CAPACITOR",c:"Componentes",d:"Fácil",desc:"Componente que armazena carga elétrica. Nas placas de console, filtra a alimentação e pode inchar ou vazar quando falha.",h:["Armazena carga elétrica temporariamente.","Sua unidade é o farad.","Pode ser eletrolítico, cerâmico ou tântalo."],e:"Componente que armazena energia em campo elétrico. Usado em filtragem, desacoplamento e partida de motores."},
-{p:"DIODO",c:"Componentes",d:"Fácil",desc:"Semicondutor de duas pernas que deixa a corrente fluir em apenas um sentido. Protege linhas de alimentação de consoles.",h:["Permite a corrente em apenas um sentido.","Tem anodo e catodo.","Pode atuar como retificador."],e:"Componente semicondutor que conduz em um sentido e bloqueia no outro. Muito usado em retificação e proteção."},
-{p:"ZENER",c:"Componentes",d:"Médio",desc:"Diodo especial que mantém uma tensão de referência. Protege linhas de sinal em placas de PS, Xbox e Nintendo.",h:["É um tipo especial de diodo.","Trabalha na região de ruptura.","Serve como referência de tensão e proteção."],e:"Diodo projetado para operar na região de ruptura reversa, mantendo uma tensão de referência. Usado em regulação e proteção."},
-{p:"MOSFET",c:"Componentes",d:"Fácil",desc:"Chave eletrônica de três terminais. Muito comum nas fases de alimentação de PS4, Xbox e Switch, próxima a indutores e capacitores.",h:["É um componente eletrônico.","Pode funcionar como chave.","É comum em circuitos de alimentação."],e:"É um tipo de transistor de efeito de campo utilizado como chave eletrônica ou elemento de controle em circuitos. Muito comum em circuitos de alimentação e chaveamento."},
-{p:"TRANSISTOR",c:"Componentes",d:"Fácil",desc:"Semicondutor de três terminais que amplifica ou chaveia sinais. Aparece em placas de console e de controle.",h:["Possui três terminais.","Pode amplificar ou chavear sinais.","No BJT: base, coletor e emissor."],e:"Componente semicondutor de três terminais usado para amplificar sinais ou funcionar como chave."},
-{p:"BOBINA",c:"Componentes",d:"Médio",desc:"Fio enrolado que armazena energia em campo magnético. Presente nas fases de alimentação dos consoles.",h:["Armazena energia em campo magnético.","Sua unidade é o henry.","Filtra ruído em linhas de alimentação."],e:"Componente formado por espiras de fio que armazena energia em campo magnético. Presente em filtros e conversores."},
-{p:"FUSIVEL",c:"Componentes",d:"Fácil",desc:"Proteção que se rompe quando a corrente passa do limite. Muito comum nas entradas de energia de videogames.",h:["Protege contra excesso de corrente.","Quando abre, interrompe o circuito.","Nunca deve ser trocado por um valor maior."],e:"Dispositivo de proteção que se abre quando a corrente excede o limite, interrompendo o circuito e evitando danos maiores."},
-{p:"REGULADOR",c:"Componentes",d:"Médio",desc:"Circuito que mantém a tensão de saída estável. Alimenta chips e sensores nas placas de videogame.",h:["Mantém uma tensão estável na saída.","Pode ser linear ou chaveado.","Costuma ter entrada, saída e referência."],e:"Circuito que mantém a tensão de saída estável mesmo com variações de carga ou de entrada."},
-{p:"LDO",c:"Componentes",d:"Médio",desc:"Regulador linear de baixa queda de tensão. Alimenta circuitos sensíveis em placas de console.",h:["É um tipo de regulador linear.","Tem baixa queda de tensão entre entrada e saída.","Dissipa calor quando a diferença é grande."],e:"Low Dropout: regulador linear que funciona mesmo com pequena diferença entre entrada e saída. Simples, porém dissipa calor."},
-{p:"VRM",c:"Componentes",d:"Difícil",desc:"Conjunto de fases que gera tensões baixas e de alta corrente para o processador do console.",h:["Conjunto de fases de alimentação.","Converte tensão principal em tensões baixas.","Fica próximo ao processador."],e:"Voltage Regulator Module: conjunto de fases que gera tensões baixas e de alta corrente para processadores e memórias."},
-{p:"CRISTAL",c:"Componentes",d:"Médio",desc:"Componente piezoelétrico que gera o clock do sistema. Sem ele, a placa do console não inicia.",h:["Gera uma frequência de referência.","Trabalha junto ao oscilador.","Sem ele a placa pode não iniciar."],e:"Componente piezoelétrico que vibra em uma frequência precisa, servindo de base para o clock do sistema."},
-{p:"BIOS",c:"Componentes",d:"Fácil",desc:"Firmware básico gravado em memória. Se corromper, o console pode não ligar ou não dar vídeo.",h:["É um firmware básico do sistema.","Inicializa o hardware.","Se corrompida, o console pode não ligar."],e:"Firmware básico que inicializa o hardware e passa o controle ao sistema. Se corrompido, o aparelho pode não iniciar."},
-{p:"APU",c:"Componentes",d:"Difícil",desc:"Chip que integra processador central e gráfico em um só. Presente em PS4, Xbox One e PS5.",h:["Reúne CPU e GPU no mesmo chip.","Muito comum em consoles modernos.","Tem alimentação dedicada."],e:"Accelerated Processing Unit: chip que integra CPU e GPU. Presente em vários consoles modernos."},
-{p:"CPU",c:"Componentes",d:"Fácil",desc:"Unidade central de processamento. Executa as instruções do console.",h:["Unidade central de processamento.","Executa instruções.","Precisa de alimentação e clock."],e:"Unidade central de processamento, responsável por executar as instruções do sistema."},
-{p:"GPU",c:"Componentes",d:"Fácil",desc:"Unidade de processamento gráfico. Gera a imagem exibida na TV.",h:["Processa gráficos.","Pode ser dedicada ou integrada.","Está ligada à saída de vídeo."],e:"Unidade de processamento gráfico, responsável por gerar a imagem exibida."},
-{p:"BGA",c:"Componentes",d:"Difícil",desc:"Encapsulamento com esferas de solda sob o chip. Muito comum em APUs e memórias de consoles.",h:["Encapsulamento com esferas de solda.","Fica soldado sob o chip.","Pode exigir reballing."],e:"Ball Grid Array: encapsulamento em que o chip é soldado à placa por esferas de solda na face inferior."},
-{p:"EEPROM",c:"Componentes",d:"Difícil",desc:"Memória não volátil regravável. Guarda configurações e dados do console.",h:["Memória regravável eletricamente.","Guarda dados que não podem ser perdidos.","Pode armazenar configurações do console."],e:"Memória não volátil regravável eletricamente, usada para guardar dados de configuração e parâmetros."},
-{p:"FLASH",c:"Componentes",d:"Médio",desc:"Memória não volátil que guarda o firmware do console.",h:["É uma memória não volátil.","Guarda firmware.","Pode ser regravada por software."],e:"Memória não volátil usada para armazenar firmware e dados permanentes do sistema."},
-{p:"CONECTOR",c:"Componentes",d:"Fácil",desc:"Peça que interliga circuitos. Pode ser de alimentação, HDMI, USB ou de bateria.",h:["Faz a ligação entre circuitos.","Pode ser de alimentação ou de sinal.","Oxidação e desgaste causam falhas."],e:"Componente que interliga circuitos ou cabos. Oxidação, solda fria e desgaste dos pinos são causas comuns de falha."},
-{p:"SMD",c:"Componentes",d:"Médio",desc:"Tipo de componente montado na superfície da placa, sem furos. Predominante em consoles modernos.",h:["É um tipo de montagem de componente.","Não atravessa a placa.","Exige técnica de solda adequada."],e:"Surface Mount Device: componente montado diretamente na superfície da placa, sem furos passantes."},
-{p:"POTENCIOMETRO",c:"Componentes",d:"Médio",desc:"Resistor variável ajustável por cursor. Usado em analógicos de controle e ajustes internos.",h:["É um resistor variável.","Permite ajuste manual.","Pode sofrer desgaste com o uso."],e:"Resistor com valor ajustável por um cursor. Usado em controles e ajustes de calibração."},
-{p:"BOTAO",c:"Componentes",d:"Fácil",desc:"Componente de entrada que fecha contato quando pressionado. Presente em controles e painéis de console.",h:["Aciona uma função ao ser pressionado.","Pode ser de membrana, tátil ou metálico.","Contatos sujos causam mau contato."],e:"Componente de entrada que fecha um contato quando pressionado, gerando um sinal ao circuito."},
-{p:"FILTRO",c:"Componentes",d:"Médio",desc:"Circuito que reduz ruído em linhas de alimentação e sinal. Comum em placas de videogame.",h:["Reduz ruídos ou interferências.","Pode ser formado por RC ou LC.","Aparece em linhas de alimentação e sinal."],e:"Circuito que atenua determinadas frequências, reduzindo ruídos e interferências."},
-{p:"VARISTOR",c:"Componentes",d:"Difícil",desc:"Proteção que desvia surtos de tensão. Pode ficar em curto após atuar.",h:["Protege contra picos de tensão.","Sua resistência cai com o aumento da tensão.","Após atuar, pode ficar em curto."],e:"Componente de proteção cuja resistência diminui quando a tensão sobe, desviando surtos para o terra."},
-{p:"TERMISTOR",c:"Componentes",d:"Difícil",desc:"Sensor cuja resistência varia com a temperatura. Usado em proteção térmica de consoles.",h:["Sua resistência varia com a temperatura.","Pode ser NTC ou PTC.","É usado em sensores e proteção."],e:"Resistor sensível à temperatura. O NTC diminui a resistência ao aquecer; o PTC aumenta."},
-
-/* ---------- CONTROLES (20) ---------- */
-{p:"ANALOGICO",c:"Controles",d:"Fácil",desc:"Alavanca que envia posição variável ao console. Sofre desgaste e desvio com o uso.",h:["É uma alavanca de controle.","Envia posição variável ao console.","Pode apresentar desvio com o tempo."],e:"Eixo de controle que envia valores variáveis de posição ao console. É um dos componentes que mais desgastam em controles."},
-{p:"DRIFT",c:"Controles",d:"Fácil",desc:"Defeito em que o personagem se move sozinho, mesmo sem o jogador tocar no analógico. Muito comum em controles de PS, Xbox e Switch.",h:["É um defeito do analógico.","O personagem se move sozinho.","Muito comum em controles de PS, Xbox e Switch."],e:"Desvio no eixo do analógico que faz o controle enviar movimento sem o usuário tocar. Comum por desgaste do módulo."},
-{p:"JOYSTICK",c:"Controles",d:"Fácil",desc:"Alavanca de controle. Pode ser de arcade ou o analógico do controle moderno.",h:["É um controle com alavanca.","Usado em consoles e arcades.","Pode ter botões integrados."],e:"Dispositivo de controle com alavanca, usado em consoles e máquinas de arcade."},
-{p:"TRIGGER",c:"Controles",d:"Médio",desc:"Gatilho do controle. No PS5 é adaptável; nos demais, é um potenciômetro ou sensor.",h:["É um gatilho de controle.","No PS5 tem resposta adaptável.","Fica atrás do controle."],e:"Gatilho analógico do controle, usado para acelerar, frear ou atirar. No DualSense é adaptável."},
-{p:"BUMPER",c:"Controles",d:"Médio",desc:"Botão superior do controle. Fica acima do gatilho.",h:["É um botão superior do controle.","Fica acima do gatilho.","Costuma ser digital."],e:"Botão superior do controle, localizado acima do gatilho. Costuma ser digital (liga/desliga)."},
-{p:"HALL",c:"Controles",d:"Difícil",desc:"Sensor magnético sem contato usado em analógicos modernos. Evita o desvio.",h:["É um sensor magnético.","Não tem contato mecânico.","Evita o desvio do analógico."],e:"Sensor de efeito Hall, que mede campo magnético sem contato físico. Usado em analógicos que não sofrem drift."},
-{p:"MEMBRANA",c:"Controles",d:"Médio",desc:"Película condutora com contatos. Usada em botões de controle e painéis de console.",h:["É uma película condutora.","Fica sob os botões.","Contatos sujos causam falha."],e:"Película flexível com trilhas condutoras que fecha contato quando o botão é pressionado."},
-{p:"CARBONO",c:"Controles",d:"Médio",desc:"Material condutor presente em membranas e contatos de controle.",h:["É um material condutor.","Fica nas membranas de botão.","Desgasta com o uso."],e:"Material condutor aplicado em membranas e contatos. Seu desgaste causa falha em botões."},
-{p:"TOUCHPAD",c:"Controles",d:"Médio",desc:"Área sensível ao toque do controle do PS4 e PS5.",h:["É uma área sensível ao toque.","Fica no centro do controle.","Presente no PS4 e PS5."],e:"Superfície sensível ao toque no controle do PS4 e PS5, usada como entrada adicional."},
-{p:"LIGHTBAR",c:"Controles",d:"Médio",desc:"Barra de luz do controle do PS4. Indica jogador e status.",h:["É uma barra de luz.","Fica na parte frontal do controle.","Presente no DualShock 4."],e:"Barra luminosa do controle do PS4 que indica o jogador e o status da bateria."},
-{p:"BATERIA",c:"Controles",d:"Fácil",desc:"Célula que alimenta o controle sem fio. Pode inchar ou perder capacidade.",h:["Armazena energia.","Alimenta o controle sem fio.","Pode inchar ou perder capacidade."],e:"Célula recarregável que alimenta o controle sem fio. Com o tempo, pode inchar ou perder capacidade."},
-{p:"VIBRACAO",c:"Controles",d:"Fácil",desc:"Função do controle que faz o aparelho tremer durante o jogo.",h:["É uma função do controle.","Faz o aparelho tremer.","Usa motor interno."],e:"Função do controle que faz o aparelho vibrar durante o jogo, usando um pequeno motor interno."},
-{p:"DIRECIONAL",c:"Controles",d:"Médio",desc:"Conjunto de botões em cruz usado para movimentação.",h:["É um conjunto de botões.","Tem formato de cruz.","Serve para movimentação."],e:"Conjunto de botões em cruz (d-pad) usado para movimentação em jogos."},
-{p:"GIROSCOPIO",c:"Controles",d:"Difícil",desc:"Sensor que detecta rotação e movimento do controle.",h:["É um sensor de rotação.","Detecta movimento.","Está em controles modernos."],e:"Sensor que detecta rotação e movimento, usado em controles para entrada por movimento."},
-{p:"ACELEROMETRO",c:"Controles",d:"Difícil",desc:"Sensor que detecta a aceleração do controle.",h:["É um sensor de aceleração.","Detecta movimento do controle.","Trabalha junto ao giroscópio."],e:"Sensor que detecta aceleração linear, usado em controles para entrada por movimento."},
-{p:"GRIP",c:"Controles",d:"Fácil",desc:"Revestimento lateral do controle. Ajuda na pegada do jogador.",h:["É um revestimento.","Fica nas laterais do controle.","Ajuda na pegada."],e:"Revestimento lateral do controle, responsável pela ergonomia e pegada do jogador."},
-{p:"SHELL",c:"Controles",d:"Médio",desc:"Carcaça externa do controle. Pode ser trocada por modelos customizados.",h:["É a carcaça do controle.","Pode ser trocada.","Existem modelos customizados."],e:"Carcaça externa do controle, que pode ser substituída por modelos customizados."},
-{p:"MOLA",c:"Controles",d:"Fácil",desc:"Peça que faz o botão voltar à posição original.",h:["É uma peça de retorno.","Faz o botão voltar ao lugar.","Pode enferrujar ou perder força."],e:"Peça elástica que devolve o botão à posição original após o pressionamento."},
-{p:"HAPTICO",c:"Controles",d:"Difícil",desc:"Resposta tátil do controle, como a do DualSense do PS5.",h:["É uma resposta tátil.","Presente no DualSense.","Diferente da vibração comum."],e:"Resposta tátil avançada do controle DualSense, que transmite sensações mais precisas que a vibração comum."},
-{p:"RUMBLE",c:"Controles",d:"Médio",desc:"Motor de vibração do controle. Pode falhar e deixar de vibrar.",h:["É um motor de vibração.","Faz o controle tremer.","Pode falhar com o tempo."],e:"Motor de vibração do controle, responsável por fazer o aparelho tremer durante o jogo."},
-
-/* ---------- ALIMENTAÇÃO (16) ---------- */
-{p:"STANDBY",c:"Alimentação",d:"Médio",desc:"Tensão presente mesmo com o console desligado. Alimenta o circuito de espera.",h:["Tensão presente com o aparelho desligado.","Alimenta o circuito de espera.","Sem ela, o botão de ligar não responde."],e:"Linha de alimentação permanente que mantém o circuito de espera ativo, permitindo detectar o comando de ligar."},
-{p:"ENABLE",c:"Alimentação",d:"Médio",desc:"Sinal de habilitação da fonte ou de um circuito. Costuma ser nível lógico.",h:["É um sinal de habilitação.","Geralmente é um nível lógico.","Sem ele, a fonte não parte."],e:"Sinal que habilita o funcionamento de um circuito ou de uma fonte. Costuma ser um nível lógico alto ou baixo."},
-{p:"VCORE",c:"Alimentação",d:"Difícil",desc:"Tensão do núcleo do processador do console. É baixa e trabalha com alta corrente.",h:["É a tensão do núcleo do processador.","É baixa e trabalha com alta corrente.","Varia conforme modelo e revisão."],e:"Tensão de alimentação do núcleo do processador. Baixa e de alta corrente, seu valor depende do modelo e da revisão da placa."},
-{p:"VCC",c:"Alimentação",d:"Médio",desc:"Tensão de alimentação positiva que aparece em vários pontos da placa.",h:["É uma tensão de alimentação positiva.","Aparece em vários pontos da placa.","Pode ter valores diferentes no mesmo aparelho."],e:"Designação comum para a tensão de alimentação positiva de um circuito."},
-{p:"GND",c:"Alimentação",d:"Fácil",desc:"Referência de terra, ponto comum das medições elétricas.",h:["É a referência de terra.","É o ponto comum das medições.","Sem ele, nada funciona."],e:"Ground: referência de 0 V do circuito. Todas as medições de tensão são feitas em relação a ele."},
-{p:"BUCK",c:"Alimentação",d:"Difícil",desc:"Conversor que abaixa a tensão. Usa indutor e chaveamento, comum nas fontes internas.",h:["É um conversor que abaixa a tensão.","Usa indutor e chaveamento.","É comum nas fontes internas."],e:"Conversor DC-DC abaixador. Chaveia a entrada e usa indutor e capacitor para gerar uma tensão menor na saída."},
-{p:"BOOST",c:"Alimentação",d:"Difícil",desc:"Conversor que eleva a tensão. Também usa indutor.",h:["É um conversor que eleva a tensão.","Também usa indutor.","Aparece em linhas específicas."],e:"Conversor DC-DC elevador, que produz uma tensão de saída maior que a de entrada."},
-{p:"FONTE",c:"Alimentação",d:"Fácil",desc:"Fornece energia ao console. Pode ser interna ou externa e deve ser testada antes da placa.",h:["Fornece energia ao console.","Pode ser interna ou externa.","Deve ser testada antes da placa."],e:"Equipamento que converte a energia da rede em tensões adequadas ao console. Pode ser interna ou externa."},
-{p:"CHAVEAMENTO",c:"Alimentação",d:"Difícil",desc:"Técnica de ligar e desligar rapidamente um elemento para controlar energia. Base dos conversores DC-DC.",h:["Liga e desliga rapidamente.","Presente em conversores DC-DC.","Gera ruído que precisa ser filtrado."],e:"Técnica de ligar e desligar um elemento rapidamente para controlar energia. Base dos conversores DC-DC."},
-{p:"RIPPLE",c:"Alimentação",d:"Difícil",desc:"Ondulação residual sobreposta à tensão contínua. Capacitores ruins aumentam esse efeito.",h:["É uma ondulação residual.","É vista no osciloscópio.","Capacitores ruins aumentam esse efeito."],e:"Ondulação residual sobreposta à tensão contínua. Capacitores de filtro deteriorados aumentam o ripple."},
-{p:"SOBRETENSAO",c:"Alimentação",d:"Médio",desc:"Tensão acima do esperado que pode danificar componentes. Costuma vir de falha na regulação.",h:["Tensão acima do esperado.","Pode danificar componentes.","Costuma vir de falha na regulação."],e:"Condição em que a tensão ultrapassa o valor previsto, podendo danificar componentes da linha."},
-{p:"SUBTENSAO",c:"Alimentação",d:"Médio",desc:"Tensão abaixo do esperado. Pode causar desligamentos ou indicar consumo excessivo.",h:["Tensão abaixo do esperado.","Pode causar desligamentos.","Pode indicar consumo excessivo."],e:"Condição em que a tensão fica abaixo do previsto. Pode ser causada por consumo excessivo ou falha na regulação."},
-{p:"PROTECAO",c:"Alimentação",d:"Médio",desc:"Circuito que evita danos ao detectar condição anormal. Se atua, algo está errado.",h:["Circuito que evita danos.","Pode atuar desligando a saída.","Se atua, algo está errado."],e:"Circuito que interrompe o funcionamento ao detectar condição anormal, evitando danos maiores."},
-{p:"CONSUMO",c:"Alimentação",d:"Médio",desc:"Corrente exigida pelo circuito. Pode ser medida com fonte de bancada.",h:["É a corrente exigida pelo circuito.","Pode ser medida com fonte de bancada.","Consumo alto pode indicar curto."],e:"Corrente drenada pelo aparelho. Comparar o consumo com o esperado ajuda a identificar curtos."},
-{p:"ATERRAMENTO",c:"Alimentação",d:"Médio",desc:"Ligação ao potencial de terra, importante para segurança e redução de ruído.",h:["Ligação ao potencial de terra.","Importante para segurança e ruído.","Deve existir na bancada."],e:"Ligação elétrica ao potencial de terra, essencial para segurança do técnico e redução de ruído."},
-{p:"REGULACAO",c:"Alimentação",d:"Difícil",desc:"Ação de manter a tensão estável. Depende do circuito de realimentação.",h:["Ação de manter a tensão estável.","Depende do circuito de realimentação.","Falhas geram oscilação."],e:"Processo pelo qual o circuito mantém a tensão estável por meio de realimentação."},
-
-/* ---------- MEDIÇÕES (15) ---------- */
-{p:"TENSAO",c:"Medições",d:"Fácil",desc:"Diferença de potencial medida em volts. Deve ser verificada na linha indicada.",h:["É uma diferença de potencial.","Medida em volts.","Deve ser verificada na linha indicada."],e:"Diferença de potencial elétrico entre dois pontos, medida em volts. Sempre meça em relação ao GND."},
-{p:"RESISTENCIA",c:"Medições",d:"Fácil",desc:"Oposição à passagem de corrente, medida em ohms. Deve ser medida sem energia no circuito.",h:["É a oposição à corrente.","Medida em ohms.","Deve ser medida com o circuito desenergizado."],e:"Oposição à passagem de corrente elétrica, medida em ohms. Meça sempre com o circuito desligado."},
-{p:"CONTINUIDADE",c:"Medições",d:"Fácil",desc:"Teste que verifica se existe caminho elétrico entre dois pontos. O multímetro costuma apitar.",h:["Indica se existe caminho elétrico.","O multímetro costuma apitar.","Deve ser testada sem energia."],e:"Teste que verifica se existe caminho condutor entre dois pontos. Feito com o circuito desenergizado."},
-{p:"CORRENTE",c:"Medições",d:"Fácil",desc:"Fluxo de cargas elétricas medida em ampères. O amperímetro fica em série com o circuito.",h:["É o fluxo de cargas elétricas.","Medida em ampères.","O multímetro deve ficar em série."],e:"Fluxo ordenado de cargas elétricas, medido em ampères. O amperímetro é ligado em série com o circuito."},
-{p:"FREQUENCIA",c:"Medições",d:"Médio",desc:"Número de repetições por segundo de um sinal, medido em hertz.",h:["Indica repetições por segundo.","Medida em hertz.","É observada no osciloscópio."],e:"Número de ciclos por segundo de um sinal, medido em hertz."},
-{p:"CLOCK",c:"Medições",d:"Médio",desc:"Sinal de sincronismo gerado pelo oscilador. Sem ele o sistema não inicia.",h:["É o sinal de sincronismo.","Vem do oscilador ou cristal.","Sem ele o sistema não inicia."],e:"Sinal de referência de tempo que sincroniza as operações do sistema."},
-{p:"RESET",c:"Medições",d:"Médio",desc:"Sinal de reinicialização do sistema. Costuma ter nível lógico definido.",h:["Reinicia o sistema.","É um sinal de controle.","Costuma ter nível lógico definido."],e:"Sinal que reinicializa o sistema, colocando os circuitos em estado conhecido antes da operação."},
-{p:"ESCALA",c:"Medições",d:"Médio",desc:"Faixa de medição selecionada no instrumento. Errada, gera leitura incorreta.",h:["Define a faixa de medição.","Errada, gera leitura incorreta.","Deve ser escolhida antes de medir."],e:"Faixa de medição selecionada no instrumento. Escolher a escala errada gera leituras incorretas."},
-{p:"CALIBRACAO",c:"Medições",d:"Difícil",desc:"Ajuste de precisão do instrumento. Deve ser feito periodicamente.",h:["Ajusta a precisão do instrumento.","Deve ser feita periodicamente.","Instrumento descalibrado engana o técnico."],e:"Processo de ajuste do instrumento para que suas leituras correspondam ao valor real."},
-{p:"REFERENCIA",c:"Medições",d:"Médio",desc:"Valor ou sinal usado como base de comparação para validar uma medição.",h:["Serve de base de comparação.","Pode ser uma tensão ou um sinal.","Ajuda a validar a medição."],e:"Valor ou sinal usado como base de comparação para validar uma medição."},
-{p:"SONDA",c:"Medições",d:"Médio",desc:"Ponta de prova do instrumento. Precisa de bom contato para não gerar leitura falsa.",h:["É a ponta de prova do instrumento.","Precisa de bom contato.","Ponta ruim gera leitura falsa."],e:"Ponta de prova usada para contato com o ponto de medição. Mau contato gera leituras falsas."},
-{p:"OHM",c:"Medições",d:"Fácil",desc:"Unidade de resistência elétrica, representada pelo símbolo Ω.",h:["É a unidade de resistência.","Símbolo Ω.","Aparece na escala do multímetro."],e:"Unidade de resistência elétrica, representada pelo símbolo Ω."},
-{p:"VOLT",c:"Medições",d:"Fácil",desc:"Unidade de tensão elétrica, representada pelo símbolo V.",h:["É a unidade de tensão.","Símbolo V.","Aparece na escala do multímetro."],e:"Unidade de tensão elétrica, representada pelo símbolo V."},
-{p:"AMPERE",c:"Medições",d:"Fácil",desc:"Unidade de corrente elétrica, representada pelo símbolo A. Exige medição em série.",h:["É a unidade de corrente.","Símbolo A.","Exige medição em série."],e:"Unidade de corrente elétrica, representada pelo símbolo A."},
-{p:"HERTZ",c:"Medições",d:"Fácil",desc:"Unidade de frequência, representada por Hz. Um hertz equivale a um ciclo por segundo.",h:["É a unidade de frequência.","Símbolo Hz.","Um hertz equivale a um ciclo por segundo."],e:"Unidade de frequência, representada por Hz. Um hertz equivale a um ciclo por segundo."},
-
-/* ---------- DEFEITOS (18) ---------- */
-{p:"CURTO",c:"Defeitos",d:"Fácil",desc:"Caminho de baixa resistência indesejado. Costuma gerar consumo alto e pode ser localizado com fonte de bancada.",h:["Caminho de baixa resistência indesejado.","Costuma gerar consumo alto.","Pode ser localizado com fonte de bancada."],e:"Contato indesejado de baixa resistência entre dois pontos. Provoca consumo elevado e pode acionar proteções."},
-{p:"OXIDACAO",c:"Defeitos",d:"Médio",desc:"Ação da umidade sobre metais, afetando contatos e soldas do console.",h:["Ação da umidade sobre metais.","Afeta contatos e soldas.","Causa mau contato e intermitência."],e:"Corrosão superficial de contatos e soldas causada por umidade, gerando mau contato."},
-{p:"CORROSAO",c:"Defeitos",d:"Médio",desc:"Degradação do metal que pode atingir trilhas e componentes do console.",h:["Degradação do metal.","Pode atingir trilhas e componentes.","Exige limpeza e às vezes reconstrução da trilha."],e:"Degradação do metal por agentes químicos ou umidade, podendo romper trilhas e destruir terminais."},
-{p:"SUPERAQUECIMENTO",c:"Defeitos",d:"Médio",desc:"Temperatura acima do normal que pode acionar proteção térmica. Pasta seca e cooler obstruído estão envolvidos.",h:["Temperatura acima do normal.","Pode acionar proteção térmica.","Pasta térmica e cooler estão envolvidos."],e:"Elevação excessiva de temperatura. Pode ser causada por falha de ventilação, pasta térmica seca ou consumo anormal."},
-{p:"ARTEFATO",c:"Defeitos",d:"Médio",desc:"Distorção visual na imagem, como listras, blocos ou cores erradas. Pode indicar problema na GPU ou memória de vídeo.",h:["Aparece na imagem.","Pode ser listras, blocos ou cores erradas.","Pode indicar problema na GPU ou memória de vídeo."],e:"Distorção visual na imagem, como blocos, listras ou cores incorretas. Pode ter origem na GPU, memórias ou conexões."},
-{p:"TRAVAMENTO",c:"Defeitos",d:"Médio",desc:"Interrupção do funcionamento em que o console para de responder. Diversas causas possíveis.",h:["O sistema para de responder.","Pode ocorrer em jogos ou no menu.","Pode ter origem térmica, de memória ou de firmware."],e:"Interrupção do funcionamento em que o sistema deixa de responder. Diversas causas possíveis, incluindo térmicas e de memória."},
-{p:"DESLIGAMENTO",c:"Defeitos",d:"Médio",desc:"Aparelho desliga sozinho. Frequentemente associado à atuação de proteções.",h:["O aparelho desliga sozinho.","Pode ser proteção atuando.","Pode estar ligado a consumo ou temperatura."],e:"Desligamento não comandado pelo usuário. Frequentemente associado à atuação de proteções."},
-{p:"REINICIO",c:"Defeitos",d:"Médio",desc:"Reinicialização inesperada do console, muitas vezes ligada a quedas de tensão sob carga.",h:["O sistema volta ao início sozinho.","Pode ser queda de tensão.","Pode ocorrer sob carga."],e:"Reinicialização inesperada do sistema, muitas vezes ligada a quedas de tensão sob carga."},
-{p:"ABERTO",c:"Defeitos",d:"Médio",desc:"Condição em que um componente ou trilha não conduz mais corrente, interrompendo o circuito.",h:["Significa caminho interrompido.","O componente não conduz.","Pode ser medido com continuidade."],e:"Condição em que um componente ou trilha não conduz mais corrente, interrompendo o circuito."},
-{p:"INTERMITENTE",c:"Defeitos",d:"Difícil",desc:"Falha que aparece e desaparece. Difícil de reproduzir, pode depender de temperatura ou vibração.",h:["A falha vai e volta.","Difícil de reproduzir.","Pode depender de temperatura ou vibração."],e:"Falha que aparece e desaparece, geralmente associada a solda fria, contato ruim ou dilatação térmica."},
-{p:"TRILHA",c:"Defeitos",d:"Médio",desc:"Caminho condutor de cobre na placa. Pode romper por corrosão, calor ou dano mecânico.",h:["É o caminho de cobre na placa.","Pode romper por corrosão.","Pode ser restaurada com fio."],e:"Caminho condutor de cobre na placa. Pode romper por corrosão, calor ou dano mecânico."},
-{p:"QUEIMADO",c:"Defeitos",d:"Fácil",desc:"Componente danificado por excesso de corrente ou calor, muitas vezes com marca escura visível.",h:["Indica dano por calor excessivo.","Pode apresentar cheiro ou marca escura.","Exige análise do motivo da queima."],e:"Componente danificado por excesso de corrente ou calor, muitas vezes com marca escura visível."},
-{p:"UMIDADE",c:"Defeitos",d:"Fácil",desc:"Presença de água ou vapor no aparelho, levando à oxidação e a curtos.",h:["Vem do ambiente ou de líquidos.","Provoca oxidação.","Pode causar curto."],e:"Presença de água ou vapor no aparelho, levando à oxidação e a curtos."},
-{p:"INFILTRACAO",c:"Defeitos",d:"Médio",desc:"Entrada de líquido no console. Quanto mais rápido o tratamento, menor o dano.",h:["Líquido entrou no aparelho.","Causa corrosão e curtos.","Exige limpeza imediata."],e:"Entrada de líquido no aparelho. Quanto mais rápido o tratamento, menor o dano."},
-{p:"AVARIA",c:"Defeitos",d:"Médio",desc:"Dano grave que compromete o funcionamento do aparelho e exige avaliação completa.",h:["É um dano grave.","Pode inutilizar o aparelho.","Exige avaliação completa."],e:"Dano grave que compromete o funcionamento do aparelho, exigindo avaliação detalhada."},
-{p:"FALHA",c:"Defeitos",d:"Fácil",desc:"Funcionamento diferente do esperado, total ou parcial. Precisa ser investigada com medições.",h:["Indica funcionamento incorreto.","Pode ser total ou parcial.","Precisa ser investigada com medições."],e:"Qualquer funcionamento diferente do esperado. Deve ser investigada com método e medições."},
-{p:"DEFEITO",c:"Defeitos",d:"Fácil",desc:"Anomalia apresentada pelo aparelho. O sintoma é o defeito; a causa exige investigação.",h:["É o problema apresentado.","Pode ter várias causas.","Não deve ser confundido com a causa."],e:"Anomalia apresentada pelo aparelho. O defeito é o sintoma; a causa exige investigação."},
-{p:"SUJEIRA",c:"Defeitos",d:"Fácil",desc:"Acúmulo de poeira e resíduos que obstrui a ventilação e provoca superaquecimento.",h:["Acumula com o uso.","Pode causar superaquecimento.","Deve ser removida com cuidado."],e:"Acúmulo de poeira e resíduos que obstrui a ventilação e provoca superaquecimento."},
-
-/* ---------- FERRAMENTAS (15) ---------- */
-{p:"MULTIMETRO",c:"Ferramentas",d:"Fácil",desc:"Instrumento que mede tensão, corrente e resistência. É a ferramenta básica da bancada.",h:["Mede várias grandezas elétricas.","Possui pontas de prova.","Tem escalas de tensão, corrente e resistência."],e:"Instrumento que mede tensão, corrente, resistência e continuidade. É a ferramenta básica da bancada."},
-{p:"OSCILOSCOPIO",c:"Ferramentas",d:"Médio",desc:"Instrumento que exibe a forma de onda de um sinal ao longo do tempo.",h:["Mostra a forma de onda.","Permite ver o sinal no tempo.","É essencial para clock e comunicação."],e:"Instrumento que exibe a forma de onda de um sinal ao longo do tempo, permitindo analisar frequência e amplitude."},
-{p:"BANCADA",c:"Ferramentas",d:"Médio",desc:"Estação de trabalho do técnico. Deve ser organizada, iluminada e com aterramento adequado.",h:["É o local de trabalho do técnico.","Deve ser organizada e aterrada.","Aqui ficam os equipamentos."],e:"Estação de trabalho do técnico. Deve ser organizada, iluminada e com aterramento adequado."},
-{p:"ESTACAO",c:"Ferramentas",d:"Médio",desc:"Equipamento de solda ou ar quente com temperatura controlada. Usada para soldar e dessoldar.",h:["Serve para soldar e dessoldar.","Pode ser de ar quente.","Permite controlar a temperatura."],e:"Estação de solda ou de ar quente usada para soldar e dessoldar componentes com temperatura controlada."},
-{p:"SOLDA",c:"Ferramentas",d:"Fácil",desc:"Processo de união de componentes à placa por liga metálica fundida.",h:["Une componentes à placa.","Pode ser feita com ferro ou ar quente.","Exige temperatura e fluxo adequados."],e:"Processo de união de componentes à placa por meio de liga metálica fundida."},
-{p:"MICROSCOPIO",c:"Ferramentas",d:"Médio",desc:"Instrumento de ampliação usado para inspecionar soldas, trilhas e componentes pequenos.",h:["Amplia detalhes pequenos.","Ajuda a ver soldas e trincas.","Muito usado em SMD e BGA."],e:"Instrumento de ampliação usado para inspecionar soldas, trilhas e componentes de pequeno porte."},
-{p:"LUPA",c:"Ferramentas",d:"Fácil",desc:"Lente de aumento usada para inspeção visual de soldas e componentes.",h:["Amplia a visão.","Ajuda na inspeção visual.","Pode ter iluminação acoplada."],e:"Lente de aumento usada para inspeção visual de soldas e componentes."},
-{p:"TERMOMETRO",c:"Ferramentas",d:"Fácil",desc:"Instrumento para medir temperatura. Útil para identificar componentes que aquecem demais.",h:["Mede temperatura.","Pode ser de contato ou infravermelho.","Ajuda a detectar aquecimento anormal."],e:"Instrumento para medir temperatura, útil na identificação de componentes que aquecem demais."},
-{p:"ANALISADOR",c:"Ferramentas",d:"Difícil",desc:"Equipamento que registra e interpreta sinais digitais em barramentos de comunicação.",h:["Analisa sinais digitais.","Registra comunicação entre chips.","Ajuda em barramentos e protocolos."],e:"Analisador lógico: registra e interpreta sinais digitais em barramentos de comunicação."},
-{p:"ALICATE",c:"Ferramentas",d:"Fácil",desc:"Ferramenta de corte, prensão e manipulação. Existem modelos específicos para eletrônica.",h:["Aperta, corta e segura.","Existem vários modelos.","Não deve ser usado como chave."],e:"Ferramenta de corte, prensão e manipulação. Existem modelos específicos para eletrônica."},
-{p:"PINCA",c:"Ferramentas",d:"Fácil",desc:"Ferramenta de precisão para manipular componentes pequenos. Existe em versão antiestática.",h:["Serve para pegar peças pequenas.","Existe em versão antiestática.","Ajuda na solda de SMD."],e:"Ferramenta de precisão para manipular componentes pequenos, disponível em versões antiestáticas."},
-{p:"SUGADOR",c:"Ferramentas",d:"Médio",desc:"Ferramenta que aspira a solda derretida, facilitando a remoção de componentes.",h:["Remove solda derretida.","Ajuda a dessoldar componentes.","Deve ser acionado rapidamente."],e:"Ferramenta que aspira a solda derretida, facilitando a remoção de componentes."},
-{p:"FLUXO",c:"Ferramentas",d:"Médio",desc:"Substância que reduz a oxidação e melhora o espalhamento da solda durante o processo.",h:["Ajuda a solda a fluir.","Reduz oxidação durante a solda.","Deve ser limpo após o uso."],e:"Substância que reduz a oxidação e melhora o espalhamento da solda durante o processo."},
-{p:"ESTANHO",c:"Ferramentas",d:"Fácil",desc:"Liga metálica usada na solda de componentes eletrônicos. Vem em fio ou pasta.",h:["É o material de solda.","Vem em fio ou pasta.","Existem ligas com e sem chumbo."],e:"Liga metálica usada na solda de componentes eletrônicos."},
-{p:"PULSEIRA",c:"Ferramentas",d:"Médio",desc:"Pulseira antiestática que drena cargas do corpo do técnico, evitando ESD nos componentes.",h:["É usada no pulso do técnico.","Previne descarga eletrostática.","Deve estar ligada ao terra."],e:"Pulseira antiestática que drena cargas do corpo do técnico, evitando ESD nos componentes."},
-
-/* ---------- VÍDEO (16) ---------- */
-{p:"HDMI",c:"Vídeo",d:"Fácil",desc:"Interface digital que transporta áudio e vídeo em alta definição. Possui 19 pinos na versão padrão.",h:["É uma interface de vídeo digital.","Transporta áudio e vídeo.","Possui 19 pinos na versão padrão."],e:"High Definition Multimedia Interface: interface digital que transporta áudio e vídeo em alta definição."},
-{p:"IMAGEM",c:"Vídeo",d:"Fácil",desc:"Resultado visual da saída de vídeo. Sua ausência pode ter várias origens.",h:["É o resultado visual da saída de vídeo.","Pode faltar mesmo com o console ligado.","Depende de toda a cadeia de vídeo."],e:"Resultado visual gerado pelo console e exibido na tela. Sua ausência pode ter várias origens."},
-{p:"MANCHA",c:"Vídeo",d:"Fácil",desc:"Alteração localizada na imagem ou no painel, podendo ter origem no display ou na iluminação.",h:["É um defeito visual.","Aparece em uma região da tela.","Pode ser do painel ou do backlight."],e:"Alteração localizada na imagem ou no painel, podendo ter origem no display ou na iluminação."},
-{p:"LISTRAS",c:"Vídeo",d:"Fácil",desc:"Linhas verticais ou horizontais na imagem, geralmente ligadas ao painel, ao flex ou à GPU.",h:["São linhas na imagem.","Podem ser verticais ou horizontais.","Podem indicar painel ou conexão."],e:"Linhas verticais ou horizontais na imagem, geralmente ligadas ao painel, ao flex ou à GPU."},
-{p:"PIXEL",c:"Vídeo",d:"Fácil",desc:"Menor elemento da imagem. Pode apresentar defeito preso ou morto.",h:["É o menor ponto da imagem.","Pode ficar preso ou morto.","Pode ser permanente."],e:"Menor elemento da imagem. Pode apresentar defeito preso (sempre aceso) ou morto (sempre apagado)."},
-{p:"TELA",c:"Vídeo",d:"Fácil",desc:"Display do aparelho, que pode ser LCD ou OLED e liga-se à placa por cabo flex.",h:["É o display do aparelho.","Pode ser LCD ou OLED.","Liga-se por cabo flex."],e:"Display responsável por exibir a imagem. Conecta-se à placa por cabo flex ou conector."},
-{p:"BACKLIGHT",c:"Vídeo",d:"Médio",desc:"Iluminação traseira do painel LCD, normalmente feita por LEDs. Sua falha deixa a tela escura.",h:["Ilumina o painel LCD.","É formado por LEDs.","Se falhar, a imagem fica escura."],e:"Iluminação traseira do painel LCD, normalmente feita por LEDs. Sua falha deixa a tela escura."},
-{p:"RESOLUCAO",c:"Vídeo",d:"Médio",desc:"Quantidade de pixels exibidos na tela, definindo o nível de detalhe da imagem.",h:["Define a quantidade de pixels.","Quanto maior, mais detalhe.","Precisa ser compatível com a TV."],e:"Quantidade de pixels exibidos na tela, definindo o nível de detalhe da imagem."},
-{p:"RGB",c:"Vídeo",d:"Fácil",desc:"Três componentes de cor usadas para formar todas as cores na tela.",h:["São três componentes de cor.","Vermelho, verde e azul.","Formam todas as cores na tela."],e:"Red, Green, Blue: as três componentes de cor usadas para formar todas as cores na tela."},
-{p:"VGA",c:"Vídeo",d:"Fácil",desc:"Padrão de vídeo analógico com conector de 15 pinos, só para imagem.",h:["É uma interface de vídeo analógica.","Usa conector de 15 pinos.","Transporta apenas vídeo."],e:"Video Graphics Array: padrão de vídeo analógico com conector de 15 pinos, só para imagem."},
-{p:"DISPLAY",c:"Vídeo",d:"Médio",desc:"Conjunto de exibição formado pelo painel e pelo circuito de controle.",h:["É o conjunto de exibição.","Inclui painel e controle.","Pode ter driver próprio."],e:"Conjunto de exibição, formado pelo painel e pelo circuito de controle."},
-{p:"LCD",c:"Vídeo",d:"Fácil",desc:"Painel de cristal líquido que precisa de iluminação traseira.",h:["É um tipo de painel.","Usa cristal líquido.","Precisa de backlight."],e:"Liquid Crystal Display: painel de cristal líquido que precisa de iluminação traseira."},
-{p:"OLED",c:"Vídeo",d:"Fácil",desc:"Painel em que cada pixel emite luz própria, dispensando backlight.",h:["É um tipo de painel.","Cada pixel emite luz própria.","Não precisa de backlight."],e:"Organic Light Emitting Diode: painel em que cada pixel emite luz própria, dispensando backlight."},
-{p:"FLEX",c:"Vídeo",d:"Médio",desc:"Cabo plano que conecta a tela à placa. Pode romper ou apresentar mau contato.",h:["É um cabo plano.","Liga a tela à placa.","Pode romper ou desgastar."],e:"Cabo plano flexível que conecta a tela à placa. Pode romper ou apresentar mau contato."},
-{p:"LED",c:"Vídeo",d:"Fácil",desc:"Diodo emissor de luz, usado em indicadores e na iluminação de painéis.",h:["É um diodo emissor de luz.","Usado em iluminação e indicadores.","Também forma o backlight."],e:"Diodo emissor de luz, usado em indicadores e na iluminação de painéis."},
-{p:"RETROILUMINACAO",c:"Vídeo",d:"Difícil",desc:"Sistema de iluminação posicionado atrás do painel, responsável por tornar a imagem visível.",h:["Ilumina o painel por trás.","Também chamada de backlight.","Pode ter falha parcial."],e:"Sistema de iluminação posicionado atrás do painel, responsável por tornar a imagem visível."},
-
-/* ---------- ÁUDIO (9) ---------- */
-{p:"AUDIO",c:"Áudio",d:"Fácil",desc:"Sinal sonoro gerado pelo console e reproduzido por alto-falantes, fone ou saída HDMI.",h:["É o som do sistema.","Pode sair por HDMI, fone ou alto-falante.","Depende de codec e amplificador."],e:"Sinal sonoro gerado pelo sistema e reproduzido por alto-falantes, fone ou saída HDMI."},
-{p:"FALANTE",c:"Áudio",d:"Fácil",desc:"Transdutor que converte sinal elétrico em som audível.",h:["Transforma sinal elétrico em som.","Também é chamado de alto-falante.","Pode ter a bobina rompida."],e:"Transdutor que converte sinal elétrico em som audível."},
-{p:"ZUMBIDO",c:"Áudio",d:"Médio",desc:"Ruído contínuo de baixa frequência, muitas vezes ligado a problemas de filtragem na alimentação.",h:["É um ruído contínuo.","Pode vir da alimentação.","Capacitores ruins agravam."],e:"Ruído contínuo de baixa frequência, muitas vezes ligado a problemas de filtragem na alimentação."},
-{p:"CHIADO",c:"Áudio",d:"Médio",desc:"Ruído agudo, geralmente causado por interferência ou realimentação no circuito de áudio.",h:["É um ruído agudo.","Pode vir de interferência.","Aparece com o volume alto."],e:"Ruído agudo, geralmente causado por interferência ou realimentação no circuito de áudio."},
-{p:"AMPLIFICADOR",c:"Áudio",d:"Médio",desc:"Circuito que eleva o nível do sinal de áudio para excitar o alto-falante.",h:["Aumenta o nível do sinal.","Alimenta o alto-falante.","Pode esquentar durante o uso."],e:"Circuito que eleva o nível do sinal de áudio para excitar o alto-falante."},
-{p:"CODEC",c:"Áudio",d:"Difícil",desc:"Circuito que converte sinais entre os domínios digital e analógico no áudio.",h:["Converte sinais de áudio.","Faz digital para analógico.","É comum em consoles."],e:"Circuito que converte sinais entre os domínios digital e analógico no áudio."},
-{p:"JACK",c:"Áudio",d:"Fácil",desc:"Conector usado para fone ou microfone, geralmente de 3,5 mm. Contatos sujos causam falha.",h:["É um conector de áudio.","Costuma ser de 3,5 mm.","Pode ter contato sujo."],e:"Conector usado para fone ou microfone, geralmente de 3,5 mm. Contatos sujos causam falha."},
-{p:"FONE",c:"Áudio",d:"Fácil",desc:"Acessório que reproduz áudio próximo ao ouvido, útil para isolar falhas de saída.",h:["Reproduz áudio no ouvido.","Usa conector ou conexão sem fio.","Ajuda a isolar o problema de áudio."],e:"Acessório que reproduz áudio próximo ao ouvido, útil para isolar falhas de saída."},
-{p:"MICROFONE",c:"Áudio",d:"Fácil",desc:"Transdutor que converte som em sinal elétrico, usado em headsets e chat de voz.",h:["Capta som.","Converte som em sinal elétrico.","Pode falhar em headsets."],e:"Transdutor que converte som em sinal elétrico, usado em headsets e chat de voz."},
-
-/* ---------- USB (8) ---------- */
-{p:"USB",c:"USB",d:"Fácil",desc:"Interface universal que transporta dados e energia entre o console e os periféricos.",h:["É uma interface universal.","Transporta dados e energia.","Existe em várias versões."],e:"Universal Serial Bus: interface que transporta dados e energia entre dispositivos."},
-{p:"HOST",c:"USB",d:"Médio",desc:"Dispositivo que controla o barramento USB e gerencia os periféricos conectados.",h:["É quem controla o barramento.","O console normalmente atua assim.","Gerencia os dispositivos conectados."],e:"Dispositivo que controla o barramento USB e gerencia os periféricos conectados."},
-{p:"PERIFERICO",c:"USB",d:"Médio",desc:"Dispositivo conectado ao console, como controle, teclado ou headset.",h:["É conectado ao console.","Pode ser controle, teclado ou headset.","Depende da porta USB."],e:"Dispositivo conectado ao console, como controle, teclado ou headset."},
-{p:"CONTROLADOR",c:"USB",d:"Difícil",desc:"Circuito que gerencia o barramento e as portas USB do console. Sua falha afeta o conjunto das portas.",h:["Gerencia um barramento.","Fica na placa do console.","Falhas afetam todas as portas."],e:"Circuito que gerencia o barramento e as portas USB. Falhas nele afetam o conjunto das portas."},
-{p:"CABO",c:"USB",d:"Fácil",desc:"Condutor que transporta sinal e energia. Pode romper internamente e causar falha.",h:["Transporta sinal e energia.","Pode romper internamente.","Deve ser testado antes da placa."],e:"Condutor que transporta sinal e energia. Pode romper internamente e causar falha."},
-{p:"PINO",c:"USB",d:"Fácil",desc:"Terminal metálico do conector. Pode entortar, quebrar ou soltar da placa.",h:["É o terminal do conector.","Pode entortar ou quebrar.","Precisa de solda firme."],e:"Terminal metálico do conector. Pode entortar, quebrar ou soltar da placa."},
-{p:"ADAPTADOR",c:"USB",d:"Médio",desc:"Dispositivo que converte um padrão de conexão em outro, podendo ser de energia ou de dados.",h:["Converte um padrão em outro.","Pode ser de tomada ou de dados.","Pode introduzir falhas."],e:"Dispositivo que converte um padrão de conexão em outro, podendo ser de energia ou de dados."},
-{p:"DADOS",c:"USB",d:"Fácil",desc:"Informação transmitida pela interface. Uma porta pode ter energia sem transferir dados.",h:["É a informação transmitida.","Passa pelos pinos de dados.","Pode haver energia sem dados."],e:"Informação transmitida pela interface. Uma porta pode ter energia sem conseguir transferir dados."},
-
-/* ---------- PLAYSTATION (20) ---------- */
-{p:"PLAYSTATION",c:"PlayStation",d:"Fácil",desc:"Família de consoles da Sony, presente em várias gerações e revisões de placa.",h:["É uma família de consoles.","Fabricada pela Sony.","Passou por várias gerações."],e:"Família de consoles da Sony, presente em várias gerações e revisões de placa."},
-{p:"PSP",c:"PlayStation",d:"Fácil",desc:"Console portátil da Sony com tela própria e bateria interna.",h:["É um console portátil.","Fabricado pela Sony.","Usa cartão de memória próprio."],e:"PlayStation Portable: console portátil da Sony, com tela própria e bateria interna."},
-{p:"VITA",c:"PlayStation",d:"Fácil",desc:"Console portátil da Sony, sucessor do PSP, com tela OLED em uma versão.",h:["É um portátil da Sony.","Sucessor do PSP.","Possui tela OLED em uma versão."],e:"PlayStation Vita: console portátil da Sony, sucessor do PSP."},
-{p:"DUALSENSE",c:"PlayStation",d:"Médio",desc:"Controle oficial do PlayStation 5, com gatilhos adaptáveis e resposta tátil.",h:["É um controle de console.","Tem gatilhos adaptáveis.","Acompanha o PS5."],e:"Controle oficial do PlayStation 5, com gatilhos adaptáveis e resposta tátil."},
-{p:"DUALSHOCK",c:"PlayStation",d:"Médio",desc:"Família de controles do PlayStation com vibração, usada de gerações anteriores até o PS4.",h:["É um controle de console.","Foi usado por várias gerações.","Possui vibração."],e:"Família de controles do PlayStation com vibração, usada de gerações anteriores até o PS4."},
-{p:"LEITOR",c:"PlayStation",d:"Médio",desc:"Conjunto responsável por ler a mídia óptica do console.",h:["Lê mídia física.","Tem conjunto óptico.","Pode falhar com o tempo."],e:"Conjunto responsável por ler a mídia óptica do console."},
-{p:"LENTE",c:"PlayStation",d:"Médio",desc:"Componente óptico que focaliza o laser sobre o disco. Sujeira ou desgaste causam falha de leitura.",h:["Faz parte do conjunto óptico.","Focaliza o laser.","Sua sujeira causa falha de leitura."],e:"Componente óptico que focaliza o laser sobre o disco. Sujeira ou desgaste causam falha de leitura."},
-{p:"LASER",c:"PlayStation",d:"Médio",desc:"Feixe de luz usado para ler a mídia óptica. Nunca olhe diretamente para o feixe.",h:["Lê a mídia óptica.","Tem comprimento de onda específico.","Nunca olhe diretamente para ele."],e:"Feixe de luz usado para ler a mídia óptica. Nunca olhe diretamente para o feixe."},
-{p:"MODCHIP",c:"PlayStation",d:"Difícil",desc:"Circuito adicional instalado para alterar o funcionamento original do console.",h:["É um chip adicional.","Altera o funcionamento original.","Pode comprometer a garantia."],e:"Circuito adicional instalado para alterar o funcionamento original do console."},
-{p:"DESBLOQUEIO",c:"PlayStation",d:"Médio",desc:"Procedimento que remove restrições de região ou mídia do console, envolvendo riscos técnicos e legais.",h:["Permite uso não original.","Pode ser por software ou hardware.","Envolve riscos e garantia."],e:"Procedimento que remove restrições de região ou mídia do console. Envolve riscos técnicos e legais."},
-{p:"FIRMWARE",c:"PlayStation",d:"Médio",desc:"Software básico gravado no console, responsável pelo funcionamento e atualizável pelo fabricante.",h:["É o software básico do console.","Pode ser atualizado.","Versão errada pode causar problemas."],e:"Software básico gravado no console, responsável pelo funcionamento e atualizável pelo fabricante."},
-{p:"REVISAO",c:"PlayStation",d:"Médio",desc:"Identificação da versão da placa. Revisões diferentes podem ter componentes e tensões diferentes.",h:["Identifica a versão da placa.","Muda entre lotes.","Afeta tensões e componentes."],e:"Identificação da versão da placa. Revisões diferentes podem ter componentes e tensões diferentes."},
-{p:"COOLER",c:"PlayStation",d:"Médio",desc:"Sistema de refrigeração do console, geralmente formado por ventoinha e dissipador.",h:["Refrigera o console.","Possui ventoinha.","Poeira reduz seu desempenho."],e:"Sistema de refrigeração do console, geralmente formado por ventoinha e dissipador."},
-{p:"PASTA",c:"PlayStation",d:"Fácil",desc:"Pasta térmica aplicada entre o chip e o dissipador para melhorar a condução de calor.",h:["Fica entre chip e dissipador.","Melhora a troca de calor.","Pode secar com o tempo."],e:"Pasta térmica aplicada entre o chip e o dissipador para melhorar a condução de calor."},
-{p:"BLURAY",c:"PlayStation",d:"Médio",desc:"Mídia óptica de alta capacidade usada em consoles a partir de determinada geração.",h:["É uma mídia óptica.","Usada em consoles modernos.","Tem alta capacidade."],e:"Mídia óptica de alta capacidade usada em consoles a partir de determinada geração."},
-{p:"DISCO",c:"PlayStation",d:"Fácil",desc:"Mídia física de armazenamento lida pelo conjunto óptico do console.",h:["É a mídia física.","Pode riscar.","Depende do leitor óptico."],e:"Mídia física de armazenamento lida pelo conjunto óptico do console."},
-{p:"SENSOR",c:"PlayStation",d:"Médio",desc:"Dispositivo que detecta uma grandeza física e a converte em sinal elétrico.",h:["Detecta uma grandeza física.","Pode ser de temperatura ou posição.","Envia sinal ao controlador."],e:"Dispositivo que detecta uma grandeza física e a converte em sinal elétrico."},
-{p:"CONSOLE",c:"PlayStation",d:"Fácil",desc:"Aparelho de videogame que executa jogos e gera a saída de áudio e vídeo.",h:["É o aparelho de videogame.","Liga-se à TV.","Contém placa, fonte e refrigeração."],e:"Aparelho de videogame que executa jogos e gera a saída de áudio e vídeo."},
-{p:"HOMEBREW",c:"PlayStation",d:"Difícil",desc:"Software não oficial desenvolvido por comunidade, executado em consoles modificados.",h:["É software não oficial.","Roda em consoles modificados.","Envolve riscos."],e:"Software não oficial desenvolvido por comunidade, executado em consoles modificados."},
-{p:"BLUETOOTH",c:"PlayStation",d:"Médio",desc:"Tecnologia sem fio usada para conectar controles ao console.",h:["É uma tecnologia sem fio.","Conecta controles ao console.","Tem baixo consumo de energia."],e:"Tecnologia de comunicação sem fio de curto alcance usada para conectar controles e acessórios ao console."},
-
-/* ---------- XBOX (11) ---------- */
-{p:"XBOX",c:"Xbox",d:"Fácil",desc:"Família de consoles da Microsoft, com várias gerações e revisões de placa.",h:["É uma família de consoles.","Fabricada pela Microsoft.","Estreou no início dos anos 2000."],e:"Família de consoles da Microsoft, com várias gerações e revisões de placa."},
-{p:"KINECT",c:"Xbox",d:"Médio",desc:"Acessório com câmera e sensores de movimento e profundidade, usado em algumas gerações do Xbox.",h:["É um acessório de sensor.","Detecta movimento.","Usa câmera e sensores."],e:"Acessório com câmera e sensores de movimento e profundidade, usado em algumas gerações do Xbox."},
-{p:"ELITE",c:"Xbox",d:"Fácil",desc:"Linha de controles de alto desempenho, com peças intercambiáveis e ajustes.",h:["É uma linha de controle.","Tem peças intercambiáveis.","Custa mais que o controle comum."],e:"Linha de controles de alto desempenho, com peças intercambiáveis e ajustes."},
-{p:"DASHBOARD",c:"Xbox",d:"Médio",desc:"Interface principal do console, que organiza jogos, configurações e serviços.",h:["É a interface do console.","Organiza jogos e ajustes.","Pode ser atualizada."],e:"Interface principal do console, que organiza jogos, configurações e serviços."},
-{p:"GAMERTAG",c:"Xbox",d:"Médio",desc:"Apelido que identifica a conta do jogador na rede Xbox.",h:["É o apelido do jogador.","Identifica a conta.","Pode ser alterada."],e:"Apelido que identifica a conta do jogador na rede Xbox."},
-{p:"VENTILADOR",c:"Xbox",d:"Médio",desc:"Componente que movimenta o ar para refrigerar o console, evitando superaquecimento.",h:["Move o ar.","Refrigera o console.","Pode acumular poeira."],e:"Componente que movimenta o ar para refrigerar o console, evitando superaquecimento."},
-{p:"XCLAMP",c:"Xbox",d:"Difícil",desc:"Peça de fixação do dissipador em determinados modelos de Xbox. O manuseio incorreto pode danificar a placa.",h:["É uma peça de fixação.","Relaciona-se ao dissipador.","Exige cuidado ao remover."],e:"Peça de fixação do dissipador em determinados modelos de Xbox. O manuseio incorreto pode danificar a placa."},
-{p:"RROD",c:"Xbox",d:"Difícil",desc:"Indicação luminosa de falha de hardware em uma geração do Xbox. As causas podem ser várias.",h:["É um código de erro visual.","Aparece como luzes no painel.","Indica falha geral de hardware."],e:"Red Ring of Death: indicação luminosa de falha de hardware em uma geração do Xbox. As causas podem ser várias."},
-{p:"JASPER",c:"Xbox",d:"Difícil",desc:"Nome de uma revisão de placa de uma geração do Xbox, com melhorias de consumo e refrigeração.",h:["É uma revisão de placa.","Pertence a uma geração do Xbox.","Mudou o consumo e a refrigeração."],e:"Nome de uma revisão de placa de uma geração do Xbox, com melhorias de consumo e refrigeração."},
-{p:"CORONA",c:"Xbox",d:"Difícil",desc:"Nome de uma revisão de placa de uma geração do Xbox. Características variam conforme a versão.",h:["É uma revisão de placa.","Pertence a uma geração do Xbox.","Varia conforme a versão."],e:"Nome de uma revisão de placa de uma geração do Xbox. Características variam conforme a versão."},
-{p:"SCORPIO",c:"Xbox",d:"Difícil",desc:"Codinome de projeto usado durante o desenvolvimento de um modelo de Xbox.",h:["É um codinome de projeto.","Relaciona-se a um modelo do Xbox.","Não é o nome comercial final."],e:"Codinome de projeto usado durante o desenvolvimento de um modelo de Xbox."},
-
-/* ---------- NINTENDO (14) ---------- */
-{p:"NINTENDO",c:"Nintendo",d:"Fácil",desc:"Empresa japonesa de videogames responsável por diversas famílias de consoles.",h:["É uma empresa japonesa.","Criou franquias famosas.","Faz consoles desde os anos 80."],e:"Empresa japonesa de videogames, responsável por diversas famílias de consoles."},
-{p:"SWITCH",c:"Nintendo",d:"Fácil",desc:"Console híbrido que funciona como portátil e como console de mesa.",h:["É um console híbrido.","Serve como portátil e de mesa.","Usa Joy-Con."],e:"Console híbrido da Nintendo, que funciona como portátil e como console de mesa."},
-{p:"JOYCON",c:"Nintendo",d:"Médio",desc:"Controle destacável do Switch, que se acopla às laterais do console.",h:["É um controle destacável.","Vem em pares.","Encaixa nas laterais do console."],e:"Controle destacável do Switch, que se acopla às laterais do console."},
-{p:"GAMECUBE",c:"Nintendo",d:"Fácil",desc:"Console de mesa da Nintendo com mídia óptica própria e controle característico.",h:["É um console de mesa.","Usa discos de tamanho menor.","Tem controle com formato marcante."],e:"Console de mesa da Nintendo com mídia óptica própria e controle característico."},
-{p:"GAMEPAD",c:"Nintendo",d:"Médio",desc:"Controle com tela integrada do Wii U, que permite jogar sem usar a televisão.",h:["É um controle com tela.","Pertence a um console da Nintendo.","Permite jogar sem a TV."],e:"Controle com tela integrada do Wii U, que permite jogar sem usar a televisão."},
-{p:"WIIMOTE",c:"Nintendo",d:"Médio",desc:"Controle com sensores de movimento do Wii, usado com a barra de sensores.",h:["É um controle por movimento.","Usa sensor de posição.","Acompanha um console da Nintendo."],e:"Controle com sensores de movimento do Wii, usado com a barra de sensores."},
-{p:"NUNCHUK",c:"Nintendo",d:"Difícil",desc:"Acessório que se conecta ao controle do Wii e adiciona analógico e botões.",h:["É um acessório de controle.","Conecta-se ao controle principal.","Adiciona analógico."],e:"Acessório que se conecta ao controle do Wii e adiciona analógico e botões."},
-{p:"CARTUCHO",c:"Nintendo",d:"Fácil",desc:"Mídia física em formato de placa encapsulada, usada em consoles e portáteis.",h:["É uma mídia física.","Usado em consoles antigos e portáteis.","Tem contatos dourados."],e:"Mídia física em formato de placa encapsulada, usada em consoles e portáteis."},
-{p:"SNES",c:"Nintendo",d:"Fácil",desc:"Console de 16 bits, sucessor do NES. Ficou conhecido no Brasil por outro nome.",h:["É um console de 16 bits.","Sucessor do NES.","Ficou conhecido no Brasil por outro nome."],e:"Super Nintendo Entertainment System: console de 16 bits, sucessor do NES."},
-{p:"NES",c:"Nintendo",d:"Fácil",desc:"Console de 8 bits que popularizou os videogames domésticos.",h:["É um console de 8 bits.","Muito famoso nos anos 80.","Usava cartuchos."],e:"Nintendo Entertainment System: console de 8 bits que popularizou os videogames domésticos."},
-{p:"FITA",c:"Nintendo",d:"Fácil",desc:"Nome popular dado ao cartucho em algumas regiões. Seus contatos precisam estar limpos.",h:["É um apelido de mídia.","Usada em consoles antigos.","Precisa de limpeza nos contatos."],e:"Nome popular dado ao cartucho em algumas regiões. Seus contatos precisam estar limpos."},
-{p:"DOCK",c:"Nintendo",d:"Médio",desc:"Base que conecta o console portátil à TV e realiza a recarga.",h:["É uma base de console.","Conecta à TV.","Também carrega o aparelho."],e:"Base que conecta o console portátil à TV e realiza a recarga."},
-{p:"LITE",c:"Nintendo",d:"Fácil",desc:"Versão do Switch voltada ao uso portátil, com controles fixos.",h:["É uma versão de console.","Não destaca os controles.","É portátil por completo."],e:"Versão do Switch voltada ao uso portátil, com controles fixos."},
-{p:"PROCONTROLLER",c:"Nintendo",d:"Médio",desc:"Controle opcional do Switch com formato tradicional, sem tela.",h:["É um controle do Switch.","Tem formato tradicional.","Não tem tela."],e:"Controle opcional do Switch com formato tradicional e pegada mais confortável."},
-
-/* ---------- DIAGNÓSTICO (18) ---------- */
-{p:"DIAGNOSTICO",c:"Diagnóstico",d:"Fácil",desc:"Processo de identificar a causa de um defeito por meio de observação, medições e comparação.",h:["É o processo de identificar a causa.","Vem depois do sintoma.","Exige método e medições."],e:"Processo de identificar a causa de um defeito por meio de observação, medições e comparação."},
-{p:"SINTOMA",c:"Diagnóstico",d:"Fácil",desc:"Manifestação observável do defeito. Não é a causa e pode ter várias origens.",h:["É o que o aparelho apresenta.","Não é a causa.","Pode ter várias origens."],e:"Manifestação observável do defeito. O sintoma não é a causa e pode ter várias origens."},
-{p:"CAUSA",c:"Diagnóstico",d:"Fácil",desc:"Origem real do defeito. Deve ser confirmada por medição, não por suposição.",h:["É a origem do problema.","Só é confirmada com medição.","Não deve ser suposta."],e:"Origem real do defeito. Deve ser confirmada por medição, não por suposição."},
-{p:"ANALISE",c:"Diagnóstico",d:"Médio",desc:"Estudo sistemático do problema, seguindo um método para chegar à causa.",h:["É o estudo do problema.","Segue um método.","Evita troca desnecessária."],e:"Estudo sistemático do problema, seguindo um método para chegar à causa."},
-{p:"TESTE",c:"Diagnóstico",d:"Fácil",desc:"Procedimento que confirma ou descarta uma hipótese sobre o defeito.",h:["Serve para confirmar hipótese.","Pode ser com ou sem energia.","Deve ser repetível."],e:"Procedimento que confirma ou descarta uma hipótese sobre o defeito."},
-{p:"HIPOTESE",c:"Diagnóstico",d:"Médio",desc:"Suspeita levantada durante o diagnóstico, que precisa ser confirmada ou descartada por testes.",h:["É uma suspeita inicial.","Precisa ser testada.","Pode ser descartada."],e:"Suspeita levantada durante o diagnóstico, que precisa ser confirmada ou descartada por testes."},
-{p:"EVIDENCIA",c:"Diagnóstico",d:"Médio",desc:"Prova obtida por medição ou observação que sustenta uma conclusão técnica.",h:["É a prova de algo.","Vem de medições e observações.","Sustenta a conclusão."],e:"Prova obtida por medição ou observação que sustenta uma conclusão técnica."},
-{p:"ISOLAMENTO",c:"Diagnóstico",d:"Médio",desc:"Técnica de separar partes do circuito para localizar o setor responsável pela falha.",h:["Separa o setor com problema.","Divide o circuito em partes.","Ajuda a localizar a falha."],e:"Técnica de separar partes do circuito para localizar o setor responsável pela falha."},
-{p:"INJECAO",c:"Diagnóstico",d:"Médio",desc:"Aplicação controlada de sinal ou tensão em um ponto do circuito para observar a resposta.",h:["Aplica um sinal ou tensão.","Serve para testar resposta.","Deve respeitar os limites."],e:"Aplicação controlada de sinal ou tensão em um ponto do circuito para observar a resposta."},
-{p:"RASTREAMENTO",c:"Diagnóstico",d:"Difícil",desc:"Acompanhamento do caminho de um sinal ou tensão pela placa para localizar a falha.",h:["Segue o caminho do sinal.","Usa esquema ou boardview.","Ajuda a achar o ponto exato."],e:"Acompanhamento do caminho de um sinal ou tensão pela placa para localizar a falha."},
-{p:"COMPARACAO",c:"Diagnóstico",d:"Médio",desc:"Técnica de comparar medições com um aparelho ou placa de referência da mesma revisão.",h:["Usa um aparelho de referência.","Ajuda a validar medições.","Deve ser da mesma revisão."],e:"Técnica de comparar medições com um aparelho ou placa de referência da mesma revisão."},
-{p:"TERMICA",c:"Diagnóstico",d:"Médio",desc:"Análise baseada em temperatura, que revela componentes com aquecimento anormal.",h:["Relaciona-se à temperatura.","Pode usar câmera ou termômetro.","Revela componentes quentes."],e:"Análise baseada em temperatura, que revela componentes com aquecimento anormal."},
-{p:"CAMERA",c:"Diagnóstico",d:"Fácil",desc:"Equipamento de captura de imagem, inclusive na versão térmica, usada para identificar aquecimento.",h:["Captura imagem.","Pode ser térmica.","Ajuda a detectar aquecimento."],e:"Equipamento de captura de imagem, inclusive na versão térmica, usada para identificar aquecimento."},
-{p:"PROCEDIMENTO",c:"Diagnóstico",d:"Médio",desc:"Sequência padronizada de passos para executar o diagnóstico ou o reparo.",h:["É uma sequência de passos.","Padroniza o atendimento.","Reduz erros."],e:"Sequência padronizada de passos para executar o diagnóstico ou o reparo."},
-{p:"CHECKLIST",c:"Diagnóstico",d:"Médio",desc:"Lista de verificação usada para garantir que todas as etapas foram cumpridas.",h:["É uma lista de verificação.","Evita esquecer etapas.","Ajuda na entrega final."],e:"Lista de verificação usada para garantir que todas as etapas foram cumpridas."},
-{p:"RELATORIO",c:"Diagnóstico",d:"Médio",desc:"Documento que registra o que foi medido, testado e concluído durante o atendimento.",h:["Documenta o atendimento.","Registra medições e conclusões.","Serve ao cliente e ao técnico."],e:"Documento que registra o que foi medido, testado e concluído durante o atendimento."},
-{p:"ESQUEMA",c:"Diagnóstico",d:"Médio",desc:"Representação gráfica das ligações e valores do circuito. Deve ser da revisão correta da placa.",h:["É o desenho do circuito.","Mostra ligações e valores.","Deve ser da revisão correta."],e:"Representação gráfica das ligações e valores do circuito. Deve ser da revisão correta da placa."},
-{p:"BOARDVIEW",c:"Diagnóstico",d:"Difícil",desc:"Visualização da placa com a posição dos componentes, usada junto ao esquema.",h:["Mostra a placa em imagem.","Indica a posição dos componentes.","Complementa o esquema."],e:"Visualização da placa com a posição dos componentes, usada junto ao esquema."},
-
-/* ---------- REPARO (14) ---------- */
-{p:"REPARO",c:"Reparo",d:"Fácil",desc:"Correção do defeito, executada após diagnóstico e seguida de teste final.",h:["É a correção do defeito.","Deve ser testada depois.","Envolve diagnóstico prévio."],e:"Correção do defeito, executada após diagnóstico e seguida de teste final."},
-{p:"MANUTENCAO",c:"Reparo",d:"Fácil",desc:"Conjunto de ações para manter ou restaurar o funcionamento do aparelho.",h:["Pode ser preventiva ou corretiva.","Mantém o aparelho funcionando.","Inclui limpeza e troca de pasta."],e:"Conjunto de ações para manter ou restaurar o funcionamento do aparelho."},
-{p:"LIMPEZA",c:"Reparo",d:"Fácil",desc:"Remoção de sujeira, poeira e resíduos com produtos e técnicas adequadas.",h:["Remove sujeira e resíduos.","Melhora a refrigeração.","Deve usar produtos adequados."],e:"Remoção de sujeira, poeira e resíduos com produtos e técnicas adequadas."},
-{p:"RESSOLDAGEM",c:"Reparo",d:"Médio",desc:"Processo de refazer uma solda defeituosa, corrigindo solda fria ou trincada.",h:["Refaz uma solda.","Corrige solda fria.","Exige fluxo e temperatura."],e:"Processo de refazer uma solda defeituosa, corrigindo solda fria ou trincada."},
-{p:"REBALLING",c:"Reparo",d:"Difícil",desc:"Processo de refazer as esferas de solda de um componente BGA para ressoldá-lo à placa.",h:["Refaz as esferas de solda.","Aplicado a componentes BGA.","Exige equipamento adequado."],e:"Processo de refazer as esferas de solda de um componente BGA para ressoldá-lo à placa."},
-{p:"TROCA",c:"Reparo",d:"Fácil",desc:"Substituição de um componente defeituoso por outro equivalente, após confirmação da causa.",h:["Substitui um componente.","Só deve ocorrer após diagnóstico.","Use peça equivalente."],e:"Substituição de um componente defeituoso por outro equivalente, após confirmação da causa."},
-{p:"AJUSTE",c:"Reparo",d:"Fácil",desc:"Correção de pequenos desvios mecânicos ou elétricos, validada após a execução.",h:["Corrige pequenos desvios.","Pode ser mecânico ou elétrico.","Deve ser validado após."],e:"Correção de pequenos desvios mecânicos ou elétricos, validada após a execução."},
-{p:"ALCOOL",c:"Reparo",d:"Fácil",desc:"Álcool isopropílico usado na limpeza de placas, com boa evaporação e baixo resíduo.",h:["É usado na limpeza.","Deve ser isopropílico.","Evapora rapidamente."],e:"Álcool isopropílico usado na limpeza de placas, com boa evaporação e baixo resíduo."},
-{p:"ISOPROPILICO",c:"Reparo",d:"Difícil",desc:"Tipo de álcool indicado para limpeza de placas por evaporar sem deixar resíduos.",h:["É um tipo de álcool.","Usado em limpeza de placas.","Não deixa resíduo."],e:"Álcool isopropílico, indicado para limpeza de placas por evaporar sem deixar resíduos."},
-{p:"GARANTIA",c:"Reparo",d:"Fácil",desc:"Período de cobertura do serviço prestado, que deve ser informado e registrado.",h:["Cobre o serviço prestado.","Deve ser informada ao cliente.","Exige registro do atendimento."],e:"Período de cobertura do serviço prestado, que deve ser informado e registrado."},
-{p:"ORCAMENTO",c:"Reparo",d:"Médio",desc:"Estimativa de custo do serviço, elaborada após o diagnóstico e aprovada pelo cliente.",h:["É a estimativa de custo.","Depende do diagnóstico.","Deve ser aprovado pelo cliente."],e:"Estimativa de custo do serviço, elaborada após o diagnóstico e aprovada pelo cliente."},
-{p:"LAUDO",c:"Reparo",d:"Médio",desc:"Documento técnico que descreve o problema, o procedimento e o resultado do serviço.",h:["É o documento técnico.","Descreve o que foi feito.","Serve de comprovação."],e:"Documento técnico que descreve o problema, o procedimento e o resultado do serviço."},
-{p:"RESTAURACAO",c:"Reparo",d:"Médio",desc:"Recuperação de partes danificadas, como trilhas, conectores ou carcaça.",h:["Recupera algo danificado.","Pode envolver trilhas e carcaça.","Exige paciência e técnica."],e:"Recuperação de partes danificadas, como trilhas, conectores ou carcaça."},
-{p:"PLACA",c:"Reparo",d:"Fácil",desc:"Placa de circuito impresso que sustenta e interliga os componentes por trilhas de cobre.",h:["Suporta os componentes.","Tem trilhas de cobre.","Existe em várias revisões."],e:"Placa de circuito impresso que sustenta e interliga os componentes por trilhas de cobre."}
-];
-
-/* ============================================================
-   CASOS DE BANCADA
-   ============================================================ */
-const CASES = [
-  {n:1, console:"PS4", sintoma:"Liga e desliga após alguns segundos.", pista:"Proteções térmicas podem estar atuando. Verifique ventilação, dissipador e temperatura antes de concluir.", palavra:"SUPERAQUECIMENTO"},
-  {n:2, console:"Xbox 360", sintoma:"Não liga e não apresenta tensão de espera.", pista:"A linha que mantém o circuito de espera ativo alimenta o botão de ligar.", palavra:"STANDBY"},
-  {n:3, console:"Nintendo Switch", sintoma:"Não carrega e não liga.", pista:"Antes de condenar o circuito de carga, verifique o conector da porta e sua solda.", palavra:"CONECTOR"},
-  {n:4, console:"PlayStation 5", sintoma:"Sem imagem na saída HDMI.", pista:"Verifique cabo, TV, conector e as linhas de sinal antes de concluir. Meça, não suponha.", palavra:"HDMI"},
-  {n:5, console:"Nintendo Switch Lite", sintoma:"O personagem se move sozinho no menu.", pista:"Desgaste do módulo do analógico é uma causa comum, mas confirme com teste e calibração.", palavra:"DRIFT"},
-  {n:6, console:"PlayStation 3", sintoma:"Sem funcionamento após queda de energia.", pista:"A proteção de entrada pode ter atuado. Meça continuidade antes de trocar qualquer peça.", palavra:"FUSIVEL"}
-];
-
-/* ============================================================
-   CENÁRIOS DE TREINAMENTO
-   ============================================================ */
-const TRAIN = [
-  {s:"Um videogame não apresenta uma determinada tensão de alimentação.", p:"MOSFET", d:"Componente que pode atuar no chaveamento dessa linha."},
-  {s:"Um console não liga e a linha de espera está presente.", p:"ENABLE", d:"Sinal que habilita a partida da fonte."},
-  {s:"O multímetro apita entre dois pontos que deveriam estar isolados.", p:"CURTO", d:"Caminho de baixa resistência indesejado."},
-  {s:"O console liga, mas a tela fica escura e a imagem aparece de longe com lanterna.", p:"BACKLIGHT", d:"Iluminação traseira do painel."},
-  {s:"A imagem apresenta linhas verticais coloridas.", p:"LISTRAS", d:"Defeito visual comum em painéis e conexões."},
-  {s:"Um controle envia movimento sem ser tocado.", p:"DRIFT", d:"Desvio no eixo do analógico."},
-  {s:"O console desliga sozinho sob carga e o dissipador está muito quente.", p:"SUPERAQUECIMENTO", d:"Elevação excessiva de temperatura."},
-  {s:"A porta USB não reconhece nenhum periférico, mas há energia nos pinos.", p:"DADOS", d:"A informação transmitida pode estar interrompida."}
-];
-
-/* ============================================================
-   NÍVEIS
-   ============================================================ */
-const LEVELS = [
-  {n:1,t:"Curioso",xp:0},{n:2,t:"Aprendiz",xp:100},{n:3,t:"Auxiliar",xp:250},
-  {n:4,t:"Técnico Iniciante",xp:500},{n:5,t:"Técnico",xp:900},{n:6,t:"Técnico Avançado",xp:1400},
-  {n:7,t:"Especialista",xp:2000},{n:8,t:"Mestre da Bancada",xp:2800},{n:9,t:"Expert",xp:3800},
-  {n:10,t:"Mestre dos Reparos",xp:5000}
-];
-function levelFromXp(xp){let cur=LEVELS[0];for(const L of LEVELS)if(xp>=L.xp)cur=L;return cur;}
-function nextLevel(xp){for(const L of LEVELS)if(xp<L.xp)return L;return null;}
-
-/* ============================================================
-   CONQUISTAS
-   ============================================================ */
-const ACHS = [
-  {id:"first_repair",ic:"🔧",name:"Primeiro Reparo",desc:"Descubra sua primeira palavra.",test:s=>s.wordsFound>=1},
-  {id:"words10",ic:"📚",name:"Estudioso",desc:"Descubra 10 palavras.",test:s=>s.wordsFound>=10},
-  {id:"words50",ic:"🎓",name:"Veterano da Bancada",desc:"Descubra 50 palavras.",test:s=>s.wordsFound>=50},
-  {id:"words100",ic:"🧠",name:"Enciclopédia Humana",desc:"Descubra 100 palavras.",test:s=>s.wordsFound>=100},
-  {id:"win1",ic:"🏆",name:"Primeira Vitória",desc:"Vença um desafio completo.",test:s=>s.wins>=1},
-  {id:"win10",ic:"🥇",name:"10 Vitórias",desc:"Vença 10 desafios.",test:s=>s.wins>=10},
-  {id:"streak5",ic:"🔥",name:"Sequência de 5",desc:"Acerte 5 palavras seguidas.",test:s=>s.bestStreak>=5},
-  {id:"streak10",ic:"🔥",name:"Sequência de 10",desc:"Acerte 10 palavras seguidas.",test:s=>s.bestStreak>=10},
-  {id:"streak50",ic:"🔥",name:"Sequência de 50",desc:"Acerte 50 palavras seguidas.",test:s=>s.bestStreak>=50},
-  {id:"score1000",ic:"⭐",name:"Pontuador",desc:"Acumule 1.000 pontos.",test:s=>s.totalScore>=1000},
-  {id:"score5000",ic:"💎",name:"Elite da Bancada",desc:"Acumule 5.000 pontos.",test:s=>s.totalScore>=5000},
-  {id:"level5",ic:"📈",name:"Técnico de Verdade",desc:"Alcance o nível 5.",test:s=>levelFromXp(s.xp).n>=5},
-  {id:"level10",ic:"👑",name:"Mestre dos Reparos",desc:"Alcance o nível 10.",test:s=>levelFromXp(s.xp).n>=10},
-  {id:"power",ic:"⚡",name:"Mestre da Alimentação",desc:"Acerte 10 termos de Alimentação.",test:s=>(s.catCounts["Alimentação"]||0)>=10},
-  {id:"video",ic:"📺",name:"Mestre HDMI",desc:"Acerte 10 termos de Vídeo.",test:s=>(s.catCounts["Vídeo"]||0)>=10},
-  {id:"tools",ic:"🔬",name:"Mestre do Multímetro",desc:"Acerte 10 termos de Ferramentas.",test:s=>(s.catCounts["Ferramentas"]||0)>=10},
-  {id:"ctrl",ic:"🎮",name:"Mestre dos Controles",desc:"Acerte 10 termos de Controles.",test:s=>(s.catCounts["Controles"]||0)>=10},
-  {id:"diag",ic:"🧠",name:"Primeiro Diagnóstico",desc:"Conclua um caso de bancada.",test:s=>s.casesDone>=1},
-  {id:"diag5",ic:"🩺",name:"Diagnosticador",desc:"Conclua 5 casos de bancada.",test:s=>s.casesDone>=5},
-  {id:"ps",ic:"🎮",name:"Mestre PlayStation",desc:"Acerte 10 termos de PlayStation.",test:s=>(s.catCounts["PlayStation"]||0)>=10},
-  {id:"xb",ic:"🟢",name:"Mestre Xbox",desc:"Acerte 10 termos de Xbox.",test:s=>(s.catCounts["Xbox"]||0)>=10},
-  {id:"nt",ic:"🔴",name:"Mestre Nintendo",desc:"Acerte 10 termos de Nintendo.",test:s=>(s.catCounts["Nintendo"]||0)>=10},
-  {id:"hard",ic:"☠️",name:"Sobreviveu ao Curto",desc:"Vença um desafio no Modo Técnico.",test:s=>s.hardWins>=1},
-  {id:"perfect",ic:"🎯",name:"Sem Erros",desc:"Vença um desafio sem errar letras.",test:s=>s.perfectWins>=1},
-  {id:"fav",ic:"⭐",name:"Colecionador",desc:"Favorite 5 termos.",test:s=>s.favorites.length>=5},
-  {id:"cases_all",ic:"🔧",name:"Mestre da Bancada",desc:"Conclua todos os casos de bancada.",test:s=>s.casesDone>=CASES.length}
-];
-
-/* ============================================================
-   ESTADO
-   ============================================================ */
-const DEFAULT_STATE = {
-  name:"",xp:0,totalScore:0,score:0,wins:0,losses:0,games:0,streak:0,bestStreak:0,bestScore:0,
-  wordsFound:0,correctLetters:0,wrongLetters:0,hardWins:0,perfectWins:0,casesDone:0,casesDoneIds:[],
-  catCounts:{},achievements:[],favorites:[],history:[],customTerms:[],
-  settings:{sound:true,vibration:true,theme:"dark",font:16}
-};
-let ST=null,storageOK=true;
-
-function mergeState(base,loaded){
-  const out=clone(base);
-  if(!loaded||typeof loaded!=="object")return out;
-  for(const k in base){
-    if(loaded[k]===undefined)continue;
-    if(Array.isArray(base[k])){if(Array.isArray(loaded[k]))out[k]=loaded[k];}
-    else if(base[k]&&typeof base[k]==="object"){
-      if(loaded[k]&&typeof loaded[k]==="object"){
-        for(const kk in base[k])if(loaded[k][kk]!==undefined)out[k][kk]=loaded[k][kk];
-      }
-    }else out[k]=loaded[k];
-  }
-  return out;
-}
-function loadState(){
-  try{
-    const raw=localStorage.getItem(STORAGE_KEY);
-    if(!raw)return clone(DEFAULT_STATE);
-    return mergeState(DEFAULT_STATE,JSON.parse(raw));
-  }catch(e){storageOK=false;return clone(DEFAULT_STATE);}
-}
-function saveState(){
-  if(!storageOK)return;
-  try{localStorage.setItem(STORAGE_KEY,JSON.stringify(ST));}catch(e){storageOK=false;}
-}
-
-/* ============================================================
-   ÁUDIO / VIBRAÇÃO / TOAST / CONFETES
-   ============================================================ */
-let AC=null;
-function ac(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)();}catch(e){AC=null;}}return AC;}
-function beep(freq,dur,type,vol){
-  if(!ST||!ST.settings.sound)return;
-  const c=ac();if(!c)return;
-  try{
-    if(c.state==="suspended")c.resume();
-    const o=c.createOscillator(),g=c.createGain();
-    o.type=type||"sine";o.frequency.value=freq;o.connect(g);g.connect(c.destination);
-    const t=c.currentTime,v=vol||0.06;
-    g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
-    o.start(t);o.stop(t+dur+0.02);
-  }catch(e){}
-}
-const SFX={
-  click:()=>beep(420,0.05,"square",0.03),
-  ok:()=>{beep(680,0.08,"triangle",0.07);setTimeout(()=>beep(920,0.09,"triangle",0.06),65);},
-  err:()=>beep(150,0.16,"sawtooth",0.05),
-  win:()=>[523,659,784,1046].forEach((f,i)=>setTimeout(()=>beep(f,0.14,"triangle",0.07),i*105)),
-  lose:()=>[392,330,262,196].forEach((f,i)=>setTimeout(()=>beep(f,0.18,"sine",0.07),i*125)),
-  ach:()=>[784,988,1318].forEach((f,i)=>setTimeout(()=>beep(f,0.12,"triangle",0.07),i*90)),
-  level:()=>[523,784,1046,1318].forEach((f,i)=>setTimeout(()=>beep(f,0.13,"square",0.05),i*95))
-};
-function vib(p){if(!ST||!ST.settings.vibration)return;try{if(navigator.vibrate)navigator.vibrate(p);}catch(e){}}
-function toast(msg,kind){
-  const box=$("#toasts");
-  const el=document.createElement("div");
-  el.className="toast"+(kind?" "+kind:"");
-  el.innerHTML=msg;box.appendChild(el);
-  setTimeout(()=>{el.style.transition="opacity .3s, transform .3s";el.style.opacity="0";el.style.transform="translateY(-10px)";setTimeout(()=>el.remove(),320);},2600);
-}
-function confetti(n){
-  const colors=["#00e0a4","#31a8ff","#a06bff","#ffd166","#ff5470","#2ee6a8"];
-  const total=n||60;
-  for(let i=0;i<total;i++){
-    const d=document.createElement("div");
-    d.className="confetti";
-    d.style.left=Math.random()*100+"vw";
-    d.style.background=colors[rand(colors.length)];
-    d.style.animationDuration=(2+Math.random()*1.6)+"s";
-    d.style.animationDelay=(Math.random()*0.5)+"s";
-    d.style.opacity=0.85;
-    if(Math.random()>0.6)d.style.borderRadius="50%";
-    document.body.appendChild(d);
-    setTimeout(()=>d.remove(),4200);
-  }
-}
-
-/* ============================================================
-   BANCO COMPLETO
-   ============================================================ */
-function allTerms(){
-  const custom=(ST.customTerms||[]).filter(t=>t&&t.p).map(t=>({
-    p:String(t.p).toUpperCase(),c:t.c||"Controles",d:t.d||"Médio",
-    desc:t.desc||"",
-    h:Array.isArray(t.h)?t.h:[t.h1||"",t.h2||"",t.h3||""],
-    e:t.e||"",o:t.o||"",custom:true
-  }));
-  return TERMS.concat(custom);
-}
-function findTerm(word){const n=norm(word);return allTerms().find(t=>norm(t.p)===n)||null;}
-
-/* ============================================================
-   HUD
-   ============================================================ */
-function renderHUD(){
-  const lvl=levelFromXp(ST.xp),nxt=nextLevel(ST.xp);
-  $("#hudName").textContent=ST.name||"Jogador";
-  $("#hudLevel").textContent="Nível "+lvl.n+" · "+lvl.t;
-  $("#hudXp").textContent=fmt(ST.xp)+" XP";
-  $("#hudScore").textContent=fmt(ST.totalScore);
-  $("#hudStreak").textContent=ST.streak;
-  $("#hudStreakChip").className="chip"+(ST.streak>=3?" gold":"");
-  let pct=100;
-  if(nxt){const base=lvl.xp,span=nxt.xp-base;pct=Math.max(0,Math.min(100,((ST.xp-base)/span)*100));}
-  $("#xpFill").style.width=pct+"%";
-  $("#achCount").textContent=(ST.achievements||[]).length;
-  $("#achTotal").textContent=ACHS.length;
-}
-
-/* ============================================================
-   NAVEGAÇÃO
-   ============================================================ */
-let curView="home";
-function go(v){
-  curView=v;
-  $$(".view").forEach(el=>el.classList.toggle("active",el.id==="view-"+v));
-  $$(".navbtn").forEach(b=>b.classList.toggle("on",b.dataset.go===v));
-  window.scrollTo({top:0,behavior:"instant" in window?"instant":"auto"});
-  if(v==="encyclopedia")renderEncyclopedia();
-  if(v==="favorites")renderFavorites();
-  if(v==="history")renderHistory();
-  if(v==="achievements")renderAchievements();
-  if(v==="stats")renderStats();
-  if(v==="cases")renderCases();
-  if(v==="training")renderTraining();
-  if(v==="editor")renderEditorList();
-  if(v==="home")renderHome();
-  if(v==="settings")renderSettings();
-}
-function renderHome(){
-  const h=new Date().getHours();
-  const sauda=h<12?"Bom dia":(h<18?"Boa tarde":"Boa noite");
-  $("#homeGreet").textContent=sauda+", "+(ST.name||"jogador")+"! 🔧🎮";
-  $("#homeSub").textContent="Descubra. Aprenda. Repare.";
-}
-
-/* ============================================================
-   SPLASH / NOME
-   ============================================================ */
-function showScreen(id){$$(".screen").forEach(s=>s.classList.toggle("active",s.id===id));$("#app").classList.add("hidden");}
-function showApp(){$$(".screen").forEach(s=>s.classList.remove("active"));$("#app").classList.remove("hidden");renderHUD();go("home");}
-
-/* ============================================================
-   CONQUISTAS
-   ============================================================ */
-function checkAchievements(){
-  let novos=[];
-  for(const a of ACHS){
-    if(ST.achievements.includes(a.id))continue;
-    let ok=false;try{ok=a.test(ST);}catch(e){ok=false;}
-    if(ok){ST.achievements.push(a.id);novos.push(a);}
-  }
-  if(novos.length){
-    saveState();renderHUD();
-    novos.forEach((a,i)=>setTimeout(()=>{toast("🏆 Conquista: <b>"+esc(a.name)+"</b>","gold");SFX.ach();vib([22,40,22]);},i*420));
-  }
-}
-
-/* ============================================================
-   XP / PONTUAÇÃO
-   ============================================================ */
-function addXP(n){
-  if(!n)return;
-  const antes=levelFromXp(ST.xp).n;
-  ST.xp+=n;
-  const depois=levelFromXp(ST.xp).n;
-  if(depois>antes){
-    setTimeout(()=>{toast("🎉 Nível "+depois+" — "+levelFromXp(ST.xp).t+"!","gold");SFX.level();vib([30,50,30,50]);confetti(40);},250);
-  }
-  renderHUD();
-}
-function addScore(n){
-  if(!n)return;
-  ST.totalScore+=n;
-  if(ST.totalScore>ST.bestScore)ST.bestScore=ST.totalScore;
-  renderHUD();
-}
-
-/* ============================================================
-   ESTADO DO JOGO
-   ============================================================ */
-let G=null,S=null,timerId=null;
-function stopTimer(){if(timerId){clearInterval(timerId);timerId=null;}}
-
-function pickTerm(filterFn,usedSet){
-  const pool=allTerms().filter(t=>t&&t.p&&t.p.length>=3);
-  let cand=pool.filter(t=>(!filterFn||filterFn(t))&&!(usedSet&&usedSet.has(norm(t.p))));
-  if(!cand.length)cand=pool.filter(t=>!filterFn||filterFn(t));
-  if(!cand.length)cand=pool;
-  return cand[rand(cand.length)];
-}
-
-function startSession(mode,extras){
-  extras=extras||{};
-  stopTimer();closeOverlay();
-  const total=mode==="normal"?10:mode==="hard"?8:mode==="case"?CASES.length:mode==="training"?6:mode==="timed"?9999:3;
-  S={mode,index:0,total,score:0,words:0,errors:0,lettersOk:0,lettersBad:0,used:new Set(),start:Date.now(),timeLeft:60,
-    duo:mode==="duo",p1:{name:extras.p1||"Jogador 1",score:0},p2:{name:extras.p2||"Jogador 2",score:0},turn:1,round:0};
-  if(mode==="duo"){S.p1.name=extras.p1||"Jogador 1";S.p2.name=extras.p2||"Jogador 2";S.total=3;}
-  go("game");
-  if(mode==="timed"){
-    S.timeLeft=60;
-    timerId=setInterval(()=>{
-      if(!S)return;
-      S.timeLeft--;renderGameHead();
-      if(S.timeLeft<=0){stopTimer();endSession(true);}
-    },1000);
-  }
-  nextWord();
-}
-
-function nextWord(){
-  if(!S)return;
-  if(S.mode!=="timed"&&S.mode!=="training"&&S.mode!=="duo"){
-    if(S.index>=S.total){endSession(false);return;}
-  }
-  if(S.mode==="duo"&&S.round>=S.total){endSession(false);return;}
-
-  let term=null;
-  if(S.mode==="case"){
-    const c=CASES[S.index%CASES.length];
-    term=findTerm(c.palavra)||pickTerm();
-    G=makeGame(term,{maxWrong:6,caso:c});
-    G.caseInfo=c;
-  }else if(S.mode==="hard"){
-    term=pickTerm(t=>t.d==="Difícil",S.used);
-    G=makeGame(term,{maxWrong:4});
-  }else if(S.mode==="duo"){
-    term=pickTerm(null,S.used);
-    G=makeGame(term,{maxWrong:6});
-  }else{
-    term=pickTerm(null,S.used);
-    G=makeGame(term,{maxWrong:6});
-  }
-  S.used.add(norm(term.p));
-  renderGame();
-}
-
-function makeGame(term,opts){
-  return {term,word:term.p,nword:norm(term.p),guessed:new Set(),wrong:0,maxWrong:opts.maxWrong||6,hinted:0,finished:false,caseInfo:opts.caso||null};
-}
-
-/* ============================================================
-   RENDER DO JOGO
-   ============================================================ */
-function renderGameHead(){
-  const head=$("#gameHead");
-  if(!G||!S)return;
-  let html="";
-  html+='<span class="badge cat">'+(CAT_META[G.term.c]?CAT_META[G.term.c].ic:"🔧")+" "+esc(G.term.c)+"</span>";
-  html+='<span class="badge dif">'+esc(G.term.d)+"</span>";
-  const modos={normal:"Desafio",hard:"Modo Técnico",timed:"Desafio Rápido",case:"Caso de Bancada",training:"Treinamento",duo:"2 Jogadores"};
-  html+='<span class="badge mode">'+(modos[S.mode]||"Jogo")+"</span>";
-  if(S.mode==="timed"){
-    html+='<span class="badge timer">⏱️ '+S.timeLeft+"s</span>";
-  }else if(S.mode!=="training"){
-    const num=S.mode==="duo"?S.round+1:S.index+1;
-    html+='<span class="badge">'+num+" / "+S.total+"</span>";
-  }
-  html+='<span class="badge">❤️ '+(G.maxWrong-G.wrong)+"</span>";
-  html+='<span class="badge">⭐ '+fmt(S.score)+"</span>";
-  head.innerHTML=html;
-}
-
-function renderDuoBoard(){
-  const el=$("#duoBoard");
-  if(!S||!S.duo){el.classList.add("hidden");return;}
-  el.classList.remove("hidden");
-  el.innerHTML='<div class="duo-p '+(S.turn===1?"on":"")+'"><div class="nm">'+esc(S.p1.name)+'</div><div class="sc">'+fmt(S.p1.score)+'</div></div>'+
-    '<div class="duo-p '+(S.turn===2?"on":"")+'"><div class="nm">'+esc(S.p2.name)+'</div><div class="sc">'+fmt(S.p2.score)+'</div></div>';
-}
-
-/* ===== NOVO: CAIXA DE DESCRIÇÃO — leia e descubra ===== */
-function renderDescBox(){
-  const box=$("#descBox");
-  if(!G||!S){box.classList.add("hidden");return;}
-  box.classList.remove("hidden");
-  let lbl="📖 LEIA E DESCUBRA", text="";
-  let extraClass="";
-  if(S.mode==="case"&&G.caseInfo){
-    lbl="🔧 CASO #"+String(G.caseInfo.n).padStart(3,"0")+" · "+G.caseInfo.console.toUpperCase();
-    text="<b>Sintoma:</b> "+esc(G.caseInfo.sintoma)+" <br><br>Descubra o termo técnico relacionado a esse caso.";
-    extraClass=" desc-case";
-  }else if(S.mode==="training"){
-    const tr=TRAIN[S.index%TRAIN.length];
-    lbl="🧠 SITUAÇÃO DE BANCADA";
-    text=esc(tr.s);
-    extraClass=" desc-train";
-  }else{
-    text=esc(G.term.desc||G.term.e||"Descubra a palavra técnica relacionada a reparo de videogame.");
-  }
-  box.className="descbox"+extraClass;
-  box.innerHTML='<span class="desc-lbl">'+lbl+'</span><p class="desc-text">'+text+'</p>';
-}
-
-function renderHints(){
-  const box=$("#hintBox");
-  if(!G){box.classList.add("hidden");return;}
-  const hints=(G.term.h||[]).filter(Boolean);
-  if(G.hinted>0&&hints.length){
-    box.classList.remove("hidden");
-    let parts=['<span class="hlbl">💡 DICAS REVELADAS</span><ul>'];
-    for(let i=0;i<Math.min(G.hinted,hints.length);i++)parts.push("<li>"+esc(hints[i])+"</li>");
-    parts.push("</ul>");
-    box.innerHTML=parts.join("");
-  }else{
-    box.classList.add("hidden");box.innerHTML="";
-  }
-}
-
-function renderHangman(){
-  const wrap=$("#canvasWrap");
-  if(!G){wrap.innerHTML="";return;}
-  const shown=Math.ceil(G.wrong*6/G.maxWrong);
-  const colPart="var(--acc)";
-  let s='<svg viewBox="0 0 200 210" role="img" aria-label="Desenho da forca">';
-  s+='<line x1="24" y1="192" x2="130" y2="192" class="stroke-main"/>';
-  s+='<line x1="52" y1="192" x2="52" y2="26" class="stroke-main"/>';
-  s+='<line x1="52" y1="26" x2="128" y2="26" class="stroke-main"/>';
-  s+='<line x1="128" y1="26" x2="128" y2="48" class="stroke-main"/>';
-  if(shown>=1)s+='<circle cx="128" cy="66" r="17" class="stroke-head"/>';
-  if(shown>=2)s+='<line x1="128" y1="83" x2="128" y2="132" class="stroke-part"/>';
-  if(shown>=3)s+='<line x1="128" y1="96" x2="104" y2="116" class="stroke-part"/>';
-  if(shown>=4)s+='<line x1="128" y1="96" x2="152" y2="116" class="stroke-part"/>';
-  if(shown>=5)s+='<line x1="128" y1="132" x2="108" y2="164" class="stroke-part"/>';
-  if(shown>=6)s+='<line x1="128" y1="132" x2="148" y2="164" class="stroke-part"/>';
-  if(G.finished&&G.wrong>=G.maxWrong){
-    s+='<line x1="121" y1="60" x2="127" y2="66" stroke="'+colPart+'" stroke-width="2.4" stroke-linecap="round"/>';
-    s+='<line x1="127" y1="60" x2="121" y2="66" stroke="'+colPart+'" stroke-width="2.4" stroke-linecap="round"/>';
-    s+='<line x1="131" y1="60" x2="137" y2="66" stroke="'+colPart+'" stroke-width="2.4" stroke-linecap="round"/>';
-    s+='<line x1="137" y1="60" x2="131" y2="66" stroke="'+colPart+'" stroke-width="2.4" stroke-linecap="round"/>';
-  }
-  s+="</svg>";
-  wrap.innerHTML=s;
-}
-
-function renderWord(){
-  const el=$("#wordDisplay");
-  if(!G){el.innerHTML="";return;}
-  let html="";
-  for(const ch of G.word){
-    if(ch===" "){html+='<span class="letter space"></span>';continue;}
-    const n=norm(ch);
-    const rev=!isLetter(n)||G.guessed.has(n);
-    html+='<span class="letter '+(rev?"rev":"")+'">'+(rev?esc(ch):"_")+"</span>";
-  }
-  el.innerHTML=html;
-}
-
-function renderKeyboard(){
-  const el=$("#keyboard");
-  if(!el.dataset.built){
-    let html="";
-    for(let i=65;i<=90;i++){
-      const L=String.fromCharCode(i);
-      html+='<button class="key" data-k="'+L+'" aria-label="Letra '+L+'">'+L+"</button>";
-    }
-    el.innerHTML=html;el.dataset.built="1";
-  }
-  $$(".key",el).forEach(b=>{
-    const L=b.dataset.k;
-    b.disabled=false;b.classList.remove("ok","no");
-    if(G&&G.guessed.has(L)){b.disabled=true;b.classList.add(G.nword.includes(L)?"ok":"no");}
-    if(G&&G.finished)b.disabled=true;
+/* ===== NAVEGAÇÃO ===== */
+function go(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(page).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b=>{
+    b.classList.toggle('active', b.dataset.page===page);
   });
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
-function renderGame(){
-  if(!G)return;
-  renderGameHead();renderDuoBoard();renderDescBox();renderHints();renderHangman();renderWord();renderKeyboard();
-  $("#btnHint").textContent="💡 DICA ("+Math.max(0,3-G.hinted)+")";
-  $("#btnHint").disabled=G.hinted>=3||G.finished;
-  $("#btnSkip").disabled=!!G.finished;
+/* ===== TOAST ===== */
+let toastTimer;
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 2200);
 }
 
-/* ============================================================
-   ADIVINHAR LETRA
-   ============================================================ */
-function guessLetter(ch){
-  if(!G||G.finished||!S)return;
-  const L=norm(ch);
-  if(!/^[A-Z]$/.test(L))return;
-  if(G.guessed.has(L))return;
-  G.guessed.add(L);
-  if(G.nword.includes(L)){
-    S.score+=10;ST.correctLetters++;S.lettersOk++;addScore(10);addXP(10);SFX.ok();vib(18);
-    const wd=$("#wordDisplay");wd.classList.remove("pulse");void wd.offsetWidth;wd.classList.add("pulse");
-    renderWord();renderKeyboard();renderGameHead();
-    if(isWordComplete())finishWord(true);
-  }else{
-    G.wrong++;S.errors++;S.lettersBad++;ST.wrongLetters++;
-    S.score=Math.max(0,S.score-5);ST.totalScore=Math.max(0,ST.totalScore-5);
-    SFX.err();vib([28,45,28]);
-    const wd=$("#wordDisplay");wd.classList.remove("shake");void wd.offsetWidth;wd.classList.add("shake");
-    renderHangman();renderKeyboard();renderGameHead();
-    if(S.duo){S.turn=S.turn===1?2:1;renderDuoBoard();}
-    if(G.wrong>=G.maxWrong)finishWord(false);
+/* ===== CARRINHO ===== */
+let cart = [];
+
+function addCart(name, price){
+  const item = cart.find(i=>i.name===name);
+  if(item) item.qty++;
+  else cart.push({name, price, qty:1});
+  renderCart();
+  toast('✅ Adicionado ao carrinho');
+}
+
+function changeQty(name, delta){
+  const item = cart.find(i=>i.name===name);
+  if(!item) return;
+  item.qty += delta;
+  if(item.qty <= 0) cart = cart.filter(i=>i.name!==name);
+  renderCart();
+}
+
+function renderCart(){
+  const list = document.getElementById('cartList');
+  const empty = document.getElementById('cartEmpty');
+  const totalBox = document.getElementById('cartTotal');
+  list.innerHTML = '';
+
+  if(cart.length === 0){
+    empty.style.display = 'block';
+    totalBox.style.display = 'none';
+    return;
   }
-  saveState();
-}
+  empty.style.display = 'none';
+  totalBox.style.display = 'block';
 
-function isWordComplete(){
-  for(const ch of G.nword){if(isLetter(ch)&&!G.guessed.has(ch))return false;}
-  return true;
-}
-
-/* ============================================================
-   FINAL DE PALAVRA
-   ============================================================ */
-function finishWord(won){
-  if(!G||G.finished)return;
-  G.finished=true;
-  const errosThisWord=G.wrong;
-  if(won){
-    let bonus=50;if(errosThisWord===0)bonus+=50;
-    const mult=ST.streak>=20?3:ST.streak>=10?2:ST.streak>=5?1.5:1;
-    bonus=Math.round(bonus*mult);
-    S.score+=bonus;S.words++;ST.wordsFound++;ST.streak++;
-    if(ST.streak>ST.bestStreak)ST.bestStreak=ST.streak;
-    ST.catCounts[G.term.c]=(ST.catCounts[G.term.c]||0)+1;
-    addScore(bonus);addXP(50);SFX.win();vib([30,40,30]);confetti(36);
-  }else{
-    ST.streak=0;SFX.lose();vib([60,60,60]);
-  }
-  if(S.duo){
-    if(won){if(S.turn===1)S.p1.score+=100;else S.p2.score+=100;}
-    S.round++;
-  }
-  ST.history.unshift({p:G.term.p,c:G.term.c,d:G.term.d,t:Date.now()});
-  ST.history=ST.history.slice(0,40);
-  if(S.mode==="case"&&G.caseInfo&&!ST.casesDoneIds.includes(G.caseInfo.n))ST.casesDoneIds.push(G.caseInfo.n);
-  if(S.mode==="case")ST.casesDone=ST.casesDoneIds.length;
-  saveState();checkAchievements();renderHUD();renderGameHead();
-  showWordOverlay(won,errosThisWord);
-}
-
-/* ============================================================
-   OVERLAY DE PALAVRA
-   ============================================================ */
-function showWordOverlay(won,erros){
-  const meta=CAT_META[G.term.c]||CAT_META["Reparo"];
-  const hints=(G.term.h||[]).filter(Boolean);
-  let html="";
-  html+='<h3 class="ov-title" style="color:'+(won?"var(--acc)":"var(--bad)")+'">'+(won?"🎉 CORRETO!":"💀 DIAGNÓSTICO FALHOU!")+"</h3>";
-  html+='<div class="ov-word">'+esc(G.word)+"</div>";
-  html+='<div style="text-align:center;font-size:.82rem;color:var(--muted);margin-bottom:10px">'+
-    (won?(erros===0?"🌟 Perfeito! Sem erros":"✔️ Descoberta com "+erros+" erro(s)"):"❌ Erros: "+erros)+"</div>";
-  html+='<div class="ov-sec"><h4>📚 O QUE É?</h4><p>'+esc(G.term.e||"Termo técnico da área de reparo de videogames.")+"</p></div>";
-  html+='<div class="ov-sec"><h4>🔧 ONDE PODE SER ENCONTRADO?</h4><p>'+esc(G.term.o||meta.onde)+"</p></div>";
-  if(hints.length)html+='<div class="ov-sec"><h4>💡 DICAS</h4><p>'+hints.map(h=>"• "+esc(h)).join("<br>")+"</p></div>";
-  if(S.mode==="case"&&G.caseInfo)html+='<div class="ov-sec"><h4>🧠 COMO PENSAR NO CASO</h4><p>'+esc(G.caseInfo.pista)+"</p></div>";
-  html+='<p class="ov-note">⚠️ Um sintoma pode possuir várias causas. Não condene um componente sem realizar medições. Valores de tensão podem variar conforme modelo e revisão da placa.</p>';
-  const labelNext=(S.mode==="timed")?"▶️ CONTINUAR":"➡️ PRÓXIMO DESAFIO";
-  html+='<div style="display:flex;flex-direction:column;gap:8px;margin-top:16px">'+
-    '<button class="btn primary" id="ovNext">'+labelNext+"</button>"+
-    (S.mode!=="timed"?'<button class="btn ghost" id="ovQuit">🏠 SAIR PARA O MENU</button>':"")+
-    "</div>";
-  openOverlay(html);
-  $("#ovNext").addEventListener("click",()=>{
-    SFX.click();closeOverlay();
-    if(S&&S.mode==="timed"&&S.timeLeft<=0){endSession(true);return;}
-    if(S)S.index++;
-    if(S&&S.mode==="timed"){nextWord();return;}
-    if(S&&S.mode==="training"){nextWord();return;}
-    if(S&&S.mode==="duo"){if(S.round>=S.total){endSession(false);return;}nextWord();return;}
-    if(S&&S.index>=S.total){endSession(false);return;}
-    nextWord();
-  });
-  const q=$("#ovQuit");
-  if(q)q.addEventListener("click",()=>{closeOverlay();endSession(false);});
-}
-
-function openOverlay(html){
-  $("#overlayPanel").innerHTML=html;
-  $("#overlay").classList.add("on");
-  if(timerId){clearInterval(timerId);timerId=null;S._paused=true;}
-}
-function closeOverlay(){
-  $("#overlay").classList.remove("on");
-  $("#overlayPanel").innerHTML="";
-  if(S&&S._paused&&S.mode==="timed"&&S.timeLeft>0){
-    S._paused=false;
-    timerId=setInterval(()=>{
-      if(!S)return;
-      S.timeLeft--;renderGameHead();
-      if(S.timeLeft<=0){stopTimer();endSession(true);}
-    },1000);
-  }
-}
-
-/* ============================================================
-   DICAS / PULAR
-   ============================================================ */
-function useHint(){
-  if(!G||G.finished||G.hinted>=3)return;
-  const cost=[10,20,30][G.hinted];
-  G.hinted++;
-  S.score=Math.max(0,S.score-cost);ST.totalScore=Math.max(0,ST.totalScore-cost);
-  SFX.click();renderHints();renderGameHead();renderGame();
-  toast("💡 Dica revelada · −"+cost+" pontos");saveState();
-}
-function skipWord(){
-  if(!G||G.finished)return;
-  G.wrong=G.maxWrong;finishWord(false);
-}
-
-/* ============================================================
-   FIM DE SESSÃO
-   ============================================================ */
-function endSession(tempoEsgotado){
-  stopTimer();closeOverlay();
-  if(!S)return;
-  const venceu=S.duo?(S.p1.score!==S.p2.score):(S.mode==="timed"?S.words>=3:S.words>=Math.ceil(S.total*0.6));
-  ST.games++;
-  if(venceu)ST.wins++;else ST.losses++;
-  if(S.mode==="hard"&&venceu)ST.hardWins++;
-  if(S.lettersBad===0&&S.words>0)ST.perfectWins++;
-  ST.totalScore=Math.max(0,ST.totalScore);
-  if(ST.totalScore>ST.bestScore)ST.bestScore=ST.totalScore;
-  let xpBonus=0;
-  if(S.mode==="case")xpBonus+=150;
-  if(venceu)xpBonus+=100;
-  if(xpBonus)addXP(xpBonus);
-  saveState();checkAchievements();renderHUD();
-  const res={mode:S.mode,score:S.score,words:S.words,errors:S.errors,lettersOk:S.lettersOk,lettersBad:S.lettersBad,
-    streak:ST.bestStreak,level:levelFromXp(ST.xp),xpGain:xpBonus,tempoEsgotado:!!tempoEsgotado,venceu,
-    duo:S.duo?{p1:clone(S.p1),p2:clone(S.p2)}:null};
-  S=null;G=null;
-  renderResult(res);go("result");
-  if(venceu){confetti(80);SFX.win();}else{SFX.lose();}
-}
-
-/* ============================================================
-   MENSAGEM FINAL
-   ============================================================ */
-function mensagemFinal(nome,pontos,nivel){
-  const alta="Parabéns, "+nome+"! 🔧🎮\nVocê mandou muito bem no Repair Forca!\nTerminou o desafio com "+fmt(pontos)+" pontos e mostrou que está afiado nos conhecimentos de reparo de videogames.\nContinue estudando e evoluindo na bancada! ⚡🛠️";
-  const media="Boa, "+nome+"! 🎮🔧\nVocê terminou o desafio com "+fmt(pontos)+" pontos.\nJá mostrou que conhece vários termos técnicos.\nContinue praticando e tente superar seu recorde! 🚀";
-  const baixa="Boa tentativa, "+nome+"! 🔧\nVocê terminou o desafio com "+fmt(pontos)+" pontos.\nNão desanime! Cada erro também faz parte do aprendizado.\nContinue estudando e tente novamente! 💪🎮";
-  if(pontos>=500)return alta;
-  if(pontos>=200)return media;
-  return baixa;
-}
-
-/* ============================================================
-   RESULTADO
-   ============================================================ */
-let ultimoResultado=null;
-function renderResult(res){
-  ultimoResultado=res;
-  const nome=ST.name||"Jogador";
-  const lvl=res.level;
-  const msg=mensagemFinal(nome,res.score,lvl);
-  let html="";
-  html+='<div class="card" style="text-align:center;padding:24px">';
-  html+='<div style="font-size:2.4rem;line-height:1">'+(res.venceu?"🏆":"🔧")+"</div>";
-  html+='<h1 class="page-title" style="margin-top:8px">'+(res.venceu?"DESAFIO CONCLUÍDO!":"DESAFIO ENCERRADO")+"</h1>";
-  html+='<p class="page-sub" style="margin-bottom:14px">'+(res.tempoEsgotado?"⏱️ Tempo esgotado!":"Parabéns, "+esc(nome)+"!")+"</p>";
-  if(res.duo){
-    const d=res.duo;
-    const venc=d.p1.score===d.p2.score?"EMPATE!":(d.p1.score>d.p2.score?d.p1.name:d.p2.name)+" VENCEU!";
-    html+='<div style="font-size:1.1rem;font-weight:900;color:var(--gold);margin-bottom:12px">👥 '+esc(venc)+"</div>";
-    html+='<div class="duo-board" style="margin-bottom:14px">'+
-      '<div class="duo-p"><div class="nm">'+esc(d.p1.name)+'</div><div class="sc">'+fmt(d.p1.score)+"</div></div>"+
-      '<div class="duo-p"><div class="nm">'+esc(d.p2.name)+'</div><div class="sc">'+fmt(d.p2.score)+"</div></div>"+
-      "</div>";
-  }
-  html+='<div class="stat-grid" style="margin-bottom:16px">';
-  html+='<div class="stat"><div class="v">'+fmt(res.score)+'</div><div class="k">⭐ Pontuação</div></div>';
-  html+='<div class="stat"><div class="v">'+res.words+'</div><div class="k">🔧 Palavras</div></div>';
-  html+='<div class="stat"><div class="v">'+res.errors+'</div><div class="k">❌ Erros</div></div>';
-  html+='<div class="stat"><div class="v">'+res.streak+'</div><div class="k">🔥 Sequência</div></div>';
-  html+='<div class="stat"><div class="v">'+lvl.n+'</div><div class="k">🏆 Nível</div></div>';
-  html+='<div class="stat"><div class="v">'+fmt(ST.xp)+'</div><div class="k">⚡ XP</div></div>';
-  html+="</div>";
-  html+='<div class="hintbox" style="text-align:left;white-space:pre-line">'+esc(msg)+"</div>";
-  html+='<div style="display:flex;flex-direction:column;gap:9px;margin-top:14px">'+
-    '<button class="btn primary" id="rCopy">📋 COPIAR RESULTADO</button>'+
-    '<button class="btn blue" id="rWhats">📲 ENVIAR RESULTADO</button>'+
-    '<button class="btn purple" id="rShare">📤 COMPARTILHAR</button>'+
-    '<button class="btn" id="rAgain">🔄 JOGAR NOVAMENTE</button>'+
-    '<button class="btn ghost" id="rMenu">🏠 MENU</button>'+
-    "</div></div>";
-  html+='<p class="page-sub" style="font-size:.74rem;margin-top:18px;line-height:1.6">⚠️ Os casos apresentados são educativos. Um sintoma pode possuir várias causas. Não condene um componente sem realizar medições. Valores de tensão podem variar conforme modelo e revisão da placa.</p>';
-  $("#resultBody").innerHTML=html;
-  $("#rCopy").addEventListener("click",()=>copiarResultado(res,msg));
-  $("#rWhats").addEventListener("click",()=>enviarWhats(res,msg));
-  $("#rShare").addEventListener("click",()=>compartilhar(res,msg));
-  $("#rAgain").addEventListener("click",()=>{SFX.click();const m=res.mode==="duo"?"normal":res.mode;if(m==="duo")startDuoFlow();else startSession(m);});
-  $("#rMenu").addEventListener("click",()=>{SFX.click();go("home");});
-}
-
-function textoResultado(res,msg){
-  const nome=ST.name||"Jogador";
-  let t="";
-  t+="🎮 REPAIR FORCA — RESULTADO\n\n";
-  t+="👤 Jogador: "+nome+"\n";
-  if(res.duo){t+="👥 "+res.duo.p1.name+": "+fmt(res.duo.p1.score)+" pontos\n";t+="👥 "+res.duo.p2.name+": "+fmt(res.duo.p2.score)+" pontos\n";}
-  t+="⭐ Pontuação: "+fmt(res.score)+"\n";
-  t+="🔧 Palavras descobertas: "+res.words+"\n";
-  t+="❌ Erros: "+res.errors+"\n";
-  t+="🔥 Sequência: "+res.streak+"\n";
-  t+="🏆 Nível: "+res.level.n+" — "+res.level.t+"\n";
-  t+="⚡ XP: "+fmt(ST.xp)+"\n\n";
-  t+=msg+"\n";
-  return t;
-}
-
-function copiarResultado(res,msg){
-  const txt=textoResultado(res,msg);
-  const done=()=>{toast("✅ Resultado copiado!");SFX.click();};
-  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(txt).then(done).catch(()=>fallbackCopy(txt,done));
-  else fallbackCopy(txt,done);
-}
-function fallbackCopy(txt,cb){
-  try{
-    const ta=document.createElement("textarea");ta.value=txt;ta.style.position="fixed";ta.style.left="-9999px";
-    document.body.appendChild(ta);ta.select();document.execCommand("copy");ta.remove();cb();
-  }catch(e){toast("Não foi possível copiar neste navegador.","bad");}
-}
-function enviarWhats(res,msg){
-  const txt=textoResultado(res,msg);
-  const url="https://wa.me/"+WHATSAPP_DESTINO+"?text="+encodeURIComponent(txt);
-  try{const w=window.open(url,"_blank");if(!w)window.location.href=url;toast("📲 WhatsApp aberto. Confirme o envio no app.");}
-  catch(e){toast("Não foi possível abrir o WhatsApp.","bad");}
-}
-function compartilhar(res,msg){
-  const txt=textoResultado(res,msg);
-  if(navigator.share){navigator.share({title:APP_NAME,text:txt}).catch(()=>{});}
-  else{
-    openOverlay('<h3 class="ov-title">📤 COMPARTILHAR</h3><p class="page-sub" style="text-align:center">Compartilhamento nativo indisponível.</p><div style="display:flex;flex-direction:column;gap:8px"><button class="btn primary" id="shCopy">📋 COPIAR</button><button class="btn blue" id="shWhats">📲 WHATSAPP</button><button class="btn ghost" id="shClose">FECHAR</button></div>');
-    $("#shCopy").addEventListener("click",()=>{closeOverlay();copiarResultado(res,msg);});
-    $("#shWhats").addEventListener("click",()=>{closeOverlay();enviarWhats(res,msg);});
-    $("#shClose").addEventListener("click",closeOverlay);
-  }
-}
-
-/* ============================================================
-   CASOS / TREINAMENTO
-   ============================================================ */
-function renderCases(){
-  const el=$("#casesList");
-  let html="";
-  CASES.forEach(c=>{
-    const feito=ST.casesDoneIds.includes(c.n);
-    html+='<div class="row" data-case="'+c.n+'"><div class="r-ico">'+(feito?"✅":"🔧")+"</div>"+
-      '<div class="r-main"><div class="r-ttl">CASO #'+String(c.n).padStart(3,"0")+" · "+esc(c.console)+"</div>"+
-      '<div class="r-sub">'+esc(c.sintoma)+"</div></div>"+
-      '<div class="r-right">'+(feito?"concluído":"abrir")+"</div></div>";
-  });
-  el.innerHTML=html;
-  $$(".row",el).forEach(r=>r.addEventListener("click",()=>{
-    SFX.click();startSession("case");
-    const alvo=Number(r.dataset.case)-1;S.index=alvo;nextWord();
-  }));
-}
-function renderTraining(){
-  const el=$("#trainingList");
-  let html="";
-  TRAIN.forEach((t,i)=>{
-    html+='<div class="row" data-tr="'+i+'"><div class="r-ico">🧠</div>'+
-      '<div class="r-main"><div class="r-ttl">'+esc(t.s)+"</div>"+
-      '<div class="r-sub">Dica: '+esc(t.d)+"</div></div>"+
-      '<div class="r-right">jogar</div></div>';
-  });
-  el.innerHTML=html;
-  $$(".row",el).forEach(r=>r.addEventListener("click",()=>{
-    SFX.click();startSession("training");S.index=Number(r.dataset.tr)%TRAIN.length;nextWord();
-  }));
-}
-
-/* ============================================================
-   ENCICLOPÉDIA
-   ============================================================ */
-function renderEncyclopedia(){
-  const q=norm($("#encSearch").value||"");
-  const list=allTerms().filter(t=>{
-    if(!q)return true;
-    return norm(t.p).includes(q)||norm(t.c).includes(q)||norm(t.e||"").includes(q)||norm(t.desc||"").includes(q);
-  }).sort((a,b)=>a.p.localeCompare(b.p));
-  const el=$("#encList");
-  if(!list.length){el.innerHTML='<p class="page-sub">Nenhum termo encontrado.</p>';return;}
-  let html="";
-  list.slice(0,400).forEach(t=>{
-    const fav=ST.favorites.includes(norm(t.p))?"⭐":(CAT_META[t.c]?CAT_META[t.c].ic:"🔧");
-    html+='<div class="row" data-term="'+esc(t.p)+'"><div class="r-ico">'+fav+"</div>"+
-      '<div class="r-main"><div class="r-ttl">'+esc(t.p)+"</div>"+
-      '<div class="r-sub">'+esc(t.c)+" · "+esc(t.d)+"</div></div>"+
-      '<div class="r-right">›</div></div>';
-  });
-  el.innerHTML=html;
-  $$(".row",el).forEach(r=>r.addEventListener("click",()=>{SFX.click();openTerm(r.dataset.term);}));
-}
-
-function openTerm(word){
-  const t=findTerm(word);if(!t)return;
-  const meta=CAT_META[t.c]||CAT_META["Reparo"];
-  const fav=ST.favorites.includes(norm(t.p));
-  let html='<div class="card">';
-  html+='<div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">';
-  html+='<div><h1 class="page-title" style="margin-bottom:2px">'+esc(t.p)+"</h1>"+
-    '<p class="page-sub" style="margin:0">'+meta.ic+" "+esc(t.c)+" · "+esc(t.d)+"</p></div>";
-  html+='<button class="btn" id="btnFav" style="min-width:auto;padding:.6rem .8rem" aria-label="Favoritar">'+(fav?"⭐":"☆")+"</button>";
-  html+="</div>";
-  if(t.desc)html+='<div class="descbox" style="margin-top:12px"><span class="desc-lbl">📖 DESCRIÇÃO</span><p class="desc-text">'+esc(t.desc)+"</p></div>";
-  html+='<div class="ov-sec" style="margin-top:12px"><h4>📚 O QUE É</h4><p>'+esc(t.e||"—")+"</p></div>";
-  html+='<div class="ov-sec"><h4>🔧 ONDE APARECE</h4><p>'+esc(t.o||meta.onde)+"</p></div>";
-  html+='<div class="ov-sec"><h4>🧪 COMO PODE SER TESTADO</h4><p>'+esc(meta.teste)+"</p></div>";
-  html+='<div class="ov-sec"><h4>⚠️ POSSÍVEIS SINTOMAS</h4><p>'+esc(meta.sintomas)+"</p></div>";
-  if((t.h||[]).filter(Boolean).length)html+='<div class="ov-sec"><h4>💡 DICAS</h4><p>'+t.h.filter(Boolean).map(x=>"• "+esc(x)).join("<br>")+"</p></div>";
-  html+='<p class="ov-note">Esta informação depende do modelo e da revisão da placa. Não condene um componente sem realizar medições.</p>';
-  html+='<div style="margin-top:14px"><button class="btn primary" id="btnPlayTerm">🎮 JOGAR ESTA PALAVRA</button></div></div>';
-  $("#termDetail").innerHTML=html;go("term");
-  $("#btnFav").addEventListener("click",()=>{
-    const n=norm(t.p);const i=ST.favorites.indexOf(n);
-    if(i>=0){ST.favorites.splice(i,1);toast("Removido dos favoritos");}
-    else{ST.favorites.push(n);toast("⭐ Adicionado aos favoritos");}
-    SFX.click();saveState();checkAchievements();renderHUD();openTerm(t.p);
-  });
-  $("#btnPlayTerm").addEventListener("click",()=>{
-    SFX.click();startSession("training");
-    G=makeGame(t,{maxWrong:6});S.used.add(norm(t.p));go("game");renderGame();
-  });
-}
-
-/* ============================================================
-   FAVORITOS / HISTÓRICO
-   ============================================================ */
-function renderFavorites(){
-  const el=$("#favList");
-  const favs=ST.favorites.map(f=>findTerm(f)).filter(Boolean);
-  if(!favs.length){el.innerHTML='<p class="page-sub">Você ainda não favoritou nenhum termo. Abra a enciclopédia e toque em ☆.</p>';return;}
-  el.innerHTML=favs.map(t=>'<div class="row" data-term="'+esc(t.p)+'"><div class="r-ico">⭐</div><div class="r-main"><div class="r-ttl">'+esc(t.p)+'</div><div class="r-sub">'+esc(t.c)+" · "+esc(t.d)+'</div></div><div class="r-right">›</div></div>').join("");
-  $$(".row",el).forEach(r=>r.addEventListener("click",()=>{SFX.click();openTerm(r.dataset.term);}));
-}
-function renderHistory(){
-  const el=$("#histList");
-  if(!ST.history.length){el.innerHTML='<p class="page-sub">Nenhum termo estudado ainda.</p>';return;}
-  el.innerHTML=ST.history.slice(0,30).map(h=>{
-    const dt=new Date(h.t||Date.now());
-    const ds=dt.toLocaleDateString("pt-BR")+" "+dt.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
-    return '<div class="row" data-term="'+esc(h.p)+'"><div class="r-ico">🕘</div><div class="r-main"><div class="r-ttl">'+esc(h.p)+'</div><div class="r-sub">'+esc(h.c||"")+" · "+ds+'</div></div><div class="r-right">›</div></div>';
-  }).join("");
-  $$(".row",el).forEach(r=>r.addEventListener("click",()=>{SFX.click();openTerm(r.dataset.term);}));
-}
-
-/* ============================================================
-   CONQUISTAS
-   ============================================================ */
-function renderAchievements(){
-  const el=$("#achList");
-  const unlocked=ST.achievements||[];
-  $("#achSub").textContent=unlocked.length+" de "+ACHS.length+" conquistas desbloqueadas.";
-  el.innerHTML=ACHS.map(a=>{
-    const on=unlocked.includes(a.id);
-    return '<div class="ach '+(on?"on":"")+'"><div class="a-ico">'+a.ic+"</div>"+
-      '<div><div class="a-ttl">'+esc(a.name)+"</div>"+
-      '<div class="a-dsc">'+esc(a.desc)+(on?" · ✅ desbloqueada":"")+"</div></div></div>";
-  }).join("");
-}
-
-/* ============================================================
-   ESTATÍSTICAS
-   ============================================================ */
-function renderStats(){
-  const lvl=levelFromXp(ST.xp),nxt=nextLevel(ST.xp);
-  const cats=Object.entries(ST.catCounts||{}).sort((a,b)=>b[1]-a[1]).slice(0,6);
-  let html='<div class="stat-grid">';
-  const rows=[
-    ["Partidas",fmt(ST.games)],["Vitórias",fmt(ST.wins)],["Derrotas",fmt(ST.losses)],
-    ["Pontuação total",fmt(ST.totalScore)],["Maior pontuação",fmt(ST.bestScore)],
-    ["Palavras descobertas",fmt(ST.wordsFound)],["Letras corretas",fmt(ST.correctLetters)],
-    ["Letras erradas",fmt(ST.wrongLetters)],["Maior sequência",fmt(ST.bestStreak)],
-    ["XP",fmt(ST.xp)],["Nível",lvl.n+" — "+lvl.t],["Casos concluídos",ST.casesDoneIds.length+"/"+CASES.length]
-  ];
-  rows.forEach(r=>{html+='<div class="stat"><div class="v">'+r[1]+'</div><div class="k">'+r[0]+"</div></div>";});
-  html+="</div>";
-  if(nxt)html+='<p class="page-sub" style="margin-top:14px">Próximo nível: <b>'+nxt.n+" — "+esc(nxt.t)+"</b> · faltam "+fmt(Math.max(0,nxt.xp-ST.xp))+" XP</p>";
-  else html+='<p class="page-sub" style="margin-top:14px">👑 Você alcançou o nível máximo!</p>';
-  html+='<h2 class="sec-title">🎯 Categorias dominadas</h2>';
-  if(cats.length){
-    html+='<div class="list">';
-    cats.forEach(c=>{html+='<div class="row" style="cursor:default"><div class="r-ico">'+(CAT_META[c[0]]?CAT_META[c[0]].ic:"🔧")+'</div><div class="r-main"><div class="r-ttl">'+esc(c[0])+'</div></div><div class="r-right">'+c[1]+" acertos</div></div>";});
-    html+="</div>";
-  }else html+='<p class="page-sub">Jogue para descobrir suas categorias mais fortes.</p>';
-  $("#statsBody").innerHTML=html;
-}
-
-/* ============================================================
-   CONFIGURAÇÕES
-   ============================================================ */
-function renderSettings(){
-  $("#setName").value=ST.name||"";
-  $("#tgSound").classList.toggle("on",!!ST.settings.sound);
-  $("#tgVib").classList.toggle("on",!!ST.settings.vibration);
-  $("#tgTheme").classList.toggle("on",ST.settings.theme==="light");
-  $("#setFont").value=String(ST.settings.font||16);
-  applyTheme();
-}
-function applyTheme(){
-  document.documentElement.setAttribute("data-theme",ST.settings.theme==="light"?"light":"dark");
-  document.documentElement.style.setProperty("--fs",(ST.settings.font||16)+"px");
-}
-
-/* ============================================================
-   EDITOR
-   ============================================================ */
-let editingIdx=-1;
-function renderEditorList(){
-  const el=$("#edList");
-  if(!ST.customTerms.length){el.innerHTML='<p class="page-sub">Nenhum termo personalizado. Crie o primeiro acima.</p>';return;}
-  el.innerHTML=ST.customTerms.map((t,i)=>
-    '<div class="row" style="cursor:default"><div class="r-ico">🛠️</div>'+
-    '<div class="r-main"><div class="r-ttl">'+esc(t.p)+"</div>"+
-    '<div class="r-sub">'+esc(t.c)+" · "+esc(t.d)+"</div></div>"+
-    '<button class="btn ghost" data-edit="'+i+'" style="min-height:auto;padding:.45rem .6rem;font-size:.78rem">✏️</button>'+
-    '<button class="btn ghost" data-del="'+i+'" style="min-height:auto;padding:.45rem .6rem;font-size:.78rem;color:var(--bad)">🗑️</button></div>'
-  ).join("");
-  $$("[data-edit]",el).forEach(b=>b.addEventListener("click",()=>{
-    const i=Number(b.dataset.edit);const t=ST.customTerms[i];editingIdx=i;
-    $("#edWord").value=t.p||"";$("#edCat").value=t.c||"Controles";$("#edDif").value=t.d||"Médio";
-    $("#edDesc").value=t.desc||"";
-    $("#edH1").value=(t.h&&t.h[0])||"";$("#edH2").value=(t.h&&t.h[1])||"";$("#edH3").value=(t.h&&t.h[2])||"";
-    $("#edExp").value=t.e||"";$("#edObs").value=t.o||"";
-    $("#edStatus").textContent="Editando: "+t.p;
-    window.scrollTo({top:0,behavior:"smooth"});SFX.click();
-  }));
-  $$("[data-del]",el).forEach(b=>b.addEventListener("click",()=>{
-    const i=Number(b.dataset.del);
-    if(confirm('Excluir o termo "'+ST.customTerms[i].p+'"?')){
-      ST.customTerms.splice(i,1);saveState();renderEditorList();toast("Termo excluído");SFX.click();
-    }
-  }));
-}
-function editorSave(){
-  const p=($("#edWord").value||"").trim().toUpperCase();
-  if(!p||p.length<3){toast("Informe uma palavra com pelo menos 3 letras.","bad");return;}
-  const t={p,c:$("#edCat").value,d:$("#edDif").value,desc:($("#edDesc").value||"").trim(),
-    h:[($("#edH1").value||"").trim(),($("#edH2").value||"").trim(),($("#edH3").value||"").trim()],
-    e:($("#edExp").value||"").trim(),o:($("#edObs").value||"").trim()};
-  if(editingIdx>=0&&ST.customTerms[editingIdx]){ST.customTerms[editingIdx]=t;toast("✅ Termo atualizado!");}
-  else{ST.customTerms.push(t);toast("✅ Termo adicionado!");}
-  editingIdx=-1;saveState();editorClear();renderEditorList();SFX.ok();
-}
-function editorClear(){
-  editingIdx=-1;
-  $("#edWord").value="";$("#edDesc").value="";
-  $("#edH1").value="";$("#edH2").value="";$("#edH3").value="";
-  $("#edExp").value="";$("#edObs").value="";
-  $("#edStatus").textContent="";
-}
-
-/* ============================================================
-   BACKUP
-   ============================================================ */
-function exportar(){
-  try{
-    const data=JSON.stringify(ST,null,2);
-    const blob=new Blob([data],{type:"application/json"});
-    const url=URL.createObjectURL(blob);
-    const a=document.createElement("a");
-    a.href=url;a.download="repair-forca-backup-"+new Date().toISOString().slice(0,10)+".json";
-    document.body.appendChild(a);a.click();a.remove();
-    setTimeout(()=>URL.revokeObjectURL(url),3000);
-    toast("📤 Progresso exportado!");SFX.ok();
-  }catch(e){toast("Não foi possível exportar.","bad");}
-}
-function importar(file){
-  const reader=new FileReader();
-  reader.onload=()=>{
-    try{
-      const obj=JSON.parse(reader.result);
-      if(!obj||typeof obj!=="object")throw new Error("inválido");
-      ST=mergeState(DEFAULT_STATE,obj);saveState();applyTheme();renderHUD();renderSettings();go("home");
-      toast("📥 Progresso importado com sucesso!");SFX.ok();
-    }catch(e){toast("Arquivo inválido. Nada foi alterado.","bad");}
-  };
-  reader.onerror=()=>toast("Falha ao ler o arquivo.","bad");
-  reader.readAsText(file);
-}
-
-/* ============================================================
-   MODO 2 JOGADORES
-   ============================================================ */
-function startDuoFlow(){
-  openOverlay('<h3 class="ov-title">👥 2 JOGADORES</h3>'+
-    '<p class="page-sub" style="text-align:center">Alternem turnos: acertou, continua; errou, passa a vez.</p>'+
-    '<div class="field"><label>Jogador 1</label><input class="input" id="duoP1" maxlength="14" placeholder="Nome do jogador 1"></div>'+
-    '<div class="field"><label>Jogador 2</label><input class="input" id="duoP2" maxlength="14" placeholder="Nome do jogador 2"></div>'+
-    '<div style="display:flex;flex-direction:column;gap:8px"><button class="btn primary" id="duoGo">🚀 COMEÇAR</button><button class="btn ghost" id="duoCancel">CANCELAR</button></div>');
-  $("#duoCancel").addEventListener("click",closeOverlay);
-  $("#duoGo").addEventListener("click",()=>{
-    const p1=($("#duoP1").value||"").trim()||"Jogador 1";
-    const p2=($("#duoP2").value||"").trim()||"Jogador 2";
-    closeOverlay();startSession("duo",{p1,p2});
-  });
-}
-
-/* ============================================================
-   EVENTOS
-   ============================================================ */
-function bindEvents(){
-  $("#btnStart").addEventListener("click",()=>{
-    SFX.click();vib(12);
-    if(ST.name){$("#wbName").textContent=ST.name.toUpperCase()+" 👋";showScreen("welcomeBack");}
-    else{showScreen("nameScreen");setTimeout(()=>$("#inpName").focus(),250);}
-  });
-  $("#btnNameGo").addEventListener("click",()=>{
-    const v=($("#inpName").value||"").trim();
-    if(!v){toast("Digite seu nome para começar.","bad");$("#inpName").focus();return;}
-    ST.name=v.slice(0,18);saveState();SFX.ok();
-    toast("Boa sorte, "+esc(ST.name)+"! 🔧🎮");
-    showApp();
-  });
-  $("#inpName").addEventListener("keydown",e=>{if(e.key==="Enter")$("#btnNameGo").click();});
-  $("#btnContinue").addEventListener("click",()=>{SFX.click();showApp();});
-  $("#btnChangeName").addEventListener("click",()=>{SFX.click();showScreen("nameScreen");$("#inpName").value=ST.name||"";setTimeout(()=>$("#inpName").focus(),200);});
-
-  document.addEventListener("click",e=>{
-    const nav=e.target.closest("[data-go]");
-    if(nav){SFX.click();const dest=nav.dataset.go;if(dest==="play"){go("home");openPlayMenu();return;}go(dest);return;}
-    const modeBtn=e.target.closest("[data-mode]");
-    if(modeBtn){SFX.click();const m=modeBtn.dataset.mode;if(m==="duo"){startDuoFlow();return;}startSession(m);return;}
+  let total = 0;
+  cart.forEach(item=>{
+    total += item.price * item.qty;
+    const div = document.createElement('div');
+    div.className = 'cart-item';
+    div.innerHTML = `
+      <div class="ci-ico">🛍️</div>
+      <div class="ci-info">
+        <h4>${item.name}</h4>
+        <small>R$ ${item.price.toFixed(2).replace('.',',')}</small>
+      </div>
+      <div class="qty">
+        <button onclick="changeQty('${item.name}',-1)">−</button>
+        <span>${item.qty}</span>
+        <button onclick="changeQty('${item.name}',1)">+</button>
+      </div>`;
+    list.appendChild(div);
   });
 
-  $("#keyboard").addEventListener("click",e=>{
-    const b=e.target.closest(".key");if(!b||b.disabled)return;guessLetter(b.dataset.k);
-  });
-  $("#btnHint").addEventListener("click",useHint);
-  $("#btnSkip").addEventListener("click",()=>{if(confirm("Pular esta palavra? Ela contará como erro.")){SFX.click();skipWord();}});
-  $("#btnQuit").addEventListener("click",()=>{if(confirm("Sair do desafio atual?")){SFX.click();endSession(false);}});
-
-  document.addEventListener("keydown",e=>{
-    if(curView!=="game")return;
-    if($("#overlay").classList.contains("on")){if(e.key==="Enter"){const b=$("#ovNext");if(b)b.click();}return;}
-    if(/^[a-zA-Z]$/.test(e.key))guessLetter(e.key);
-  });
-
-  $("#encSearch").addEventListener("input",renderEncyclopedia);
-  $("#btnBackTerm").addEventListener("click",()=>{SFX.click();go("encyclopedia");});
-
-  $("#btnSaveName").addEventListener("click",()=>{
-    const v=($("#setName").value||"").trim();
-    if(!v){toast("Digite um nome válido.","bad");return;}
-    ST.name=v.slice(0,18);saveState();renderHUD();renderHome();toast("✅ Nome atualizado!");SFX.ok();
-  });
-  $("#tgSound").addEventListener("click",()=>{ST.settings.sound=!ST.settings.sound;saveState();renderSettings();if(ST.settings.sound)SFX.ok();});
-  $("#tgVib").addEventListener("click",()=>{ST.settings.vibration=!ST.settings.vibration;saveState();renderSettings();vib(20);});
-  $("#tgTheme").addEventListener("click",()=>{ST.settings.theme=ST.settings.theme==="light"?"dark":"light";saveState();applyTheme();renderSettings();SFX.click();});
-  $("#setFont").addEventListener("change",()=>{ST.settings.font=Number($("#setFont").value)||16;saveState();applyTheme();});
-  $("#btnExport").addEventListener("click",exportar);
-  $("#btnImport").addEventListener("click",()=>$("#fileImport").click());
-  $("#fileImport").addEventListener("change",e=>{const f=e.target.files&&e.target.files[0];if(f)importar(f);e.target.value="";});
-  $("#btnReset").addEventListener("click",()=>{
-    if(!confirm("Isso apaga TODO o progresso. Deseja continuar?"))return;
-    if(!confirm("Confirma definitivamente?"))return;
-    try{localStorage.removeItem(STORAGE_KEY);}catch(e){}
-    ST=clone(DEFAULT_STATE);saveState();applyTheme();renderHUD();
-    toast("🗑️ Progresso resetado.");showScreen("splash");
-  });
-
-  $("#btnEdSave").addEventListener("click",editorSave);
-  $("#btnEdClear").addEventListener("click",()=>{SFX.click();editorClear();});
-
-  $("#overlay").addEventListener("click",e=>{
-    if(e.target===$("#overlay")){if(curView==="game")return;closeOverlay();}
-  });
-  ["#tgSound","#tgVib","#tgTheme"].forEach(sel=>{
-    $(sel).addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();$(sel).click();}});
-  });
+  document.getElementById('totalValue').textContent = 'R$ ' + total.toFixed(2).replace('.',',');
 }
 
-function openPlayMenu(){
-  openOverlay('<h3 class="ov-title">🎮 ESCOLHA O MODO</h3>'+
-    '<p class="page-sub" style="text-align:center">Leia a descrição e descubra a palavra.</p>'+
-    '<div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">'+
-    '<button class="btn primary" data-playmode="normal">🎯 DESAFIO · 10 palavras</button>'+
-    '<button class="btn" data-playmode="timed">⏱️ DESAFIO RÁPIDO · 60s</button>'+
-    '<button class="btn" data-playmode="hard">☠️ MODO TÉCNICO · 4 tentativas</button>'+
-    '<button class="btn" data-playmode="duo">👥 2 JOGADORES</button>'+
-    '<button class="btn ghost" id="pmClose">CANCELAR</button></div>');
-  $("#pmClose").addEventListener("click",closeOverlay);
-  $$("[data-playmode]").forEach(b=>b.addEventListener("click",()=>{
-    const m=b.dataset.playmode;closeOverlay();SFX.click();
-    if(m==="duo"){startDuoFlow();return;}
-    startSession(m);
-  }));
+function finishOrder(){
+  if(cart.length === 0) return;
+  cart = [];
+  renderCart();
+  toast('🎉 Pedido realizado com sucesso!');
+  setTimeout(()=>go('home'), 1200);
 }
 
-/* ============================================================
-   INICIALIZAÇÃO
-   ============================================================ */
-function init(){
-  ST=loadState();
-  applyTheme();
-  $("#edCat").innerHTML=CATEGORIES.map(c=>'<option value="'+c+'">'+c+"</option>").join("");
-  $("#edCat").value="Controles";
-  renderHUD();
-  bindEvents();
-  if(!storageOK)setTimeout(()=>toast("⚠️ Armazenamento indisponível: o progresso não será salvo.","bad"),900);
-  showScreen("splash");
+/* ===== AGENDAMENTO ===== */
+function agendar(nome, preco){
+  go('agendar');
+  const sel = document.getElementById('petService');
+  for(let opt of sel.options){
+    if(opt.text.includes(nome)){ sel.selectedIndex = opt.index; break; }
+  }
+  toast('Serviço selecionado: ' + nome);
 }
-document.addEventListener("DOMContentLoaded",init);
+
+function confirmSchedule(){
+  const nome = document.getElementById('petName').value.trim();
+  const data = document.getElementById('petDate').value;
+  const hora = document.getElementById('petTime').value;
+
+  if(!nome){ toast('⚠️ Informe o nome do pet'); return; }
+  if(!data){ toast('⚠️ Escolha uma data'); return; }
+  if(!hora){ toast('⚠️ Escolha um horário'); return; }
+
+  toast('✅ Agendamento confirmado!');
+  document.getElementById('petName').value = '';
+  document.getElementById('petDate').value = '';
+  document.getElementById('petTime').value = '';
+  document.getElementById('petNotes').value = '';
+  setTimeout(()=>go('perfil'), 1400);
+}
+
+/* ===== DATA PADRÃO ===== */
+window.addEventListener('load', ()=>{
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('petDate').min = today;
+});
 </script>
 </body>
 </html>

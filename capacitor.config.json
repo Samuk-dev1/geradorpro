@@ -1,6 +1,6 @@
 {
-  "appId": "com.gestoriptv.gerenciamentostudio33",
-  "appName": "Gerenciamento Studio 33",
+  "appId": "com.gestoriptv.gestorpro",
+  "appName": "gestorpro",
   "webDir": "www",
   "plugins": {
     "LocalNotifications": {

@@ -1,4 +1,4 @@
-package com.gestoriptv.gerenciamentostudio33;
+package com.gestoriptv.gestorpro;
 
 import com.getcapacitor.BridgeActivity;
 

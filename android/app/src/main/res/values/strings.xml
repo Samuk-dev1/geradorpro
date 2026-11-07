@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">gestozin</string>
-    <string name="title_activity_main">gestozin</string>
-    <string name="package_name">com.gestoriptv.gestozin</string>
-    <string name="custom_url_scheme">com.gestoriptv.gestozin</string>
+    <string name="app_name">Gerenciador Studio</string>
+    <string name="title_activity_main">Gerenciador Studio</string>
+    <string name="package_name">com.gestoriptv.gerenciadorstudio</string>
+    <string name="custom_url_scheme">com.gestoriptv.gerenciadorstudio</string>
 </resources>

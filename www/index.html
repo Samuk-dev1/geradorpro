@@ -1,597 +1,428 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#ff7a45">
-<title>PetLovers • Pet Shop</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Tattoo Manager">
+<meta name="theme-color" content="#0f0f1a">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%230f0f1a'/%3E%3Ctext x='90' y='120' font-size='100' text-anchor='middle'%3E%F0%9F%96%A4%3C/text%3E%3C/svg%3E">
+<title>Tattoo Studio Manager</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 :root{
-  --primary:#ff7a45;
-  --primary-dark:#e85d2a;
-  --secondary:#3ba7ff;
-  --bg:#f7f8fb;
-  --card:#ffffff;
-  --text:#1f2430;
-  --muted:#7a8194;
-  --success:#2ecc71;
-  --radius:18px;
-  --shadow:0 8px 24px rgba(31,36,48,.08);
+--bg:#0f0f1a;--card:#1a1a2e;--card2:#232342;--accent:#e94560;--accent2:#0f3460;
+--green:#00d9a5;--red:#ff4757;--yellow:#ffa502;--text:#eaeaea;--muted:#8b8b9e;
+--safe-top:env(safe-area-inset-top);--safe-bottom:env(safe-area-inset-bottom);
 }
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{
-  font-family:'Segoe UI',system-ui,-apple-system,Roboto,sans-serif;
-  background:var(--bg);color:var(--text);
-  max-width:480px;margin:0 auto;min-height:100vh;
-  position:relative;overflow-x:hidden;
-  padding-bottom:84px;
-}
-/* HEADER */
-header{
-  position:sticky;top:0;z-index:50;
-  background:linear-gradient(135deg,var(--primary),#ff9a6b);
-  color:#fff;padding:18px 20px 22px;
-  border-bottom-left-radius:24px;border-bottom-right-radius:24px;
-  box-shadow:0 6px 18px rgba(255,122,69,.3);
-}
-.top-bar{display:flex;justify-content:space-between;align-items:center}
-.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.25rem}
-.brand .logo{
-  width:38px;height:38px;border-radius:50%;
-  background:#fff;color:var(--primary);
-  display:grid;place-items:center;font-size:1.3rem;
-}
-.header-icons{display:flex;gap:14px;font-size:1.2rem;cursor:pointer}
-.location{margin-top:12px;font-size:.85rem;opacity:.92;display:flex;align-items:center;gap:6px}
-.search{
-  margin-top:14px;background:rgba(255,255,255,.22);
-  border-radius:14px;padding:11px 16px;display:flex;align-items:center;gap:10px;
-  backdrop-filter:blur(6px);
-}
-.search input{
-  border:none;background:transparent;color:#fff;width:100%;outline:none;font-size:.95rem;
-}
-.search input::placeholder{color:rgba(255,255,255,.75)}
-
-/* MAIN */
-main{padding:18px 16px}
-.section-title{
-  display:flex;justify-content:space-between;align-items:center;
-  margin:22px 4px 12px;font-size:1.05rem;font-weight:700;
-}
-.section-title a{color:var(--primary);font-size:.82rem;font-weight:600;text-decoration:none}
-
-/* BANNER */
-.banner{
-  background:linear-gradient(135deg,#ffe0c9,#ffd0e0);
-  border-radius:var(--radius);padding:22px;position:relative;overflow:hidden;
-  box-shadow:var(--shadow);
-}
-.banner h2{font-size:1.15rem;line-height:1.35;max-width:65%}
-.banner p{font-size:.82rem;color:#7a5a48;margin:8px 0 14px;max-width:70%}
-.banner button{
-  background:var(--primary);color:#fff;border:none;
-  padding:10px 20px;border-radius:30px;font-weight:700;font-size:.85rem;
-  cursor:pointer;transition:.2s;
-}
-.banner button:active{transform:scale(.95)}
-.banner .emoji{
-  position:absolute;right:-6px;bottom:-14px;font-size:6rem;opacity:.9;transform:rotate(-8deg);
-}
-
-/* QUICK ACTIONS */
-.quick-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}
-.quick{
-  background:var(--card);border-radius:16px;padding:14px 6px;text-align:center;
-  box-shadow:var(--shadow);cursor:pointer;transition:.2s;border:none;
-}
-.quick:active{transform:scale(.94)}
-.quick .ico{font-size:1.55rem;display:block;margin-bottom:6px}
-.quick span{font-size:.7rem;font-weight:600;color:var(--muted)}
-
-/* CARDS HORIZONTAIS */
-.h-scroll{display:flex;gap:12px;overflow-x:auto;padding:4px 2px 10px;scrollbar-width:none}
-.h-scroll::-webkit-scrollbar{display:none}
-.card{
-  background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);
-  min-width:160px;flex-shrink:0;overflow:hidden;cursor:pointer;transition:.2s;
-}
-.card:active{transform:scale(.97)}
-.card .thumb{
-  height:100px;display:grid;place-items:center;font-size:2.8rem;
-  background:linear-gradient(135deg,#fff1e8,#ffe0d0);
-}
-.card .thumb.blue{background:linear-gradient(135deg,#e3f2ff,#cfe6ff)}
-.card .thumb.green{background:linear-gradient(135deg,#e6fbef,#cdf3dd)}
-.card .thumb.pink{background:linear-gradient(135deg,#ffe6f2,#ffd0e6)}
-.card .info{padding:12px}
-.card .info h4{font-size:.9rem;margin-bottom:4px}
-.card .info small{color:var(--muted);font-size:.74rem}
-.card .price{margin-top:8px;color:var(--primary);font-weight:800;font-size:.95rem}
-
-/* LISTA SERVIÇOS */
-.service-list{display:flex;flex-direction:column;gap:10px}
-.service{
-  background:var(--card);border-radius:16px;padding:14px;display:flex;align-items:center;gap:14px;
-  box-shadow:var(--shadow);cursor:pointer;transition:.2s;
-}
-.service:active{transform:scale(.98)}
-.service .s-ico{
-  width:52px;height:52px;border-radius:14px;display:grid;place-items:center;
-  font-size:1.5rem;background:#fff1e8;flex-shrink:0;
-}
-.service .s-info{flex:1}
-.service .s-info h4{font-size:.92rem;margin-bottom:3px}
-.service .s-info p{font-size:.75rem;color:var(--muted)}
-.service .s-price{color:var(--primary);font-weight:800;font-size:.9rem}
-
-/* CARRINHO */
-.cart-item{
-  background:var(--card);border-radius:16px;padding:14px;display:flex;align-items:center;
-  gap:12px;box-shadow:var(--shadow);margin-bottom:10px;
-}
-.cart-item .ci-ico{font-size:1.8rem}
-.cart-item .ci-info{flex:1}
-.cart-item .ci-info h4{font-size:.9rem}
-.cart-item .ci-info small{color:var(--muted);font-size:.75rem}
-.qty{display:flex;align-items:center;gap:8px}
-.qty button{
-  width:28px;height:28px;border-radius:50%;border:none;background:#fff1e8;color:var(--primary);
-  font-weight:800;font-size:1rem;cursor:pointer;
-}
-.qty span{font-weight:700;font-size:.9rem;min-width:16px;text-align:center}
-
-/* AGENDAMENTO */
-.form-card{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}
-.form-group{margin-bottom:16px}
-.form-group label{display:block;font-size:.82rem;font-weight:600;margin-bottom:6px;color:#4a5064}
-.form-group input,.form-group select,.form-group textarea{
-  width:100%;padding:12px 14px;border:1.5px solid #e6e9f0;border-radius:12px;
-  font-size:.9rem;font-family:inherit;outline:none;transition:.2s;background:#fbfcfe;
-}
-.form-group input:focus,.form-group select:focus,.form-group textarea:focus{
-  border-color:var(--primary);background:#fff;
-}
-.btn-primary{
-  width:100%;padding:15px;border:none;border-radius:14px;color:#fff;font-weight:800;
-  font-size:1rem;cursor:pointer;transition:.2s;
-  background:linear-gradient(135deg,var(--primary),#ff9a6b);
-  box-shadow:0 8px 20px rgba(255,122,69,.35);
-}
-.btn-primary:active{transform:scale(.97)}
-
-/* PERFIL */
-.profile-head{
-  background:linear-gradient(135deg,var(--primary),#ff9a6b);
-  border-radius:var(--radius);padding:24px;color:#fff;text-align:center;
-  box-shadow:0 8px 20px rgba(255,122,69,.3);margin-bottom:18px;
-}
-.avatar{
-  width:78px;height:78px;border-radius:50%;background:#fff;margin:0 auto 12px;
-  display:grid;place-items:center;font-size:2.4rem;
-}
-.profile-head h3{font-size:1.15rem}
-.profile-head p{font-size:.82rem;opacity:.9;margin-top:4px}
-.menu-list{display:flex;flex-direction:column;gap:10px}
-.menu-item{
-  background:var(--card);border-radius:14px;padding:16px;display:flex;align-items:center;gap:14px;
-  box-shadow:var(--shadow);cursor:pointer;transition:.2s;
-}
-.menu-item:active{transform:scale(.98)}
-.menu-item .m-ico{font-size:1.3rem}
-.menu-item span{flex:1;font-size:.9rem;font-weight:600}
-.menu-item .arrow{color:var(--muted);font-size:1.1rem}
-
-/* BOTTOM NAV */
-nav{
-  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
-  width:100%;max-width:480px;background:#fff;
-  display:flex;justify-content:space-around;align-items:center;
-  padding:10px 6px 14px;box-shadow:0 -4px 20px rgba(31,36,48,.08);
-  border-top-left-radius:22px;border-top-right-radius:22px;z-index:100;
-}
-.nav-btn{
-  background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:4px;
-  color:var(--muted);cursor:pointer;font-size:.66rem;font-weight:600;padding:6px 10px;
-  transition:.2s;font-family:inherit;
-}
-.nav-btn .ni{font-size:1.35rem;transition:.2s}
-.nav-btn.active{color:var(--primary)}
-.nav-btn.active .ni{transform:translateY(-3px) scale(1.15)}
-.cart-badge{
-  position:absolute;top:0;right:4px;background:#ff3b5c;color:#fff;
-  font-size:.6rem;padding:1px 5px;border-radius:10px;font-weight:800;
-}
-.nav-btn{position:relative}
-
-/* PAGES */
-.page{display:none;animation:fade .25s ease}
-.page.active{display:block}
-@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-
-/* TOAST */
-.toast{
-  position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);
-  background:#1f2430;color:#fff;padding:12px 22px;border-radius:30px;font-size:.85rem;
-  font-weight:600;opacity:0;pointer-events:none;transition:.3s;z-index:200;white-space:nowrap;
-}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-
-.empty{text-align:center;padding:50px 20px;color:var(--muted)}
-.empty .big{font-size:3.5rem;margin-bottom:12px}
-.total-bar{
-  background:var(--card);border-radius:16px;padding:16px;margin-top:16px;
-  display:flex;justify-content:space-between;align-items:center;box-shadow:var(--shadow);
-}
-.total-bar strong{font-size:1.15rem;color:var(--primary)}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased}
+html,body{overscroll-behavior-y:contain}
+body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);padding-bottom:calc(90px + var(--safe-bottom));overflow-x:hidden;min-height:100vh}
+.header{background:linear-gradient(135deg,#1a1a2e,#0f3460);padding:calc(16px + var(--safe-top)) 16px 16px;position:sticky;top:0;z-index:100;box-shadow:0 2px 20px rgba(0,0,0,.4)}
+.header h1{font-size:18px;display:flex;align-items:center;gap:8px}
+.header .sub{font-size:11px;color:var(--muted);margin-top:2px}
+.container{padding:12px;max-width:600px;margin:0 auto}
+.card{background:var(--card);border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:0 4px 12px rgba(0,0,0,.3)}
+.card h2{font-size:15px;margin-bottom:10px;display:flex;align-items:center;gap:6px;color:var(--accent)}
+.card h3{font-size:13px;margin:10px 0 8px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+input,select,textarea,button{font-family:inherit;font-size:16px;width:100%}
+input,select,textarea{background:var(--card2);border:1px solid #333;border-radius:10px;padding:11px;color:var(--text);margin-bottom:8px;outline:none;-webkit-appearance:none;appearance:none}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238b8b9e' d='M6 8L2 4h8z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+label{font-size:11px;color:var(--muted);display:block;margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px}
+.row{display:flex;gap:8px}
+.row>*{flex:1;min-width:0}
+button{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:12px;font-weight:600;cursor:pointer;transition:.2s}
+button:active{transform:scale(.97)}
+button.secondary{background:var(--card2);color:var(--text)}
+button.green{background:var(--green);color:#000}
+button.red{background:var(--red)}
+button.small{padding:7px 10px;font-size:12px;width:auto}
+.tabs{display:flex;background:var(--card);border-radius:12px;padding:4px;margin-bottom:12px;gap:4px;overflow-x:auto}
+.tabs button{background:transparent;color:var(--muted);padding:9px 10px;font-size:12px;border-radius:8px;flex:1;white-space:nowrap;min-width:fit-content}
+.tabs button.active{background:var(--accent);color:#fff}
+.nav-bottom{position:fixed;bottom:0;left:0;right:0;background:var(--card);display:flex;padding:6px 6px calc(6px + var(--safe-bottom));border-top:1px solid #333;z-index:100;max-width:600px;margin:0 auto;box-shadow:0 -4px 20px rgba(0,0,0,.3)}
+.nav-bottom button{background:transparent;color:var(--muted);flex:1;padding:8px 4px;font-size:10px;display:flex;flex-direction:column;align-items:center;gap:3px;border-radius:8px}
+.nav-bottom button.active{color:var(--accent)}
+.nav-bottom button span{font-size:18px}
+.item{background:var(--card2);border-radius:10px;padding:10px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.item .info{flex:1;min-width:0}
+.item .info strong{font-size:13px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item .info small{font-size:11px;color:var(--muted);display:block;margin-top:2px}
+.item .value{font-weight:700;font-size:14px;white-space:nowrap}
+.item .actions{display:flex;gap:4px;flex-shrink:0}
+.item .actions button{padding:6px 8px;font-size:11px}
+.total-box{background:linear-gradient(135deg,var(--accent2),var(--card2));border-radius:12px;padding:12px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+.total-box .label{font-size:11px;color:var(--muted);text-transform:uppercase}
+.total-box .amount{font-size:20px;font-weight:800}
+.green-text{color:var(--green)}
+.red-text{color:var(--red)}
+.yellow-text{color:var(--yellow)}
+.empty{text-align:center;padding:20px;color:var(--muted);font-size:13px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:1000;padding:16px;padding-top:calc(16px + var(--safe-top));padding-bottom:calc(16px + var(--safe-bottom));overflow-y:auto}
+.modal.show{display:flex}
+.modal-content{background:var(--card);border-radius:14px;padding:16px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto}
+.modal-content h2{font-size:16px;margin-bottom:12px;color:var(--accent)}
+.filter-bar{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.filter-bar select,.filter-bar input{margin:0;font-size:14px;padding:8px;flex:1;min-width:100px}
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;text-transform:uppercase}
+.badge.pix{background:#32bcad33;color:#32bcad}
+.badge.cartao{background:#5c6bc033;color:#7c8cf0}
+.badge.dinheiro{background:#00d9a533;color:#00d9a5}
+.badge.parcelado{background:#ffa50233;color:#ffa502}
+.badge.pendente{background:#ff475733;color:#ff4757}
+.badge.pago{background:#00d9a533;color:#00d9a5}
+.chart-container{position:relative;height:220px;margin-top:8px}
+details{background:var(--card2);border-radius:10px;padding:10px;margin-bottom:8px}
+summary{cursor:pointer;font-weight:600;font-size:13px;list-style:none;display:flex;justify-content:space-between;align-items:center}
+summary::-webkit-details-marker{display:none}
+summary::after{content:'▼';font-size:10px;transition:.2s}
+details[open] summary::after{transform:rotate(180deg)}
+details[open] summary{margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid #333}
+.info-line{display:flex;justify-content:space-between;font-size:13px;padding:7px 0;border-bottom:1px solid #2a2a45}
+.info-line:last-child{border:none}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.stat-box{background:var(--card2);border-radius:10px;padding:10px;text-align:center}
+.stat-box .l{font-size:10px;color:var(--muted);text-transform:uppercase}
+.stat-box .v{font-size:16px;font-weight:700;margin-top:3px}
+.toast{position:fixed;bottom:calc(100px + var(--safe-bottom));left:50%;transform:translateX(-50%);background:var(--green);color:#000;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:600;z-index:2000;opacity:0;transition:.3s;pointer-events:none;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis}
+.toast.show{opacity:1}
+.toast.error{background:var(--red);color:#fff}
+.income-card{background:linear-gradient(135deg,#00d9a520,#00d9a508);border:1px solid #00d9a533;border-radius:12px;padding:12px;margin-bottom:8px}
+.income-card .t{font-size:14px;font-weight:700;margin-bottom:4px}
+.income-card .d{font-size:11px;color:var(--muted)}
+.income-card .v{font-size:16px;font-weight:800;color:var(--green);margin-top:4px}
+.hidden{display:none!important}
 </style>
 </head>
 <body>
 
-<header>
-  <div class="top-bar">
-    <div class="brand">
-      <div class="logo">🐾</div>
-      <span>PetLovers</span>
-    </div>
-    <div class="header-icons">
-      <span onclick="go('carrinho')">🛒</span>
-      <span onclick="go('perfil')">👤</span>
-    </div>
-  </div>
-  <div class="location">📍 Av. dos Pets, 120 — Centro</div>
-  <div class="search">
-    <span>🔍</span>
-    <input type="text" placeholder="Buscar produtos e serviços...">
-  </div>
-</header>
+<div class="header">
+<h1>🖤 Tattoo Studio Manager</h1>
+<div class="sub">Ganhos • Gastos • Impostos • Gráficos • iOS</div>
+</div>
 
-<main>
+<div class="container" id="app"></div>
 
-  <!-- ========== HOME ========== -->
-  <section id="home" class="page active">
-    <div class="banner">
-      <h2>Banho & Tosa com 20% OFF 🛁</h2>
-      <p>Agende hoje e deixe seu pet cheiroso e lindo!</p>
-      <button onclick="go('agendar')">Agendar agora</button>
-      <div class="emoji">🐶</div>
-    </div>
+<div class="nav-bottom">
+<button data-tab="dashboard" class="active"><span>📊</span>Painel</button>
+<button data-tab="ganhos"><span>💰</span>Ganhos</button>
+<button data-tab="gastos"><span>💸</span>Gastos</button>
+<button data-tab="contas"><span>📋</span>Contas</button>
+<button data-tab="config"><span>⚙️</span>Config</button>
+</div>
 
-    <div class="quick-grid">
-      <button class="quick" onclick="go('agendar')"><span class="ico">🛁</span><span>Banho</span></button>
-      <button class="quick" onclick="go('agendar')"><span class="ico">✂️</span><span>Tosa</span></button>
-      <button class="quick" onclick="go('loja')"><span class="ico">🦴</span><span>Ração</span></button>
-      <button class="quick" onclick="go('agendar')"><span class="ico">💉</span><span>Vacina</span></button>
-    </div>
-
-    <div class="section-title">
-      <span>Serviços populares</span>
-      <a onclick="go('servicos')">Ver todos</a>
-    </div>
-    <div class="h-scroll">
-      <div class="card" onclick="go('agendar')">
-        <div class="thumb">🛁</div>
-        <div class="info"><h4>Banho Completo</h4><small>45 min</small><div class="price">R$ 45</div></div>
-      </div>
-      <div class="card" onclick="go('agendar')">
-        <div class="thumb blue">✂️</div>
-        <div class="info"><h4>Tosa Higiênica</h4><small>30 min</small><div class="price">R$ 35</div></div>
-      </div>
-      <div class="card" onclick="go('agendar')">
-        <div class="thumb green">💉</div>
-        <div class="info"><h4>Vacina V10</h4><small>15 min</small><div class="price">R$ 80</div></div>
-      </div>
-      <div class="card" onclick="go('agendar')">
-        <div class="thumb pink">🐕</div>
-        <div class="info"><h4>Passeio</h4><small>1 hora</small><div class="price">R$ 25</div></div>
-      </div>
-    </div>
-
-    <div class="section-title">
-      <span>Mais vendidos</span>
-      <a onclick="go('loja')">Ver loja</a>
-    </div>
-    <div class="h-scroll">
-      <div class="card" onclick="addCart('Ração Premium 10kg',189)">
-        <div class="thumb">🥫</div>
-        <div class="info"><h4>Ração Premium</h4><small>10kg · Adulto</small><div class="price">R$ 189</div></div>
-      </div>
-      <div class="card" onclick="addCart('Brinquedo Osso',29)">
-        <div class="thumb blue">🦴</div>
-        <div class="info"><h4>Brinquedo Osso</h4><small>Borracha</small><div class="price">R$ 29</div></div>
-      </div>
-      <div class="card" onclick="addCart('Cama Pet',119)">
-        <div class="thumb green">🛏️</div>
-        <div class="info"><h4>Cama Confort</h4><small>Tamanho M</small><div class="price">R$ 119</div></div>
-      </div>
-      <div class="card" onclick="addCart('Coleira Antipulgas',59)">
-        <div class="thumb pink">🦮</div>
-        <div class="info"><h4>Coleira Antipulgas</h4><small>3 meses</small><div class="price">R$ 59</div></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========== SERVIÇOS ========== -->
-  <section id="servicos" class="page">
-    <div class="section-title"><span>Nossos Serviços</span></div>
-    <div class="service-list">
-      <div class="service" onclick="agendar('Banho Completo',45)">
-        <div class="s-ico">🛁</div>
-        <div class="s-info"><h4>Banho Completo</h4><p>Shampoo + secagem + perfume</p></div>
-        <div class="s-price">R$ 45</div>
-      </div>
-      <div class="service" onclick="agendar('Tosa Higiênica',35)">
-        <div class="s-ico">✂️</div>
-        <div class="s-info"><h4>Tosa Higiênica</h4><p>Patas, focinho e região íntima</p></div>
-        <div class="s-price">R$ 35</div>
-      </div>
-      <div class="service" onclick="agendar('Tosa Completa',65)">
-        <div class="s-ico">🐩</div>
-        <div class="s-info"><h4>Tosa Completa</h4><p>Máquina + tesoura</p></div>
-        <div class="s-price">R$ 65</div>
-      </div>
-      <div class="service" onclick="agendar('Vacinação V10',80)">
-        <div class="s-ico">💉</div>
-        <div class="s-info"><h4>Vacina V10</h4><p>Proteção completa</p></div>
-        <div class="s-price">R$ 80</div>
-      </div>
-      <div class="service" onclick="agendar('Consulta Veterinária',120)">
-        <div class="s-ico">🩺</div>
-        <div class="s-info"><h4>Consulta Veterinária</h4><p>Avaliação geral do pet</p></div>
-        <div class="s-price">R$ 120</div>
-      </div>
-      <div class="service" onclick="agendar('Passeio 1h',25)">
-        <div class="s-ico">🐕</div>
-        <div class="s-info"><h4>Passeio 1h</h4><p>Profissional treinado</p></div>
-        <div class="s-price">R$ 25</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========== LOJA ========== -->
-  <section id="loja" class="page">
-    <div class="section-title"><span>Loja Pet</span></div>
-    <div class="service-list">
-      <div class="service" onclick="addCart('Ração Premium 10kg',189)">
-        <div class="s-ico">🥫</div>
-        <div class="s-info"><h4>Ração Premium 10kg</h4><p>Adulto · Frango</p></div>
-        <div class="s-price">R$ 189</div>
-      </div>
-      <div class="service" onclick="addCart('Brinquedo Osso',29)">
-        <div class="s-ico">🦴</div>
-        <div class="s-info"><h4>Brinquedo Osso</h4><p>Borracha atóxica</p></div>
-        <div class="s-price">R$ 29</div>
-      </div>
-      <div class="service" onclick="addCart('Cama Pet M',119)">
-        <div class="s-ico">🛏️</div>
-        <div class="s-info"><h4>Cama Confort M</h4><p>Lavável</p></div>
-        <div class="s-price">R$ 119</div>
-      </div>
-      <div class="service" onclick="addCart('Coleira Antipulgas',59)">
-        <div class="s-ico">🦮</div>
-        <div class="s-info"><h4>Coleira Antipulgas</h4><p>Dura 3 meses</p></div>
-        <div class="s-price">R$ 59</div>
-      </div>
-      <div class="service" onclick="addCart('Shampoo Neutro',39)">
-        <div class="s-ico">🧴</div>
-        <div class="s-info"><h4>Shampoo Neutro</h4><p>500ml · Pelos macios</p></div>
-        <div class="s-price">R$ 39</div>
-      </div>
-      <div class="service" onclick="addCart('Petiscos Naturais',24)">
-        <div class="s-ico">🍖</div>
-        <div class="s-info"><h4>Petiscos Naturais</h4><p>Sem conservantes</p></div>
-        <div class="s-price">R$ 24</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========== AGENDAR ========== -->
-  <section id="agendar" class="page">
-    <div class="section-title"><span>Agendar Serviço</span></div>
-    <div class="form-card">
-      <div class="form-group">
-        <label>Nome do Pet</label>
-        <input type="text" id="petName" placeholder="Ex: Rex">
-      </div>
-      <div class="form-group">
-        <label>Espécie</label>
-        <select id="petType">
-          <option>Cachorro</option>
-          <option>Gato</option>
-          <option>Outro</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Serviço</label>
-        <select id="petService">
-          <option>Banho Completo — R$ 45</option>
-          <option>Tosa Higiênica — R$ 35</option>
-          <option>Tosa Completa — R$ 65</option>
-          <option>Vacinação V10 — R$ 80</option>
-          <option>Consulta Veterinária — R$ 120</option>
-          <option>Passeio 1h — R$ 25</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Data</label>
-        <input type="date" id="petDate">
-      </div>
-      <div class="form-group">
-        <label>Horário</label>
-        <input type="time" id="petTime">
-      </div>
-      <div class="form-group">
-        <label>Observações</label>
-        <textarea id="petNotes" rows="2" placeholder="Alguma informação extra?"></textarea>
-      </div>
-      <button class="btn-primary" onclick="confirmSchedule()">Confirmar Agendamento</button>
-    </div>
-  </section>
-
-  <!-- ========== CARRINHO ========== -->
-  <section id="carrinho" class="page">
-    <div class="section-title"><span>Meu Carrinho</span></div>
-    <div id="cartList"></div>
-    <div id="cartEmpty" class="empty">
-      <div class="big">🛒</div>
-      <p>Seu carrinho está vazio</p>
-    </div>
-    <div id="cartTotal" style="display:none">
-      <div class="total-bar">
-        <span>Total</span>
-        <strong id="totalValue">R$ 0,00</strong>
-      </div>
-      <button class="btn-primary" style="margin-top:12px" onclick="finishOrder()">Finalizar Pedido</button>
-    </div>
-  </section>
-
-  <!-- ========== PERFIL ========== -->
-  <section id="perfil" class="page">
-    <div class="profile-head">
-      <div class="avatar">👤</div>
-      <h3>João Silva</h3>
-      <p>joao@email.com</p>
-    </div>
-    <div class="menu-list">
-      <div class="menu-item"><span class="m-ico">🐾</span><span>Meus Pets</span><span class="arrow">›</span></div>
-      <div class="menu-item"><span class="m-ico">📅</span><span>Meus Agendamentos</span><span class="arrow">›</span></div>
-      <div class="menu-item"><span class="m-ico">📦</span><span>Meus Pedidos</span><span class="arrow">›</span></div>
-      <div class="menu-item"><span class="m-ico">💳</span><span>Pagamentos</span><span class="arrow">›</span></div>
-      <div class="menu-item"><span class="m-ico">🎁</span><span>Programa Fidelidade</span><span class="arrow">›</span></div>
-      <div class="menu-item"><span class="m-ico">⚙️</span><span>Configurações</span><span class="arrow">›</span></div>
-      <div class="menu-item" onclick="alert('Saindo...')"><span class="m-ico">🚪</span><span>Sair</span><span class="arrow">›</span></div>
-    </div>
-  </section>
-
-</main>
-
-<!-- BOTTOM NAV -->
-<nav>
-  <button class="nav-btn active" data-page="home" onclick="go('home')"><span class="ni">🏠</span>Início</button>
-  <button class="nav-btn" data-page="servicos" onclick="go('servicos')"><span class="ni">🛁</span>Serviços</button>
-  <button class="nav-btn" data-page="loja" onclick="go('loja')"><span class="ni">🛍️</span>Loja</button>
-  <button class="nav-btn" data-page="agendar" onclick="go('agendar')"><span class="ni">📅</span>Agendar</button>
-  <button class="nav-btn" data-page="perfil" onclick="go('perfil')"><span class="ni">👤</span>Perfil</button>
-</nav>
-
+<div class="modal" id="modal"><div class="modal-content" id="modalContent"></div></div>
 <div class="toast" id="toast"></div>
 
 <script>
-/* ===== NAVEGAÇÃO ===== */
-function go(page){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById(page).classList.add('active');
-  document.querySelectorAll('.nav-btn').forEach(b=>{
-    b.classList.toggle('active', b.dataset.page===page);
-  });
-  window.scrollTo({top:0,behavior:'smooth'});
+const DEFAULTS = {
+ganhos: [],
+gastos: [],
+contas: [],
+config: {
+impostoPix: 6,
+impostoCartao: 6,
+studioNome: 'Meu Estúdio',
+categoriasGastoEstudio: ['Material','Aluguel','Energia','Internet','Marketing','Equipamento','Manutenção','Outros'],
+categoriasGastoPessoal: ['Alimentação','Moradia','Transporte','Saúde','Lazer','Educação','Roupas','Outros'],
+formasPagamento: ['Pix','Cartão Débito','Cartão Crédito','Dinheiro','Cartão Parcelado']
+}
+};
+
+let state = loadState();
+let currentTab = 'dashboard';
+let currentFilter = { ano: new Date().getFullYear(), mes: new Date().getMonth() };
+let charts = {};
+
+function loadState(){
+try{
+const s = JSON.parse(localStorage.getItem('tattoo_manager_ios'));
+if(!s) return structuredClone(DEFAULTS);
+return {
+ganhos: s.ganhos || [],
+gastos: s.gastos || [],
+contas: s.contas || [],
+config: {...DEFAULTS.config, ...(s.config||{})}
+};
+}catch(e){ return structuredClone(DEFAULTS); }
+}
+function saveState(){ localStorage.setItem('tattoo_manager_ios', JSON.stringify(state)); }
+
+const uid = () => Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const fmt = v => 'R$ '+(Number(v)||0).toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+const fmtDate = d => { if(!d) return ''; const [y,m,dd]=d.split('-'); return `${dd}/${m}/${y}`; };
+const today = () => new Date().toISOString().slice(0,10);
+const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const escapeHtml = s => String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function toast(msg, err=false){
+const t = document.getElementById('toast');
+t.textContent = msg; t.className = 'toast show'+(err?' error':'');
+clearTimeout(t._tm); t._tm = setTimeout(()=>t.className='toast'+(err?' error':''),2200);
+}
+function openModal(html){
+document.getElementById('modalContent').innerHTML = html;
+document.getElementById('modal').classList.add('show');
+}
+function closeModal(){ document.getElementById('modal').classList.remove('show'); }
+document.getElementById('modal').addEventListener('click', e => { if(e.target.id==='modal') closeModal(); });
+
+function mesAnoMatch(dataStr){
+if(!dataStr) return false;
+const d = new Date(dataStr+'T00:00:00');
+return d.getMonth()===currentFilter.mes && d.getFullYear()===currentFilter.ano;
 }
 
-/* ===== TOAST ===== */
-let toastTimer;
-function toast(msg){
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(()=>t.classList.remove('show'), 2200);
+function calcGanho(g){
+const val = Number(g.valor)||0;
+const juros = Number(g.juros)||0;
+const forma = g.forma || '';
+let impostoPct = 0;
+if(forma==='Pix') impostoPct = state.config.impostoPix;
+else if(forma.includes('Cartão')) impostoPct = state.config.impostoCartao;
+const imposto = val * (impostoPct/100);
+const liquido = val - juros - imposto;
+return { bruto: val, juros, imposto, liquido, impostoPct };
+}
+function totalGanhos(lista){
+return lista.reduce((s,g)=>{ const c=calcGanho(g); s.bruto+=c.bruto; s.juros+=c.juros; s.imposto+=c.imposto; s.liquido+=c.liquido; return s; }, {bruto:0,juros:0,imposto:0,liquido:0});
+}
+function totalGastos(lista,tipo){
+return lista.filter(g=>!tipo||g.tipo===tipo).reduce((s,g)=>s+(Number(g.valor)||0),0);
+}
+function totalContas(lista,tipo,status){
+return lista.filter(c=>(!tipo||c.tipo===tipo)&&(!status||c.status===status)).reduce((s,c)=>s+(Number(c.valor)||0),0);
 }
 
-/* ===== CARRINHO ===== */
-let cart = [];
-
-function addCart(name, price){
-  const item = cart.find(i=>i.name===name);
-  if(item) item.qty++;
-  else cart.push({name, price, qty:1});
-  renderCart();
-  toast('✅ Adicionado ao carrinho');
-}
-
-function changeQty(name, delta){
-  const item = cart.find(i=>i.name===name);
-  if(!item) return;
-  item.qty += delta;
-  if(item.qty <= 0) cart = cart.filter(i=>i.name!==name);
-  renderCart();
-}
-
-function renderCart(){
-  const list = document.getElementById('cartList');
-  const empty = document.getElementById('cartEmpty');
-  const totalBox = document.getElementById('cartTotal');
-  list.innerHTML = '';
-
-  if(cart.length === 0){
-    empty.style.display = 'block';
-    totalBox.style.display = 'none';
-    return;
-  }
-  empty.style.display = 'none';
-  totalBox.style.display = 'block';
-
-  let total = 0;
-  cart.forEach(item=>{
-    total += item.price * item.qty;
-    const div = document.createElement('div');
-    div.className = 'cart-item';
-    div.innerHTML = `
-      <div class="ci-ico">🛍️</div>
-      <div class="ci-info">
-        <h4>${item.name}</h4>
-        <small>R$ ${item.price.toFixed(2).replace('.',',')}</small>
-      </div>
-      <div class="qty">
-        <button onclick="changeQty('${item.name}',-1)">−</button>
-        <span>${item.qty}</span>
-        <button onclick="changeQty('${item.name}',1)">+</button>
-      </div>`;
-    list.appendChild(div);
-  });
-
-  document.getElementById('totalValue').textContent = 'R$ ' + total.toFixed(2).replace('.',',');
-}
-
-function finishOrder(){
-  if(cart.length === 0) return;
-  cart = [];
-  renderCart();
-  toast('🎉 Pedido realizado com sucesso!');
-  setTimeout(()=>go('home'), 1200);
-}
-
-/* ===== AGENDAMENTO ===== */
-function agendar(nome, preco){
-  go('agendar');
-  const sel = document.getElementById('petService');
-  for(let opt of sel.options){
-    if(opt.text.includes(nome)){ sel.selectedIndex = opt.index; break; }
-  }
-  toast('Serviço selecionado: ' + nome);
-}
-
-function confirmSchedule(){
-  const nome = document.getElementById('petName').value.trim();
-  const data = document.getElementById('petDate').value;
-  const hora = document.getElementById('petTime').value;
-
-  if(!nome){ toast('⚠️ Informe o nome do pet'); return; }
-  if(!data){ toast('⚠️ Escolha uma data'); return; }
-  if(!hora){ toast('⚠️ Escolha um horário'); return; }
-
-  toast('✅ Agendamento confirmado!');
-  document.getElementById('petName').value = '';
-  document.getElementById('petDate').value = '';
-  document.getElementById('petTime').value = '';
-  document.getElementById('petNotes').value = '';
-  setTimeout(()=>go('perfil'), 1400);
-}
-
-/* ===== DATA PADRÃO ===== */
-window.addEventListener('load', ()=>{
-  const today = new Date().toISOString().split('T')[0];
-  document.getElementById('petDate').min = today;
+document.querySelectorAll('.nav-bottom button').forEach(btn=>{
+btn.addEventListener('click', ()=>{
+currentTab = btn.dataset.tab;
+document.querySelectorAll('.nav-bottom button').forEach(b=>b.classList.toggle('active',b===btn));
+render();
+window.scrollTo(0,0);
 });
-</script>
-</body>
-</html>
+});
+
+function render(){
+const app = document.getElementById('app');
+if(currentTab==='dashboard') app.innerHTML = renderDashboard();
+else if(currentTab==='ganhos') app.innerHTML = renderGanhos();
+else if(currentTab==='gastos') app.innerHTML = renderGastos();
+else if(currentTab==='contas') app.innerHTML = renderContas();
+else if(currentTab==='config') app.innerHTML = renderConfig();
+attachEvents();
+drawCharts();
+}
+
+function anosDisponiveis(){
+const anos = new Set([new Date().getFullYear()]);
+[...state.ganhos.map(x=>x.data),...state.gastos.map(x=>x.data),...state.contas.map(x=>x.vencimento)].forEach(d=>{
+if(d) anos.add(parseInt(d.slice(0,4)));
+});
+return [...anos].sort((a,b)=>b-a);
+}
+
+function attachEvents(){
+const fAno = document.getElementById('fAno');
+const fMes = document.getElementById('fMes');
+if(fAno) fAno.addEventListener('change', e=>{ currentFilter.ano = parseInt(e.target.value); render(); });
+if(fMes) fMes.addEventListener('change', e=>{ currentFilter.mes = parseInt(e.target.value); render(); });
+}
+
+/* ===== DASHBOARD ===== */
+function renderDashboard(){
+const ganhosMes = state.ganhos.filter(g=>mesAnoMatch(g.data));
+const gastosMes = state.gastos.filter(g=>mesAnoMatch(g.data));
+const contasMes = state.contas.filter(c=>{
+if(!c.vencimento) return false;
+const d = new Date(c.vencimento+'T00:00:00');
+return d.getMonth()===currentFilter.mes && d.getFullYear()===currentFilter.ano;
+});
+const tg = totalGanhos(ganhosMes);
+const ge = totalGastos(gastosMes,'estudio');
+const gp = totalGastos(gastosMes,'pessoal');
+const cePend = totalContas(contasMes,'estudio','pendente');
+const cpPend = totalContas(contasMes,'pessoal','pendente');
+const receitaLiq = tg.liquido;
+const despesasTotal = ge+gp+cePend+cpPend;
+const saldo = receitaLiq - despesasTotal;
+
+return `
+<div class="filter-bar">
+<select id="fAno">${anosDisponiveis().map(a=>`<option ${a===currentFilter.ano?'selected':''}>${a}</option>`).join('')}</select>
+<select id="fMes">${MESES.map((m,i)=>`<option value="${i}" ${i===currentFilter.mes?'selected':''}>${m}</option>`).join('')}</select>
+</div>
+<div class="stat-grid">
+<div class="stat-box"><div class="l">Ganho Líquido</div><div class="v green-text">${fmt(tg.liquido)}</div></div>
+<div class="stat-box"><div class="l">Ganho Bruto</div><div class="v">${fmt(tg.bruto)}</div></div>
+<div class="stat-box"><div class="l">Impostos</div><div class="v yellow-text">${fmt(tg.imposto)}</div></div>
+<div class="stat-box"><div class="l">Juros Maquininha</div><div class="v yellow-text">${fmt(tg.juros)}</div></div>
+</div>
+<div class="card">
+<h2>💼 Resumo do Mês</h2>
+<div class="info-line"><span>Ganhos Líquidos</span><strong class="green-text">${fmt(receitaLiq)}</strong></div>
+<div class="info-line"><span>Gastos Estúdio</span><strong class="red-text">-${fmt(ge)}</strong></div>
+<div class="info-line"><span>Gastos Pessoais</span><strong class="red-text">-${fmt(gp)}</strong></div>
+<div class="info-line"><span>Contas Estúdio (pendentes)</span><strong class="red-text">-${fmt(cePend)}</strong></div>
+<div class="info-line"><span>Contas Pessoais (pendentes)</span><strong class="red-text">-${fmt(cpPend)}</strong></div>
+<div class="info-line" style="border-top:2px solid var(--accent);margin-top:6px;padding-top:8px;font-size:15px">
+<span><strong>SALDO FINAL</strong></span>
+<strong class="${saldo>=0?'green-text':'red-text'}" style="font-size:18px">${fmt(saldo)}</strong>
+</div>
+</div>
+<div class="card">
+<h2>📈 Ganhos vs Gastos (${currentFilter.ano})</h2>
+<div class="chart-container"><canvas id="chartMensal"></canvas></div>
+</div>
+<div class="card">
+<h2>🎯 Formas de Pagamento</h2>
+<div class="chart-container"><canvas id="chartFormas"></canvas></div>
+</div>
+<div class="card">
+<h2>🏷️ Top Categorias de Gasto</h2>
+${renderCategoriasResumo(gastosMes)}
+</div>`;
+}
+
+function renderCategoriasResumo(gastos){
+const map = {};
+gastos.forEach(g=>{ const k = g.tipo+'|'+g.categoria; map[k]=(map[k]||0)+Number(g.valor); });
+const arr = Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,6);
+if(!arr.length) return '<div class="empty">Sem gastos no mês</div>';
+return arr.map(([k,v])=>{
+const [tipo,cat]=k.split('|');
+return `<div class="info-line"><span>${tipo==='estudio'?'🏪':'🏠'} ${escapeHtml(cat)}</span><strong class="red-text">${fmt(v)}</strong></div>`;
+}).join('');
+}
+
+/* ===== GANHOS ===== */
+function renderGanhos(){
+const lista = state.ganhos.filter(g=>mesAnoMatch(g.data)).sort((a,b)=>b.data.localeCompare(a.data));
+const t = totalGanhos(lista);
+return `
+<div class="filter-bar">
+<select id="fAno">${anosDisponiveis().map(a=>`<option ${a===currentFilter.ano?'selected':''}>${a}</option>`).join('')}</select>
+<select id="fMes">${MESES.map((m,i)=>`<option value="${i}" ${i===currentFilter.mes?'selected':''}>${m}</option>`).join('')}</select>
+</div>
+<div class="total-box">
+<div><div class="label">Líquido Recebido</div><div class="amount green-text">${fmt(t.liquido)}</div></div>
+<button class="small" onclick="novoGanho()">+ Novo</button>
+</div>
+<div class="stat-grid">
+<div class="stat-box"><div class="l">Bruto</div><div class="v">${fmt(t.bruto)}</div></div>
+<div class="stat-box"><div class="l">Impostos</div><div class="v yellow-text">${fmt(t.imposto)}</div></div>
+</div>
+<div class="card">
+<h2>💰 Trabalhos do Mês (${lista.length})</h2>
+${lista.length? lista.map(g=>{
+const c = calcGanho(g);
+const badge = (g.forma||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').split(' ')[0];
+return `<div class="income-card">
+<div style="display:flex;justify-content:space-between;align-items:start;gap:8px">
+<div style="flex:1;min-width:0">
+<div class="t">${escapeHtml(g.nome)}</div>
+<div class="d">${fmtDate(g.data)} • <span class="badge ${badge}">${escapeHtml(g.forma)}</span>${g.parcelas>1?` • ${g.parcelas}x`:''}</div>
+<div class="d" style="margin-top:4px">Bruto ${fmt(c.bruto)} • Juros ${fmt(c.juros)} • Imp. ${fmt(c.imposto)} (${c.impostoPct}%)</div>
+</div>
+<div style="text-align:right">
+<div class="v">${fmt(c.liquido)}</div>
+<div style="display:flex;gap:4px;margin-top:6px;justify-content:flex-end">
+<button class="small secondary" onclick="novoGanho('${g.id}')">✏️</button>
+<button class="small red" onclick="excluirGanho('${g.id}')">🗑</button>
+</div>
+</div>
+</div>
+</div>`;
+}).join('') : '<div class="empty">Nenhum ganho neste mês</div>'}
+</div>`;
+}
+
+function novoGanho(id){
+const g = id ? state.ganhos.find(x=>x.id===id) : {data:today(),nome:'',valor:'',forma:'Pix',juros:0,parcelas:1,obs:''};
+openModal(`
+<h2>${id?'Editar':'Novo'} Ganho</h2>
+<label>Data</label><input type="date" id="gData" value="${g.data}">
+<label>Nome da Tattoo / Trabalho</label><input type="text" id="gNome" value="${escapeHtml(g.nome)}" placeholder="Ex: Rosa no braço">
+<label>Valor Cobrado (R$)</label><input type="number" step="0.01" inputmode="decimal" id="gValor" value="${g.valor}" oninput="previewGanho()">
+<label>Forma de Pagamento</label>
+<select id="gForma" onchange="previewGanho()">
+${state.config.formasPagamento.map(f=>`<option ${f===g.forma?'selected':''}>${f}</option>`).join('')}
+</select>
+<div id="gParcelasWrap">
+<label>Nº de Parcelas</label>
+<input type="number" min="1" inputmode="numeric" id="gParcelas" value="${g.parcelas||1}" oninput="previewGanho()">
+</div>
+<label>Juros da Maquininha (R$)</label>
+<input type="number" step="0.01" inputmode="decimal" id="gJuros" value="${g.juros||0}" oninput="previewGanho()">
+<label>Observação</label>
+<input type="text" id="gObs" value="${escapeHtml(g.obs||'')}" placeholder="Opcional">
+<div id="gPreview" class="card" style="background:var(--card2);margin-top:10px"></div>
+<div class="row" style="margin-top:10px">
+<button class="secondary" onclick="closeModal()">Cancelar</button>
+<button class="green" onclick="salvarGanho('${id||''}')">Salvar</button>
+</div>
+`);
+previewGanho();
+}
+
+function previewGanho(){
+const valEl = document.getElementById('gValor'); if(!valEl) return;
+const val = parseFloat(valEl.value)||0;
+const juros = parseFloat(document.getElementById('gJuros').value)||0;
+const forma = document.getElementById('gForma').value;
+const impostoPct = forma==='Pix' ? state.config.impostoPix : (forma.includes('Cartão') ? state.config.impostoCartao : 0);
+const imposto = val*(impostoPct/100);
+const liquido = val-juros-imposto;
+document.getElementById('gPreview').innerHTML = `
+<div class="info-line"><span>Valor Bruto</span><strong>${fmt(val)}</strong></div>
+<div class="info-line"><span>Juros Maquininha</span><strong class="yellow-text">-${fmt(juros)}</strong></div>
+<div class="info-line"><span>Imposto (${impostoPct}%)</span><strong class="yellow-text">-${fmt(imposto)}</strong></div>
+<div class="info-line" style="border-top:1px solid var(--accent);margin-top:4px;padding-top:8px">
+<span><strong>Você recebe</strong></span>
+<strong class="green-text" style="font-size:16px">${fmt(liquido)}</strong>
+</div>`;
+document.getElementById('gParcelasWrap').style.display = forma==='Cartão Parcelado' ? 'block' : 'none';
+}
+
+function salvarGanho(id){
+const data = document.getElementById('gData').value;
+const nome = document.getElementById('gNome').value.trim();
+const valor = parseFloat(document.getElementById('gValor').value)||0;
+const forma = document.getElementById('gForma').value;
+const juros = parseFloat(document.getElementById('gJuros').value)||0;
+const parcelas = parseInt(document.getElementById('gParcelas').value)||1;
+const obs = document.getElementById('gObs').value.trim();
+if(!nome || valor<=0){ toast('Preencha nome e valor',true); return; }
+if(id){
+Object.assign(state.ganhos.find(x=>x.id===id),{data,nome,valor,forma,juros,parcelas,obs});
+} else {
+state.ganhos.push({id:uid(),data,nome,valor,forma,juros,parcelas,obs});
+}
+saveState(); closeModal(); render(); toast('Ganho salvo!');
+}
+function excluirGanho(id){
+if(!confirm('Excluir este ganho?')) return;
+state.ganhos = state.ganhos.filter(g=>g.id!==id);
+saveState(); render(); toast('Excluído');
+}
+
+/* ===== GASTOS ===== */
+function renderGastos(){
+const gastos = state.gastos.filter(g=>mesAnoMatch(g.data));
+const ge = gastos.filter(g=>g.tipo==='estudio').sort((a,b)=>b.data.localeCompare(a.data));
+const gp = gastos.filter(g=>g.tipo==='pessoal').sort((a,b)=>b.data.localeCompare(a.data));
+return `
+<div class="filter-bar">
+<select id="fAno">${anosDisponiveis().map(a=>`<option ${a===currentFilter.ano?'selected':''}>${a}</option>`).join('')}</select>
+<select id="fMes">${MESES.map((m,i)=>`<option value="${i}" ${i===currentFilter.mes?'selected':''}>${m}</option>`).join('')}</select>
+</div>
+<div class="stat-grid">
+<div class="stat-box"><div class="l">Gastos Estúdio</div><div class="v red-text">${fmt(totalGastos(gastos,'estudio'))}</div></div>
+<div class="stat-box"><div class="l">Gastos Pessoais</div><div class="v red-text">${fmt(totalGastos(gastos,'pessoal'))}</div></div>
+</div>
+<div class="card">
+<h2 style="display:flex;justify-content:space-between;align-items:center">🏪 Gastos do Estúdio <button class="small" onclick="novoGasto('estudio')">+ Novo</button></h2>
+${ge.length? ge.map(g=>renderItemGasto(g)).join('') : '<div class="empty">Sem gast

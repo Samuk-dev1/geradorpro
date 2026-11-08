@@ -1,6 +1,6 @@
 {
-  "appId": "com.gestoriptv.gerenciadorstudio",
-  "appName": "Gerenciador Studio",
+  "appId": "com.gestoriptv.meuapkk",
+  "appName": "meu apkk",
   "webDir": "www",
   "plugins": {
     "LocalNotifications": {

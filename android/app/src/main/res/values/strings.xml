@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Gerenciador Studio</string>
-    <string name="title_activity_main">Gerenciador Studio</string>
-    <string name="package_name">com.gestoriptv.gerenciadorstudio</string>
-    <string name="custom_url_scheme">com.gestoriptv.gerenciadorstudio</string>
+    <string name="app_name">meu apkk</string>
+    <string name="title_activity_main">meu apkk</string>
+    <string name="package_name">com.gestoriptv.meuapkk</string>
+    <string name="custom_url_scheme">com.gestoriptv.meuapkk</string>
 </resources>

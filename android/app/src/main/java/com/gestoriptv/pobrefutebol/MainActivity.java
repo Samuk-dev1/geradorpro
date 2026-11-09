@@ -1,4 +1,4 @@
-package com.gestoriptv.meuapkk;
+package com.gestoriptv.pobrefutebol;
 
 import com.getcapacitor.BridgeActivity;
 

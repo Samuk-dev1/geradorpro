@@ -1,6 +1,6 @@
 {
-  "appId": "com.gestoriptv.meuapkk",
-  "appName": "meu apkk",
+  "appId": "com.gestoriptv.pobrefutebol",
+  "appName": "Pobre Futebol",
   "webDir": "www",
   "plugins": {
     "LocalNotifications": {

@@ -1,6 +1,6 @@
 {
-  "appId": "com.gestoriptv.pobrefutebol",
-  "appName": "Pobre Futebol",
+  "appId": "com.gestoriptv.kajsf",
+  "appName": "kajsf",
   "webDir": "www",
   "plugins": {
     "LocalNotifications": {

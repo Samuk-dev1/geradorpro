@@ -1,4 +1,4 @@
-package com.gestoriptv.pobrefutebol;
+package com.gestoriptv.kajsf;
 
 import com.getcapacitor.BridgeActivity;
 

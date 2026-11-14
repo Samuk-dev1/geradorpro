@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Pobre Futebol</string>
-    <string name="title_activity_main">Pobre Futebol</string>
-    <string name="package_name">com.gestoriptv.pobrefutebol</string>
-    <string name="custom_url_scheme">com.gestoriptv.pobrefutebol</string>
+    <string name="app_name">kajsf</string>
+    <string name="title_activity_main">kajsf</string>
+    <string name="package_name">com.gestoriptv.kajsf</string>
+    <string name="custom_url_scheme">com.gestoriptv.kajsf</string>
 </resources>
